@@ -6,8 +6,19 @@ import "fmt"
 type TokenType byte
 
 const (
-	// EOF ...
-	EOF TokenType = iota
+	Eof TokenType = iota
+
+	// Keywords
+	Program
+	Begin
+	End
+
+	Identifier
+	SemiColon
+	StrLiteral
+	Period
+	LParen
+	RParen
 )
 
 // Token defines a type of token
@@ -21,6 +32,12 @@ func GetTokenName(t byte) string {
 	switch t {
 	case 1:
 		return "EOF"
+	case 2:
+		return "Program"
+	case 3:
+		return "Begin"
+	case 4:
+		return "End"
 	default:
 		return ""
 	}
@@ -28,4 +45,15 @@ func GetTokenName(t byte) string {
 
 func (t *Token) String() string {
 	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(byte(t.Type)))
+}
+
+// Keywords define the reserved words of the language
+var Keywords map[string]TokenType
+
+func init() {
+	Keywords = map[string]TokenType{
+		"program": Program,
+		"begin":   Begin,
+		"end":     End,
+	}
 }
