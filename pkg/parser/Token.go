@@ -17,8 +17,8 @@ type Token struct {
 }
 
 // GetTokenName returns the textual form of a token given its TokenType value
-func (t *Token) GetTokenName() string {
-	switch t.Type {
+func GetTokenName(t byte) string {
+	switch t {
 	case 1:
 		return "EOF"
 	default:
@@ -27,5 +27,5 @@ func (t *Token) GetTokenName() string {
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("<%s, %s>", t.Text, t.GetTokenName())
+	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(byte(t.Type)))
 }
