@@ -18,8 +18,8 @@ func TestLexingEmptyString(t *testing.T) {
 		t.Errorf("lex.NextToken. Expected token text = <EOF>, Got %v", token.Text)
 	}
 
-	if token.Type != Eof {
-		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", Eof, GetTokenName(byte(token.Type)))
+	if token.Type != EOF {
+		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", EOF, GetTokenName(token.Type))
 	}
 }
 
@@ -61,7 +61,8 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 		}
 
 		if token.Type != test.expType {
-			t.Errorf("lex.NextToken. Expected token type = %v, Got %v", test.expText, GetTokenName(byte(token.Type)))
+			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
+				test.expText, GetTokenName(token.Type))
 		}
 	}
 }

@@ -24,7 +24,7 @@ func NewLexer(input string) Lexer {
 // Consume read the the current byte in the input and advances the pointer to the next byte
 func (lex *Lexer) Consume() {
 	if lex.curReadPos >= len(lex.input) {
-		lex.curChar = byte(Eof)
+		lex.curChar = byte(EOF)
 	} else {
 		lex.curChar = lex.input[lex.curReadPos]
 	}
@@ -35,7 +35,7 @@ func (lex *Lexer) Consume() {
 
 // NextToken constructs and returns the next token in the input stream
 func (lex *Lexer) NextToken() (Token, error) {
-	for lex.curChar != byte(Eof) {
+	for lex.curChar != byte(EOF) {
 		switch lex.curChar {
 		case ' ', '\t', '\n', '\r':
 			lex.consumeWhiteSpace()
@@ -65,11 +65,11 @@ func (lex *Lexer) NextToken() (Token, error) {
 				return Token{Type: lex.getTypeOfName(name), Text: name}, nil
 			}
 
-			return Token{}, fmt.Errorf("invalid character: %s", GetTokenName(byte(lex.curChar)))
+			return Token{}, fmt.Errorf("invalid character: %v", lex.curChar)
 		}
 	}
 
-	return Token{Text: "<EOF>", Type: Eof}, nil
+	return Token{Text: "<EOF>", Type: EOF}, nil
 }
 
 func (lex *Lexer) getTypeOfName(name string) TokenType {

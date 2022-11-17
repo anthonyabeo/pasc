@@ -6,7 +6,7 @@ import "fmt"
 type TokenType byte
 
 const (
-	Eof TokenType = iota
+	EOF TokenType = iota
 
 	// Keywords
 	Program
@@ -28,7 +28,7 @@ type Token struct {
 }
 
 // GetTokenName returns the textual form of a token given its TokenType value
-func GetTokenName(t byte) string {
+func GetTokenName(t TokenType) string {
 	switch t {
 	case 1:
 		return "EOF"
@@ -44,7 +44,7 @@ func GetTokenName(t byte) string {
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(byte(t.Type)))
+	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(t.Type))
 }
 
 // Keywords define the reserved words of the language
