@@ -2,6 +2,8 @@ package parser
 
 import (
 	"fmt"
+
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 // Lexer define a type that performs lexical analysis on the input stream.
@@ -16,15 +18,15 @@ type Lexer struct {
 // NewLexer create, initializes and returns a new lexer entity
 func NewLexer(input string) Lexer {
 	lex := Lexer{input: input}
-	lex.Consume()
+	lex.consume()
 
 	return lex
 }
 
 // Consume read the the current byte in the input and advances the pointer to the next byte
-func (lex *Lexer) Consume() {
+func (lex *Lexer) consume() {
 	if lex.curReadPos >= len(lex.input) {
-		lex.curChar = byte(EOF)
+		lex.curChar = byte(token.EOF)
 	} else {
 		lex.curChar = lex.input[lex.curReadPos]
 	}
@@ -34,56 +36,56 @@ func (lex *Lexer) Consume() {
 }
 
 // NextToken constructs and returns the next token in the input stream
-func (lex *Lexer) NextToken() (Token, error) {
-	for lex.curChar != byte(EOF) {
+func (lex *Lexer) NextToken() (token.Token, error) {
+	for lex.curChar != byte(token.EOF) {
 		switch lex.curChar {
 		case ' ', '\t', '\n', '\r':
 			lex.consumeWhiteSpace()
 			continue
 		case '(':
-			lex.Consume()
-			return Token{Type: LParen, Text: "("}, nil
+			lex.consume()
+			return token.Token{Type: token.LParen, Text: "("}, nil
 		case ')':
-			lex.Consume()
-			return Token{Type: RParen, Text: ")"}, nil
+			lex.consume()
+			return token.Token{Type: token.RParen, Text: ")"}, nil
 		case ';':
-			lex.Consume()
-			return Token{Type: SemiColon, Text: ";"}, nil
+			lex.consume()
+			return token.Token{Type: token.SemiColon, Text: ";"}, nil
 		case '\'':
-			lex.Consume()
-			tok := Token{Type: StrLiteral, Text: lex.readStringLiteral()}
-			lex.Consume()
+			lex.consume()
+			tok := token.Token{Type: token.StrLiteral, Text: lex.readStringLiteral()}
+			lex.consume()
 
 			return tok, nil
 		case '.':
-			lex.Consume()
-			return Token{Type: Period, Text: "."}, nil
+			lex.consume()
+			return token.Token{Type: token.Period, Text: "."}, nil
 		default:
 			if lex.curCharIsLetter() {
 				name := lex.readName()
 
-				return Token{Type: lex.getTypeOfName(name), Text: name}, nil
+				return token.Token{Type: lex.getTypeOfName(name), Text: name}, nil
 			}
 
-			return Token{}, fmt.Errorf("invalid character: %v", lex.curChar)
+			return token.Token{}, fmt.Errorf("invalid character: %v", lex.curChar)
 		}
 	}
 
-	return Token{Text: "<EOF>", Type: EOF}, nil
+	return token.Token{Text: "<EOF>", Type: token.EOF}, nil
 }
 
-func (lex *Lexer) getTypeOfName(name string) TokenType {
-	if val, ok := Keywords[name]; ok {
+func (lex *Lexer) getTypeOfName(name string) token.Type {
+	if val, ok := token.Keywords[name]; ok {
 		return val
 	}
 
-	return Identifier
+	return token.Identifier
 }
 
 func (lex *Lexer) readName() string {
 	pos := lex.curCharPos
 	for lex.curCharIsLetter() || lex.isDigit() {
-		lex.Consume()
+		lex.consume()
 	}
 
 	return lex.input[pos:lex.curCharPos]
@@ -92,7 +94,7 @@ func (lex *Lexer) readName() string {
 func (lex *Lexer) readStringLiteral() string {
 	pos := lex.curCharPos
 	for lex.curChar != '\'' {
-		lex.Consume()
+		lex.consume()
 	}
 
 	return lex.input[pos:lex.curCharPos]
@@ -109,6 +111,6 @@ func (lex *Lexer) curCharIsLetter() bool {
 
 func (lex *Lexer) consumeWhiteSpace() {
 	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\n' || lex.curChar == '\r' {
-		lex.Consume()
+		lex.consume()
 	}
 }

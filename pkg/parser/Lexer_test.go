@@ -3,23 +3,25 @@ package parser
 import (
 	"fmt"
 	"testing"
+
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 func TestLexingEmptyString(t *testing.T) {
 	input := ""
 
 	lex := Lexer{input: input}
-	token, err := lex.NextToken()
+	tok, err := lex.NextToken()
 	if err != nil {
 		t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
 	}
 
-	if token.Text != "<EOF>" {
-		t.Errorf("lex.NextToken. Expected token text = <EOF>, Got %v", token.Text)
+	if tok.Text != "<EOF>" {
+		t.Errorf("lex.NextToken. Expected token text = <EOF>, Got %v", tok.Text)
 	}
 
-	if token.Type != EOF {
-		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", EOF, GetTokenName(token.Type))
+	if tok.Type != token.EOF {
+		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", token.EOF, token.GetTokenName(tok.Type))
 	}
 }
 
@@ -32,37 +34,37 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 	`
 
 	tests := []struct {
-		expType TokenType
+		expType token.Type
 		expText string
 	}{
-		{Program, "program"},
-		{Identifier, "HelloWorld"},
-		{SemiColon, ";"},
-		{Begin, "begin"},
-		{Identifier, "writeln"},
-		{LParen, "("},
-		{StrLiteral, "Hello, World!"},
-		{RParen, ")"},
-		{SemiColon, ";"},
-		{End, "end"},
-		{Period, "."},
+		{token.Program, "program"},
+		{token.Identifier, "HelloWorld"},
+		{token.SemiColon, ";"},
+		{token.Begin, "begin"},
+		{token.Identifier, "writeln"},
+		{token.LParen, "("},
+		{token.StrLiteral, "Hello, World!"},
+		{token.RParen, ")"},
+		{token.SemiColon, ";"},
+		{token.End, "end"},
+		{token.Period, "."},
 	}
 
 	lex := NewLexer(input)
 
 	for _, test := range tests {
-		token, err := lex.NextToken()
+		tok, err := lex.NextToken()
 		if err != nil {
 			t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
 		}
 
-		if token.Text != test.expText {
-			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", test.expText, token.Text)
+		if tok.Text != test.expText {
+			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", test.expText, tok.Text)
 		}
 
-		if token.Type != test.expType {
+		if tok.Type != test.expType {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				test.expText, GetTokenName(token.Type))
+				test.expText, token.GetTokenName(tok.Type))
 		}
 	}
 }
