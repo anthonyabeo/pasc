@@ -12,6 +12,8 @@ const (
 	Program
 	Begin
 	End
+	Var
+	Integer
 
 	Identifier
 	SemiColon
@@ -19,6 +21,11 @@ const (
 	Period
 	LParen
 	RParen
+	Initialize
+	Plus
+	Colon
+	IntLiteral
+	Comma
 )
 
 // Token defines a type of token
@@ -33,11 +40,15 @@ func GetTokenName(t Type) string {
 	case 1:
 		return "EOF"
 	case 2:
-		return "Program"
+		return "program"
 	case 3:
-		return "Begin"
+		return "begin"
 	case 4:
-		return "End"
+		return "end"
+	case 5:
+		return "var"
+	case 6:
+		return "integer"
 	default:
 		return ""
 	}
@@ -55,5 +66,7 @@ func init() {
 		"program": Program,
 		"begin":   Begin,
 		"end":     End,
+		"integer": Integer,
+		"var":     Var,
 	}
 }
