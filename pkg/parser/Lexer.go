@@ -60,11 +60,30 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 		case '.':
 			lex.consume()
 			return token.Token{Type: token.Period, Text: "."}, nil
+
+		case '+':
+			lex.consume()
+			return token.Token{Type: token.Plus, Text: "+"}, nil
+		case ',':
+			lex.consume()
+			return token.Token{Type: token.Comma, Text: ","}, nil
+		case ':':
+			lex.consume()
+			if lex.curChar == '=' {
+				lex.consume()
+				return token.Token{Type: token.Initialize, Text: ":="}, nil
+			}
+
+			return token.Token{Type: token.Colon, Text: ":"}, nil
+
 		default:
 			if lex.curCharIsLetter() {
 				name := lex.readName()
-
 				return token.Token{Type: lex.getTypeOfName(name), Text: name}, nil
+			}
+
+			if lex.isDigit() {
+				return token.Token{Type: token.IntLiteral, Text: lex.readIntLiteral()}, nil
 			}
 
 			return token.Token{}, fmt.Errorf("invalid character: %v", lex.curChar)
@@ -94,6 +113,15 @@ func (lex *Lexer) readName() string {
 func (lex *Lexer) readStringLiteral() string {
 	pos := lex.curCharPos
 	for lex.curChar != '\'' {
+		lex.consume()
+	}
+
+	return lex.input[pos:lex.curCharPos]
+}
+
+func (lex *Lexer) readIntLiteral() string {
+	pos := lex.curCharPos
+	for lex.isDigit() {
 		lex.consume()
 	}
 
