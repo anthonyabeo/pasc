@@ -43,7 +43,9 @@ func (p *Parser) consume() error {
 // Match proceeds to the next token.
 func (p *Parser) match(t token.Type) error {
 	if p.lookahead.Type == t {
-		p.consume()
+		if err := p.consume(); err != nil {
+			return err
+		}
 
 		return nil
 	}
@@ -55,8 +57,9 @@ func (p *Parser) match(t token.Type) error {
 // It is the starting point in the parsing process.
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
-		err     error
-		stmtSeq []ast.Statement
+		err      error
+		varDecls []*ast.VarDecl
+		stmtSeq  []ast.Statement
 	)
 
 	if err = p.programHeading(); err != nil {
@@ -67,11 +70,12 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	if stmtSeq, err = p.block(); err != nil {
+	if stmtSeq, varDecls, err = p.block(); err != nil {
 		return nil, err
 	}
 	program := new(ast.ProgramAST)
 	program.Stats = append(program.Stats, stmtSeq...)
+	program.Vars = append(program.Vars, varDecls...)
 
 	if err = p.match(token.Period); err != nil {
 		return nil, err
@@ -96,17 +100,109 @@ func (p *Parser) programHeading() error {
 	return nil
 }
 
-func (p *Parser) block() ([]ast.Statement, error) {
+func (p *Parser) block() ([]ast.Statement, []*ast.VarDecl, error) {
 	var (
 		err     error
+		decls   []*ast.VarDecl
 		stmtSeq []ast.Statement
 	)
 
+	if decls, err = p.variableDeclarationPart(); err != nil {
+		return nil, nil, err
+	}
+
 	if stmtSeq, err = p.compoundStatement(); err != nil {
+		return nil, nil, err
+	}
+
+	return stmtSeq, decls, nil
+}
+
+func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
+	// TODO: extend to support potentially multiple variable declarations
+	var (
+		err     error
+		varDecl *ast.VarDecl
+		decls   []*ast.VarDecl
+	)
+
+	if p.lookahead.Type != token.Var {
+		return nil, nil
+	}
+
+	if err = p.consume(); err != nil {
 		return nil, err
 	}
 
-	return stmtSeq, nil
+	if varDecl, err = p.variableDeclaration(); err != nil {
+		return nil, err
+	}
+	varDecl.Token = token.Token{Type: token.Var, Text: "var"}
+	decls = append(decls, varDecl)
+
+	if err = p.match(token.SemiColon); err != nil {
+		return nil, err
+	}
+
+	return decls, nil
+}
+
+func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
+	var (
+		err   error
+		names []*ast.Identifier
+	)
+
+	varDecl := new(ast.VarDecl)
+
+	if names, err = p.identifierList(); err != nil {
+		return nil, err
+	}
+
+	varDecl.Names = append(varDecl.Names, names...)
+
+	if err = p.match(token.Colon); err != nil {
+		return nil, err
+	}
+
+	if !ast.IsTypeIdentifier(p.lookahead.Type) {
+		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+	}
+
+	varDecl.Type = ast.NewTInteger(p.lookahead)
+
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
+
+	return varDecl, nil
+}
+
+func (p *Parser) identifierList() ([]*ast.Identifier, error) {
+	var (
+		err   error
+		names []*ast.Identifier
+	)
+
+	names = append(names, ast.NewIdentifier(p.lookahead, p.lookahead.Text))
+
+	if err = p.match(token.Identifier); err != nil {
+		return nil, err
+	}
+
+	for p.lookahead.Type != token.Colon {
+		if err = p.match(token.Comma); err != nil {
+			return nil, err
+		}
+
+		names = append(names, ast.NewIdentifier(p.lookahead, p.lookahead.Text))
+
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+	}
+
+	return names, nil
 }
 
 func (p *Parser) compoundStatement() ([]ast.Statement, error) {

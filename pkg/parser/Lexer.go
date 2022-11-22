@@ -77,7 +77,7 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			return token.Token{Type: token.Colon, Text: ":"}, nil
 
 		default:
-			if lex.curCharIsLetter() {
+			if lex.isLetter() {
 				name := lex.readName()
 				return token.Token{Type: lex.getTypeOfName(name), Text: name}, nil
 			}
@@ -103,7 +103,7 @@ func (lex *Lexer) getTypeOfName(name string) token.Type {
 
 func (lex *Lexer) readName() string {
 	pos := lex.curCharPos
-	for lex.curCharIsLetter() || lex.isDigit() {
+	for lex.isLetter() || lex.isDigit() {
 		lex.consume()
 	}
 
@@ -132,7 +132,7 @@ func (lex *Lexer) isDigit() bool {
 	return '0' <= lex.curChar && lex.curChar <= '9'
 }
 
-func (lex *Lexer) curCharIsLetter() bool {
+func (lex *Lexer) isLetter() bool {
 	return 'a' <= lex.curChar && lex.curChar <= 'z' ||
 		'A' <= lex.curChar && lex.curChar <= 'Z'
 }

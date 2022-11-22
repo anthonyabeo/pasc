@@ -37,17 +37,17 @@ type Token struct {
 // GetTokenName returns the textual form of a token given its TokenType value
 func GetTokenName(t Type) string {
 	switch t {
-	case 1:
+	case 0:
 		return "EOF"
-	case 2:
+	case 1:
 		return "program"
-	case 3:
+	case 2:
 		return "begin"
-	case 4:
+	case 3:
 		return "end"
-	case 5:
+	case 4:
 		return "var"
-	case 6:
+	case 5:
 		return "integer"
 	default:
 		return ""
