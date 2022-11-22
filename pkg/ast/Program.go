@@ -6,8 +6,13 @@ type ProgramAST struct {
 	// label definition part
 	// constant definition part
 	// type definition part
+
 	// variable declaration part
+	Vars []*VarDecl
+
 	// procedure and function declaration part
+
+	// statements
 	Stats []Statement
 }
 
