@@ -14,6 +14,7 @@ const (
 	End
 	Var
 	Integer
+	Goto
 
 	Identifier
 	SemiColon
@@ -49,6 +50,8 @@ func GetTokenName(t Kind) string {
 		return "var"
 	case 5:
 		return "integer"
+	case 6:
+		return "goto"
 	default:
 		return ""
 	}
