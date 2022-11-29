@@ -5,12 +5,12 @@ import "github.com/anthonyabeo/pasc/pkg/token"
 // Identifier models an identifier node in the AST
 type Identifier struct {
 	token token.Token
-	value string
+	name  string
 }
 
 // NewIdentifier creates and returns a new Identifier
-func NewIdentifier(token token.Token, value string) *Identifier {
-	return &Identifier{token: token, value: value}
+func NewIdentifier(token token.Token, name string) *Identifier {
+	return &Identifier{token: token, name: name}
 }
 
 // TokenLiteral returns the text value this node's token.

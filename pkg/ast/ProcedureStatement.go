@@ -21,5 +21,5 @@ func (ps *ProcedureStatement) TokenLiteral() string {
 func (ps *ProcedureStatement) statNode() {}
 
 func (ps *ProcedureStatement) String() string {
-	return fmt.Sprintf("%v(%v)", ps.ProcedureID.value, ps.ParamList)
+	return fmt.Sprintf("%v(%v)", ps.ProcedureID.name, ps.ParamList)
 }
