@@ -2,11 +2,11 @@ package token
 
 import "fmt"
 
-// Type defines the category of a token. E.g. Keyword, Identifier etc
-type Type byte
+// Kind defines the category of a token. E.g. Keyword, Identifier etc
+type Kind byte
 
 const (
-	EOF Type = iota
+	EOF Kind = iota
 
 	// Keywords
 	Program
@@ -31,11 +31,11 @@ const (
 // Token defines a type of token
 type Token struct {
 	Text string
-	Type Type
+	Kind Kind
 }
 
 // GetTokenName returns the textual form of a token given its TokenType value
-func GetTokenName(t Type) string {
+func GetTokenName(t Kind) string {
 	switch t {
 	case 0:
 		return "EOF"
@@ -55,14 +55,14 @@ func GetTokenName(t Type) string {
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(t.Type))
+	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(t.Kind))
 }
 
 // Keywords define the reserved words of the language
-var Keywords map[string]Type
+var Keywords map[string]Kind
 
 func init() {
-	Keywords = map[string]Type{
+	Keywords = map[string]Kind{
 		"program": Program,
 		"begin":   Begin,
 		"end":     End,
