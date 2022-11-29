@@ -44,56 +44,56 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			continue
 		case '(':
 			lex.consume()
-			return token.Token{Type: token.LParen, Text: "("}, nil
+			return token.Token{Kind: token.LParen, Text: "("}, nil
 		case ')':
 			lex.consume()
-			return token.Token{Type: token.RParen, Text: ")"}, nil
+			return token.Token{Kind: token.RParen, Text: ")"}, nil
 		case ';':
 			lex.consume()
-			return token.Token{Type: token.SemiColon, Text: ";"}, nil
+			return token.Token{Kind: token.SemiColon, Text: ";"}, nil
 		case '\'':
 			lex.consume()
-			tok := token.Token{Type: token.StrLiteral, Text: lex.readStringLiteral()}
+			tok := token.Token{Kind: token.StrLiteral, Text: lex.readStringLiteral()}
 			lex.consume()
 
 			return tok, nil
 		case '.':
 			lex.consume()
-			return token.Token{Type: token.Period, Text: "."}, nil
+			return token.Token{Kind: token.Period, Text: "."}, nil
 
 		case '+':
 			lex.consume()
-			return token.Token{Type: token.Plus, Text: "+"}, nil
+			return token.Token{Kind: token.Plus, Text: "+"}, nil
 		case ',':
 			lex.consume()
-			return token.Token{Type: token.Comma, Text: ","}, nil
+			return token.Token{Kind: token.Comma, Text: ","}, nil
 		case ':':
 			lex.consume()
 			if lex.curChar == '=' {
 				lex.consume()
-				return token.Token{Type: token.Initialize, Text: ":="}, nil
+				return token.Token{Kind: token.Initialize, Text: ":="}, nil
 			}
 
-			return token.Token{Type: token.Colon, Text: ":"}, nil
+			return token.Token{Kind: token.Colon, Text: ":"}, nil
 
 		default:
 			if lex.isLetter() {
 				name := lex.readName()
-				return token.Token{Type: lex.getTypeOfName(name), Text: name}, nil
+				return token.Token{Kind: lex.getTypeOfName(name), Text: name}, nil
 			}
 
 			if lex.isDigit() {
-				return token.Token{Type: token.IntLiteral, Text: lex.readIntLiteral()}, nil
+				return token.Token{Kind: token.IntLiteral, Text: lex.readIntLiteral()}, nil
 			}
 
 			return token.Token{}, fmt.Errorf("invalid character: %v", lex.curChar)
 		}
 	}
 
-	return token.Token{Text: "<EOF>", Type: token.EOF}, nil
+	return token.Token{Text: "<EOF>", Kind: token.EOF}, nil
 }
 
-func (lex *Lexer) getTypeOfName(name string) token.Type {
+func (lex *Lexer) getTypeOfName(name string) token.Kind {
 	if val, ok := token.Keywords[name]; ok {
 		return val
 	}

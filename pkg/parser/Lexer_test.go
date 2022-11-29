@@ -20,8 +20,8 @@ func TestLexingEmptyString(t *testing.T) {
 		t.Errorf("lex.NextToken. Expected token text = <EOF>, Got %v", tok.Text)
 	}
 
-	if tok.Type != token.EOF {
-		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", token.EOF, token.GetTokenName(tok.Type))
+	if tok.Kind != token.EOF {
+		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", token.EOF, token.GetTokenName(tok.Kind))
 	}
 }
 
@@ -34,7 +34,7 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 	`
 
 	tests := []struct {
-		expType token.Type
+		expType token.Kind
 		expText string
 	}{
 		{token.Program, "program"},
@@ -62,9 +62,9 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", test.expText, tok.Text)
 		}
 
-		if tok.Type != test.expType {
+		if tok.Kind != test.expType {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				test.expText, token.GetTokenName(tok.Type))
+				test.expText, token.GetTokenName(tok.Kind))
 		}
 	}
 }
@@ -86,7 +86,7 @@ func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
 	lex := NewLexer(input)
 
 	tests := []struct {
-		expType token.Type
+		expKind token.Kind
 		expText string
 	}{
 		{token.Program, "program"},
@@ -135,9 +135,9 @@ func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
 			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", tt.expText, tok.Text)
 		}
 
-		if tok.Type != tt.expType {
+		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, token.GetTokenName(tok.Type))
+				tt.expText, token.GetTokenName(tok.Kind))
 		}
 	}
 }
