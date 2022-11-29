@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
@@ -79,23 +80,23 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	}
 
 	varDecl := prog.Vars[0]
-	if varDecl.Token.Type != token.Var {
+	if varDecl.Token.Kind != token.Var {
 		t.Errorf("expected token to be %v; got %v",
-			token.GetTokenName(token.Var), token.GetTokenName(varDecl.Token.Type))
+			token.GetTokenName(token.Var), token.GetTokenName(varDecl.Token.Kind))
 	}
 
 	if len(varDecl.Names) != 3 {
 		t.Errorf("expected 3 variables; got %v", len(varDecl.Names))
 	}
 
-	intType, ok := varDecl.Type.(*ast.TInteger)
+	intType, ok := varDecl.Type.(*dtype.Integer)
 	if !ok {
 		t.Errorf("expected variables type to be an integer, instead it is of type, %v", intType)
 	}
 
-	if intType.Token.Type != token.Integer {
+	if intType.Token.Kind != token.Integer {
 		t.Errorf("expected token type to be %v, got %v",
-			token.GetTokenName(token.Integer), token.GetTokenName(intType.Token.Type))
+			token.GetTokenName(token.Integer), token.GetTokenName(intType.Token.Kind))
 	}
 }
 
@@ -120,7 +121,7 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 // 		b := 200;
 // 		ret := max(a, b);
 
-// 		writeln( 'Max value is : ', ret );
+// 		writeln(ret);
 // 	end.
 // 	`
 // }

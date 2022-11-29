@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
@@ -41,8 +42,8 @@ func (p *Parser) consume() error {
 // Match returns an error if the lookahead token does not match the expected
 // type t, provided as an argument. If t is the token the parser expected,
 // Match proceeds to the next token.
-func (p *Parser) match(t token.Type) error {
-	if p.lookahead.Type == t {
+func (p *Parser) match(t token.Kind) error {
+	if p.lookahead.Kind == t {
 		if err := p.consume(); err != nil {
 			return err
 		}
@@ -126,7 +127,7 @@ func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
 		decls   []*ast.VarDecl
 	)
 
-	if p.lookahead.Type != token.Var {
+	if p.lookahead.Kind != token.Var {
 		return nil, nil
 	}
 
@@ -137,7 +138,7 @@ func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
 	if varDecl, err = p.variableDeclaration(); err != nil {
 		return nil, err
 	}
-	varDecl.Token = token.Token{Type: token.Var, Text: "var"}
+	varDecl.Token = token.Token{Kind: token.Var, Text: "var"}
 	decls = append(decls, varDecl)
 
 	if err = p.match(token.SemiColon); err != nil {
@@ -165,11 +166,11 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 		return nil, err
 	}
 
-	if !ast.IsTypeIdentifier(p.lookahead.Type) {
+	if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
 		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
 	}
 
-	varDecl.Type = ast.NewTInteger(p.lookahead)
+	varDecl.Type = dtype.NewInteger(p.lookahead)
 
 	if err = p.consume(); err != nil {
 		return nil, err
@@ -190,7 +191,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Type != token.Colon {
+	for p.lookahead.Kind != token.Colon {
 		if err = p.match(token.Comma); err != nil {
 			return nil, err
 		}
@@ -255,7 +256,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 	// TODO Ignoring the optional Label for now.
 	// TODO the lookahead set of the statement include the the first and follow sets of SimpleStatement and ProcedureStament. These tokens include GOTO, procedure_identifier, etc. The current implementation only checks for the procedure identifier.
-	if p.lookahead.Type == token.Identifier { // || GOTO || procedure_identifier
+	if p.lookahead.Kind == token.Identifier { // || GOTO || procedure_identifier
 		if stmt, err = p.simpleStatement(); err != nil {
 			return nil, err
 		}
@@ -272,7 +273,7 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 		ps  *ast.ProcedureStatement
 	)
 
-	switch p.lookahead.Type {
+	switch p.lookahead.Kind {
 	case token.Identifier:
 		if ps, err = p.procedureStatement(); err != nil {
 			return nil, err
