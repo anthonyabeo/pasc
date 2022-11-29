@@ -15,11 +15,11 @@ func NewProcedureStatement(pID *Identifier) *ProcedureStatement {
 
 // TokenLiteral returns the text value this node's token.
 func (ps *ProcedureStatement) TokenLiteral() string {
-	return ps.ProcedureID.token.Text
+	return ps.ProcedureID.Token.Text
 }
 
 func (ps *ProcedureStatement) statNode() {}
 
 func (ps *ProcedureStatement) String() string {
-	return fmt.Sprintf("%v(%v)", ps.ProcedureID.name, ps.ParamList)
+	return fmt.Sprintf("%v(%v)", ps.ProcedureID.Name, ps.ParamList)
 }
