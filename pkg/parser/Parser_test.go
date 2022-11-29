@@ -40,9 +40,9 @@ func TestParseBasicProgram(t *testing.T) {
 		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
 	}
 
-	programName := procStat.TokenLiteral()
-	if programName != "writeln" {
-		t.Errorf("expected procedure name, HelloWorld, found %v", programName)
+	procedureID := procStat.TokenLiteral()
+	if procedureID != "writeln" {
+		t.Errorf("expected procedure name, writeln, found %v", procedureID)
 	}
 }
 
@@ -97,6 +97,90 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	if intType.Token.Kind != token.Integer {
 		t.Errorf("expected token type to be %v, got %v",
 			token.GetTokenName(token.Integer), token.GetTokenName(intType.Token.Kind))
+	}
+}
+
+func TestParsingProgramWithAssignmentStatements(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+
+	begin
+		a := 1;
+		b := 2;
+
+		writeln('Hello, world!');
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if prog == nil {
+		t.Error("AST not created")
+	}
+
+	if len(prog.Stats) != 3 {
+		t.Errorf("expected 1 statement in program; found %v", len(prog.Stats))
+	}
+
+	if len(prog.Vars) != 1 {
+		t.Errorf("expected 1 var declaration; found %v", len(prog.Vars))
+	}
+
+	// first statement
+	assignStmt, ok := prog.Stats[0].(*ast.AssignStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
+	}
+
+	if assignStmt.Variable.Token.Kind != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
+	}
+
+	intLit, ok := assignStmt.Value.(*ast.IntegerLiteral)
+	if !ok || intLit.Token.Kind != token.IntLiteral {
+		t.Errorf("expected value of assignment type to be integer literal")
+	}
+
+	// second statement
+	assignStmt, ok = prog.Stats[1].(*ast.AssignStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
+	}
+
+	if assignStmt.Variable.Token.Kind != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
+	}
+
+	intLit, ok = assignStmt.Value.(*ast.IntegerLiteral)
+	if !ok || intLit.Token.Kind != token.IntLiteral {
+		t.Errorf("expected value of assignment type to be integer literal")
+	}
+
+	if intLit.Value != "2" {
+		t.Errorf("expected value to be 2, got %v", intLit.Value)
+	}
+
+	// third statement
+	procStat, ok := prog.Stats[2].(*ast.ProcedureStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
+	}
+
+	procedureID := procStat.TokenLiteral()
+	if procedureID != "writeln" {
+		t.Errorf("expected procedure name, writeln, found %v", procedureID)
 	}
 }
 

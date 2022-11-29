@@ -234,15 +234,16 @@ func (p *Parser) statementSequence() ([]ast.Statement, error) {
 		stmtSeq []ast.Statement
 	)
 
-	// TODO Update to support 1+ statements
-	if stmt, err = p.statement(); err != nil {
-		return nil, err
-	}
+	for p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto || p.lookahead.Kind == token.SemiColon {
+		if stmt, err = p.statement(); err != nil {
+			return nil, err
+		}
 
-	stmtSeq = append(stmtSeq, stmt)
+		stmtSeq = append(stmtSeq, stmt)
 
-	if err = p.match(token.SemiColon); err != nil {
-		return nil, err
+		if err = p.match(token.SemiColon); err != nil {
+			return nil, err
+		}
 	}
 
 	return stmtSeq, nil
@@ -269,30 +270,40 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 func (p *Parser) simpleStatement() (ast.Statement, error) {
 	var (
-		err error
-		ps  *ast.ProcedureStatement
+		err  error
+		stmt ast.Statement
 	)
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		if ps, err = p.procedureStatement(); err != nil {
+		// ident is either a procedure identifier or variable identifier
+		ident := p.lookahead
+
+		if err := p.consume(); err != nil {
 			return nil, err
 		}
+
+		if p.lookahead.Kind == token.LParen {
+			if stmt, err = p.procedureStatement(ident); err != nil {
+				return nil, err
+			}
+		} else if p.lookahead.Kind == token.Initialize {
+			if stmt, err = p.assignmentStatement(ident); err != nil {
+				return nil, err
+			}
+		}
+
 	default:
 		return nil, fmt.Errorf("expecting procedure_name, goto or assignment; found %v", p.lookahead)
 	}
 
-	return ps, nil
+	return stmt, nil
 }
 
-func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
+func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, error) {
 	var err error
 
-	ps := ast.NewProcedureStatement(ast.NewIdentifier(p.lookahead, p.lookahead.Text))
-
-	if err = p.match(token.Identifier); err != nil {
-		return nil, err
-	}
+	ps := ast.NewProcedureStatement(ast.NewIdentifier(tt, tt.Text))
 
 	if err = p.match(token.LParen); err != nil {
 		return nil, err
@@ -312,4 +323,22 @@ func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
 	}
 
 	return ps, nil
+}
+
+func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, error) {
+	var err error
+
+	as := ast.NewAssignmentStatement(ast.NewIdentifier(tt, tt.Text))
+
+	if err = p.match(token.Initialize); err != nil {
+		return nil, err
+	}
+
+	// TODO: replace hardcoded value with parsing expression
+	as.Value = ast.NewIntegerLiteral(p.lookahead)
+	if err = p.match(token.IntLiteral); err != nil {
+		return nil, err
+	}
+
+	return as, nil
 }
