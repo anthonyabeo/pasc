@@ -15,6 +15,11 @@ const (
 	Var
 	Integer
 	Goto
+	Div
+	Mod
+	And
+	Or
+	In
 
 	Identifier
 	SemiColon
@@ -27,6 +32,15 @@ const (
 	Colon
 	IntLiteral
 	Comma
+	Star
+	FwdSlash
+	Minus
+	Equal
+	LessThan
+	LessThanGreaterThan
+	LessThanOrEqual
+	GreaterThan
+	GreaterThanOrEqual
 )
 
 // Token defines a type of token
@@ -52,6 +66,16 @@ func GetTokenName(t Kind) string {
 		return "integer"
 	case 6:
 		return "goto"
+	case 7:
+		return "div"
+	case 8:
+		return "mod"
+	case 9:
+		return "and"
+	case 10:
+		return "or"
+	case 11:
+		return "in"
 	default:
 		return ""
 	}
@@ -71,5 +95,10 @@ func init() {
 		"end":     End,
 		"integer": Integer,
 		"var":     Var,
+		"div":     Div,
+		"mod":     Mod,
+		"and":     And,
+		"or":      Or,
+		"in":      In,
 	}
 }
