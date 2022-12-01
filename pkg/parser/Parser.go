@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/dtype"
@@ -257,7 +258,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 	// TODO Ignoring the optional Label for now.
 	// TODO the lookahead set of the statement include the the first and follow sets of SimpleStatement and ProcedureStament. These tokens include GOTO, procedure_identifier, etc. The current implementation only checks for the procedure identifier.
-	if p.lookahead.Kind == token.Identifier { // || GOTO || procedure_identifier
+	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto { // || GOTO || procedure_identifier
 		if stmt, err = p.simpleStatement(); err != nil {
 			return nil, err
 		}
@@ -334,11 +335,161 @@ func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, erro
 		return nil, err
 	}
 
-	// TODO: replace hardcoded value with parsing expression
-	as.Value = ast.NewIntegerLiteral(p.lookahead)
-	if err = p.match(token.IntLiteral); err != nil {
+	as.Value, err = p.expression()
+	if err != nil {
 		return nil, err
 	}
 
 	return as, nil
+}
+
+func (p *Parser) expression() (ast.Expression, error) {
+	simpleExpr, err := p.simpleExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	if p.isRelationalOp() {
+		relExpr := &ast.BinaryExpression{Operator: p.lookahead, Left: simpleExpr}
+		relExpr.Right, err = p.simpleExpression()
+		if err != nil {
+			return nil, err
+		}
+
+		return relExpr, nil
+	}
+
+	return simpleExpr, nil
+}
+
+func (p *Parser) simpleExpression() (ast.Expression, error) {
+	var (
+		err  error
+		sign token.Token
+		term ast.Expression
+	)
+
+	if p.isSign() {
+		sign = p.lookahead
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+	}
+
+	term, err = p.term()
+	if err != nil {
+		return nil, err
+	}
+
+	if p.isAddingOp() {
+		binExp := &ast.BinaryExpression{Left: term, Operator: p.lookahead}
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		binExp.Right, err = p.term()
+		if err != nil {
+			return nil, err
+		}
+
+		return binExp, nil
+	}
+
+	if !reflect.DeepEqual(sign, token.Token{}) {
+		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: term}
+		return unaryExp, nil
+	}
+
+	return term, nil
+}
+
+func (p *Parser) term() (ast.Expression, error) {
+	// TODO: implement {multiplying-operator factor}
+	fact, err := p.factor()
+	if err != nil {
+		return nil, err
+	}
+
+	return fact, err
+}
+
+func (p *Parser) factor() (ast.Expression, error) {
+	// TODO: implements only 'bounded-identifier' alternative
+	// factor > bound-identifier
+	// factor > variable-access
+	//		  | unsigned-constant
+	//		  | function-designator
+	//		  | set-constructor
+	//		  | '(' expression ')'
+	//		  | 'not' factor
+
+	switch p.lookahead.Kind {
+	case token.Identifier:
+		return p.variableAccess()
+	case token.IntLiteral:
+		return p.unsignedConstant()
+	default:
+		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
+	}
+}
+
+func (p *Parser) variableAccess() (ast.Expression, error) {
+	fact := p.lookahead
+
+	if err := p.consume(); err != nil {
+		return nil, err
+	}
+
+	return ast.NewIdentifier(fact, fact.Text), nil
+}
+
+func (p *Parser) unsignedConstant() (ast.Expression, error) {
+	// TODO: complete implementation
+	// unsigned-constant := unsigned-number
+	//					 | character-string
+	//					 | constant-identier
+	//					 | 'nil' .
+	// unsigned-number := unsigned-integer
+	//                 | unsigned-real .
+	// unsigned-integer = digit-sequence .
+	tt := p.lookahead
+	if err := p.match(token.IntLiteral); err != nil {
+		return nil, err
+	}
+
+	return &ast.IntegerLiteral{Token: tt, Value: tt.Text}, nil
+}
+
+func (p *Parser) unsignedNumber() {
+
+}
+
+func (p *Parser) isMultiplyOp() bool {
+	return p.lookahead.Kind == token.Star ||
+		p.lookahead.Kind == token.FwdSlash ||
+		p.lookahead.Kind == token.Div ||
+		p.lookahead.Kind == token.Mod ||
+		p.lookahead.Kind == token.And
+}
+
+func (p *Parser) isAddingOp() bool {
+	return p.lookahead.Kind == token.Plus ||
+		p.lookahead.Kind == token.Minus ||
+		p.lookahead.Kind == token.Or
+}
+
+func (p *Parser) isRelationalOp() bool {
+	return p.lookahead.Kind == token.Equal ||
+		p.lookahead.Kind == token.LessThanGreaterThan ||
+		p.lookahead.Kind == token.LessThan ||
+		p.lookahead.Kind == token.GreaterThan ||
+		p.lookahead.Kind == token.LessThanOrEqual ||
+		p.lookahead.Kind == token.GreaterThanOrEqual ||
+		p.lookahead.Kind == token.In
+
+}
+
+func (p *Parser) isSign() bool {
+	return p.lookahead.Kind == token.Plus ||
+		p.lookahead.Kind == token.Minus
 }

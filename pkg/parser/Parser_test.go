@@ -129,7 +129,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	}
 
 	if len(prog.Stats) != 3 {
-		t.Errorf("expected 1 statement in program; found %v", len(prog.Stats))
+		t.Errorf("expected 3 statement in program; found %v", len(prog.Stats))
 	}
 
 	if len(prog.Vars) != 1 {
@@ -181,6 +181,103 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	procedureID := procStat.TokenLiteral()
 	if procedureID != "writeln" {
 		t.Errorf("expected procedure name, writeln, found %v", procedureID)
+	}
+}
+
+func TestParseBasicArithmeticOperation(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+
+	begin
+		a := 1;
+		b := 2;
+		sum := a + b;
+		a := -5;
+
+		writeln('Hello, world!');
+	end.
+`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if prog == nil {
+		t.Error("AST not created")
+	}
+
+	if len(prog.Stats) != 5 {
+		t.Errorf("expected 5 statement in program; found %v", len(prog.Stats))
+	}
+
+	if len(prog.Vars) != 1 {
+		t.Errorf("expected 1 var declaration; found %v", len(prog.Vars))
+	}
+
+	stmt, ok := prog.Stats[2].(*ast.AssignStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.AssignStatement; found %v", stmt)
+	}
+
+	if stmt.Variable.Token.Kind != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(stmt.Variable.Token.Kind))
+	}
+
+	expr, ok := stmt.Value.(*ast.BinaryExpression)
+	if !ok {
+		t.Errorf("expected RHS of to be ast.BinaryExpression, got %v", expr)
+	}
+
+	if expr.Operator.Kind != token.Plus {
+		t.Errorf("expected operator to be of type +, got %v", expr.Operator.Text)
+	}
+
+	lhs, ok := expr.Left.(*ast.Identifier)
+	if !ok {
+		t.Errorf("expected LHS of binary expression to be of type identifier")
+	}
+
+	if lhs.Token.Text != "a" {
+		t.Errorf("expected LHS identifier to be 'a', got %v", lhs.Token.Text)
+	}
+
+	// Unary Statement
+	stmt, ok = prog.Stats[3].(*ast.AssignStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.AssignStatement; found %v", stmt)
+	}
+
+	if stmt.Variable.Token.Kind != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(stmt.Variable.Token.Kind))
+	}
+
+	uexpr, ok := stmt.Value.(*ast.UnaryExpression)
+	if !ok {
+		t.Errorf("expected RHS of to be ast.UnaryExpression")
+	}
+
+	if uexpr.Operator.Kind != token.Minus {
+		t.Errorf("expected operator to be of type -, got %v", expr.Operator.Text)
+	}
+
+	intLit, ok := uexpr.Operand.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("expected operand to be integer literal, got %v", intLit)
+	}
+
+	if intLit.Value != "5" {
+		t.Errorf("expected integer value to be 5, got %v", intLit.Value)
 	}
 }
 
