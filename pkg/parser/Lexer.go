@@ -64,6 +64,24 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 		case '+':
 			lex.consume()
 			return token.Token{Kind: token.Plus, Text: "+"}, nil
+		case '-':
+			lex.consume()
+			return token.Token{Kind: token.Minus, Text: "-"}, nil
+		case '*':
+			lex.consume()
+			return token.Token{Kind: token.Star, Text: "*"}, nil
+		case '/':
+			lex.consume()
+			return token.Token{Kind: token.FwdSlash, Text: "/"}, nil
+		case '=':
+			lex.consume()
+			return token.Token{Kind: token.Equal, Text: "="}, nil
+		case '<':
+			lex.consume()
+			return token.Token{Kind: token.LessThan, Text: "<"}, nil
+		case '>':
+			lex.consume()
+			return token.Token{Kind: token.GreaterThan, Text: ">"}, nil
 		case ',':
 			lex.consume()
 			return token.Token{Kind: token.Comma, Text: ","}, nil
@@ -86,7 +104,7 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 				return token.Token{Kind: token.IntLiteral, Text: lex.readIntLiteral()}, nil
 			}
 
-			return token.Token{}, fmt.Errorf("invalid character: %v", lex.curChar)
+			return token.Token{}, fmt.Errorf("invalid character: %v", string(lex.curChar))
 		}
 	}
 
