@@ -31,11 +31,11 @@ func TestParseBasicProgram(t *testing.T) {
 		t.Error("AST not created")
 	}
 
-	if len(prog.Stats) != 1 {
-		t.Errorf("expected 1 statement in program; found %v", len(prog.Stats))
+	if len(prog.Block.Stats) != 1 {
+		t.Errorf("expected 1 statement in program; found %v", len(prog.Block.Stats))
 	}
 
-	procStat, ok := prog.Stats[0].(*ast.ProcedureStatement)
+	procStat, ok := prog.Block.Stats[0].(*ast.ProcedureStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
 	}
@@ -71,15 +71,15 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		t.Error("AST not created")
 	}
 
-	if len(prog.Stats) != 1 {
-		t.Errorf("expected 1 statement in program; found %v", len(prog.Stats))
+	if len(prog.Block.Stats) != 1 {
+		t.Errorf("expected 1 statement in program; found %v", len(prog.Block.Stats))
 	}
 
-	if len(prog.Vars) != 1 {
-		t.Errorf("expected 1 var declaration; found %v", len(prog.Vars))
+	if len(prog.Block.Vars) != 1 {
+		t.Errorf("expected 1 var declaration; found %v", len(prog.Block.Vars))
 	}
 
-	varDecl := prog.Vars[0]
+	varDecl := prog.Block.Vars[0]
 	if varDecl.Token.Kind != token.Var {
 		t.Errorf("expected token to be %v; got %v",
 			token.GetTokenName(token.Var), token.GetTokenName(varDecl.Token.Kind))
@@ -128,16 +128,16 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		t.Error("AST not created")
 	}
 
-	if len(prog.Stats) != 3 {
-		t.Errorf("expected 3 statement in program; found %v", len(prog.Stats))
+	if len(prog.Block.Stats) != 3 {
+		t.Errorf("expected 3 statement in program; found %v", len(prog.Block.Stats))
 	}
 
-	if len(prog.Vars) != 1 {
-		t.Errorf("expected 1 var declaration; found %v", len(prog.Vars))
+	if len(prog.Block.Vars) != 1 {
+		t.Errorf("expected 1 var declaration; found %v", len(prog.Block.Vars))
 	}
 
 	// first statement
-	assignStmt, ok := prog.Stats[0].(*ast.AssignStatement)
+	assignStmt, ok := prog.Block.Stats[0].(*ast.AssignStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
 	}
@@ -153,7 +153,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	}
 
 	// second statement
-	assignStmt, ok = prog.Stats[1].(*ast.AssignStatement)
+	assignStmt, ok = prog.Block.Stats[1].(*ast.AssignStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
 	}
@@ -173,7 +173,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	}
 
 	// third statement
-	procStat, ok := prog.Stats[2].(*ast.ProcedureStatement)
+	procStat, ok := prog.Block.Stats[2].(*ast.ProcedureStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
 	}
@@ -215,15 +215,15 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Error("AST not created")
 	}
 
-	if len(prog.Stats) != 5 {
-		t.Errorf("expected 5 statement in program; found %v", len(prog.Stats))
+	if len(prog.Block.Stats) != 5 {
+		t.Errorf("expected 5 statement in program; found %v", len(prog.Block.Stats))
 	}
 
-	if len(prog.Vars) != 1 {
-		t.Errorf("expected 1 var declaration; found %v", len(prog.Vars))
+	if len(prog.Block.Vars) != 1 {
+		t.Errorf("expected 1 var declaration; found %v", len(prog.Block.Vars))
 	}
 
-	stmt, ok := prog.Stats[2].(*ast.AssignStatement)
+	stmt, ok := prog.Block.Stats[2].(*ast.AssignStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.AssignStatement; found %v", stmt)
 	}
@@ -252,7 +252,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 
 	// Unary Statement
-	stmt, ok = prog.Stats[3].(*ast.AssignStatement)
+	stmt, ok = prog.Block.Stats[3].(*ast.AssignStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.AssignStatement; found %v", stmt)
 	}
@@ -281,28 +281,122 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 }
 
-// func TestFibonacciProgram(t *testing.T) {
-// 	input := `
-// 	program MaxProgram;
+func TestParseProgramWithMaxFunction(t *testing.T) {
+	input := `
+	program MaxProgram;
 
-// 	function max(n, m integer): integer;
-// 	var result: integer;
+	function foo(n, m integer): integer;
+	var result: integer;
 
-// 	begin
-// 		if (n > m) then
-// 			result := n;
-// 		else
-// 			result := m;
+	begin
+		foo := 2;
+	end
 
-// 		max := result
-// 	end;
+	begin
+		a := 100;
+		b := 200;
 
-// 	begin
-// 		a := 100;
-// 		b := 200;
-// 		ret := max(a, b);
+		writeln('Hello, world!');
+	end.
+	`
 
-// 		writeln(ret);
-// 	end.
-// 	`
-// }
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if prog == nil {
+		t.Error("AST not created")
+	}
+
+	if len(prog.Block.Stats) != 3 {
+		t.Errorf("expected 3 statements, found %v", len(prog.Block.Stats))
+	}
+
+	if len(prog.Block.Callables) != 1 {
+		t.Errorf("expected 1 function declaration, found %v", len(prog.Block.Callables))
+	}
+
+	funcDecl, ok := prog.Block.Callables[0].(*ast.FuncDeclaration)
+	if !ok {
+		t.Errorf("expected function declaration type, got %v", funcDecl)
+	}
+
+	if funcDecl.Token.Kind != token.Function {
+		t.Errorf("function declaration has wrong token type, %v", funcDecl.Token.Text)
+	}
+
+	if funcDecl.Name.Token.Kind != token.Identifier {
+		t.Errorf("function name is not of type identifier. It is %v", funcDecl.Name.Token.Text)
+	}
+
+	if funcDecl.Name.Name != "foo" {
+		t.Errorf("expected function name to be 'foo', got %v", funcDecl.Name.Name)
+	}
+
+	if len(funcDecl.Parameters) != 1 {
+		t.Errorf("more than 1 set of parameters")
+	}
+
+	params := funcDecl.Parameters[0]
+	if len(params.Names) != 2 {
+		t.Errorf("expected 2 parameters, got %v", len(params.Names))
+	}
+
+	intType, ok := params.Type.(*dtype.Integer)
+	if !ok || intType.Token.Kind != token.Integer {
+		t.Errorf("parameters are not of %v type", params.Type.GetName())
+	}
+
+	intType, ok = funcDecl.ReturnType.(*dtype.Integer)
+	if !ok || intType.Token.Kind != token.Integer {
+		t.Errorf("return type is not of %v type", params.Type.GetName())
+	}
+
+	if len(funcDecl.Block.Stats) != 1 {
+		t.Errorf("expected function block to contain 1 statement, found %v", len(funcDecl.Block.Stats))
+	}
+
+	assignStmt, ok := funcDecl.Block.Stats[0].(*ast.AssignStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
+	}
+
+	if assignStmt.Variable.Token.Kind != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
+	}
+
+	intLit, ok := assignStmt.Value.(*ast.IntegerLiteral)
+	if !ok || intLit.Token.Kind != token.IntLiteral {
+		t.Errorf("expected value of assignment type to be integer literal")
+	}
+}
+
+// program MaxProgram;
+
+// function max(n, m integer): integer;
+// var result: integer;
+
+// begin
+// 	if (n > m) then
+// 		result := n;
+// 	else
+// 		result := m;
+
+// 	max := result
+// end;
+
+// begin
+// 	a := 100;
+// 	b := 200;
+// 	ret := max(a, b);
+
+// 	writeln(ret);
+// end.

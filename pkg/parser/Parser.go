@@ -59,9 +59,8 @@ func (p *Parser) match(t token.Kind) error {
 // It is the starting point in the parsing process.
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
-		err      error
-		varDecls []*ast.VarDecl
-		stmtSeq  []ast.Statement
+		err   error
+		block *ast.Block
 	)
 
 	if err = p.programHeading(); err != nil {
@@ -72,12 +71,11 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	if stmtSeq, varDecls, err = p.block(); err != nil {
+	if block, err = p.block(); err != nil {
 		return nil, err
 	}
 	program := new(ast.ProgramAST)
-	program.Stats = append(program.Stats, stmtSeq...)
-	program.Vars = append(program.Vars, varDecls...)
+	program.Block = block
 
 	if err = p.match(token.Period); err != nil {
 		return nil, err
@@ -102,22 +100,207 @@ func (p *Parser) programHeading() error {
 	return nil
 }
 
-func (p *Parser) block() ([]ast.Statement, []*ast.VarDecl, error) {
+func (p *Parser) block() (*ast.Block, error) {
 	var (
-		err     error
-		decls   []*ast.VarDecl
-		stmtSeq []ast.Statement
+		err       error
+		decls     []*ast.VarDecl
+		stmtSeq   []ast.Statement
+		callables []ast.Statement
 	)
 
+	block := &ast.Block{}
+
 	if decls, err = p.variableDeclarationPart(); err != nil {
-		return nil, nil, err
+		return nil, err
+	}
+
+	if callables, err = p.procedureAndFunctionDeclarationPart(); err != nil {
+		return nil, err
 	}
 
 	if stmtSeq, err = p.compoundStatement(); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return stmtSeq, decls, nil
+	block.Vars = append(block.Vars, decls...)
+	block.Stats = append(block.Stats, stmtSeq...)
+	block.Callables = append(block.Callables, callables...)
+
+	return block, nil
+}
+
+func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) {
+	// procedure-and-function-declaration-part = { ( procedure-declaration | function-declaration ) ';' } .
+	//
+	// procedure-declaration := procedure-heading ';' directive
+	// 						  | procedure-identication ';' procedure-block
+	// 						  | procedure-heading ';' procedure-block .
+	// procedure-heading := 'procedure' identier [ formal-parameter-list ] .
+	// procedure-identication := 'procedure' procedure-identier .
+	// procedure-identier := identier .
+	// procedure-block := block .
+	// directive := letter { letter | digit } .
+	//
+	// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
+	// formal-parameter-section > value-parameter-specification
+	//                          | variable-parameter-specification
+	//                          | procedural-parameter-specification
+	//                          | functional-parameter-specification .
+	// formal-parameter-section > conformant-array-parameter-specification .
+	//
+	// value-parameter-specication = identifier-list ':' type-identifier .
+	// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
+	// procedural-parameter-specification = procedure-heading .
+	// functional-parameter-specification = function-heading .
+	//
+	// function-heading = 'function' identifier [ formal-parameter-list ] ':' result-type .
+	// procedure-heading = 'procedure' identifier [ formal-parameter-list ] .
+	//
+	// result-type = simple-type-identifier | pointer-type-identifier .
+	// simple-type-identifier = type-identifier .
+	// pointer-type-identifier = type-identifier .
+	//
+	// type-identifier = identifier .
+	//
+	//
+	// function-declaration := function-heading ';' directive
+	//                      | function-identification ';' function-block
+	//                      | function-heading ';' function-block .       <---- implementing this
+	// function-identification = 'function' function-identifier .
+	// function-identifier = identifier .
+	// function-block = block .
+
+	var callables []ast.Statement
+
+	for p.lookahead.Kind == token.Function || p.lookahead.Kind == token.Procedure {
+		switch p.lookahead.Kind {
+		case token.Function:
+			funcDecl, err := p.functionDeclaration()
+			if err != nil {
+				return nil, err
+			}
+
+			callables = append(callables, funcDecl)
+		// case token.Procedure:
+		// 	return p.procedureDeclaration()
+		default:
+			return nil, nil
+		}
+	}
+
+	return callables, nil
+}
+
+func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
+	var (
+		err       error
+		paramList []*ast.Parameter
+	)
+
+	funcDecl := &ast.FuncDeclaration{Token: p.lookahead}
+
+	if err = p.match(token.Function); err != nil {
+		return nil, err
+	}
+
+	funcDecl.Name = ast.NewIdentifier(p.lookahead, p.lookahead.Text)
+
+	if err = p.match(token.Identifier); err != nil {
+		return nil, err
+	}
+
+	paramList, err = p.formalParameterList()
+	if err != nil {
+		return nil, err
+	}
+	funcDecl.Parameters = append(funcDecl.Parameters, paramList...)
+
+	if err = p.match(token.Colon); err != nil {
+		return nil, err
+	}
+
+	//TODO: Fix this
+	if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
+		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+	}
+
+	funcDecl.ReturnType = dtype.NewInteger(p.lookahead)
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
+
+	return funcDecl, nil
+}
+
+func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
+	funcDecl, err := p.functionHeading()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.SemiColon); err != nil {
+		return nil, err
+	}
+
+	funcDecl.Block, err = p.block()
+	if err != nil {
+		return nil, err
+	}
+
+	return funcDecl, nil
+}
+
+func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
+	// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
+	var (
+		err       error
+		paramList []*ast.Parameter
+	)
+
+	if err = p.match(token.LParen); err != nil {
+		return nil, err
+	}
+
+	for p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Var ||
+		p.lookahead.Kind == token.Procedure || p.lookahead.Kind == token.Function {
+
+		switch p.lookahead.Kind {
+		case token.Identifier:
+			names, err := p.identifierList()
+			if err != nil {
+				return nil, err
+			}
+			params := &ast.Parameter{Names: names}
+
+			if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
+				return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+			}
+
+			// TODO: fix this hardcoding
+			params.Type = dtype.NewInteger(p.lookahead)
+			paramList = append(paramList, params)
+
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+		case token.Var:
+		case token.Procedure:
+		case token.Function:
+		default:
+			return nil, nil
+		}
+
+	}
+
+	if err = p.match(token.RParen); err != nil {
+		return nil, err
+	}
+
+	return paramList, nil
+}
+
+func (p *Parser) procedureDeclaration() (error, error) {
+	return nil, nil
 }
 
 func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
@@ -171,6 +354,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
 	}
 
+	// TODO: fix this hardcoding
 	varDecl.Type = dtype.NewInteger(p.lookahead)
 
 	if err = p.consume(); err != nil {
@@ -192,7 +376,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Kind != token.Colon {
+	for p.lookahead.Kind == token.Comma || p.lookahead.Kind == token.Identifier {
 		if err = p.match(token.Comma); err != nil {
 			return nil, err
 		}
