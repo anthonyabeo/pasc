@@ -23,6 +23,13 @@ const (
 	Function
 	Procedure
 	If
+	Then
+	Else
+	With
+	For
+	Repeat
+	While
+	Case
 
 	Identifier
 	SemiColon
@@ -85,6 +92,20 @@ func GetTokenName(t Kind) string {
 		return "procedure"
 	case 14:
 		return "if"
+	case 15:
+		return "then"
+	case 16:
+		return "else"
+	case 17:
+		return "with"
+	case 18:
+		return "for"
+	case 19:
+		return "repeat"
+	case 20:
+		return "while"
+	case 21:
+		return "case"
 	default:
 		return ""
 	}
@@ -112,5 +133,12 @@ func init() {
 		"function":  Function,
 		"procedure": Procedure,
 		"if":        If,
+		"then":      Then,
+		"else":      Else,
+		"with":      With,
+		"for":       For,
+		"repeat":    Repeat,
+		"while":     While,
+		"case":      Case,
 	}
 }
