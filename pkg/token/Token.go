@@ -20,6 +20,9 @@ const (
 	And
 	Or
 	In
+	Function
+	Procedure
+	If
 
 	Identifier
 	SemiColon
@@ -76,6 +79,12 @@ func GetTokenName(t Kind) string {
 		return "or"
 	case 11:
 		return "in"
+	case 12:
+		return "function"
+	case 13:
+		return "procedure"
+	case 14:
+		return "if"
 	default:
 		return ""
 	}
@@ -90,15 +99,18 @@ var Keywords map[string]Kind
 
 func init() {
 	Keywords = map[string]Kind{
-		"program": Program,
-		"begin":   Begin,
-		"end":     End,
-		"integer": Integer,
-		"var":     Var,
-		"div":     Div,
-		"mod":     Mod,
-		"and":     And,
-		"or":      Or,
-		"in":      In,
+		"program":   Program,
+		"begin":     Begin,
+		"end":       End,
+		"integer":   Integer,
+		"var":       Var,
+		"div":       Div,
+		"mod":       Mod,
+		"and":       And,
+		"or":        Or,
+		"in":        In,
+		"function":  Function,
+		"procedure": Procedure,
+		"if":        If,
 	}
 }
