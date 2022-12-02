@@ -14,3 +14,5 @@ type VarDecl struct {
 
 // TokenLiteral returns the text value this node's token.
 func (v *VarDecl) TokenLiteral() string { return v.Token.Text }
+
+func (v *VarDecl) statNode() {}
