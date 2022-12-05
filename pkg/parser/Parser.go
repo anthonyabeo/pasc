@@ -102,10 +102,10 @@ func (p *Parser) programHeading() error {
 
 func (p *Parser) block() (*ast.Block, error) {
 	var (
-		err       error
-		decls     []*ast.VarDecl
-		stmtSeq   []ast.Statement
-		callables []ast.Statement
+		err          error
+		decls        []*ast.VarDecl
+		callables    []ast.Statement
+		compoundStmt *ast.CompoundStatement
 	)
 
 	block := &ast.Block{}
@@ -118,12 +118,12 @@ func (p *Parser) block() (*ast.Block, error) {
 		return nil, err
 	}
 
-	if stmtSeq, err = p.compoundStatement(); err != nil {
+	if compoundStmt, err = p.compoundStatement(); err != nil {
 		return nil, err
 	}
 
 	block.Vars = append(block.Vars, decls...)
-	block.Stats = append(block.Stats, stmtSeq...)
+	block.Stats = append(block.Stats, compoundStmt.Statements...)
 	block.Callables = append(block.Callables, callables...)
 
 	return block, nil
@@ -181,8 +181,7 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 			}
 
 			callables = append(callables, funcDecl)
-		// case token.Procedure:
-		// 	return p.procedureDeclaration()
+		case token.Procedure:
 		default:
 			return nil, nil
 		}
@@ -247,6 +246,10 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
+	if err = p.match(token.SemiColon); err != nil {
+		return nil, err
+	}
+
 	return funcDecl, nil
 }
 
@@ -297,10 +300,6 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	}
 
 	return paramList, nil
-}
-
-func (p *Parser) procedureDeclaration() (error, error) {
-	return nil, nil
 }
 
 func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
@@ -391,7 +390,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	return names, nil
 }
 
-func (p *Parser) compoundStatement() ([]ast.Statement, error) {
+func (p *Parser) compoundStatement() (*ast.CompoundStatement, error) {
 	var (
 		err     error
 		stmtSeq []ast.Statement
@@ -409,7 +408,7 @@ func (p *Parser) compoundStatement() ([]ast.Statement, error) {
 		return nil, err
 	}
 
-	return stmtSeq, nil
+	return &ast.CompoundStatement{Statements: stmtSeq}, nil
 }
 
 func (p *Parser) statementSequence() ([]ast.Statement, error) {
@@ -419,15 +418,23 @@ func (p *Parser) statementSequence() ([]ast.Statement, error) {
 		stmtSeq []ast.Statement
 	)
 
-	for p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto || p.lookahead.Kind == token.SemiColon {
+	for p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto || p.lookahead.Kind == token.SemiColon ||
+		p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
+		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
+		p.lookahead.Kind == token.For {
+
 		if stmt, err = p.statement(); err != nil {
 			return nil, err
 		}
 
 		stmtSeq = append(stmtSeq, stmt)
 
-		if err = p.match(token.SemiColon); err != nil {
-			return nil, err
+		if p.lookahead.Kind == token.SemiColon {
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+
+			continue
 		}
 	}
 
@@ -440,20 +447,58 @@ func (p *Parser) statement() (ast.Statement, error) {
 		stmt ast.Statement
 	)
 
-	// TODO Ignoring the optional Label for now.
-	// TODO the lookahead set of the statement include the the first and follow sets of SimpleStatement and ProcedureStament. These tokens include GOTO, procedure_identifier, etc. The current implementation only checks for the procedure identifier.
-	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto { // || GOTO || procedure_identifier
+	// structured-statement := compound-statement
+	//                      | conditional-statement
+	//                      | repetitive-statement
+	//                      | with-statement .
+	//
+	// repetitive-statement := repeat-statement
+	//						| while-statement
+	//						| for-statement .
+	// repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
+	// while-statement = 'while' Boolean-expression 'do' statement .
+	// for-statement = 'for' control-variable ':=' initial-value ( 'to' j 'downto' )  nal-value 'do' statement .
+	//
+	// compound-statement := 'begin' statement-sequence 'end' .
+	//
+	// with-statement := 'with' record-variable-list 'do' statement .
+	//
+	// conditional-statement := if-statement
+	//					     | case-statement .
+	// if-statement = 'if' Boolean-expression 'then' statement [ else-part ] .
+	// case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
+
+	// TODO: remove the if-else since it is already define in statementSequence.
+	if p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
+		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
+		p.lookahead.Kind == token.For {
+
+		switch p.lookahead.Kind {
+		case token.If:
+			return p.ifStatement()
+		case token.Begin:
+			return p.compoundStatement()
+		case token.While:
+		case token.With:
+		case token.Case:
+		case token.Repeat:
+		case token.For:
+		default:
+
+		}
+		// TODO Ignoring the optional Label for now.
+		// TODO the lookahead set of the statement include the the first and follow sets of SimpleStatement and ProcedureStament. These tokens include GOTO, procedure_identifier, etc. The current implementation only checks for the procedure identifier.
+	} else if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto {
 		if stmt, err = p.simpleStatement(); err != nil {
 			return nil, err
 		}
-	} else {
-		// TODO this branch handles the StructuredStatement alternative path
 	}
 
 	return stmt, nil
 }
 
 func (p *Parser) simpleStatement() (ast.Statement, error) {
+	// TODO: get rid of this simpleStatement and implement the individual methods in the switch case in statement
 	var (
 		err  error
 		stmt ast.Statement
@@ -535,6 +580,10 @@ func (p *Parser) expression() (ast.Expression, error) {
 
 	if p.isRelationalOp() {
 		relExpr := &ast.BinaryExpression{Operator: p.lookahead, Left: simpleExpr}
+		if err := p.consume(); err != nil {
+			return nil, err
+		}
+
 		relExpr.Right, err = p.simpleExpression()
 		if err != nil {
 			return nil, err
@@ -612,6 +661,21 @@ func (p *Parser) factor() (ast.Expression, error) {
 		return p.variableAccess()
 	case token.IntLiteral:
 		return p.unsignedConstant()
+	case token.LParen:
+		if err := p.match(token.LParen); err != nil {
+			return nil, err
+		}
+
+		expr, err := p.expression()
+		if err != nil {
+			return nil, err
+		}
+
+		if err = p.match(token.RParen); err != nil {
+			return nil, err
+		}
+
+		return expr, nil
 	default:
 		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
 	}
@@ -676,4 +740,53 @@ func (p *Parser) isRelationalOp() bool {
 func (p *Parser) isSign() bool {
 	return p.lookahead.Kind == token.Plus ||
 		p.lookahead.Kind == token.Minus
+}
+
+func (p *Parser) ifStatement() (*ast.IfStatement, error) {
+	// if-statement := 'if' Boolean-expression 'then' statement [ else-part ] .
+	// Boolean-expression := expression .
+	// else-part := 'else' statement .
+	var err error
+
+	ifStmt := &ast.IfStatement{Token: p.lookahead}
+
+	if err = p.match(token.If); err != nil {
+		return nil, err
+	}
+
+	ifStmt.BoolExpr, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Then); err != nil {
+		return nil, err
+	}
+
+	ifStmt.TruePath, err = p.statement()
+	if err != nil {
+		return nil, err
+	}
+
+	if p.lookahead.Kind == token.Else {
+		ifStmt.ElsePath, err = p.elsePart()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return ifStmt, nil
+}
+
+func (p *Parser) elsePart() (ast.Statement, error) {
+	if err := p.match(token.Else); err != nil {
+		return nil, err
+	}
+
+	stmt, err := p.statement()
+	if err != nil {
+		return nil, err
+	}
+
+	return stmt, nil
 }
