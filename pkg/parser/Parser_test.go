@@ -147,8 +147,8 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
 	}
 
-	intLit, ok := assignStmt.Value.(*ast.IntegerLiteral)
-	if !ok || intLit.Token.Kind != token.IntLiteral {
+	intLit, ok := assignStmt.Value.(*ast.UIntegerLiteral)
+	if !ok || intLit.Token.Kind != token.UIntLiteral {
 		t.Errorf("expected value of assignment type to be integer literal")
 	}
 
@@ -163,8 +163,8 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
 	}
 
-	intLit, ok = assignStmt.Value.(*ast.IntegerLiteral)
-	if !ok || intLit.Token.Kind != token.IntLiteral {
+	intLit, ok = assignStmt.Value.(*ast.UIntegerLiteral)
+	if !ok || intLit.Token.Kind != token.UIntLiteral {
 		t.Errorf("expected value of assignment type to be integer literal")
 	}
 
@@ -271,7 +271,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Errorf("expected operator to be of type -, got %v", expr.Operator.Text)
 	}
 
-	intLit, ok := uexpr.Operand.(*ast.IntegerLiteral)
+	intLit, ok := uexpr.Operand.(*ast.UIntegerLiteral)
 	if !ok {
 		t.Errorf("expected operand to be integer literal, got %v", intLit)
 	}
@@ -373,8 +373,8 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
 	}
 
-	intLit, ok := assignStmt.Value.(*ast.IntegerLiteral)
-	if !ok || intLit.Token.Kind != token.IntLiteral {
+	intLit, ok := assignStmt.Value.(*ast.UIntegerLiteral)
+	if !ok || intLit.Token.Kind != token.UIntLiteral {
 		t.Errorf("expected value of assignment type to be integer literal")
 	}
 }

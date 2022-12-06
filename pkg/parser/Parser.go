@@ -670,7 +670,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 		}
 
 		return p.variableAccess(tt)
-	case token.IntLiteral:
+	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil, token.ConstIdentifier:
 		return p.unsignedConstant()
 	case token.LParen:
 		if err := p.match(token.LParen); err != nil {
@@ -706,19 +706,45 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	//					 | character-string
 	//					 | constant-identier
 	//					 | 'nil' .
-	// unsigned-number := unsigned-integer
-	//                 | unsigned-real .
-	// unsigned-integer = digit-sequence .
+	// constant-identi er = identifier .
+
 	tt := p.lookahead
-	if err := p.match(token.IntLiteral); err != nil {
+
+	if err := p.consume(); err != nil {
 		return nil, err
 	}
 
-	return &ast.IntegerLiteral{Token: tt, Value: tt.Text}, nil
+	switch tt.Kind {
+	case token.UIntLiteral, token.URealLiteral:
+		return p.unsignedNumber(tt)
+	case token.CharString:
+		return &ast.CharString{Token: tt, Value: tt.Text}, nil
+	case token.ConstIdentifier:
+		return ast.NewIdentifier(tt, tt.Text), nil
+	case token.Nil:
+		return &ast.NilValue{Token: tt}, nil
+	default:
+		return nil, fmt.Errorf("expected unsigned constant type, instead got, %v", tt.Text)
+	}
 }
 
-func (p *Parser) unsignedNumber() {
+func (p *Parser) unsignedNumber(tt token.Token) (ast.Expression, error) {
+	// unsigned-number := unsigned-integer
+	//                 | unsigned-real .
+	// unsigned-integer := digit-sequence .
+	// unsigned-real := digit-sequence '.' fractional-part [ 'e' scale-factor ]
+	//                | digit-sequence 'e' scale-factor .
 
+	switch tt.Kind {
+	case token.UIntLiteral:
+		return ast.NewUIntegerLiteral(tt), nil
+	case token.URealLiteral:
+		// TODO: implement
+		// return ast.NewURealLiteral()
+		return nil, nil
+	default:
+		return nil, fmt.Errorf("expected unsigned real or integer, instead got, %v", p.lookahead.Text)
+	}
 }
 
 func (p *Parser) isMultiplyOp() bool {
