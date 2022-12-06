@@ -8,14 +8,13 @@ type Identifier struct {
 	Name  string
 }
 
-// NewIdentifier creates and returns a new Identifier
-func NewIdentifier(token token.Token, name string) *Identifier {
-	return &Identifier{Token: token, Name: name}
-}
-
 // TokenLiteral returns the text value this node's token.
 func (id *Identifier) TokenLiteral() string {
 	return id.Token.Text
 }
 
 func (id *Identifier) exprNode() {}
+
+func (id *Identifier) String() string {
+	return id.Name
+}

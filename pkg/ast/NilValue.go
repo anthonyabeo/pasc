@@ -2,7 +2,7 @@ package ast
 
 import "github.com/anthonyabeo/pasc/pkg/token"
 
-// NilValue ...
+// NilValue represents node for nil values.
 type NilValue struct {
 	Token token.Token
 }
@@ -11,3 +11,7 @@ type NilValue struct {
 func (n *NilValue) TokenLiteral() string { return n.Token.Text }
 
 func (n *NilValue) exprNode() {}
+
+func (n *NilValue) String() string {
+	return "nil"
+}

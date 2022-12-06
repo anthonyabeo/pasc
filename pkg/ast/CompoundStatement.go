@@ -1,6 +1,8 @@
 package ast
 
-// CompoundStatement ...
+import "fmt"
+
+// CompoundStatement is the node in the AST that represents a compound statement.
 type CompoundStatement struct {
 	Statements []Statement
 }
@@ -9,3 +11,7 @@ type CompoundStatement struct {
 func (cs *CompoundStatement) TokenLiteral() string { return "compound-statement" }
 
 func (cs *CompoundStatement) statNode() {}
+
+func (cs *CompoundStatement) String() string {
+	return fmt.Sprintf("%v", cs.Statements)
+}

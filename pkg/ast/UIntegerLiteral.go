@@ -2,15 +2,10 @@ package ast
 
 import "github.com/anthonyabeo/pasc/pkg/token"
 
-// UIntegerLiteral ...
+// UIntegerLiteral is the node for an unsigned integer node in the AST
 type UIntegerLiteral struct {
 	Token token.Token
 	Value string
-}
-
-// NewUIntegerLiteral ...
-func NewUIntegerLiteral(tt token.Token) *UIntegerLiteral {
-	return &UIntegerLiteral{Token: tt, Value: tt.Text}
 }
 
 // TokenLiteral returns the text value this node's token.

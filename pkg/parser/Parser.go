@@ -202,7 +202,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
-	funcDecl.Name = ast.NewIdentifier(p.lookahead, p.lookahead.Text)
+	funcDecl.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
 
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
@@ -369,7 +369,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		names []*ast.Identifier
 	)
 
-	names = append(names, ast.NewIdentifier(p.lookahead, p.lookahead.Text))
+	names = append(names, &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text})
 
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
@@ -380,7 +380,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 			return nil, err
 		}
 
-		names = append(names, ast.NewIdentifier(p.lookahead, p.lookahead.Text))
+		names = append(names, &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text})
 
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
@@ -539,7 +539,7 @@ func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, er
 	//								  | writeln-parameter-list ) .
 	var err error
 
-	ps := ast.NewProcedureStatement(ast.NewIdentifier(tt, tt.Text))
+	ps := ast.NewProcedureStatement(&ast.Identifier{Token: tt, Name: tt.Text})
 
 	actualParamList, err := p.actualParameterList()
 	if err != nil {
@@ -560,7 +560,7 @@ func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, er
 func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, error) {
 	var err error
 
-	as := ast.NewAssignmentStatement(ast.NewIdentifier(tt, tt.Text))
+	as := &ast.AssignStatement{Variable: &ast.Identifier{Token: tt, Name: tt.Text}}
 
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
@@ -697,7 +697,7 @@ func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	// 	return nil, err
 	// }
 
-	return ast.NewIdentifier(t, t.Text), nil
+	return &ast.Identifier{Token: t, Name: t.Text}, nil
 }
 
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
@@ -706,7 +706,7 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	//					 | character-string
 	//					 | constant-identier
 	//					 | 'nil' .
-	// constant-identi er = identifier .
+	// constant-identifier = identifier .
 
 	tt := p.lookahead
 
@@ -720,7 +720,7 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	case token.CharString:
 		return &ast.CharString{Token: tt, Value: tt.Text}, nil
 	case token.ConstIdentifier:
-		return ast.NewIdentifier(tt, tt.Text), nil
+		return &ast.Identifier{Token: tt, Name: tt.Text}, nil
 	case token.Nil:
 		return &ast.NilValue{Token: tt}, nil
 	default:
@@ -737,7 +737,7 @@ func (p *Parser) unsignedNumber(tt token.Token) (ast.Expression, error) {
 
 	switch tt.Kind {
 	case token.UIntLiteral:
-		return ast.NewUIntegerLiteral(tt), nil
+		return &ast.UIntegerLiteral{Token: tt, Value: tt.Text}, nil
 	case token.URealLiteral:
 		// TODO: implement
 		// return ast.NewURealLiteral()
@@ -831,7 +831,7 @@ func (p *Parser) functionDesignator(t token.Token) (*ast.FuncDesignator, error) 
 	// function-identitier = identitier .
 	var err error
 
-	funcCall := &ast.FuncDesignator{Name: ast.NewIdentifier(t, t.Text)}
+	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: t, Name: t.Text}}
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
 		return nil, err
