@@ -457,7 +457,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 	//						| for-statement .
 	// repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
 	// while-statement = 'while' Boolean-expression 'do' statement .
-	// for-statement = 'for' control-variable ':=' initial-value ( 'to' j 'downto' )  nal-value 'do' statement .
+	// for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) fi nal-value 'do' statement .
 	//
 	// compound-statement := 'begin' statement-sequence 'end' .
 	//
@@ -531,26 +531,28 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 }
 
 func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, error) {
+	// TODO: complete implementation
+	// procedure-statement = procedure-identitier ( [ actual-parameter-list ]
+	//                                | read-parameter-list
+	//                                | readln-parameter-list
+	//                                | write-parameter-list
+	//								  | writeln-parameter-list ) .
 	var err error
 
 	ps := ast.NewProcedureStatement(ast.NewIdentifier(tt, tt.Text))
 
-	if err = p.match(token.LParen); err != nil {
+	actualParamList, err := p.actualParameterList()
+	if err != nil {
 		return nil, err
 	}
 
-	// TODO: compute the parameter list
-	ps.ParamList = append(ps.ParamList, ast.NewStringLiteral(p.lookahead, p.lookahead.Text))
-
-	// TODO: check for procedure parameter list here.
-	// TODO: For now we just match the string literal
-	if err = p.match(token.StrLiteral); err != nil {
+	writelnParamList, err := p.writelnParameterList()
+	if err != nil {
 		return nil, err
 	}
 
-	if err = p.match(token.RParen); err != nil {
-		return nil, err
-	}
+	ps.ParamList = append(ps.ParamList, actualParamList...)
+	ps.ParamList = append(ps.ParamList, writelnParamList...)
 
 	return ps, nil
 }
@@ -658,7 +660,16 @@ func (p *Parser) factor() (ast.Expression, error) {
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		return p.variableAccess()
+		tt := p.lookahead
+		if err := p.consume(); err != nil {
+			return nil, err
+		}
+
+		if p.lookahead.Kind == token.LParen {
+			return p.functionDesignator(tt)
+		}
+
+		return p.variableAccess(tt)
 	case token.IntLiteral:
 		return p.unsignedConstant()
 	case token.LParen:
@@ -681,14 +692,12 @@ func (p *Parser) factor() (ast.Expression, error) {
 	}
 }
 
-func (p *Parser) variableAccess() (ast.Expression, error) {
-	fact := p.lookahead
+func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
+	// if err := p.consume(); err != nil {
+	// 	return nil, err
+	// }
 
-	if err := p.consume(); err != nil {
-		return nil, err
-	}
-
-	return ast.NewIdentifier(fact, fact.Text), nil
+	return ast.NewIdentifier(t, t.Text), nil
 }
 
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
@@ -789,4 +798,143 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 	}
 
 	return stmt, nil
+}
+
+func (p *Parser) functionDesignator(t token.Token) (*ast.FuncDesignator, error) {
+	// function-designator = function-identitier [ actual-parameter-list ] .
+	// function-identitier = identitier .
+	var err error
+
+	funcCall := &ast.FuncDesignator{Name: ast.NewIdentifier(t, t.Text)}
+	funcCall.Parameters, err = p.actualParameterList()
+	if err != nil {
+		return nil, err
+	}
+
+	return funcCall, nil
+}
+
+func (p *Parser) actualParameterList() ([]ast.Expression, error) {
+	// actual-parameter-list = '(' actual-parameter { ',' actual-parameter } ')' .
+	// actual-parameter := expression
+	//			         | variable-access
+	//					 | procedure-identitier
+	//	                 | function-identitier .
+	var (
+		err       error
+		param     ast.Expression
+		paramList []ast.Expression
+	)
+
+	if err = p.match(token.LParen); err != nil {
+		return nil, err
+	}
+
+	param, err = p.actualParameter()
+	if err != nil {
+		return nil, err
+	}
+	paramList = append(paramList, param)
+
+	for p.lookahead.Kind == token.Comma {
+		if err := p.match(token.Comma); err != nil {
+			return nil, err
+		}
+
+		param, err = p.actualParameter()
+		if err != nil {
+			return nil, err
+		}
+		paramList = append(paramList, param)
+	}
+
+	if err = p.match(token.RParen); err != nil {
+		return nil, err
+	}
+
+	return paramList, nil
+}
+
+func (p *Parser) actualParameter() (ast.Expression, error) {
+	expr, err := p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	return expr, nil
+}
+
+func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
+	// writeln-parameter-list = [ '(' (  file-variable | write-parameter ) { ',' write-parameter } ')' ] .
+	var (
+		err              error
+		writeParam       *ast.WriteParameter
+		writelnParamList []ast.Expression
+	)
+
+	if p.lookahead.Kind == token.LParen {
+		if err = p.match(token.LParen); err != nil {
+			return nil, err
+		}
+
+		// TODO: implement file-variable alternative
+		writeParam, err = p.writeParameter()
+		if err != nil {
+			return nil, err
+		}
+		writelnParamList = append(writelnParamList, writeParam)
+
+		for p.lookahead.Kind != token.Comma {
+			if err = p.match(token.Comma); err != nil {
+				return nil, err
+			}
+
+			writeParam, err = p.writeParameter()
+			if err != nil {
+				return nil, err
+			}
+			writelnParamList = append(writelnParamList, writeParam)
+		}
+	}
+
+	return writelnParamList, nil
+}
+
+func (p *Parser) writeParameter() (*ast.WriteParameter, error) {
+	// write-parameter := expression [ ':' expression [ ':' expression ] ] .
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	expr, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	wp := &ast.WriteParameter{E: expr}
+
+	if p.lookahead.Kind == token.Colon {
+		if err = p.match(token.Colon); err != nil {
+			return nil, err
+		}
+
+		wp.TotalWidth, err = p.expression()
+		if err != nil {
+			return nil, err
+		}
+
+		if p.lookahead.Kind == token.Colon {
+			if err = p.match(token.Colon); err != nil {
+				return nil, err
+			}
+
+			wp.FracDigits, err = p.expression()
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return wp, nil
 }

@@ -494,6 +494,62 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	}
 }
 
+func TestParseProgramWithFunctionCall(t *testing.T) {
+	input := `
+	program MaxProgram;
+
+	begin
+		a := 100;
+		b := 200;
+		result := max(a, b);
+
+		writeln(res)
+	end.
+	`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if prog == nil {
+		t.Error("AST not created")
+	}
+
+	if len(prog.Block.Stats) != 4 {
+		t.Errorf("expected 4 statement in program; found %v", len(prog.Block.Stats))
+	}
+
+	assignStmt, ok := prog.Block.Stats[2].(*ast.AssignStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
+	}
+
+	if assignStmt.Variable.Token.Kind != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
+	}
+
+	funcDesg, ok := assignStmt.Value.(*ast.FuncDesignator)
+	if !ok {
+		t.Errorf("expected RHS to be a function call, instead got %v", funcDesg)
+	}
+
+	if funcDesg.Name.Name != "max" {
+		t.Errorf("expected function name to be 'max', instead got %v", funcDesg.Name.Name)
+	}
+
+	if len(funcDesg.Parameters) != 2 {
+		t.Errorf("expected 2 function parameter, instead got %v", len(funcDesg.Parameters))
+	}
+}
+
 // func testIsAssignmentStatment(t *testing.T, stmt ast.Statement) bool {
 // 	assignStmt, ok := stmt.(*ast.AssignStatement)
 // 	if !ok {
