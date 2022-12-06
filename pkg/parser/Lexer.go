@@ -37,11 +37,10 @@ func (lex *Lexer) consume() {
 
 // NextToken constructs and returns the next token in the input stream
 func (lex *Lexer) NextToken() (token.Token, error) {
+	lex.consumeWhiteSpace()
+
 	for lex.curChar != byte(token.EOF) {
 		switch lex.curChar {
-		case ' ', '\t', '\n', '\r':
-			lex.consumeWhiteSpace()
-			continue
 		case '(':
 			lex.consume()
 			return token.Token{Kind: token.LParen, Text: "("}, nil
@@ -78,9 +77,24 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			return token.Token{Kind: token.Equal, Text: "="}, nil
 		case '<':
 			lex.consume()
+			if lex.curChar == '>' {
+				lex.consume()
+				return token.Token{Kind: token.LessThanGreaterThan, Text: "<>"}, nil
+			}
+
+			if lex.curChar == '=' {
+				lex.consume()
+				return token.Token{Kind: token.LessThanOrEqual, Text: "<="}, nil
+			}
+
 			return token.Token{Kind: token.LessThan, Text: "<"}, nil
 		case '>':
 			lex.consume()
+			if lex.curChar == '=' {
+				lex.consume()
+				return token.Token{Kind: token.GreaterThanOrEqual, Text: ">="}, nil
+			}
+
 			return token.Token{Kind: token.GreaterThan, Text: ">"}, nil
 		case ',':
 			lex.consume()

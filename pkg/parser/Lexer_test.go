@@ -141,3 +141,34 @@ func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
 		}
 	}
 }
+
+func TestOperators(t *testing.T) {
+	input := `<> <= >=`
+
+	tests := []struct {
+		expKind token.Kind
+		expText string
+	}{
+		{token.LessThanGreaterThan, "<>"},
+		{token.LessThanOrEqual, "<="},
+		{token.GreaterThanOrEqual, ">="},
+	}
+
+	lex := NewLexer(input)
+
+	for _, tt := range tests {
+		tok, err := lex.NextToken()
+		if err != nil {
+			t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
+		}
+
+		if tok.Text != tt.expText {
+			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", tt.expText, tok.Text)
+		}
+
+		if tok.Kind != tt.expKind {
+			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
+				tt.expText, token.GetTokenName(tok.Kind))
+		}
+	}
+}
