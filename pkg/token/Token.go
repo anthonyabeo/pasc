@@ -30,17 +30,18 @@ const (
 	Repeat
 	While
 	Case
+	Nil
 
 	Identifier
 	SemiColon
-	StrLiteral
+	CharString
 	Period
 	LParen
 	RParen
 	Initialize
 	Plus
 	Colon
-	IntLiteral
+	UIntLiteral
 	Comma
 	Star
 	FwdSlash
@@ -51,6 +52,8 @@ const (
 	LessThanOrEqual
 	GreaterThan
 	GreaterThanOrEqual
+	URealLiteral
+	ConstIdentifier
 )
 
 // Token defines a type of token
@@ -106,6 +109,8 @@ func GetTokenName(t Kind) string {
 		return "while"
 	case 21:
 		return "case"
+	case 22:
+		return "nil"
 	default:
 		return ""
 	}
@@ -140,5 +145,6 @@ func init() {
 		"repeat":    Repeat,
 		"while":     While,
 		"case":      Case,
+		"nil":       Nil,
 	}
 }

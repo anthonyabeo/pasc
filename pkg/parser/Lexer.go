@@ -52,7 +52,7 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			return token.Token{Kind: token.SemiColon, Text: ";"}, nil
 		case '\'':
 			lex.consume()
-			tok := token.Token{Kind: token.StrLiteral, Text: lex.readStringLiteral()}
+			tok := token.Token{Kind: token.CharString, Text: lex.readStringLiteral()}
 			lex.consume()
 
 			return tok, nil
@@ -115,7 +115,7 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			}
 
 			if lex.isDigit() {
-				return token.Token{Kind: token.IntLiteral, Text: lex.readIntLiteral()}, nil
+				return token.Token{Kind: token.UIntLiteral, Text: lex.readIntLiteral()}, nil
 			}
 
 			return token.Token{}, fmt.Errorf("invalid character: %v", string(lex.curChar))
