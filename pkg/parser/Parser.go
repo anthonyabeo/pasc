@@ -826,12 +826,12 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 	return stmt, nil
 }
 
-func (p *Parser) functionDesignator(t token.Token) (*ast.FuncDesignator, error) {
+func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
 	// function-designator = function-identitier [ actual-parameter-list ] .
 	// function-identitier = identitier .
 	var err error
 
-	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: t, Name: t.Text}}
+	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}}
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
 		return nil, err
@@ -842,10 +842,7 @@ func (p *Parser) functionDesignator(t token.Token) (*ast.FuncDesignator, error) 
 
 func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	// actual-parameter-list = '(' actual-parameter { ',' actual-parameter } ')' .
-	// actual-parameter := expression
-	//			         | variable-access
-	//					 | procedure-identitier
-	//	                 | function-identitier .
+
 	var (
 		err       error
 		param     ast.Expression
@@ -882,6 +879,11 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 }
 
 func (p *Parser) actualParameter() (ast.Expression, error) {
+	// actual-parameter := expression
+	//			         | variable-access
+	//					 | procedure-identitier
+	//	                 | function-identitier .
+
 	expr, err := p.expression()
 	if err != nil {
 		return nil, err

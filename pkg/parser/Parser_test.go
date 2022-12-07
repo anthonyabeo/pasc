@@ -27,12 +27,8 @@ func TestParseBasicProgram(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
-	}
-
-	if len(prog.Block.Stats) != 1 {
-		t.Errorf("expected 1 statement in program; found %v", len(prog.Block.Stats))
+	if !testProgramAST(t, prog, 1, 0, 0) {
+		return
 	}
 
 	procStat, ok := prog.Block.Stats[0].(*ast.ProcedureStatement)
@@ -67,16 +63,8 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
-	}
-
-	if len(prog.Block.Stats) != 1 {
-		t.Errorf("expected 1 statement in program; found %v", len(prog.Block.Stats))
-	}
-
-	if len(prog.Block.Vars) != 1 {
-		t.Errorf("expected 1 var declaration; found %v", len(prog.Block.Vars))
+	if !testProgramAST(t, prog, 1, 1, 0) {
+		return
 	}
 
 	varDecl := prog.Block.Vars[0]
@@ -124,52 +112,20 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
-	}
-
-	if len(prog.Block.Stats) != 3 {
-		t.Errorf("expected 3 statement in program; found %v", len(prog.Block.Stats))
-	}
-
-	if len(prog.Block.Vars) != 1 {
-		t.Errorf("expected 1 var declaration; found %v", len(prog.Block.Vars))
+	if !testProgramAST(t, prog, 3, 1, 0) {
+		return
 	}
 
 	// first statement
-	assignStmt, ok := prog.Block.Stats[0].(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
-	}
-
-	if assignStmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
-	}
-
-	intLit, ok := assignStmt.Value.(*ast.UIntegerLiteral)
-	if !ok || intLit.Token.Kind != token.UIntLiteral {
-		t.Errorf("expected value of assignment type to be integer literal")
+	value := &ast.UIntegerLiteral{Token: token.Token{Text: "1", Kind: token.UIntLiteral}, Value: "1"}
+	if !testAssignmentStatment(t, prog.Block.Stats[0], "a", value) {
+		return
 	}
 
 	// second statement
-	assignStmt, ok = prog.Block.Stats[1].(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
-	}
-
-	if assignStmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
-	}
-
-	intLit, ok = assignStmt.Value.(*ast.UIntegerLiteral)
-	if !ok || intLit.Token.Kind != token.UIntLiteral {
-		t.Errorf("expected value of assignment type to be integer literal")
-	}
-
-	if intLit.Value != "2" {
-		t.Errorf("expected value to be 2, got %v", intLit.Value)
+	value = &ast.UIntegerLiteral{Token: token.Token{Text: "2", Kind: token.UIntLiteral}, Value: "2"}
+	if !testAssignmentStatment(t, prog.Block.Stats[1], "b", value) {
+		return
 	}
 
 	// third statement
@@ -196,7 +152,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		sum := a + b;
 		a := -5;
 
-		writeln('Hello, world!');
+		writeln('Hello, world!')
 	end.
 `
 
@@ -211,16 +167,8 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
-	}
-
-	if len(prog.Block.Stats) != 5 {
-		t.Errorf("expected 5 statement in program; found %v", len(prog.Block.Stats))
-	}
-
-	if len(prog.Block.Vars) != 1 {
-		t.Errorf("expected 1 var declaration; found %v", len(prog.Block.Vars))
+	if !testProgramAST(t, prog, 5, 1, 0) {
+		return
 	}
 
 	stmt, ok := prog.Block.Stats[2].(*ast.AssignStatement)
@@ -247,8 +195,8 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Errorf("expected LHS of binary expression to be of type identifier")
 	}
 
-	if lhs.Token.Text != "a" {
-		t.Errorf("expected LHS identifier to be 'a', got %v", lhs.Token.Text)
+	if lhs.Name != "a" {
+		t.Errorf("expected LHS identifier to be 'a', got %v", lhs.Name)
 	}
 
 	// Unary Statement
@@ -311,16 +259,8 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
-	}
-
-	if len(prog.Block.Stats) != 3 {
-		t.Errorf("expected 3 statements, found %v", len(prog.Block.Stats))
-	}
-
-	if len(prog.Block.Callables) != 1 {
-		t.Errorf("expected 1 function declaration, found %v", len(prog.Block.Callables))
+	if !testProgramAST(t, prog, 3, 0, 1) {
+		return
 	}
 
 	funcDecl, ok := prog.Block.Callables[0].(*ast.FuncDeclaration)
@@ -414,16 +354,8 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
-	}
-
-	if len(prog.Block.Stats) != 3 {
-		t.Errorf("expected 3 statements, found %v", len(prog.Block.Stats))
-	}
-
-	if len(prog.Block.Callables) != 1 {
-		t.Errorf("expected 1 function declaration, found %v", len(prog.Block.Callables))
+	if !testProgramAST(t, prog, 3, 0, 1) {
+		return
 	}
 
 	funcDecl, ok := prog.Block.Callables[0].(*ast.FuncDeclaration)
@@ -448,49 +380,23 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Errorf("expected token type to be %v, got %v", token.GetTokenName(token.If), ifStmt.Token.Text)
 	}
 
-	boolExpr, ok := ifStmt.BoolExpr.(*ast.BinaryExpression)
-	if !ok {
-		t.Errorf("expected binary expresion, got %v", boolExpr)
+	if !testBinaryExpression(t, ifStmt.BoolExpr, token.NewToken(token.GreaterThan, ">"), "n", "m") {
+		return
 	}
 
-	if boolExpr.Operator.Kind != token.GreaterThan {
-		t.Errorf("expected operator to be of type '>', got %v", boolExpr.Operator.Text)
+	value := &ast.Identifier{
+		Token: token.NewToken(token.Identifier, "n"),
+		Name:  "n",
+	}
+	if !testAssignmentStatment(t, ifStmt.TruePath, "result", value) {
+		return
 	}
 
-	if boolExpr.Left.TokenLiteral() != "n" {
-		t.Errorf("expected LHS of expression to be 'n', got %v", boolExpr.Left.TokenLiteral())
-	}
+	value.Token.Text = "m"
+	value.Name = "m"
 
-	if boolExpr.Right.TokenLiteral() != "m" {
-		t.Errorf("expected RHS of expression to be 'm', got %v", boolExpr.Left.TokenLiteral())
-	}
-
-	assignStmt, ok := ifStmt.TruePath.(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
-	}
-
-	if assignStmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
-	}
-
-	if assignStmt.Value.TokenLiteral() != "n" {
-		t.Errorf("expected RHS of assignment statement to be 'n', got %v", assignStmt.Value.TokenLiteral())
-	}
-
-	assignStmt, ok = ifStmt.ElsePath.(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
-	}
-
-	if assignStmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
-	}
-
-	if assignStmt.Value.TokenLiteral() != "m" {
-		t.Errorf("expected RHS of assignment statement to be 'm', got %v", assignStmt.Value.TokenLiteral())
+	if !testAssignmentStatment(t, ifStmt.ElsePath, "result", value) {
+		return
 	}
 }
 
@@ -518,51 +424,126 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	if prog == nil {
-		t.Error("AST not created")
+	if !testProgramAST(t, prog, 4, 0, 0) {
+		return
 	}
 
-	if len(prog.Block.Stats) != 4 {
-		t.Errorf("expected 4 statement in program; found %v", len(prog.Block.Stats))
+	value := &ast.FuncDesignator{
+		Name: &ast.Identifier{Token: token.Token{Kind: token.Identifier, Text: "max"}, Name: "max"},
+		Parameters: []ast.Expression{
+			&ast.Identifier{Token: token.Token{Kind: token.Identifier, Text: "a"}, Name: "a"},
+			&ast.Identifier{Token: token.Token{Kind: token.Identifier, Text: "b"}, Name: "b"},
+		},
 	}
 
-	assignStmt, ok := prog.Block.Stats[2].(*ast.AssignStatement)
+	if !testAssignmentStatment(t, prog.Block.Stats[2], "result", value) {
+		return
+	}
+
+	if !testFuncDesignator(t, prog.Block.Stats[2].(*ast.AssignStatement).Value, "max", value.Parameters) {
+		return
+	}
+}
+
+func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, value ast.Expression) bool {
+	assignStmt, ok := stmt.(*ast.AssignStatement)
 	if !ok {
 		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
+		return false
 	}
 
 	if assignStmt.Variable.Token.Kind != token.Identifier {
 		t.Errorf("expected variable to be of kind %v, got %v",
 			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
+		return false
 	}
 
-	funcDesg, ok := assignStmt.Value.(*ast.FuncDesignator)
-	if !ok {
-		t.Errorf("expected RHS to be a function call, instead got %v", funcDesg)
+	if assignStmt.Variable.Name != variable {
+		t.Errorf("expected variable to be %v, got %v instead,", variable, assignStmt.Variable.Name)
+		return false
 	}
 
-	if funcDesg.Name.Name != "max" {
-		t.Errorf("expected function name to be 'max', instead got %v", funcDesg.Name.Name)
+	if assignStmt.Value.TokenLiteral() != value.TokenLiteral() {
+		t.Errorf("expected assignment value to be %v. got %v instead",
+			value.TokenLiteral(), assignStmt.Value.TokenLiteral())
+
+		return false
 	}
 
-	if len(funcDesg.Parameters) != 2 {
-		t.Errorf("expected 2 function parameter, instead got %v", len(funcDesg.Parameters))
-	}
+	return true
 }
 
-// func testIsAssignmentStatment(t *testing.T, stmt ast.Statement) bool {
-// 	assignStmt, ok := stmt.(*ast.AssignStatement)
-// 	if !ok {
-// 		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
-// 	}
+func testProgramAST(t *testing.T, p *ast.ProgramAST, numStmts, numVarDefs, numCallables int) bool {
+	if p == nil {
+		t.Error("AST not created")
+		return false
+	}
 
-// 	if assignStmt.Variable.Token.Kind != token.Identifier {
-// 		t.Errorf("expected variable to be of kind %v, got %v",
-// 			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
-// 	}
+	return testBlock(t, p.Block, numStmts, numVarDefs, numCallables)
+}
 
-// 	intLit, ok := assignStmt.Value.(*ast.IntegerLiteral)
-// 	if !ok || intLit.Token.Kind != token.IntLiteral {
-// 		t.Errorf("expected value of assignment type to be integer literal")
-// 	}
-// }
+func testBlock(t *testing.T, blk *ast.Block, numStmts, numVarDefs, numCallables int) bool {
+	if len(blk.Stats) != numStmts {
+		t.Errorf("expected %v statement(s) in block; found %v instead", numStmts, len(blk.Stats))
+		return false
+	}
+
+	if len(blk.Vars) != numVarDefs {
+		t.Errorf("expected %v variable declaration(s) in block; found %v instead", numVarDefs, len(blk.Vars))
+		return false
+	}
+
+	if len(blk.Callables) != numCallables {
+		t.Errorf("expected %v callable(s) in block; found %v instead", numCallables, len(blk.Callables))
+		return false
+	}
+
+	return true
+}
+
+func testFuncDesignator(t *testing.T, funcDesg ast.Expression, funcName string, params []ast.Expression) bool {
+	fDesg, ok := funcDesg.(*ast.FuncDesignator)
+	if !ok {
+		t.Errorf("expected a function designator, instead got %v", funcDesg)
+		return false
+	}
+
+	if fDesg.Name.Name != funcName {
+		t.Errorf("expected function designator name to be %v, got %v instead", funcName, fDesg.Name.Name)
+		return false
+	}
+
+	for i, j := 0, 0; i < len(params) && j < len(fDesg.Parameters); i, j = i+1, j+1 {
+		if params[i].TokenLiteral() != fDesg.Parameters[j].TokenLiteral() {
+			t.Errorf("expected parameter %v, got %v instead", params[i].TokenLiteral(), fDesg.Parameters[j].TokenLiteral())
+			return false
+		}
+	}
+
+	return true
+}
+
+func testBinaryExpression(t *testing.T, expr ast.Expression, operator token.Token, left, right string) bool {
+	exp, ok := expr.(*ast.BinaryExpression)
+	if !ok {
+		t.Errorf("expected binary expresion, got %v", exp)
+		return false
+	}
+
+	if exp.Operator.Kind != operator.Kind {
+		t.Errorf("expected operator %v, got %v instead", operator.Text, exp.Operator.Text)
+		return false
+	}
+
+	if exp.Left.TokenLiteral() != left {
+		t.Errorf("expected LHS to be %v, got %v instead", left, exp.Left.TokenLiteral())
+		return false
+	}
+
+	if exp.Right.TokenLiteral() != right {
+		t.Errorf("expected RHS to be %v, got %v instead", right, exp.Right.TokenLiteral())
+		return false
+	}
+
+	return true
+}

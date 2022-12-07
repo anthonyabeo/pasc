@@ -62,6 +62,10 @@ type Token struct {
 	Kind Kind
 }
 
+func NewToken(kind Kind, text string) Token {
+	return Token{Kind: kind, Text: text}
+}
+
 // GetTokenName returns the textual form of a token given its TokenType value
 func GetTokenName(t Kind) string {
 	switch t {
