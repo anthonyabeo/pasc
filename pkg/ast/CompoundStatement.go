@@ -10,7 +10,10 @@ type CompoundStatement struct {
 // TokenLiteral returns the text value this node's token.
 func (cs *CompoundStatement) TokenLiteral() string { return "compound-statement" }
 
-func (cs *CompoundStatement) statNode() {}
+// StatNode ...
+func (cs *CompoundStatement) StatNode() string {
+	return fmt.Sprintf("%v", cs.Statements)
+}
 
 func (cs *CompoundStatement) String() string {
 	return fmt.Sprintf("%v", cs.Statements)

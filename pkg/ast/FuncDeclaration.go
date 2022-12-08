@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"fmt"
+
 	"github.com/anthonyabeo/pasc/pkg/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
@@ -17,4 +19,11 @@ type FuncDeclaration struct {
 // TokenLiteral returns the text value this node's token.
 func (f *FuncDeclaration) TokenLiteral() string { return f.Token.Text }
 
-func (f *FuncDeclaration) statNode() {}
+// StatNode ...
+func (f *FuncDeclaration) StatNode() string {
+	return fmt.Sprintf("function(%v):%v", f.Parameters, f.ReturnType)
+}
+
+func (f *FuncDeclaration) String() string {
+	return fmt.Sprintf("function(%v):%v", f.Parameters, f.ReturnType)
+}

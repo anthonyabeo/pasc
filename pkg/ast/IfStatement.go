@@ -17,7 +17,10 @@ type IfStatement struct {
 // TokenLiteral returns the text value this node's token.
 func (f *IfStatement) TokenLiteral() string { return f.Token.Text }
 
-func (f *IfStatement) statNode() {}
+// StatNode ...
+func (f *IfStatement) StatNode() string {
+	return fmt.Sprintf("if(%v) then %v else %v", f.BoolExpr, f.TruePath, f.ElsePath)
+}
 
 func (f *IfStatement) String() string {
 	return fmt.Sprintf("if(%v) then %v else %v", f.BoolExpr, f.TruePath, f.ElsePath)

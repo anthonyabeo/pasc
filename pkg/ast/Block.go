@@ -21,7 +21,9 @@ type Block struct {
 // TokenLiteral returns the text value this node's token.
 func (b *Block) TokenLiteral() string { return "block" }
 
-func (b *Block) statNode() {}
+func (b *Block) StatNode() string {
+	return fmt.Sprintf("%v\n%v\n%v\n", b.Vars, b.Callables, b.Stats)
+}
 
 func (b *Block) String() string {
 	return fmt.Sprintf("%v\n%v\n%v\n", b.Vars, b.Callables, b.Stats)

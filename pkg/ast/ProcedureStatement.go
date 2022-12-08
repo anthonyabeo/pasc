@@ -18,7 +18,10 @@ func (ps *ProcedureStatement) TokenLiteral() string {
 	return ps.ProcedureID.Token.Text
 }
 
-func (ps *ProcedureStatement) statNode() {}
+// StatNode ...
+func (ps *ProcedureStatement) StatNode() string {
+	return fmt.Sprintf("%v(%v)", ps.ProcedureID.Name, ps.ParamList)
+}
 
 func (ps *ProcedureStatement) String() string {
 	return fmt.Sprintf("%v(%v)", ps.ProcedureID.Name, ps.ParamList)

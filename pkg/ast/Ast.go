@@ -8,7 +8,7 @@ type Node interface {
 // Statement models a generic node for statement types
 type Statement interface {
 	Node
-	statNode()
+	StatNode() string
 }
 
 // Expression models a generic node for expression types

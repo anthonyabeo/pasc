@@ -15,10 +15,13 @@ type AssignStatement struct {
 
 // TokenLiteral returns the text value this node's token.
 func (as *AssignStatement) TokenLiteral() string {
-	return as.Variable.Name
+	return as.Token.Text
 }
 
-func (as *AssignStatement) statNode() {}
+// StatNode ...
+func (as *AssignStatement) StatNode() string {
+	return fmt.Sprintf("%v := %v", as.Variable, as.Value)
+}
 
 func (as *AssignStatement) String() string {
 	return fmt.Sprintf("%v := %v", as.Variable, as.Value)
