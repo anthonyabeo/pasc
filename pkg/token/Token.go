@@ -62,6 +62,7 @@ type Token struct {
 	Kind Kind
 }
 
+// NewToken constructs and returns a new token
 func NewToken(kind Kind, text string) Token {
 	return Token{Kind: kind, Text: text}
 }
