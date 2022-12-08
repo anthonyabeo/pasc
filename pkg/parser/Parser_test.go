@@ -358,32 +358,25 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		return
 	}
 
-	funcDecl, ok := prog.Block.Callables[0].(*ast.FuncDeclaration)
-	if !ok {
-		t.Errorf("expected function declaration type, got %v", funcDecl)
+	paramList := []*ast.Parameter{
+		{
+			Names: []*ast.Identifier{
+				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
+				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
+			},
+			Type: dtype.NewInteger(token.NewToken(token.Integer, "integer")),
+		},
 	}
-
-	if funcDecl.Token.Kind != token.Function {
-		t.Errorf("function declaration has wrong token type, %v", funcDecl.Token.Text)
-	}
-
-	if len(funcDecl.Block.Stats) != 2 {
-		t.Errorf("expected function block to contain 2 statement, found %v", len(funcDecl.Block.Stats))
-	}
-
-	ifStmt, ok := funcDecl.Block.Stats[0].(*ast.IfStatement)
-	if !ok {
-		t.Errorf("expected if statement, got %v", ifStmt)
-	}
-
-	if ifStmt.Token.Kind != token.If {
-		t.Errorf("expected token type to be %v, got %v", token.GetTokenName(token.If), ifStmt.Token.Text)
-	}
-
-	if !testBinaryExpression(t, ifStmt.BoolExpr, token.NewToken(token.GreaterThan, ">"), "n", "m") {
+	if !testFuncDeclaration(t, prog.Block.Callables[0], "max", "integer", paramList, 2, 1, 0) {
 		return
 	}
 
+	funcDecl := prog.Block.Callables[0].(*ast.FuncDeclaration)
+	if !testIfStatement(t, funcDecl.Block.Stats[0], token.NewToken(token.GreaterThan, ">"), "n", "m", "result := n", "result := m") {
+		return
+	}
+
+	ifStmt := funcDecl.Block.Stats[0].(*ast.IfStatement)
 	value := &ast.Identifier{
 		Token: token.NewToken(token.Identifier, "n"),
 		Name:  "n",
@@ -515,7 +508,8 @@ func testFuncDesignator(t *testing.T, funcDesg ast.Expression, funcName string, 
 
 	for i, j := 0, 0; i < len(params) && j < len(fDesg.Parameters); i, j = i+1, j+1 {
 		if params[i].TokenLiteral() != fDesg.Parameters[j].TokenLiteral() {
-			t.Errorf("expected parameter %v, got %v instead", params[i].TokenLiteral(), fDesg.Parameters[j].TokenLiteral())
+			t.Errorf("expected parameter %v, got %v instead",
+				params[i].TokenLiteral(), fDesg.Parameters[j].TokenLiteral())
 			return false
 		}
 	}
@@ -543,6 +537,90 @@ func testBinaryExpression(t *testing.T, expr ast.Expression, operator token.Toke
 	if exp.Right.TokenLiteral() != right {
 		t.Errorf("expected RHS to be %v, got %v instead", right, exp.Right.TokenLiteral())
 		return false
+	}
+
+	return true
+}
+
+func testFuncDeclaration(
+	t *testing.T,
+	fd ast.Statement,
+	funcName, retType string,
+	paramList []*ast.Parameter,
+	numStmts, numVarDefs, numCallables int,
+) bool {
+	funcDecl, ok := fd.(*ast.FuncDeclaration)
+	if !ok {
+		t.Errorf("expected function declaration type, got %v", funcDecl)
+		return false
+	}
+
+	if funcDecl.Token.Kind != token.Function {
+		t.Errorf("function declaration has wrong token type, %v", funcDecl.Token.Text)
+		return false
+	}
+
+	if funcDecl.Name.TokenLiteral() != funcName {
+		t.Errorf("expected function name to be %v, got %v instead", funcName, funcDecl.Name.TokenLiteral())
+		return false
+	}
+
+	if funcDecl.ReturnType.GetName() != retType {
+		t.Errorf("expected return type to be %v, got %v instead", retType, funcDecl.ReturnType.GetName())
+	}
+
+	for i, j := 0, 0; i < len(paramList) && j < len(funcDecl.Parameters); i, j = i+1, j+1 {
+		if paramList[i].Type.GetName() != funcDecl.Parameters[j].Type.GetName() {
+			t.Errorf("expected parameter type to be %v, got %v instead",
+				paramList[i].Type.GetName(), funcDecl.Parameters[j].Type.GetName())
+
+			return false
+		}
+
+		for m, n := 0, 0; m < len(paramList[i].Names) && n < len(funcDecl.Parameters[j].Names); m, n = m+1, n+1 {
+			if paramList[i].Names[m].Name != funcDecl.Parameters[j].Names[n].Name {
+				t.Errorf("unmatched parameter names, %v and %v", paramList[i].Names[m], funcDecl.Parameters[j].Names[n])
+				return false
+			}
+		}
+	}
+
+	if !testBlock(t, funcDecl.Block, numStmts, numVarDefs, numCallables) {
+		return false
+	}
+
+	return true
+}
+
+func testIfStatement(
+	t *testing.T,
+	stmt ast.Statement,
+	bExprOp token.Token,
+	left, right string,
+	tPath, elsePath string,
+) bool {
+	ifStmt, ok := stmt.(*ast.IfStatement)
+	if !ok {
+		t.Errorf("expected if statement, got %v", ifStmt)
+		return false
+	}
+
+	if ifStmt.Token.Kind != token.If {
+		t.Errorf("expected token type to be %v, got %v", token.GetTokenName(token.If), ifStmt.Token.Text)
+		return false
+	}
+
+	if !testBinaryExpression(t, ifStmt.BoolExpr, bExprOp, left, right) {
+		return false
+	}
+
+	if ifStmt.TruePath.StatNode() != tPath {
+		t.Errorf("expected true path to be %v, got %v instead", tPath, ifStmt.TruePath.TokenLiteral())
+		return false
+	}
+
+	if ifStmt.ElsePath.StatNode() != elsePath {
+		t.Errorf("expected else path to be %v, got %v instead", elsePath, ifStmt.ElsePath.TokenLiteral())
 	}
 
 	return true
