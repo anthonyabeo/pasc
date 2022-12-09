@@ -31,14 +31,11 @@ func TestParseBasicProgram(t *testing.T) {
 		return
 	}
 
-	procStat, ok := prog.Block.Stats[0].(*ast.ProcedureStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
+	args := []ast.Expression{
+		&ast.CharString{Token: token.NewToken(token.CharString, "Hello, World!"), Value: "Hello, World!"},
 	}
-
-	procedureID := procStat.TokenLiteral()
-	if procedureID != "writeln" {
-		t.Errorf("expected procedure name, writeln, found %v", procedureID)
+	if !testProcedureStatement(t, prog.Block.Stats[0], "writeln", args) {
+		return
 	}
 }
 
@@ -67,24 +64,10 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		return
 	}
 
-	varDecl := prog.Block.Vars[0]
-	if varDecl.Token.Kind != token.Var {
-		t.Errorf("expected token to be %v; got %v",
-			token.GetTokenName(token.Var), token.GetTokenName(varDecl.Token.Kind))
-	}
-
-	if len(varDecl.Names) != 3 {
-		t.Errorf("expected 3 variables; got %v", len(varDecl.Names))
-	}
-
-	intType, ok := varDecl.Type.(*dtype.Integer)
-	if !ok {
-		t.Errorf("expected variables type to be an integer, instead it is of type, %v", intType)
-	}
-
-	if intType.Token.Kind != token.Integer {
-		t.Errorf("expected token type to be %v, got %v",
-			token.GetTokenName(token.Integer), token.GetTokenName(intType.Token.Kind))
+	if !testVarDeclaration(
+		t, prog.Block.Vars[0], token.NewToken(token.Var, "var"), 3, []string{"a", "b", "sum"}, "integer",
+	) {
+		return
 	}
 }
 
@@ -129,14 +112,11 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	}
 
 	// third statement
-	procStat, ok := prog.Block.Stats[2].(*ast.ProcedureStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
+	args := []ast.Expression{
+		&ast.CharString{Token: token.NewToken(token.CharString, "Hello, world!"), Value: "Hello, world!"},
 	}
-
-	procedureID := procStat.TokenLiteral()
-	if procedureID != "writeln" {
-		t.Errorf("expected procedure name, writeln, found %v", procedureID)
+	if !testProcedureStatement(t, prog.Block.Stats[2], "writeln", args) {
+		return
 	}
 }
 
@@ -171,61 +151,32 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		return
 	}
 
-	stmt, ok := prog.Block.Stats[2].(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", stmt)
+	expr := &ast.BinaryExpression{
+		Operator: token.NewToken(token.Plus, "+"),
+		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
+		Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
 	}
 
-	if stmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(stmt.Variable.Token.Kind))
+	if !testAssignmentStatment(t, prog.Block.Stats[2], "sum", expr) {
+		return
 	}
 
-	expr, ok := stmt.Value.(*ast.BinaryExpression)
-	if !ok {
-		t.Errorf("expected RHS of to be ast.BinaryExpression, got %v", expr)
+	stmt := prog.Block.Stats[2].(*ast.AssignStatement)
+	if !testBinaryExpression(t, stmt.Value, expr.Operator, "a", "b") {
+		return
 	}
 
-	if expr.Operator.Kind != token.Plus {
-		t.Errorf("expected operator to be of type +, got %v", expr.Operator.Text)
+	uexpr := &ast.UnaryExpression{
+		Operator: token.NewToken(token.Minus, "-"),
+		Operand:  &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5"), Value: "5"},
+	}
+	if !testAssignmentStatment(t, prog.Block.Stats[3], "a", uexpr) {
+		return
 	}
 
-	lhs, ok := expr.Left.(*ast.Identifier)
-	if !ok {
-		t.Errorf("expected LHS of binary expression to be of type identifier")
-	}
-
-	if lhs.Name != "a" {
-		t.Errorf("expected LHS identifier to be 'a', got %v", lhs.Name)
-	}
-
-	// Unary Statement
-	stmt, ok = prog.Block.Stats[3].(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", stmt)
-	}
-
-	if stmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(stmt.Variable.Token.Kind))
-	}
-
-	uexpr, ok := stmt.Value.(*ast.UnaryExpression)
-	if !ok {
-		t.Errorf("expected RHS of to be ast.UnaryExpression")
-	}
-
-	if uexpr.Operator.Kind != token.Minus {
-		t.Errorf("expected operator to be of type -, got %v", expr.Operator.Text)
-	}
-
-	intLit, ok := uexpr.Operand.(*ast.UIntegerLiteral)
-	if !ok {
-		t.Errorf("expected operand to be integer literal, got %v", intLit)
-	}
-
-	if intLit.Value != "5" {
-		t.Errorf("expected integer value to be 5, got %v", intLit.Value)
+	stmt = prog.Block.Stats[3].(*ast.AssignStatement)
+	if !testUnaryExpression(t, stmt.Value, token.NewToken(token.Minus, "-"), "-5") {
+		return
 	}
 }
 
@@ -263,59 +214,23 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		return
 	}
 
-	funcDecl, ok := prog.Block.Callables[0].(*ast.FuncDeclaration)
-	if !ok {
-		t.Errorf("expected function declaration type, got %v", funcDecl)
+	params := []*ast.Parameter{
+		{
+			Names: []*ast.Identifier{
+				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
+				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
+			},
+			Type: dtype.NewInteger(token.NewToken(token.Integer, "integer")),
+		},
+	}
+	if !testFuncDeclaration(t, prog.Block.Callables[0], "foo", "integer", params, 1, 1, 0) {
+		return
 	}
 
-	if funcDecl.Token.Kind != token.Function {
-		t.Errorf("function declaration has wrong token type, %v", funcDecl.Token.Text)
-	}
-
-	if funcDecl.Name.Token.Kind != token.Identifier {
-		t.Errorf("function name is not of type identifier. It is %v", funcDecl.Name.Token.Text)
-	}
-
-	if funcDecl.Name.Name != "foo" {
-		t.Errorf("expected function name to be 'foo', got %v", funcDecl.Name.Name)
-	}
-
-	if len(funcDecl.Parameters) != 1 {
-		t.Errorf("more than 1 set of parameters")
-	}
-
-	params := funcDecl.Parameters[0]
-	if len(params.Names) != 2 {
-		t.Errorf("expected 2 parameters, got %v", len(params.Names))
-	}
-
-	intType, ok := params.Type.(*dtype.Integer)
-	if !ok || intType.Token.Kind != token.Integer {
-		t.Errorf("parameters are not of %v type", params.Type.GetName())
-	}
-
-	intType, ok = funcDecl.ReturnType.(*dtype.Integer)
-	if !ok || intType.Token.Kind != token.Integer {
-		t.Errorf("return type is not of %v type", params.Type.GetName())
-	}
-
-	if len(funcDecl.Block.Stats) != 1 {
-		t.Errorf("expected function block to contain 1 statement, found %v", len(funcDecl.Block.Stats))
-	}
-
-	assignStmt, ok := funcDecl.Block.Stats[0].(*ast.AssignStatement)
-	if !ok {
-		t.Errorf("expected statement of type, ast.AssignStatement; found %v", assignStmt)
-	}
-
-	if assignStmt.Variable.Token.Kind != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
-	}
-
-	intLit, ok := assignStmt.Value.(*ast.UIntegerLiteral)
-	if !ok || intLit.Token.Kind != token.UIntLiteral {
-		t.Errorf("expected value of assignment type to be integer literal")
+	funcDecl := prog.Block.Callables[0].(*ast.FuncDeclaration)
+	if !testAssignmentStatment(
+		t, funcDecl.Block.Stats[0], "foo", &ast.Identifier{Token: token.NewToken(token.Identifier, "2"), Name: "2"}) {
+		return
 	}
 }
 
@@ -621,6 +536,81 @@ func testIfStatement(
 
 	if ifStmt.ElsePath.StatNode() != elsePath {
 		t.Errorf("expected else path to be %v, got %v instead", elsePath, ifStmt.ElsePath.TokenLiteral())
+	}
+
+	return true
+}
+
+func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token, operand string) bool {
+	uexpr, ok := expr.(*ast.UnaryExpression)
+	if !ok {
+		t.Errorf("expected RHS of to be ast.UnaryExpression, got %v instead", uexpr)
+		return false
+	}
+
+	if uexpr.Operator.Kind != operator.Kind {
+		t.Errorf("expected operator %v, got %v instead", operator.Text, uexpr.Operator.Text)
+		return false
+	}
+
+	if uexpr.String() != operand {
+		t.Errorf("expected operand to be %v, got %v instead", operand, uexpr.String())
+		return false
+	}
+
+	return true
+}
+
+func testProcedureStatement(t *testing.T, stmt ast.Statement, procName string, args []ast.Expression) bool {
+	procStat, ok := stmt.(*ast.ProcedureStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.ProcedureStatement; found %v", procStat)
+	}
+
+	if procStat.ProcedureID.String() != procName {
+		t.Errorf("expected procedure name %v, got %v instead", procName, procStat.ProcedureID.String())
+		return false
+	}
+
+	for i, j := 0, 0; i < len(args) && j < len(procStat.ParamList); i, j = i+1, j+1 {
+		if args[i].TokenLiteral() != procStat.ParamList[j].TokenLiteral() {
+			t.Errorf("expected parameter %v, got %v instead",
+				args[i].TokenLiteral(), procStat.ParamList[j].TokenLiteral())
+			return false
+		}
+	}
+
+	return true
+}
+
+func testVarDeclaration(
+	t *testing.T, stmt ast.Statement, tt token.Token, varCount int, varList []string, varType string,
+) bool {
+	vd, ok := stmt.(*ast.VarDecl)
+	if !ok {
+		t.Errorf("expected variable declaration type, got %v instead", vd)
+	}
+
+	if vd.Token.Kind != tt.Kind {
+		t.Errorf("expected token to be %v; got %v instead", tt.Text, vd.Token.Text)
+		return false
+	}
+
+	if len(vd.Names) != varCount {
+		t.Errorf("expected %v variables; got %v", varCount, len(vd.Names))
+		return false
+	}
+
+	for i, j := 0, 0; i < len(vd.Names) && j < len(varList); i, j = i+1, j+1 {
+		if vd.Names[i].String() != varList[j] {
+			t.Errorf("expected var %v, got %v instead", vd.Names[i].String(), varList[j])
+			return false
+		}
+	}
+
+	if vd.Type.GetName() != varType {
+		t.Errorf("expected variable type to be %v, got %v instead", varType, vd.Type.GetName())
+		return false
 	}
 
 	return true

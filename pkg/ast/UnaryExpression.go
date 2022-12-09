@@ -1,6 +1,10 @@
 package ast
 
-import "github.com/anthonyabeo/pasc/pkg/token"
+import (
+	"fmt"
+
+	"github.com/anthonyabeo/pasc/pkg/token"
+)
 
 // UnaryExpression ...
 type UnaryExpression struct {
@@ -12,3 +16,7 @@ type UnaryExpression struct {
 func (u *UnaryExpression) TokenLiteral() string { return u.Operator.Text }
 
 func (u *UnaryExpression) exprNode() {}
+
+func (u *UnaryExpression) String() string {
+	return fmt.Sprintf("%v%v", u.Operator.Text, u.Operand)
+}
