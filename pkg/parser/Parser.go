@@ -57,15 +57,26 @@ func (p *Parser) match(t token.Kind) error {
 
 // Program represents the start symbol production rule in the grammer.
 // It is the starting point in the parsing process.
+//
+// The grammer production rules for Program is as follows:
+//
+// program = program-heading ';' program-block '.' .
+// program-heading = 'program' identifier [ '(' program-parameter-list ')' ] .
+// program-parameter-list = identifier-list .
+// program-block = block .
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
-		err   error
-		block *ast.Block
+		err           error
+		block         *ast.Block
+		programName   *ast.Identifier
+		programParams []*ast.Identifier
 	)
 
-	if err = p.programHeading(); err != nil {
+	if programName, programParams, err = p.programHeading(); err != nil {
 		return nil, err
 	}
+
+	program := &ast.ProgramAST{Name: programName, ParamList: programParams}
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
@@ -74,7 +85,7 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 	if block, err = p.block(); err != nil {
 		return nil, err
 	}
-	program := new(ast.ProgramAST)
+
 	program.Block = block
 
 	if err = p.match(token.Period); err != nil {
@@ -84,20 +95,45 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 	return program, nil
 }
 
-func (p *Parser) programHeading() error {
-	var err error
+func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
+	var (
+		err           error
+		programName   *ast.Identifier
+		programParams []*ast.Identifier
+	)
 
 	if err = p.match(token.Program); err != nil {
-		return err
+		return nil, nil, err
+	}
+
+	programName = &ast.Identifier{
+		Token: token.NewToken(token.Identifier, p.lookahead.Text),
+		Name:  p.lookahead.Text,
 	}
 
 	if err = p.match(token.Identifier); err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	// TODO: Implement matching optional program parameters
+	if p.lookahead.Kind == token.LParen {
+		if err = p.match(token.LParen); err != nil {
+			return nil, nil, err
+		}
 
-	return nil
+		if programParams, err = p.programParameterList(); err != nil {
+			return nil, nil, err
+		}
+
+		if err := p.match(token.RParen); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	return programName, programParams, nil
+}
+
+func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
+	return p.identifierList()
 }
 
 func (p *Parser) block() (*ast.Block, error) {
