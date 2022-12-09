@@ -9,7 +9,7 @@ type Block struct {
 	// type definition part
 
 	// variable declaration part
-	Vars []*VarDeclaration
+	VarDeclaration *VarDeclaration
 
 	// procedure and function declaration part
 	Callables []Statement
@@ -23,9 +23,9 @@ func (b *Block) TokenLiteral() string { return "block" }
 
 // StatNode ...
 func (b *Block) StatNode() string {
-	return fmt.Sprintf("%v\n%v\n%v\n", b.Vars, b.Callables, b.Stats)
+	return fmt.Sprintf("%v\n%v\n%v\n", b.VarDeclaration, b.Callables, b.Stats)
 }
 
 func (b *Block) String() string {
-	return fmt.Sprintf("%v\n%v\n%v\n", b.Vars, b.Callables, b.Stats)
+	return fmt.Sprintf("%v\n%v\n%v\n", b.VarDeclaration, b.Callables, b.Stats)
 }

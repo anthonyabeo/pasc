@@ -7,11 +7,12 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
-// VarDecl models the variable definition node in the AST
+// VarDeclaration models the variable definition node in the AST
 type VarDeclaration struct {
 	Token token.Token
-	Names []*Identifier
-	Type  dtype.Type
+	// Names []*Identifier
+	// Type  dtype.Type
+	Decls []*VarDecl
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -19,9 +20,27 @@ func (v *VarDeclaration) TokenLiteral() string { return v.Token.Text }
 
 // StatNode ...
 func (v *VarDeclaration) StatNode() string {
-	return fmt.Sprintf("%v %v: %v", v.Token.Text, v.Names, v.Type.GetName())
+	return fmt.Sprintf("%v", v.Decls)
 }
 
 func (v *VarDeclaration) String() string {
-	return fmt.Sprintf("%v %v: %v", v.Token.Text, v.Names, v.Type.GetName())
+	return fmt.Sprintf("%v", v.Decls)
+}
+
+// VarDecl ...
+type VarDecl struct {
+	Names []*Identifier
+	Type  dtype.Type
+}
+
+// TokenLiteral returns the text value this node's token.
+func (v *VarDecl) TokenLiteral() string { return "var" }
+
+// StatNode ...
+func (v *VarDecl) StatNode() string {
+	return fmt.Sprintf("%v: %v", v.Names, v.Type.GetName())
+}
+
+func (v *VarDecl) String() string {
+	return fmt.Sprintf("%v: %v", v.Names, v.Type.GetName())
 }

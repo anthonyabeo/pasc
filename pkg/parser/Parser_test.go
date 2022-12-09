@@ -65,8 +65,8 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	}
 
 	if !testVarDeclaration(
-		t, prog.Block.Vars[0], token.NewToken(token.Var, "var"), 3, []string{"a", "b", "sum"}, "integer",
-	) {
+		t, prog.Block.VarDeclaration, token.NewToken(token.Var, "var"), 1,
+		[][]string{{"a", "b", "sum"}}, []string{"integer"}) {
 		return
 	}
 }
@@ -353,6 +353,43 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 	}
 }
 
+func TestMultipleVariableDeclarations(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var 
+		a, b, sum : integer;
+		c, d : integer;
+
+	begin
+		writeln('Hello, world!');
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 0) {
+		return
+	}
+
+	names := [][]string{
+		{"a", "b", "sum"},
+		{"c", "d"},
+	}
+	if !testVarDeclaration(
+		t, prog.Block.VarDeclaration, token.NewToken(token.Var, "var"), 2, names, []string{"integer", "integer"},
+	) {
+		return
+	}
+}
+
 func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, value ast.Expression) bool {
 	assignStmt, ok := stmt.(*ast.AssignStatement)
 	if !ok {
@@ -415,8 +452,8 @@ func testBlock(t *testing.T, blk *ast.Block, numStmts, numVarDefs, numCallables 
 		return false
 	}
 
-	if len(blk.Vars) != numVarDefs {
-		t.Errorf("expected %v variable declaration(s) in block; found %v instead", numVarDefs, len(blk.Vars))
+	if blk.VarDeclaration != nil && len(blk.VarDeclaration.Decls) != numVarDefs {
+		t.Errorf("expected %v variable declaration(s) in block; found %v instead", numVarDefs, len(blk.VarDeclaration.Decls))
 		return false
 	}
 
@@ -603,7 +640,7 @@ func testProcedureStatement(t *testing.T, stmt ast.Statement, procName string, a
 }
 
 func testVarDeclaration(
-	t *testing.T, stmt ast.Statement, tt token.Token, varCount int, varList []string, varType string,
+	t *testing.T, stmt ast.Statement, tt token.Token, varDeclCount int, varList [][]string, varType []string,
 ) bool {
 	vd, ok := stmt.(*ast.VarDeclaration)
 	if !ok {
@@ -615,21 +652,25 @@ func testVarDeclaration(
 		return false
 	}
 
-	if len(vd.Names) != varCount {
-		t.Errorf("expected %v variables; got %v", varCount, len(vd.Names))
+	if len(vd.Decls) != varDeclCount {
+		t.Errorf("expected %v variables; got %v", varDeclCount, len(vd.Decls))
 		return false
 	}
 
-	for i, j := 0, 0; i < len(vd.Names) && j < len(varList); i, j = i+1, j+1 {
-		if vd.Names[i].String() != varList[j] {
-			t.Errorf("expected var %v, got %v instead", vd.Names[i].String(), varList[j])
+	for idx, decl := range vd.Decls {
+		names := varList[idx]
+
+		for i, j := 0, 0; i < len(decl.Names) && j < len(names); i, j = i+1, j+1 {
+			if decl.Names[i].String() != names[j] {
+				t.Errorf("expected var %v, got %v instead", decl.Names[i].String(), names[j])
+				return false
+			}
+		}
+
+		if decl.Type.GetName() != varType[idx] {
+			t.Errorf("expected variable type to be %v, got %v instead", varType, decl.Type.GetName())
 			return false
 		}
-	}
-
-	if vd.Type.GetName() != varType {
-		t.Errorf("expected variable type to be %v, got %v instead", varType, vd.Type.GetName())
-		return false
 	}
 
 	return true

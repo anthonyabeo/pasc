@@ -139,15 +139,17 @@ func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 func (p *Parser) block() (*ast.Block, error) {
 	var (
 		err          error
-		decls        []*ast.VarDeclaration
+		varDecl      *ast.VarDeclaration
 		callables    []ast.Statement
 		compoundStmt *ast.CompoundStatement
 	)
 
 	block := &ast.Block{}
 
-	if decls, err = p.variableDeclarationPart(); err != nil {
-		return nil, err
+	if p.lookahead.Kind == token.Var {
+		if varDecl, err = p.variableDeclarationPart(); err != nil {
+			return nil, err
+		}
 	}
 
 	if callables, err = p.procedureAndFunctionDeclarationPart(); err != nil {
@@ -158,7 +160,7 @@ func (p *Parser) block() (*ast.Block, error) {
 		return nil, err
 	}
 
-	block.Vars = append(block.Vars, decls...)
+	block.VarDeclaration = varDecl
 	block.Stats = append(block.Stats, compoundStmt.Statements...)
 	block.Callables = append(block.Callables, callables...)
 
@@ -338,42 +340,53 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	return paramList, nil
 }
 
-func (p *Parser) variableDeclarationPart() ([]*ast.VarDeclaration, error) {
-	// TODO: extend to support potentially multiple variable declarations
+// variable-declaration-part = [ 'var' variable-declaration ';' { variable-declaration ';' } ] .
+func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 	var (
-		err     error
-		varDecl *ast.VarDeclaration
-		decls   []*ast.VarDeclaration
+		err error
+		d   *ast.VarDecl
 	)
 
-	if p.lookahead.Kind != token.Var {
-		return nil, nil
-	}
+	varDecl := new(ast.VarDeclaration)
 
-	if err = p.consume(); err != nil {
+	if err = p.match(token.Var); err != nil {
 		return nil, err
 	}
 
-	if varDecl, err = p.variableDeclaration(); err != nil {
+	if d, err = p.variableDeclaration(); err != nil {
 		return nil, err
 	}
 	varDecl.Token = token.Token{Kind: token.Var, Text: "var"}
-	decls = append(decls, varDecl)
+	varDecl.Decls = append(varDecl.Decls, d)
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
 	}
 
-	return decls, nil
+	if p.lookahead.Kind == token.Identifier {
+		if d, err = p.variableDeclaration(); err != nil {
+			return nil, err
+		}
+
+		varDecl.Token = token.Token{Kind: token.Var, Text: "var"}
+		varDecl.Decls = append(varDecl.Decls, d)
+
+		if err = p.match(token.SemiColon); err != nil {
+			return nil, err
+		}
+	}
+
+	return varDecl, nil
 }
 
-func (p *Parser) variableDeclaration() (*ast.VarDeclaration, error) {
+// variable-declaration = identifier-list ':' type-denoter .
+func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	var (
 		err   error
 		names []*ast.Identifier
 	)
 
-	varDecl := new(ast.VarDeclaration)
+	varDecl := new(ast.VarDecl)
 
 	if names, err = p.identifierList(); err != nil {
 		return nil, err
@@ -399,6 +412,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDeclaration, error) {
 	return varDecl, nil
 }
 
+// identifier-list = identifier { ',' identifier } .
 func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	var (
 		err   error
@@ -411,7 +425,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Kind == token.Comma || p.lookahead.Kind == token.Identifier {
+	for p.lookahead.Kind == token.Comma {
 		if err = p.match(token.Comma); err != nil {
 			return nil, err
 		}
