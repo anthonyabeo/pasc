@@ -27,7 +27,7 @@ func TestParseBasicProgram(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 1, 0, 0) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 0, 0) {
 		return
 	}
 
@@ -60,7 +60,7 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 1, 1, 0) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0) {
 		return
 	}
 
@@ -95,7 +95,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 3, 1, 0) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 3, 1, 0) {
 		return
 	}
 
@@ -147,7 +147,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 5, 1, 0) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 5, 1, 0) {
 		return
 	}
 
@@ -210,7 +210,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 3, 0, 1) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 0, 1) {
 		return
 	}
 
@@ -269,7 +269,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 3, 0, 1) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 0, 1) {
 		return
 	}
 
@@ -332,7 +332,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, 4, 0, 0) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 4, 0, 0) {
 		return
 	}
 
@@ -381,10 +381,29 @@ func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, v
 	return true
 }
 
-func testProgramAST(t *testing.T, p *ast.ProgramAST, numStmts, numVarDefs, numCallables int) bool {
+func testProgramAST(
+	t *testing.T, p *ast.ProgramAST, progName string, paramList []string, numStmts, numVarDefs, numCallables int,
+) bool {
 	if p == nil {
 		t.Error("AST not created")
 		return false
+	}
+
+	if p.Name.String() != progName {
+		t.Errorf("expected program name to be %v, got %v instead", progName, p.Name.String())
+		return false
+	}
+
+	if len(p.ParamList) != len(paramList) {
+		t.Errorf("expected %v program parameters, got %v instead", len(paramList), len(p.ParamList))
+		return false
+	}
+
+	for i, j := 0, 0; i < len(p.ParamList) && j < len(paramList); i, j = i+1, j+1 {
+		if p.ParamList[i].String() != paramList[j] {
+			t.Errorf("expected var %v, got %v instead", p.ParamList[i].String(), paramList[j])
+			return false
+		}
 	}
 
 	return testBlock(t, p.Block, numStmts, numVarDefs, numCallables)
