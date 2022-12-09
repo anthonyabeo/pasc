@@ -139,7 +139,7 @@ func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 func (p *Parser) block() (*ast.Block, error) {
 	var (
 		err          error
-		decls        []*ast.VarDecl
+		decls        []*ast.VarDeclaration
 		callables    []ast.Statement
 		compoundStmt *ast.CompoundStatement
 	)
@@ -338,12 +338,12 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	return paramList, nil
 }
 
-func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
+func (p *Parser) variableDeclarationPart() ([]*ast.VarDeclaration, error) {
 	// TODO: extend to support potentially multiple variable declarations
 	var (
 		err     error
-		varDecl *ast.VarDecl
-		decls   []*ast.VarDecl
+		varDecl *ast.VarDeclaration
+		decls   []*ast.VarDeclaration
 	)
 
 	if p.lookahead.Kind != token.Var {
@@ -367,13 +367,13 @@ func (p *Parser) variableDeclarationPart() ([]*ast.VarDecl, error) {
 	return decls, nil
 }
 
-func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
+func (p *Parser) variableDeclaration() (*ast.VarDeclaration, error) {
 	var (
 		err   error
 		names []*ast.Identifier
 	)
 
-	varDecl := new(ast.VarDecl)
+	varDecl := new(ast.VarDeclaration)
 
 	if names, err = p.identifierList(); err != nil {
 		return nil, err

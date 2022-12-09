@@ -605,7 +605,7 @@ func testProcedureStatement(t *testing.T, stmt ast.Statement, procName string, a
 func testVarDeclaration(
 	t *testing.T, stmt ast.Statement, tt token.Token, varCount int, varList []string, varType string,
 ) bool {
-	vd, ok := stmt.(*ast.VarDecl)
+	vd, ok := stmt.(*ast.VarDeclaration)
 	if !ok {
 		t.Errorf("expected variable declaration type, got %v instead", vd)
 	}
