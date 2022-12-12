@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/dtype"
+	"github.com/anthonyabeo/pasc/pkg/symbols/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
