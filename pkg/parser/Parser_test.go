@@ -12,7 +12,7 @@ func TestParseBasicProgram(t *testing.T) {
 	input := `
 	program HelloWorld;
 	begin
-		writeln('Hello, World!');
+		writeln('Hello, World!')
 	end.
 `
 
@@ -46,7 +46,7 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		a, b, sum : integer;
 
 	begin
-		writeln('Hello, world!');
+		writeln('Hello, world!')
 	end.
 `
 	lex := NewLexer(input)
@@ -81,7 +81,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		a := 1;
 		b := 2;
 
-		writeln('Hello, world!');
+		writeln('Hello, world!')
 	end.
 `
 	lex := NewLexer(input)
@@ -188,14 +188,14 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	var result: integer;
 
 	begin
-		foo := 2;
+		foo := 2
 	end;
 
 	begin
 		a := 100;
 		b := 200;
 
-		writeln('Hello, world!');
+		writeln('Hello, world!')
 	end.
 	`
 
@@ -245,7 +245,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		if (n > m) then
 			result := n
 		else
-			result := m
+			result := m;
 
 		max := result
 	end;
@@ -254,7 +254,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		a := 100;
 		b := 200;
 
-		writeln('Hello, world!');
+		writeln('Hello, world!')
 	end.
 	`
 
@@ -361,7 +361,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 		c, d : integer;
 
 	begin
-		writeln('Hello, world!');
+		writeln('Hello, world!')
 	end.
 `
 	lex := NewLexer(input)
@@ -386,6 +386,49 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	if !testVarDeclaration(
 		t, prog.Block.VarDeclaration, token.NewToken(token.Var, "var"), 2, names, []string{"integer", "integer"},
 	) {
+		return
+	}
+}
+
+func TestParsingMultiplicationOperator(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+
+	begin
+		sum := a * (b * c);
+
+		writeln('Hello, world!')
+	end.
+`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0) {
+		return
+	}
+
+	value := &ast.BinaryExpression{
+		Operator: token.NewToken(token.Star, "*"),
+		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
+		Right: &ast.BinaryExpression{
+			Operator: token.NewToken(token.Star, "*"),
+			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
+			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "c"), Name: "c"},
+		},
+	}
+
+	if !testAssignmentStatment(t, prog.Block.Stats[0], "sum", value) {
 		return
 	}
 }
