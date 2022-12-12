@@ -461,6 +461,7 @@ func (p *Parser) compoundStatement() (*ast.CompoundStatement, error) {
 	return &ast.CompoundStatement{Statements: stmtSeq}, nil
 }
 
+// statement-sequence = statement { ';' statement } .
 func (p *Parser) statementSequence() ([]ast.Statement, error) {
 	var (
 		err     error
@@ -468,29 +469,28 @@ func (p *Parser) statementSequence() ([]ast.Statement, error) {
 		stmtSeq []ast.Statement
 	)
 
-	for p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto || p.lookahead.Kind == token.SemiColon ||
-		p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
-		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
-		p.lookahead.Kind == token.For {
+	if stmt, err = p.statement(); err != nil {
+		return nil, err
+	}
+
+	stmtSeq = append(stmtSeq, stmt)
+
+	for p.lookahead.Kind == token.SemiColon {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
 
 		if stmt, err = p.statement(); err != nil {
 			return nil, err
 		}
 
 		stmtSeq = append(stmtSeq, stmt)
-
-		if p.lookahead.Kind == token.SemiColon {
-			if err = p.consume(); err != nil {
-				return nil, err
-			}
-
-			continue
-		}
 	}
 
 	return stmtSeq, nil
 }
 
+// statement = [ label ':' ] ( simple-statement | structured-statement ) .
 func (p *Parser) statement() (ast.Statement, error) {
 	var (
 		err  error
@@ -518,7 +518,11 @@ func (p *Parser) statement() (ast.Statement, error) {
 	// if-statement = 'if' Boolean-expression 'then' statement [ else-part ] .
 	// case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
 
-	// TODO: remove the if-else since it is already define in statementSequence.
+	// TODO: optional label
+	// if p.lookahead.Kind == token.UIntLiteral {
+
+	// }
+
 	if p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
 		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
 		p.lookahead.Kind == token.For {
@@ -536,19 +540,23 @@ func (p *Parser) statement() (ast.Statement, error) {
 		default:
 
 		}
-		// TODO Ignoring the optional Label for now.
-		// TODO the lookahead set of the statement include the the first and follow sets of SimpleStatement and ProcedureStament. These tokens include GOTO, procedure_identifier, etc. The current implementation only checks for the procedure identifier.
 	} else if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto {
 		if stmt, err = p.simpleStatement(); err != nil {
 			return nil, err
 		}
+	} else {
+		return nil, fmt.Errorf("Parser Error: unexpected token %v", p.lookahead.Text)
 	}
 
 	return stmt, nil
 }
 
+// simple-statement := empty-statement
+//
+//			| assignment-statement
+//		    | procedure-statement
+//	        | goto-statement .
 func (p *Parser) simpleStatement() (ast.Statement, error) {
-	// TODO: get rid of this simpleStatement and implement the individual methods in the switch case in statement
 	var (
 		err  error
 		stmt ast.Statement
@@ -556,7 +564,6 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		// ident is either a procedure identifier or variable identifier
 		ident := p.lookahead
 
 		if err := p.consume(); err != nil {
@@ -607,6 +614,7 @@ func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, er
 	return ps, nil
 }
 
+// assignment-statement = ( variable-access | function-identifier ) ':=' expression .
 func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, error) {
 	var err error
 
@@ -624,7 +632,9 @@ func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, erro
 	return as, nil
 }
 
+// expression = simple-expression [ relational-operator simple-expression ] .
 func (p *Parser) expression() (ast.Expression, error) {
+	// TODO: another look
 	simpleExpr, err := p.simpleExpression()
 	if err != nil {
 		return nil, err
@@ -647,6 +657,7 @@ func (p *Parser) expression() (ast.Expression, error) {
 	return simpleExpr, nil
 }
 
+// simple-expression = [ sign ] term { adding-operator term } .
 func (p *Parser) simpleExpression() (ast.Expression, error) {
 	var (
 		err  error
@@ -688,11 +699,25 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	return term, nil
 }
 
+// term = factor { multiplying-operator factor } .
 func (p *Parser) term() (ast.Expression, error) {
-	// TODO: implement {multiplying-operator factor}
 	fact, err := p.factor()
 	if err != nil {
 		return nil, err
+	}
+
+	if p.isMultiplyOp() {
+		binExp := &ast.BinaryExpression{Left: fact, Operator: p.lookahead}
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		binExp.Right, err = p.factor()
+		if err != nil {
+			return nil, err
+		}
+
+		return binExp, err
 	}
 
 	return fact, err
@@ -737,11 +762,19 @@ func (p *Parser) factor() (ast.Expression, error) {
 		}
 
 		return expr, nil
+	case token.Not:
+		return nil, nil
 	default:
 		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
 	}
 }
 
+// variable-access :=
+//
+//	    | entire-variable      ===> identifier
+//	    | component-variable
+//		| identified-variable
+//		| buffer-variable .
 func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	// if err := p.consume(); err != nil {
 	// 	return nil, err
@@ -827,10 +860,10 @@ func (p *Parser) isSign() bool {
 		p.lookahead.Kind == token.Minus
 }
 
+// if-statement := 'if' Boolean-expression 'then' statement [ else-part ] .
+// Boolean-expression := expression .
+// else-part := 'else' statement .
 func (p *Parser) ifStatement() (*ast.IfStatement, error) {
-	// if-statement := 'if' Boolean-expression 'then' statement [ else-part ] .
-	// Boolean-expression := expression .
-	// else-part := 'else' statement .
 	var err error
 
 	ifStmt := &ast.IfStatement{Token: p.lookahead}
@@ -876,9 +909,9 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 	return stmt, nil
 }
 
+// function-designator = function-identitier [ actual-parameter-list ] .
+// function-identitier = identitier .
 func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
-	// function-designator = function-identitier [ actual-parameter-list ] .
-	// function-identitier = identitier .
 	var err error
 
 	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}}
@@ -890,9 +923,8 @@ func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error)
 	return funcCall, nil
 }
 
+// actual-parameter-list = '(' actual-parameter { ',' actual-parameter } ')' .
 func (p *Parser) actualParameterList() ([]ast.Expression, error) {
-	// actual-parameter-list = '(' actual-parameter { ',' actual-parameter } ')' .
-
 	var (
 		err       error
 		param     ast.Expression
@@ -942,8 +974,8 @@ func (p *Parser) actualParameter() (ast.Expression, error) {
 	return expr, nil
 }
 
+// writeln-parameter-list = [ '(' (  file-variable | write-parameter ) { ',' write-parameter } ')' ] .
 func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
-	// writeln-parameter-list = [ '(' (  file-variable | write-parameter ) { ',' write-parameter } ')' ] .
 	var (
 		err              error
 		writeParam       *ast.WriteParameter
@@ -978,8 +1010,8 @@ func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
 	return writelnParamList, nil
 }
 
+// write-parameter := expression [ ':' expression [ ':' expression ] ] .
 func (p *Parser) writeParameter() (*ast.WriteParameter, error) {
-	// write-parameter := expression [ ':' expression [ ':' expression ] ] .
 	var (
 		err  error
 		expr ast.Expression
