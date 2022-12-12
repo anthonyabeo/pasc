@@ -31,6 +31,7 @@ const (
 	While
 	Case
 	Nil
+	Not
 
 	Identifier
 	SemiColon
@@ -116,13 +117,15 @@ func GetTokenName(t Kind) string {
 		return "case"
 	case 22:
 		return "nil"
+	case 23:
+		return "not"
 	default:
 		return ""
 	}
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("<%s, %s>", t.Text, GetTokenName(t.Kind))
+	return fmt.Sprintf("<%s>", t.Text)
 }
 
 // Keywords define the reserved words of the language
@@ -151,5 +154,6 @@ func init() {
 		"while":     While,
 		"case":      Case,
 		"nil":       Nil,
+		"not":       Not,
 	}
 }
