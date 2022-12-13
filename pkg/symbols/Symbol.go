@@ -1,7 +1,5 @@
 package symbols
 
-import "github.com/anthonyabeo/pasc/pkg/symbols/dtype"
-
 // Kind denotes the category of the symbol. e.g. variable, function
 type Kind byte
 
@@ -16,5 +14,4 @@ const (
 type Symbol interface {
 	getName() string
 	getKind() Kind
-	getType() dtype.Type
 }
