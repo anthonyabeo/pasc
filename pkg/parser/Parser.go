@@ -247,6 +247,8 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	var (
 		err       error
+		funcName  string
+		typ       dtype.Type
 		paramList []*ast.Parameter
 	)
 
@@ -256,11 +258,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
-	// define the function symbol and update the current symbol table to the new function scope
-	funcSymbol := symbols.NewFunctionSymbol(p.lookahead.Text, symbols.FUNCTION, symbols.NewLocalScope(p.lookahead.Text, p.curScope))
-	p.curScope.Define(funcSymbol)
-	p.curScope = funcSymbol.Scope
-
+	funcName = p.lookahead.Text
 	funcDecl.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
 
 	if err = p.match(token.Identifier); err != nil {
@@ -272,16 +270,6 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 	funcDecl.Parameters = append(funcDecl.Parameters, paramList...)
-
-	for _, param := range funcDecl.Parameters {
-		for _, name := range param.Names {
-			p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE))
-		}
-
-		if _, found := p.builtInTypeSymbols[param.Type.GetName()]; !found {
-			// define new user defined type here
-		}
-	}
 
 	if err = p.match(token.Colon); err != nil {
 		return nil, err
@@ -297,10 +285,30 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
-	// if return type is a user-defined type
-	if _, found := p.builtInTypeSymbols[funcDecl.ReturnType.GetName()]; !found {
-		// define new user defined type here
+	// define the function symbol and update the current symbol table to the new function scope
+	funcSymbol := symbols.NewFunctionSymbol(funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
+	p.curScope.Define(funcSymbol)
+	p.curScope = funcSymbol.Scope
+
+	for _, param := range funcDecl.Parameters {
+		if paramBuiltinType, found := p.builtInTypeSymbols[param.Type.GetName()]; found {
+			typ = paramBuiltinType
+		} else {
+			// typ = some user-defined type
+		}
+
+		for _, name := range param.Names {
+			p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+		}
 	}
+
+	if retType, found := p.builtInTypeSymbols[funcDecl.ReturnType.GetName()]; found {
+		typ = retType
+	} else {
+		// typ = some user-defined type
+	}
+
+	funcSymbol.Type = typ
 
 	return funcDecl, nil
 }
@@ -441,14 +449,16 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	// TODO: fix this hardcoding
 	varDecl.Type = dtype.NewInteger(p.lookahead)
 
-	// add variables to symbol table
-	for _, n := range names {
-		p.curScope.Define(symbols.NewVariableSymbol(n.Name, symbols.VARIABLE))
+	var typ dtype.Type
+	if dtype, isBuiltInType := p.builtInTypeSymbols[varDecl.Type.GetName()]; isBuiltInType {
+		typ = dtype
+	} else {
+		// type is a user-defined type
 	}
 
-	// if variable type is a user-defined type
-	if _, found := p.builtInTypeSymbols[varDecl.Type.GetName()]; !found {
-		// define new user defined type here
+	// add variables to symbol table
+	for _, n := range names {
+		p.curScope.Define(symbols.NewVariableSymbol(n.Name, symbols.VARIABLE, typ))
 	}
 
 	if err = p.consume(); err != nil {
