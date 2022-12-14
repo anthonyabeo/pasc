@@ -275,12 +275,16 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
-	//TODO: Fix this
-	if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
-		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+	if dtype, isBuiltInType := p.builtInTypeSymbols[p.lookahead.Text]; isBuiltInType {
+		typ = dtype
+	} else {
+		// must be a user-defined type
+		// it must therefore be defined somewhere in the scope tree
+		// if not found, return error
+		// otherwise, typ = <<user-defined-type>>
 	}
 
-	funcDecl.ReturnType = dtype.NewInteger(p.lookahead)
+	funcDecl.ReturnType = typ
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
@@ -339,6 +343,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
 	var (
 		err       error
+		typ       dtype.Type
 		paramList []*ast.Parameter
 	)
 
@@ -357,12 +362,15 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			}
 			params := &ast.Parameter{Names: names}
 
-			if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
-				return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+			if dtype, isBuiltInType := p.builtInTypeSymbols[p.lookahead.Text]; isBuiltInType {
+				typ = dtype
+			} else {
+				// must be a user-defined type
+				// it must therefore be defined somewhere in the scope tree
+				// if not found, return error
+				// otherwise, typ = <<user-defined-type>>
 			}
-
-			// TODO: fix this hardcoding
-			params.Type = dtype.NewInteger(p.lookahead)
+			params.Type = typ
 			paramList = append(paramList, params)
 
 			if err = p.consume(); err != nil {
@@ -427,6 +435,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	var (
 		err   error
+		typ   dtype.Type
 		names []*ast.Identifier
 	)
 
@@ -442,19 +451,15 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 		return nil, err
 	}
 
-	if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
-		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
-	}
-
-	// TODO: fix this hardcoding
-	varDecl.Type = dtype.NewInteger(p.lookahead)
-
-	var typ dtype.Type
-	if dtype, isBuiltInType := p.builtInTypeSymbols[varDecl.Type.GetName()]; isBuiltInType {
+	if dtype, isBuiltInType := p.builtInTypeSymbols[p.lookahead.Text]; isBuiltInType {
 		typ = dtype
 	} else {
-		// type is a user-defined type
+		// must be a user-defined type
+		// it must therefore be defined somewhere in the scope tree
+		// if not found, return error
+		// otherwise, typ = <<user-defined-type>>
 	}
+	varDecl.Type = typ
 
 	// add variables to symbol table
 	for _, n := range names {
