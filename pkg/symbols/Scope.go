@@ -15,7 +15,7 @@ type LocalScope struct {
 	Parent  Scope
 }
 
-// NewLocalScope ...
+// NewLocalScope creates and returns a new local scope
 func NewLocalScope(name string, parent Scope) *LocalScope {
 	return &LocalScope{
 		Symbols: make(map[string]Symbol),
@@ -36,12 +36,12 @@ func (l *LocalScope) GetEnclosingScope() Scope {
 
 // Define insert a new symbol into the current scope
 func (l *LocalScope) Define(sym Symbol) {
-	l.Symbols[sym.getName()] = sym
+	l.Symbols[sym.GetName()] = sym
 }
 
 // Resolve retrieve the symbol associated with 'name' argument.
 // If the symbol is not found in the current scope, Resolve will
-// recursively search the parent scope.
+// recursively search the parent scopes.
 func (l *LocalScope) Resolve(name string) Symbol {
 	sym := l.Symbols[name]
 	if sym != nil {
@@ -57,13 +57,15 @@ func (l *LocalScope) Resolve(name string) Symbol {
 
 // GlobalScope denotes global scope. There can only be one global scope
 type GlobalScope struct {
+	Name    string
 	Symbols map[string]Symbol
 	Parent  Scope
 }
 
-// NewGlobalScope ...
+// NewGlobalScope creates and returns a new global scope
 func NewGlobalScope(parent Scope) *GlobalScope {
 	return &GlobalScope{
+		Name:    "global",
 		Symbols: make(map[string]Symbol),
 		Parent:  parent,
 	}
@@ -71,7 +73,7 @@ func NewGlobalScope(parent Scope) *GlobalScope {
 
 // GetScopeName returns the name of the function
 func (g *GlobalScope) GetScopeName() string {
-	return "global"
+	return g.Name
 }
 
 // GetEnclosingScope returns this scope's parent scope
@@ -81,7 +83,7 @@ func (g *GlobalScope) GetEnclosingScope() Scope {
 
 // Define insert a new symbol into the current scope
 func (g *GlobalScope) Define(sym Symbol) {
-	g.Symbols[sym.getName()] = sym
+	g.Symbols[sym.GetName()] = sym
 }
 
 // Resolve retrieve the symbol associated with 'name' argument.

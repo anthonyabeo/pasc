@@ -7,7 +7,7 @@ type Function struct {
 	Scope Scope
 }
 
-// NewFunctionSymbol ...
+// NewFunctionSymbol creates and returns a new function symbol
 func NewFunctionSymbol(name string, kind Kind, scope Scope) *Function {
 	return &Function{
 		Name:  name,
@@ -16,11 +16,13 @@ func NewFunctionSymbol(name string, kind Kind, scope Scope) *Function {
 	}
 }
 
-func (f *Function) getKind() Kind {
+// GetKind returns the kind of this symbol
+func (f *Function) GetKind() Kind {
 	return f.Kind
 }
 
-func (f *Function) getName() string {
+// GetName returns the name of this symbol
+func (f *Function) GetName() string {
 	return f.Name
 }
 

@@ -6,15 +6,12 @@ type BuiltInType struct {
 	Kind Kind
 }
 
-func (b *BuiltInType) getKind() Kind {
+// GetKind returns the kind of this symbol
+func (b *BuiltInType) GetKind() Kind {
 	return b.Kind
 }
 
-func (b *BuiltInType) getName() string {
-	return b.Name
-}
-
-// GetName ...
+// GetName returns the name of this symbol
 func (b *BuiltInType) GetName() string {
 	return b.Name
 }

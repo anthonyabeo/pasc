@@ -12,6 +12,6 @@ const (
 
 // Symbol denotes a generic symbol
 type Symbol interface {
-	getName() string
-	getKind() Kind
+	GetName() string
+	GetKind() Kind
 }

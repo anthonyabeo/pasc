@@ -11,11 +11,13 @@ func NewVariableSymbol(name string, kind Kind) *Variable {
 	return &Variable{Name: name, Kind: kind}
 }
 
-func (v *Variable) getKind() Kind {
+// GetKind returns the kind of this symbol
+func (v *Variable) GetKind() Kind {
 	return v.Kind
 }
 
-func (v *Variable) getName() string {
+// GetName returns the name of this symbol
+func (v *Variable) GetName() string {
 	return v.Name
 }
 
