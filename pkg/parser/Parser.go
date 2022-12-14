@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/symbols/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
@@ -15,8 +16,10 @@ import (
 // from the lexer. The Parser checks and ensures that the input tokens stream conforms
 // to the grammer of the language or returns an appropriate error otherwise.
 type Parser struct {
-	input     Lexer
-	lookahead token.Token
+	input              Lexer
+	lookahead          token.Token
+	symTable, curScope symbols.Scope
+	builtInTypeSymbols map[string]symbols.Symbol
 }
 
 // NewParser constructs and returns an instance of parser
@@ -24,6 +27,14 @@ func NewParser(lexer Lexer) (*Parser, error) {
 	parser := Parser{input: lexer}
 	if err := parser.consume(); err != nil {
 		return nil, err
+	}
+
+	globalScope := symbols.NewGlobalScope(nil)
+	parser.symTable = globalScope
+	parser.curScope = globalScope
+
+	parser.builtInTypeSymbols = map[string]symbols.Symbol{
+		"integer": &symbols.BuiltInType{Name: "integer", Kind: symbols.BUILTIN_TYPE},
 	}
 
 	return &parser, nil
@@ -38,6 +49,11 @@ func (p *Parser) consume() error {
 	p.lookahead = token
 
 	return nil
+}
+
+// SymbolTable returns the scope tree constructed during parsing
+func (p *Parser) SymbolTable() symbols.Scope {
+	return p.symTable
 }
 
 // Match returns an error if the lookahead token does not match the expected
@@ -66,8 +82,8 @@ func (p *Parser) match(t token.Kind) error {
 // program-block = block .
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
-		err           error
-		block         *ast.Block
+		err error
+		// block         *ast.Block
 		programName   *ast.Identifier
 		programParams []*ast.Identifier
 	)
@@ -82,11 +98,11 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	if block, err = p.block(); err != nil {
+	if program.Block, err = p.block(); err != nil {
 		return nil, err
 	}
 
-	program.Block = block
+	// program.Block = block
 
 	if err = p.match(token.Period); err != nil {
 		return nil, err
@@ -240,6 +256,11 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
+	// define the function symbol and update the current symbol table to the new function scope
+	funcSymbol := symbols.NewFunctionSymbol(p.lookahead.Text, symbols.FUNCTION, symbols.NewLocalScope(p.lookahead.Text, p.curScope))
+	p.curScope.Define(funcSymbol)
+	p.curScope = funcSymbol.Scope
+
 	funcDecl.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
 
 	if err = p.match(token.Identifier); err != nil {
@@ -251,6 +272,16 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 	funcDecl.Parameters = append(funcDecl.Parameters, paramList...)
+
+	for _, param := range funcDecl.Parameters {
+		for _, name := range param.Names {
+			p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE))
+		}
+
+		if _, found := p.builtInTypeSymbols[param.Type.GetName()]; !found {
+			// define new user defined type here
+		}
+	}
 
 	if err = p.match(token.Colon); err != nil {
 		return nil, err
@@ -264,6 +295,11 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	funcDecl.ReturnType = dtype.NewInteger(p.lookahead)
 	if err = p.consume(); err != nil {
 		return nil, err
+	}
+
+	// if return type is a user-defined type
+	if _, found := p.builtInTypeSymbols[funcDecl.ReturnType.GetName()]; !found {
+		// define new user defined type here
 	}
 
 	return funcDecl, nil
@@ -404,6 +440,16 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 
 	// TODO: fix this hardcoding
 	varDecl.Type = dtype.NewInteger(p.lookahead)
+
+	// add variables to symbol table
+	for _, n := range names {
+		p.curScope.Define(symbols.NewVariableSymbol(n.Name, symbols.VARIABLE))
+	}
+
+	// if variable type is a user-defined type
+	if _, found := p.builtInTypeSymbols[varDecl.Type.GetName()]; !found {
+		// define new user defined type here
+	}
 
 	if err = p.consume(); err != nil {
 		return nil, err
