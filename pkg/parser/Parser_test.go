@@ -272,7 +272,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 0, 1) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 1, 1) {
 		return
 	}
 
