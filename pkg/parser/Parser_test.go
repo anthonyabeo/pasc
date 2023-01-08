@@ -397,7 +397,8 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 		a, b, sum : integer;
 
 	begin
-		sum := a * (b * c);
+		sum := a * b * c;
+		foo := d + e * f;
 
 		writeln('Hello, world!')
 	end.
@@ -414,7 +415,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 3, 1, 0) {
 		return
 	}
 
@@ -429,6 +430,20 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	}
 
 	if !testAssignmentStatment(t, prog.Block.Stats[0], "sum", value) {
+		return
+	}
+
+	value = &ast.BinaryExpression{
+		Operator: token.NewToken(token.Star, "+"),
+		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "d"), Name: "d"},
+		Right: &ast.BinaryExpression{
+			Operator: token.NewToken(token.Star, "*"),
+			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "e"), Name: "e"},
+			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "f"), Name: "f"},
+		},
+	}
+
+	if !testAssignmentStatment(t, prog.Block.Stats[1], "foo", value) {
 		return
 	}
 }

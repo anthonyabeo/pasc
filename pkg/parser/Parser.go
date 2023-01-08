@@ -634,7 +634,6 @@ func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, erro
 
 // expression = simple-expression [ relational-operator simple-expression ] .
 func (p *Parser) expression() (ast.Expression, error) {
-	// TODO: another look
 	simpleExpr, err := p.simpleExpression()
 	if err != nil {
 		return nil, err
@@ -662,7 +661,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	var (
 		err  error
 		sign token.Token
-		term ast.Expression
+		expr ast.Expression
 	)
 
 	if p.isSign() {
@@ -672,55 +671,60 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 		}
 	}
 
-	term, err = p.term()
+	expr, err = p.term()
 	if err != nil {
 		return nil, err
 	}
 
-	if p.isAddingOp() {
-		binExp := &ast.BinaryExpression{Left: term, Operator: p.lookahead}
+	for p.isAddingOp() {
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lookahead}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
 
-		binExp.Right, err = p.term()
+		binExpr.Right, err = p.term()
 		if err != nil {
 			return nil, err
 		}
 
-		return binExp, nil
+		expr = binExpr
 	}
 
 	if !reflect.DeepEqual(sign, token.Token{}) {
-		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: term}
+		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: expr}
 		return unaryExp, nil
 	}
 
-	return term, nil
+	return expr, nil
 }
 
 // term = factor { multiplying-operator factor } .
 func (p *Parser) term() (ast.Expression, error) {
-	fact, err := p.factor()
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	expr, err = p.factor()
 	if err != nil {
 		return nil, err
 	}
 
-	if p.isMultiplyOp() {
-		binExp := &ast.BinaryExpression{Left: fact, Operator: p.lookahead}
+	for p.isMultiplyOp() {
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lookahead}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
 
-		binExp.Right, err = p.factor()
+		binExpr.Right, err = p.factor()
 		if err != nil {
 			return nil, err
 		}
 
-		return binExp, err
+		expr = binExpr
 	}
 
-	return fact, err
+	return expr, nil
 }
 
 func (p *Parser) factor() (ast.Expression, error) {
