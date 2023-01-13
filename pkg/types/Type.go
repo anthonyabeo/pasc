@@ -1,4 +1,4 @@
-package dtype
+package types
 
 import "github.com/anthonyabeo/pasc/pkg/token"
 

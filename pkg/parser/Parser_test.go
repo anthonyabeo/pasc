@@ -5,8 +5,8 @@ import (
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/symbols"
-	"github.com/anthonyabeo/pasc/pkg/symbols/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 func TestParseBasicProgram(t *testing.T) {
@@ -221,7 +221,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: dtype.NewInteger(token.NewToken(token.Integer, "integer")),
+			Type: types.NewInteger(token.NewToken(token.Integer, "integer")),
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "foo", "integer", params, 1, 1, 0) {
@@ -282,7 +282,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: dtype.NewInteger(token.NewToken(token.Integer, "integer")),
+			Type: types.NewInteger(token.NewToken(token.Integer, "integer")),
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "max", "integer", paramList, 2, 1, 0) {

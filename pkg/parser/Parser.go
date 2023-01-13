@@ -6,8 +6,8 @@ import (
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/symbols"
-	"github.com/anthonyabeo/pasc/pkg/symbols/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // Parser performs syntactic analysis to validate the correctness of the input string.
@@ -82,8 +82,8 @@ func (p *Parser) match(t token.Kind) error {
 // program-block = block .
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
-		err error
-		// block         *ast.Block
+		err           error
+		block         *ast.Block
 		programName   *ast.Identifier
 		programParams []*ast.Identifier
 	)
@@ -98,11 +98,11 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	if program.Block, err = p.block(); err != nil {
+	if block, err = p.block(); err != nil {
 		return nil, err
 	}
 
-	// program.Block = block
+	program.Block = block
 
 	if err = p.match(token.Period); err != nil {
 		return nil, err
@@ -248,7 +248,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	var (
 		err       error
 		funcName  string
-		typ       dtype.Type
+		typ       types.Type
 		paramList []*ast.Parameter
 	)
 
@@ -275,16 +275,12 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
-	if dtype, isBuiltInType := p.builtInTypeSymbols[p.lookahead.Text]; isBuiltInType {
-		typ = dtype
-	} else {
-		// must be a user-defined type
-		// it must therefore be defined somewhere in the scope tree
-		// if not found, return error
-		// otherwise, typ = <<user-defined-type>>
+	//TODO: Fix this
+	if !types.IsTypeIdentifier(p.lookahead.Kind) {
+		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
 	}
 
-	funcDecl.ReturnType = typ
+	funcDecl.ReturnType = types.NewInteger(p.lookahead)
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
@@ -343,7 +339,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
 	var (
 		err       error
-		typ       dtype.Type
+		typ       types.Type
 		paramList []*ast.Parameter
 	)
 
@@ -435,7 +431,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	var (
 		err   error
-		typ   dtype.Type
+		typ   types.Type
 		names []*ast.Identifier
 	)
 
@@ -695,7 +691,6 @@ func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, erro
 
 // expression = simple-expression [ relational-operator simple-expression ] .
 func (p *Parser) expression() (ast.Expression, error) {
-	// TODO: another look
 	simpleExpr, err := p.simpleExpression()
 	if err != nil {
 		return nil, err
@@ -723,7 +718,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	var (
 		err  error
 		sign token.Token
-		term ast.Expression
+		expr ast.Expression
 	)
 
 	if p.isSign() {
@@ -733,55 +728,60 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 		}
 	}
 
-	term, err = p.term()
+	expr, err = p.term()
 	if err != nil {
 		return nil, err
 	}
 
-	if p.isAddingOp() {
-		binExp := &ast.BinaryExpression{Left: term, Operator: p.lookahead}
+	for p.isAddingOp() {
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lookahead}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
 
-		binExp.Right, err = p.term()
+		binExpr.Right, err = p.term()
 		if err != nil {
 			return nil, err
 		}
 
-		return binExp, nil
+		expr = binExpr
 	}
 
 	if !reflect.DeepEqual(sign, token.Token{}) {
-		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: term}
+		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: expr}
 		return unaryExp, nil
 	}
 
-	return term, nil
+	return expr, nil
 }
 
 // term = factor { multiplying-operator factor } .
 func (p *Parser) term() (ast.Expression, error) {
-	fact, err := p.factor()
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	expr, err = p.factor()
 	if err != nil {
 		return nil, err
 	}
 
-	if p.isMultiplyOp() {
-		binExp := &ast.BinaryExpression{Left: fact, Operator: p.lookahead}
+	for p.isMultiplyOp() {
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lookahead}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
 
-		binExp.Right, err = p.factor()
+		binExpr.Right, err = p.factor()
 		if err != nil {
 			return nil, err
 		}
 
-		return binExp, err
+		expr = binExpr
 	}
 
-	return fact, err
+	return expr, nil
 }
 
 func (p *Parser) factor() (ast.Expression, error) {

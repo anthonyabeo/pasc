@@ -1,12 +1,12 @@
 package symbols
 
-import "github.com/anthonyabeo/pasc/pkg/symbols/dtype"
+import "github.com/anthonyabeo/pasc/pkg/types"
 
 // Function denotes a variable symbol
 type Function struct {
 	Name  string
 	Kind  Kind
-	Type  dtype.Type
+	Type  types.Type
 	Scope Scope
 }
 
@@ -30,7 +30,7 @@ func (f *Function) GetName() string {
 }
 
 // GetType ...
-func (f *Function) GetType() dtype.Type {
+func (f *Function) GetType() types.Type {
 	return f.Type
 }
 

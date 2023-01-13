@@ -1,16 +1,16 @@
 package symbols
 
-import "github.com/anthonyabeo/pasc/pkg/symbols/dtype"
+import "github.com/anthonyabeo/pasc/pkg/types"
 
 // Variable denotes a variable symbol
 type Variable struct {
 	Name string
 	Kind Kind
-	Type dtype.Type
+	Type types.Type
 }
 
 // NewVariableSymbol ...
-func NewVariableSymbol(name string, kind Kind, typ dtype.Type) *Variable {
+func NewVariableSymbol(name string, kind Kind, typ types.Type) *Variable {
 	return &Variable{Name: name, Kind: kind, Type: typ}
 }
 
@@ -25,7 +25,7 @@ func (v *Variable) GetName() string {
 }
 
 // GetType ...
-func (v *Variable) GetType() dtype.Type {
+func (v *Variable) GetType() types.Type {
 	return v.Type
 }
 

@@ -3,8 +3,8 @@ package ast
 import (
 	"fmt"
 
-	"github.com/anthonyabeo/pasc/pkg/symbols/dtype"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // FuncDeclaration is the node type for a function declaration in the AST
@@ -12,7 +12,7 @@ type FuncDeclaration struct {
 	Token      token.Token
 	Name       *Identifier
 	Parameters []*Parameter
-	ReturnType dtype.Type
+	ReturnType types.Type
 	Block      *Block
 }
 
