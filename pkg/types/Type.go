@@ -13,3 +13,11 @@ func IsTypeIdentifier(tt token.Kind) bool {
 	// TODO: Implement type ID checking
 	return true
 }
+
+type BuiltInType struct {
+	Name string
+}
+
+func (b *BuiltInType) GetName() string {
+	return b.Name
+}
