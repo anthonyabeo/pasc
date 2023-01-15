@@ -34,7 +34,7 @@ func NewParser(lexer Lexer) (*Parser, error) {
 	parser.curScope = globalScope
 
 	parser.builtInTypeSymbols = map[string]symbols.Symbol{
-		"integer": &symbols.BuiltInType{Name: "integer", Kind: symbols.BUILTIN_TYPE},
+		"integer": &symbols.Integer{Name: "integer", Kind: symbols.TYPE},
 	}
 
 	return &parser, nil
@@ -288,6 +288,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	// define the function symbol and update the current symbol table to the new function scope
 	funcSymbol := symbols.NewFunctionSymbol(funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
 	p.curScope.Define(funcSymbol)
+	funcDecl.Scope = p.curScope
 	p.curScope = funcSymbol.Scope
 
 	for _, param := range funcDecl.Parameters {
@@ -465,6 +466,8 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
+
+	varDecl.Scope = p.curScope
 
 	return varDecl, nil
 }
@@ -675,7 +678,9 @@ func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, er
 func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, error) {
 	var err error
 
-	as := &ast.AssignStatement{Variable: &ast.Identifier{Token: tt, Name: tt.Text}}
+	as := &ast.AssignStatement{
+		Token:    token.NewToken(p.lookahead.Kind, p.lookahead.Text),
+		Variable: &ast.Identifier{Token: tt, Name: tt.Text, Scope: p.curScope}}
 
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
@@ -1021,12 +1026,12 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	return paramList, nil
 }
 
+// actual-parameter := expression
+//
+//			         | variable-access
+//					 | procedure-identitier
+//	                 | function-identitier .
 func (p *Parser) actualParameter() (ast.Expression, error) {
-	// actual-parameter := expression
-	//			         | variable-access
-	//					 | procedure-identitier
-	//	                 | function-identitier .
-
 	expr, err := p.expression()
 	if err != nil {
 		return nil, err
