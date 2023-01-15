@@ -2,7 +2,7 @@ package symbols
 
 import "github.com/anthonyabeo/pasc/pkg/types"
 
-// Function denotes a variable symbol
+// Function denotes a function symbol
 type Function struct {
 	Name  string
 	Kind  Kind

@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -14,10 +15,13 @@ type FuncDeclaration struct {
 	Parameters []*Parameter
 	ReturnType types.Type
 	Block      *Block
+	Scope      symbols.Scope
 }
 
 // TokenLiteral returns the text value this node's token.
 func (f *FuncDeclaration) TokenLiteral() string { return f.Token.Text }
+
+func (f *FuncDeclaration) TokenKind() token.Kind { return f.Token.Kind }
 
 // StatNode ...
 func (f *FuncDeclaration) StatNode() string {

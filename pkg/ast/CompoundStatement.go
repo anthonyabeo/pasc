@@ -1,6 +1,10 @@
 package ast
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/anthonyabeo/pasc/pkg/token"
+)
 
 // CompoundStatement is the node in the AST that represents a compound statement.
 type CompoundStatement struct {
@@ -9,6 +13,8 @@ type CompoundStatement struct {
 
 // TokenLiteral returns the text value this node's token.
 func (cs *CompoundStatement) TokenLiteral() string { return "compound-statement" }
+
+func (cs *CompoundStatement) TokenKind() token.Kind { return token.Procedure }
 
 // StatNode ...
 func (cs *CompoundStatement) StatNode() string {

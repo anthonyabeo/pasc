@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -18,6 +19,8 @@ type VarDeclaration struct {
 // TokenLiteral returns the text value this node's token.
 func (v *VarDeclaration) TokenLiteral() string { return v.Token.Text }
 
+func (v *VarDeclaration) TokenKind() token.Kind { return v.Token.Kind }
+
 // StatNode ...
 func (v *VarDeclaration) StatNode() string {
 	return fmt.Sprintf("%v", v.Decls)
@@ -31,6 +34,7 @@ func (v *VarDeclaration) String() string {
 type VarDecl struct {
 	Names []*Identifier
 	Type  types.Type
+	Scope symbols.Scope
 }
 
 // TokenLiteral returns the text value this node's token.
