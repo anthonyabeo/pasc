@@ -9,7 +9,7 @@ const (
 	VARIABLE Kind = iota
 	FUNCTION
 	PROCEDURE
-	BUILTIN_TYPE
+	TYPE
 )
 
 // Symbol denotes a generic symbol
