@@ -16,10 +16,10 @@ import (
 // from the lexer. The Parser checks and ensures that the input tokens stream conforms
 // to the grammer of the language or returns an appropriate error otherwise.
 type Parser struct {
-	input              Lexer
-	lookahead          token.Token
-	symTable, curScope symbols.Scope
-	builtInTypeSymbols map[string]symbols.Symbol
+	input     Lexer
+	lookahead token.Token
+	curScope  symbols.Scope
+	symTable  *symbols.GlobalScope
 }
 
 // NewParser constructs and returns an instance of parser
@@ -32,10 +32,6 @@ func NewParser(lexer Lexer) (*Parser, error) {
 	globalScope := symbols.NewGlobalScope(nil)
 	parser.symTable = globalScope
 	parser.curScope = globalScope
-
-	parser.builtInTypeSymbols = map[string]symbols.Symbol{
-		"integer": &symbols.Integer{Name: "integer", Kind: symbols.TYPE},
-	}
 
 	return &parser, nil
 }
@@ -52,7 +48,7 @@ func (p *Parser) consume() error {
 }
 
 // SymbolTable returns the scope tree constructed during parsing
-func (p *Parser) SymbolTable() symbols.Scope {
+func (p *Parser) SymbolTable() *symbols.GlobalScope {
 	return p.symTable
 }
 
@@ -292,7 +288,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	p.curScope = funcSymbol.Scope
 
 	for _, param := range funcDecl.Parameters {
-		if paramBuiltinType, found := p.builtInTypeSymbols[param.Type.GetName()]; found {
+		if paramBuiltinType := p.symTable.Resolve(param.Type.GetName()); paramBuiltinType != nil {
 			typ = paramBuiltinType
 		} else {
 			// typ = some user-defined type
@@ -303,7 +299,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		}
 	}
 
-	if retType, found := p.builtInTypeSymbols[funcDecl.ReturnType.GetName()]; found {
+	if retType := p.symTable.Resolve(funcDecl.ReturnType.GetName()); retType != nil {
 		typ = retType
 	} else {
 		// typ = some user-defined type
@@ -359,7 +355,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			}
 			params := &ast.Parameter{Names: names}
 
-			if dtype, isBuiltInType := p.builtInTypeSymbols[p.lookahead.Text]; isBuiltInType {
+			if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
 				typ = dtype
 			} else {
 				// must be a user-defined type
@@ -448,7 +444,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 		return nil, err
 	}
 
-	if dtype, isBuiltInType := p.builtInTypeSymbols[p.lookahead.Text]; isBuiltInType {
+	if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
 		typ = dtype
 	} else {
 		// must be a user-defined type
@@ -846,7 +842,7 @@ func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	// 	return nil, err
 	// }
 
-	return &ast.Identifier{Token: t, Name: t.Text}, nil
+	return &ast.Identifier{Token: t, Name: t.Text, Scope: p.curScope}, nil
 }
 
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
@@ -980,7 +976,7 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
 	var err error
 
-	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}}
+	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}, Scope: p.curScope}
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
 		return nil, err

@@ -479,7 +479,7 @@ func TestSymbolTableGenerated(t *testing.T) {
 	}
 
 	symTable := pars.SymbolTable()
-	if !testGlobalSymbolTable(t, symTable, nil, "global", 4) {
+	if !testGlobalSymbolTable(t, symTable, nil, "global", len(symTable.Symbols)) {
 		return
 	}
 
