@@ -61,6 +61,15 @@ func (s *SemanticAnalyzer) computeStaticExpressionTypes(expr ast.Expression) err
 		// If they are not, return a error
 		relExpr.EvalType = s.SymbolTable.Resolve("Boolean")
 		return nil
+	case token.Function:
+		funcCall := expr.(*ast.FuncDesignator)
+		funcSymbol := funcCall.Scope.Resolve(funcCall.Name.Name)
+		if funcSymbol == nil {
+			return fmt.Errorf("function %s not defined", funcCall.Name.Name)
+		}
+
+		funcCall.EvalType = funcSymbol.GetType()
+		return nil
 	default:
 		return nil
 	}
@@ -113,6 +122,8 @@ func (s *SemanticAnalyzer) assignment(node *ast.AssignStatement) error {
 }
 
 func (s *SemanticAnalyzer) ifStatement(node *ast.IfStatement) error {
-	// TODO implement static type checking
+	if node.BoolExpr.Attr("type") != "Boolean" {
+		return fmt.Errorf("if-statement condition does not evaluate to boolean type")
+	}
 	return nil
 }
