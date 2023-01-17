@@ -1,4 +1,4 @@
-package dtype
+package types
 
 import "github.com/anthonyabeo/pasc/pkg/token"
 
@@ -12,4 +12,12 @@ type Type interface {
 func IsTypeIdentifier(tt token.Kind) bool {
 	// TODO: Implement type ID checking
 	return true
+}
+
+type BuiltInType struct {
+	Name string
+}
+
+func (b *BuiltInType) GetName() string {
+	return b.Name
 }

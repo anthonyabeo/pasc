@@ -3,13 +3,13 @@ package ast
 import (
 	"fmt"
 
-	"github.com/anthonyabeo/pasc/pkg/dtype"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // Parameter ...
 type Parameter struct {
 	Names []*Identifier
-	Type  dtype.Type
+	Type  types.Type
 }
 
 // TokenLiteral returns the text value this node's token.

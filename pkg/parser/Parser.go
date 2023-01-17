@@ -5,8 +5,9 @@ import (
 	"reflect"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/dtype"
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // Parser performs syntactic analysis to validate the correctness of the input string.
@@ -17,6 +18,8 @@ import (
 type Parser struct {
 	input     Lexer
 	lookahead token.Token
+	curScope  symbols.Scope
+	symTable  *symbols.GlobalScope
 }
 
 // NewParser constructs and returns an instance of parser
@@ -25,6 +28,10 @@ func NewParser(lexer Lexer) (*Parser, error) {
 	if err := parser.consume(); err != nil {
 		return nil, err
 	}
+
+	globalScope := symbols.NewGlobalScope(nil)
+	parser.symTable = globalScope
+	parser.curScope = globalScope
 
 	return &parser, nil
 }
@@ -38,6 +45,11 @@ func (p *Parser) consume() error {
 	p.lookahead = token
 
 	return nil
+}
+
+// SymbolTable returns the scope tree constructed during parsing
+func (p *Parser) SymbolTable() *symbols.GlobalScope {
+	return p.symTable
 }
 
 // Match returns an error if the lookahead token does not match the expected
@@ -231,6 +243,8 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	var (
 		err       error
+		funcName  string
+		typ       types.Type
 		paramList []*ast.Parameter
 	)
 
@@ -240,6 +254,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, err
 	}
 
+	funcName = p.lookahead.Text
 	funcDecl.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
 
 	if err = p.match(token.Identifier); err != nil {
@@ -257,14 +272,40 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	}
 
 	//TODO: Fix this
-	if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
+	if !types.IsTypeIdentifier(p.lookahead.Kind) {
 		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
 	}
 
-	funcDecl.ReturnType = dtype.NewInteger(p.lookahead)
+	funcDecl.ReturnType = types.NewInteger(p.lookahead)
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
+
+	// define the function symbol and update the current symbol table to the new function scope
+	funcSymbol := symbols.NewFunctionSymbol(funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
+	p.curScope.Define(funcSymbol)
+	funcDecl.Scope = p.curScope
+	p.curScope = funcSymbol.Scope
+
+	for _, param := range funcDecl.Parameters {
+		if paramBuiltinType := p.symTable.Resolve(param.Type.GetName()); paramBuiltinType != nil {
+			typ = paramBuiltinType
+		} else {
+			// typ = some user-defined type
+		}
+
+		for _, name := range param.Names {
+			p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+		}
+	}
+
+	if retType := p.symTable.Resolve(funcDecl.ReturnType.GetName()); retType != nil {
+		typ = retType
+	} else {
+		// typ = some user-defined type
+	}
+
+	funcSymbol.Type = typ
 
 	return funcDecl, nil
 }
@@ -295,6 +336,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
 	var (
 		err       error
+		typ       types.Type
 		paramList []*ast.Parameter
 	)
 
@@ -313,12 +355,15 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			}
 			params := &ast.Parameter{Names: names}
 
-			if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
-				return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+			if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+				typ = dtype
+			} else {
+				// must be a user-defined type
+				// it must therefore be defined somewhere in the scope tree
+				// if not found, return error
+				// otherwise, typ = <<user-defined-type>>
 			}
-
-			// TODO: fix this hardcoding
-			params.Type = dtype.NewInteger(p.lookahead)
+			params.Type = typ
 			paramList = append(paramList, params)
 
 			if err = p.consume(); err != nil {
@@ -383,6 +428,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	var (
 		err   error
+		typ   types.Type
 		names []*ast.Identifier
 	)
 
@@ -398,16 +444,26 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 		return nil, err
 	}
 
-	if !dtype.IsTypeIdentifier(p.lookahead.Kind) {
-		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+	if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+		typ = dtype
+	} else {
+		// must be a user-defined type
+		// it must therefore be defined somewhere in the scope tree
+		// if not found, return error
+		// otherwise, typ = <<user-defined-type>>
 	}
+	varDecl.Type = typ
 
-	// TODO: fix this hardcoding
-	varDecl.Type = dtype.NewInteger(p.lookahead)
+	// add variables to symbol table
+	for _, n := range names {
+		p.curScope.Define(symbols.NewVariableSymbol(n.Name, symbols.VARIABLE, typ))
+	}
 
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
+
+	varDecl.Scope = p.curScope
 
 	return varDecl, nil
 }
@@ -618,7 +674,9 @@ func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, er
 func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, error) {
 	var err error
 
-	as := &ast.AssignStatement{Variable: &ast.Identifier{Token: tt, Name: tt.Text}}
+	as := &ast.AssignStatement{
+		Token:    token.NewToken(p.lookahead.Kind, p.lookahead.Text),
+		Variable: &ast.Identifier{Token: tt, Name: tt.Text, Scope: p.curScope}}
 
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
@@ -784,7 +842,7 @@ func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	// 	return nil, err
 	// }
 
-	return &ast.Identifier{Token: t, Name: t.Text}, nil
+	return &ast.Identifier{Token: t, Name: t.Text, Scope: p.curScope}, nil
 }
 
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
@@ -918,7 +976,7 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
 	var err error
 
-	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}}
+	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}, Scope: p.curScope}
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
 		return nil, err
@@ -964,12 +1022,12 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	return paramList, nil
 }
 
+// actual-parameter := expression
+//
+//			         | variable-access
+//					 | procedure-identitier
+//	                 | function-identitier .
 func (p *Parser) actualParameter() (ast.Expression, error) {
-	// actual-parameter := expression
-	//			         | variable-access
-	//					 | procedure-identitier
-	//	                 | function-identitier .
-
 	expr, err := p.expression()
 	if err != nil {
 		return nil, err

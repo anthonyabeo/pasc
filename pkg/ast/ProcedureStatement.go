@@ -1,6 +1,10 @@
 package ast
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/anthonyabeo/pasc/pkg/token"
+)
 
 // ProcedureStatement models a procedure statement node
 type ProcedureStatement struct {
@@ -16,6 +20,10 @@ func NewProcedureStatement(pID *Identifier) *ProcedureStatement {
 // TokenLiteral returns the text value this node's token.
 func (ps *ProcedureStatement) TokenLiteral() string {
 	return ps.ProcedureID.Token.Text
+}
+
+func (ps *ProcedureStatement) TokenKind() token.Kind {
+	return ps.ProcedureID.Token.Kind
 }
 
 // StatNode ...

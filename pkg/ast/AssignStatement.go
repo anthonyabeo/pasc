@@ -18,6 +18,10 @@ func (as *AssignStatement) TokenLiteral() string {
 	return as.Token.Text
 }
 
+func (as *AssignStatement) TokenKind() token.Kind {
+	return as.Token.Kind
+}
+
 // StatNode ...
 func (as *AssignStatement) StatNode() string {
 	return fmt.Sprintf("%v := %v", as.Variable, as.Value)

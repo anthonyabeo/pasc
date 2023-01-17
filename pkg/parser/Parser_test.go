@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/dtype"
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 func TestParseBasicProgram(t *testing.T) {
@@ -220,7 +221,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: dtype.NewInteger(token.NewToken(token.Integer, "integer")),
+			Type: types.NewInteger(token.NewToken(token.Integer, "integer")),
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "foo", "integer", params, 1, 1, 0) {
@@ -237,6 +238,8 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 func TestParseProgramWithIfStatement(t *testing.T) {
 	input := `
 	program MaxProgram;
+	var 
+		a, b, sum : integer;
 
 	function max(n, m integer): integer;
 	var result: integer;
@@ -269,7 +272,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 0, 1) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 1, 1) {
 		return
 	}
 
@@ -279,7 +282,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: dtype.NewInteger(token.NewToken(token.Integer, "integer")),
+			Type: types.NewInteger(token.NewToken(token.Integer, "integer")),
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "max", "integer", paramList, 2, 1, 0) {
@@ -446,6 +449,134 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	if !testAssignmentStatment(t, prog.Block.Stats[1], "foo", value) {
 		return
 	}
+}
+
+func TestSymbolTableGenerated(t *testing.T) {
+	input := `
+	program MaxProgram;
+	var 
+		a, b, sum : integer;
+
+	function max(n, m integer): integer;
+	var result: integer;
+
+	begin
+		if (n > m) then
+			result := n
+		else
+			result := m;
+
+		max := result
+	end;
+
+	begin
+		a := 100;
+		b := 200;
+		result := max(a, b);
+
+		writeln(max)
+	end.
+	`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 4, 1, 1) {
+		return
+	}
+
+	symTable := pars.SymbolTable()
+	if !testGlobalSymbolTable(t, symTable, nil, "global", len(symTable.Symbols)) {
+		return
+	}
+
+	max := symTable.Resolve("max")
+	if max.GetKind() != symbols.FUNCTION {
+		t.Errorf("expected symbol of kind %v, got %v instead", symbols.FUNCTION, max.GetKind())
+	}
+
+	m, ok := max.(*symbols.Function)
+	if !ok || m.Scope == nil {
+		t.Errorf("expected a function symbol type")
+	}
+
+	if !testLocalSymbolTable(t, m.Scope, symTable, "max", 3) {
+		return
+	}
+}
+
+func testGlobalSymbolTable(
+	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
+) bool {
+	if symTable == nil {
+		t.Errorf("symbol table is nil")
+		return false
+	}
+
+	if symTable.GetEnclosingScope() != parentScope {
+		t.Errorf("enclosing scopes do not match")
+		return false
+	}
+
+	if symTable.GetScopeName() != scopeName {
+		t.Errorf("expected scope name to be %v, got %v instead", scopeName, symTable.GetScopeName())
+		return false
+	}
+
+	symTab, ok := symTable.(*symbols.GlobalScope)
+	if !ok {
+		t.Errorf("expected a global symbol table")
+		return false
+	}
+
+	if len(symTab.Symbols) != numSymbols {
+		t.Errorf("expetecd global scope to have %v entries, got %v instead",
+			numSymbols, len(symTab.Symbols))
+		return false
+	}
+
+	return true
+}
+
+func testLocalSymbolTable(
+	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
+) bool {
+	if symTable == nil {
+		t.Errorf("symbol table is nil")
+		return false
+	}
+
+	if symTable.GetEnclosingScope() != parentScope {
+		t.Errorf("enclosing scopes do not match")
+		return false
+	}
+
+	if symTable.GetScopeName() != scopeName {
+		t.Errorf("expected scope name to be %v, got %v instead", scopeName, symTable.GetScopeName())
+		return false
+	}
+
+	symTab, ok := symTable.(*symbols.LocalScope)
+	if !ok {
+		t.Errorf("expected a global symbol table")
+		return false
+	}
+
+	if len(symTab.Symbols) != numSymbols {
+		t.Errorf("expetecd global scope to have %v entries, got %v instead",
+			numSymbols, len(symTab.Symbols))
+		return false
+	}
+
+	return true
 }
 
 func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, value ast.Expression) bool {

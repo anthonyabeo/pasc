@@ -3,20 +3,23 @@ package ast
 import (
 	"fmt"
 
-	"github.com/anthonyabeo/pasc/pkg/dtype"
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // VarDeclaration models the variable definition node in the AST
 type VarDeclaration struct {
 	Token token.Token
 	// Names []*Identifier
-	// Type  dtype.Type
+	// Type  types.Type
 	Decls []*VarDecl
 }
 
 // TokenLiteral returns the text value this node's token.
 func (v *VarDeclaration) TokenLiteral() string { return v.Token.Text }
+
+func (v *VarDeclaration) TokenKind() token.Kind { return v.Token.Kind }
 
 // StatNode ...
 func (v *VarDeclaration) StatNode() string {
@@ -30,7 +33,8 @@ func (v *VarDeclaration) String() string {
 // VarDecl ...
 type VarDecl struct {
 	Names []*Identifier
-	Type  dtype.Type
+	Type  types.Type
+	Scope symbols.Scope
 }
 
 // TokenLiteral returns the text value this node's token.
