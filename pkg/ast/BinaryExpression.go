@@ -24,7 +24,7 @@ func (b *BinaryExpression) TokenKind() token.Kind {
 func (b *BinaryExpression) Attr(attr string) interface{} {
 	switch attr {
 	case "type":
-		return b.EvalType
+		return b.EvalType.GetName()
 	default:
 		return nil
 	}
