@@ -88,7 +88,10 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	program := &ast.ProgramAST{Name: programName, ParamList: programParams}
+	program := &ast.ProgramAST{
+		Name:      programName,
+		ParamList: programParams,
+		Token:     token.NewToken(token.Program, "program")}
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
