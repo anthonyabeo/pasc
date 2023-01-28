@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 // CodeGenerator ...
@@ -79,6 +80,17 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		if err := c.emit(fmt.Sprintf("const %s;\n\t", node.Value)); err != nil {
 			return err
 		}
+
+	case *ast.BinaryExpression:
+		var op string
+		if node.Operator.Kind == token.Plus {
+			op = "add"
+		} else if node.Operator.Kind == token.GreaterThan {
+			op = "gt"
+		}
+
+		c.emit(op)
+		c.emit(fmt.Sprintf(" %s %s;\n\t", node.Left.RValue(), node.Right.RValue()))
 	}
 
 	return nil

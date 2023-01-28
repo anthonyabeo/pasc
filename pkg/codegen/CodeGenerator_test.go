@@ -44,3 +44,43 @@ func TestGenerateBrilProgramAssignment(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestGenerateBrilProgramArithmeticOperation(t *testing.T) {
+	input := `
+	program Add;
+	var
+		a, b, result : integer;
+
+	begin
+		a := 5;
+		b := 15;
+		result := a + b;
+
+		writeln( result )
+	end.
+`
+	lex := parser.NewLexer(input)
+	pars, err := parser.NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	if err := semAnal.Run(); err != nil {
+		t.Error(err)
+	}
+
+	cg, err := NewCodeGenerator(prog.Name.Name)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if err := cg.Gen(prog); err != nil {
+		t.Error(err)
+	}
+}
