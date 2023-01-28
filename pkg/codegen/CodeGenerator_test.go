@@ -1,0 +1,46 @@
+package codegen
+
+import (
+	"testing"
+
+	"github.com/anthonyabeo/pasc/pkg/parser"
+	"github.com/anthonyabeo/pasc/pkg/sematics"
+)
+
+func TestGenerateBrilProgramAssignment(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a : integer;
+
+	begin
+		a := 1;
+
+		writeln( a )
+	end.
+`
+	lex := parser.NewLexer(input)
+	pars, err := parser.NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil || prog == nil {
+		t.Error(err)
+	}
+
+	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	if err := semAnal.Run(); err != nil {
+		t.Error(err)
+	}
+
+	cg, err := NewCodeGenerator(prog.Name.Name)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if err := cg.Gen(prog); err != nil {
+		t.Error(err)
+	}
+}
