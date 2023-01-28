@@ -10,7 +10,7 @@ import (
 
 // SemanticAnalyzer ...
 type SemanticAnalyzer struct {
-	ast         *ast.ProgramAST
+	Ast         *ast.ProgramAST
 	SymbolTable symbols.Scope
 }
 
@@ -77,7 +77,7 @@ func (s *SemanticAnalyzer) computeStaticExpressionTypes(expr ast.Expression) err
 
 // Run ...
 func (s *SemanticAnalyzer) Run() error {
-	for _, stmt := range s.ast.Block.Stats {
+	for _, stmt := range s.Ast.Block.Stats {
 		if err := s.ComputeStaticExpressionTypes(stmt); err != nil {
 			return err
 		}
