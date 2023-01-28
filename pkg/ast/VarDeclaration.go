@@ -11,14 +11,13 @@ import (
 // VarDeclaration models the variable definition node in the AST
 type VarDeclaration struct {
 	Token token.Token
-	// Names []*Identifier
-	// Type  types.Type
 	Decls []*VarDecl
 }
 
 // TokenLiteral returns the text value this node's token.
 func (v *VarDeclaration) TokenLiteral() string { return v.Token.Text }
 
+// TokenKind returns this node's token's kind
 func (v *VarDeclaration) TokenKind() token.Kind { return v.Token.Kind }
 
 // StatNode ...
@@ -29,6 +28,9 @@ func (v *VarDeclaration) StatNode() string {
 func (v *VarDeclaration) String() string {
 	return fmt.Sprintf("%v", v.Decls)
 }
+
+// Gen creates and emits BRIL code for this node
+func (v *VarDeclaration) Gen() {}
 
 // VarDecl ...
 type VarDecl struct {
@@ -48,3 +50,6 @@ func (v *VarDecl) StatNode() string {
 func (v *VarDecl) String() string {
 	return fmt.Sprintf("%v: %v", v.Names, v.Type.GetName())
 }
+
+// Gen creates and emits BRIL code for this node
+func (v *VarDecl) Gen() {}

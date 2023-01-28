@@ -21,6 +21,7 @@ type FuncDeclaration struct {
 // TokenLiteral returns the text value this node's token.
 func (f *FuncDeclaration) TokenLiteral() string { return f.Token.Text }
 
+// TokenKind returns this node's token's kind
 func (f *FuncDeclaration) TokenKind() token.Kind { return f.Token.Kind }
 
 // StatNode ...

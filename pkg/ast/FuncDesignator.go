@@ -42,3 +42,9 @@ func (f *FuncDesignator) Attr(attr string) interface{} {
 func (f *FuncDesignator) String() string {
 	return fmt.Sprintf("%v(%v)", f.Name, f.Parameters)
 }
+
+// RValue ...
+func (f *FuncDesignator) RValue() Expression { return nil }
+
+// LValue ...
+func (f *FuncDesignator) LValue() Expression { return nil }

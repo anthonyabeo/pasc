@@ -35,3 +35,9 @@ func (n *NilValue) Attr(attr string) interface{} {
 func (n *NilValue) String() string {
 	return "nil"
 }
+
+// RValue ...
+func (n *NilValue) RValue() Expression { return nil }
+
+// LValue ...
+func (n *NilValue) LValue() Expression { return nil }

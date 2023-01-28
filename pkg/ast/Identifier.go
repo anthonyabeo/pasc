@@ -21,10 +21,12 @@ func (id *Identifier) TokenLiteral() string {
 
 func (id *Identifier) exprNode() {}
 
+// TokenKind returns this node's token's kind
 func (id *Identifier) TokenKind() token.Kind {
 	return id.Token.Kind
 }
 
+// Attr ...
 func (id *Identifier) Attr(attr string) interface{} {
 	switch attr {
 	case "type":
@@ -37,3 +39,11 @@ func (id *Identifier) Attr(attr string) interface{} {
 func (id *Identifier) String() string {
 	return id.Name
 }
+
+// RValue ...
+func (id *Identifier) RValue() Expression {
+	return id
+}
+
+// LValue ...
+func (id *Identifier) LValue() Expression { return nil }

@@ -22,6 +22,7 @@ func (ps *ProcedureStatement) TokenLiteral() string {
 	return ps.ProcedureID.Token.Text
 }
 
+// TokenKind returns this node's token's kind
 func (ps *ProcedureStatement) TokenKind() token.Kind {
 	return ps.ProcedureID.Token.Kind
 }

@@ -17,7 +17,7 @@ func (c *CharString) TokenLiteral() string { return c.Token.Text }
 
 func (c *CharString) exprNode() {}
 
-// TokenKind ...
+// TokenKind returns this node's token's kind
 func (c *CharString) TokenKind() token.Kind {
 	return c.Token.Kind
 }
@@ -35,3 +35,9 @@ func (c *CharString) Attr(attr string) interface{} {
 func (c *CharString) String() string {
 	return c.Value
 }
+
+// RValue ...
+func (c *CharString) RValue() Expression { return nil }
+
+// LValue ...
+func (c *CharString) LValue() Expression { return nil }

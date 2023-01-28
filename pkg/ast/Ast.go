@@ -19,4 +19,6 @@ type Expression interface {
 	Node
 	exprNode()
 	Attr(string) interface{}
+	RValue() Expression
+	LValue() Expression
 }

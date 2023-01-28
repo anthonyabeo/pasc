@@ -17,10 +17,12 @@ func (b *BinaryExpression) TokenLiteral() string { return b.Operator.Text }
 
 func (b *BinaryExpression) exprNode() {}
 
+// TokenKind returns this node's token's kind
 func (b *BinaryExpression) TokenKind() token.Kind {
 	return b.Operator.Kind
 }
 
+// Attr ...
 func (b *BinaryExpression) Attr(attr string) interface{} {
 	switch attr {
 	case "type":
@@ -29,3 +31,9 @@ func (b *BinaryExpression) Attr(attr string) interface{} {
 		return nil
 	}
 }
+
+// RValue ...
+func (b *BinaryExpression) RValue() Expression { return nil }
+
+// LValue ...
+func (b *BinaryExpression) LValue() Expression { return nil }

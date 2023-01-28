@@ -19,10 +19,12 @@ func (u *UIntegerLiteral) TokenLiteral() string {
 
 func (u *UIntegerLiteral) exprNode() {}
 
+// TokenKind returns this node's token's kind
 func (u *UIntegerLiteral) TokenKind() token.Kind {
 	return u.Token.Kind
 }
 
+// Attr ...
 func (u *UIntegerLiteral) Attr(attr string) interface{} {
 	switch attr {
 	case "type":
@@ -35,3 +37,9 @@ func (u *UIntegerLiteral) Attr(attr string) interface{} {
 func (u *UIntegerLiteral) String() string {
 	return u.Value
 }
+
+// RValue ...
+func (u *UIntegerLiteral) RValue() Expression { return nil }
+
+// LValue ...
+func (u *UIntegerLiteral) LValue() Expression { return nil }
