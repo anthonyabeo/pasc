@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
@@ -32,6 +34,12 @@ func NewCodeGenerator(programName string) (*CodeGenerator, error) {
 func (c *CodeGenerator) Gen(node ast.Node) error {
 	switch node := node.(type) {
 	case *ast.ProgramAST:
+		for _, call := range node.Block.Callables {
+			if err := c.Gen(call); err != nil {
+				return err
+			}
+		}
+
 		if err := c.emit("@main {\n"); err != nil {
 			return err
 		}
@@ -51,6 +59,15 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		}
 
 	case *ast.AssignStatement:
+		sym := node.Variable.Scope.Resolve(node.Variable.Name)
+		if sym != nil && sym.GetKind() == symbols.FUNCTION {
+			if err := c.emit(fmt.Sprintf("\tret %s;\n", node.Value.String())); err != nil {
+				return err
+			}
+
+			return nil
+		}
+
 		if err := c.Gen(node.Variable); err != nil {
 			return err
 		}
@@ -72,11 +89,11 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 
 	case *ast.ProcedureStatement:
 		if node.ProcedureID.Name == "writeln" {
-			var pList []ast.Expression
+			var params []string
 			for _, e := range node.ParamList {
-				pList = append(pList, e.RValue())
+				params = append(params, e.String())
 			}
-			c.emit(fmt.Sprintf("print %+v;\n", pList[0]))
+			c.emit(fmt.Sprintf("print %+v;\n", strings.Join(params, " ")))
 		}
 
 	case *ast.Identifier:
@@ -164,6 +181,43 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		}
 
 		c.emit(fmt.Sprintf(".%s:\n", somewhere))
+
+	case *ast.FuncDesignator:
+		var params []string
+		for _, param := range node.Parameters {
+			params = append(params, param.RValue().String())
+		}
+
+		f := fmt.Sprintf("call @%s %s;\n", node.Name.Name, strings.Join(params, " "))
+		if err := c.emit(f); err != nil {
+			return err
+		}
+
+	case *ast.FuncDeclaration:
+		var params []string
+		for _, param := range node.Parameters {
+			for _, name := range param.Names {
+				params = append(params, fmt.Sprintf("%s:%s", name.Name, c.brilType(param.Type.GetName())))
+			}
+		}
+
+		funcHeader := fmt.Sprintf(
+			"@%s(%s): %s {\n", node.Name.Name, strings.Join(params, ", "), c.brilType(node.ReturnType.GetName()))
+
+		if err := c.emit(funcHeader); err != nil {
+			return err
+		}
+
+		for _, stmt := range node.Block.Stats {
+			if err := c.Gen(stmt); err != nil {
+				return err
+			}
+		}
+
+		if err := c.emit("}\n"); err != nil {
+			return err
+		}
+
 	}
 
 	return nil
