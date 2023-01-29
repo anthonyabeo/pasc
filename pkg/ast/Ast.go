@@ -21,4 +21,5 @@ type Expression interface {
 	Attr(string) interface{}
 	RValue() Expression
 	LValue() Expression
+	String() string
 }

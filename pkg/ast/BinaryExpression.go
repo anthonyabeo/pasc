@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"fmt"
+
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -30,6 +32,10 @@ func (b *BinaryExpression) Attr(attr string) interface{} {
 	default:
 		return nil
 	}
+}
+
+func (b *BinaryExpression) String() string {
+	return fmt.Sprintf("%s %s %s", b.Left, b.Operator.Text, b.Right)
 }
 
 // RValue ...
