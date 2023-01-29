@@ -84,3 +84,47 @@ func TestGenerateBrilProgramArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestGenerateBrilProgramIfStatement(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		n, m, result : integer;
+
+	begin
+		n := 2;
+		m := 15;
+
+		if (n > m) then
+			result := n
+		else
+			result := m;
+
+		writeln( result )
+	end.
+`
+	lex := parser.NewLexer(input)
+	pars, err := parser.NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	if err := semAnal.Run(); err != nil {
+		t.Error(err)
+	}
+
+	cg, err := NewCodeGenerator(prog.Name.Name)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if err := cg.Gen(prog); err != nil {
+		t.Error(err)
+	}
+}

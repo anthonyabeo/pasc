@@ -30,7 +30,7 @@ func NewCodeGenerator(programName string) (*CodeGenerator, error) {
 func (c *CodeGenerator) Gen(node ast.Node) error {
 	switch node := node.(type) {
 	case *ast.ProgramAST:
-		if err := c.emit("@main {\n\t"); err != nil {
+		if err := c.emit("@main {\n"); err != nil {
 			return err
 		}
 
@@ -57,8 +57,15 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 			return err
 		}
 
-		if err := c.Gen(node.Value); err != nil {
-			return err
+		if node.Value.TokenKind() == token.Identifier {
+			err := c.emit(fmt.Sprintf("id %s;\n", node.Value.RValue()))
+			if err != nil {
+				return err
+			}
+		} else {
+			if err := c.Gen(node.Value); err != nil {
+				return err
+			}
 		}
 
 	case *ast.ProcedureStatement:
@@ -71,13 +78,13 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		}
 
 	case *ast.Identifier:
-		err := c.emit(fmt.Sprintf("%s: %s", node.Name, c.brilType(node.EvalType.GetName())))
+		err := c.emit(fmt.Sprintf("\t%s: %s", node.Name, c.brilType(node.EvalType.GetName())))
 		if err != nil {
 			return err
 		}
 
 	case *ast.UIntegerLiteral:
-		if err := c.emit(fmt.Sprintf("const %s;\n\t", node.Value)); err != nil {
+		if err := c.emit(fmt.Sprintf("const %s;\n", node.Value)); err != nil {
 			return err
 		}
 
@@ -89,8 +96,71 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 			op = "gt"
 		}
 
-		c.emit(op)
-		c.emit(fmt.Sprintf(" %s %s;\n\t", node.Left.RValue(), node.Right.RValue()))
+		if c.isArithOp(node.Operator) {
+			if err := c.emit(op); err != nil {
+				return err
+			}
+
+			err := c.emit(fmt.Sprintf(" %s %s;\n", node.Left.RValue(), node.Right.RValue()))
+			if err != nil {
+				return err
+			}
+		}
+
+		if c.isRelationalOp(node.Operator) {
+			b1 := "b1"
+			err := c.emit(fmt.Sprintf("\t%s: %s = ", b1, c.brilType(node.EvalType.GetName())))
+			if err != nil {
+				return err
+			}
+
+			if err := c.emit(op); err != nil {
+				return err
+			}
+
+			if err := c.emit(fmt.Sprintf(" %s %s;\n", node.Left.RValue(), node.Right.RValue())); err != nil {
+				return err
+			}
+
+			if err := c.emit(fmt.Sprintf("\tbr %s ", b1)); err != nil {
+				return err
+			}
+		}
+
+	case *ast.IfStatement:
+		if err := c.Gen(node.BoolExpr); err != nil {
+			return err
+		}
+
+		l1 := "l1" // TODO create next label dynamically
+		l2 := "l2"
+		cont := "cont"
+		c.emit(fmt.Sprintf(".%s ", l1))
+		if node.ElsePath != nil {
+			c.emit(fmt.Sprintf(".%s;\n", l2))
+		}
+
+		if err := c.emit(fmt.Sprintf(".%s:\n", l1)); err != nil {
+			return err
+		}
+
+		if err := c.Gen(node.TruePath); err != nil {
+			return err
+		}
+		c.emit(fmt.Sprintf("\tjmp .%s;\n", cont))
+
+		if node.ElsePath != nil {
+			if err := c.emit(fmt.Sprintf(".%s:\n", l2)); err != nil {
+				return err
+			}
+
+			if err := c.Gen(node.ElsePath); err != nil {
+				return err
+			}
+			c.emit(fmt.Sprintf("\tjmp .%s;\n", cont))
+		}
+
+		c.emit(fmt.Sprintf(".%s:\n", cont))
 	}
 
 	return nil
@@ -114,4 +184,32 @@ func (c *CodeGenerator) brilType(s string) string {
 	}
 
 	return ""
+}
+
+func (c *CodeGenerator) isMultiplyOp(t token.Token) bool {
+	return t.Kind == token.Star ||
+		t.Kind == token.FwdSlash ||
+		t.Kind == token.Div ||
+		t.Kind == token.Mod ||
+		t.Kind == token.And
+}
+
+func (c *CodeGenerator) isAddingOp(t token.Token) bool {
+	return t.Kind == token.Plus ||
+		t.Kind == token.Minus ||
+		t.Kind == token.Or
+}
+
+func (c *CodeGenerator) isRelationalOp(t token.Token) bool {
+	return t.Kind == token.Equal ||
+		t.Kind == token.LessThanGreaterThan ||
+		t.Kind == token.LessThan ||
+		t.Kind == token.GreaterThan ||
+		t.Kind == token.LessThanOrEqual ||
+		t.Kind == token.GreaterThanOrEqual ||
+		t.Kind == token.In
+}
+
+func (c *CodeGenerator) isArithOp(t token.Token) bool {
+	return c.isAddingOp(t) || c.isMultiplyOp(t)
 }
