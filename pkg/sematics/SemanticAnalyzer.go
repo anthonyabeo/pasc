@@ -40,6 +40,30 @@ func (s *SemanticAnalyzer) ComputeStaticExpressionTypes(stmt ast.Statement) erro
 		return nil
 	case token.Procedure:
 		return nil
+	case token.Function:
+		funcDecl := stmt.(*ast.FuncDeclaration)
+
+		for _, call := range funcDecl.Block.Callables {
+			if err := s.ComputeStaticExpressionTypes(call); err != nil {
+				return err
+			}
+
+			if err := s.StaticTypeCheck(call); err != nil {
+				return err
+			}
+		}
+
+		for _, stmt := range funcDecl.Block.Stats {
+			if err := s.ComputeStaticExpressionTypes(stmt); err != nil {
+				return err
+			}
+
+			if err := s.StaticTypeCheck(stmt); err != nil {
+				return err
+			}
+		}
+
+		return nil
 	default:
 		return nil
 	}
@@ -77,6 +101,16 @@ func (s *SemanticAnalyzer) computeStaticExpressionTypes(expr ast.Expression) err
 
 // Run ...
 func (s *SemanticAnalyzer) Run() error {
+	for _, call := range s.Ast.Block.Callables {
+		if err := s.ComputeStaticExpressionTypes(call); err != nil {
+			return err
+		}
+
+		if err := s.StaticTypeCheck(call); err != nil {
+			return err
+		}
+	}
+
 	for _, stmt := range s.Ast.Block.Stats {
 		if err := s.ComputeStaticExpressionTypes(stmt); err != nil {
 			return err
