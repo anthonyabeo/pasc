@@ -11,7 +11,9 @@ import (
 
 // CodeGenerator ...
 type CodeGenerator struct {
-	buf *bufio.Writer
+	nextID       uint64
+	nextBranchID uint64
+	buf          *bufio.Writer
 }
 
 // NewCodeGenerator ...
@@ -108,8 +110,8 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		}
 
 		if c.isRelationalOp(node.Operator) {
-			b1 := "b1"
-			err := c.emit(fmt.Sprintf("\t%s: %s = ", b1, c.brilType(node.EvalType.GetName())))
+			boolVar := c.nextBrancVar()
+			err := c.emit(fmt.Sprintf("\t%s: %s = ", boolVar, c.brilType(node.EvalType.GetName())))
 			if err != nil {
 				return err
 			}
@@ -122,7 +124,7 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 				return err
 			}
 
-			if err := c.emit(fmt.Sprintf("\tbr %s ", b1)); err != nil {
+			if err := c.emit(fmt.Sprintf("\tbr %s ", boolVar)); err != nil {
 				return err
 			}
 		}
@@ -132,38 +134,51 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 			return err
 		}
 
-		l1 := "l1" // TODO create next label dynamically
-		l2 := "l2"
-		cont := "cont"
-		c.emit(fmt.Sprintf(".%s ", l1))
+		truePathLabel := c.nextLabel()
+		falsePathLabel := c.nextLabel()
+		somewhere := c.nextLabel()
+
+		c.emit(fmt.Sprintf(".%s ", truePathLabel))
 		if node.ElsePath != nil {
-			c.emit(fmt.Sprintf(".%s;\n", l2))
+			c.emit(fmt.Sprintf(".%s;\n", falsePathLabel))
 		}
 
-		if err := c.emit(fmt.Sprintf(".%s:\n", l1)); err != nil {
+		if err := c.emit(fmt.Sprintf(".%s:\n", truePathLabel)); err != nil {
 			return err
 		}
 
 		if err := c.Gen(node.TruePath); err != nil {
 			return err
 		}
-		c.emit(fmt.Sprintf("\tjmp .%s;\n", cont))
+		c.emit(fmt.Sprintf("\tjmp .%s;\n", somewhere))
 
 		if node.ElsePath != nil {
-			if err := c.emit(fmt.Sprintf(".%s:\n", l2)); err != nil {
+			if err := c.emit(fmt.Sprintf(".%s:\n", falsePathLabel)); err != nil {
 				return err
 			}
 
 			if err := c.Gen(node.ElsePath); err != nil {
 				return err
 			}
-			c.emit(fmt.Sprintf("\tjmp .%s;\n", cont))
+			c.emit(fmt.Sprintf("\tjmp .%s;\n", somewhere))
 		}
 
-		c.emit(fmt.Sprintf(".%s:\n", cont))
+		c.emit(fmt.Sprintf(".%s:\n", somewhere))
 	}
 
 	return nil
+}
+
+func (c *CodeGenerator) nextLabel() string {
+	id := c.nextID
+	c.nextID++
+	return fmt.Sprintf("l%v", id)
+}
+
+func (c *CodeGenerator) nextBrancVar() string {
+	id := c.nextBranchID
+	c.nextBranchID++
+	return fmt.Sprintf("b%v", id)
 }
 
 func (c *CodeGenerator) emit(s string) error {

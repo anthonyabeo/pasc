@@ -917,7 +917,6 @@ func (p *Parser) isRelationalOp() bool {
 		p.lookahead.Kind == token.LessThanOrEqual ||
 		p.lookahead.Kind == token.GreaterThanOrEqual ||
 		p.lookahead.Kind == token.In
-
 }
 
 func (p *Parser) isSign() bool {
