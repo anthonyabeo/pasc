@@ -24,8 +24,8 @@ func (w *WriteParameter) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (w *WriteParameter) Attr(attr string) interface{} {
-	return nil
+func (w *WriteParameter) Attr(attr string) string {
+	return ""
 }
 
 func (w *WriteParameter) String() string {

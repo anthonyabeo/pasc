@@ -27,12 +27,12 @@ func (id *Identifier) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (id *Identifier) Attr(attr string) interface{} {
+func (id *Identifier) Attr(attr string) string {
 	switch attr {
 	case "type":
 		return id.EvalType.GetName()
 	default:
-		return nil
+		return ""
 	}
 }
 

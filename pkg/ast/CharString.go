@@ -2,14 +2,13 @@ package ast
 
 import (
 	"github.com/anthonyabeo/pasc/pkg/token"
-	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // CharString models the node for character string literals
 type CharString struct {
 	Token    token.Token
 	Value    string
-	EvalType types.Type
+	EvalType string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -23,12 +22,12 @@ func (c *CharString) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (c *CharString) Attr(attr string) interface{} {
+func (c *CharString) Attr(attr string) string {
 	switch attr {
 	case "type":
 		return c.EvalType
 	default:
-		return nil
+		return ""
 	}
 }
 

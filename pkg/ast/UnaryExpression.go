@@ -4,14 +4,13 @@ import (
 	"fmt"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
-	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // UnaryExpression ...
 type UnaryExpression struct {
 	Operator token.Token
 	Operand  Expression
-	EvalType types.Type
+	EvalType string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -25,12 +24,12 @@ func (u *UnaryExpression) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (u *UnaryExpression) Attr(attr string) interface{} {
+func (u *UnaryExpression) Attr(attr string) string {
 	switch attr {
 	case "type":
 		return u.EvalType
 	default:
-		return nil
+		return ""
 	}
 }
 
