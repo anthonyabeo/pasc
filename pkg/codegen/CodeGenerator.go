@@ -128,7 +128,7 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 
 		if c.isRelationalOp(node.Operator) {
 			boolVar := c.nextBrancVar()
-			err := c.emit(fmt.Sprintf("\t%s: %s = ", boolVar, c.brilType(node.EvalType.GetName())))
+			err := c.emit(fmt.Sprintf("\t%s: %s = ", boolVar, c.brilType(node.EvalType)))
 			if err != nil {
 				return err
 			}

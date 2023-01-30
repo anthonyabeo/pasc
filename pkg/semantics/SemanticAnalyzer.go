@@ -53,12 +53,24 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 
 	case *ast.BinaryExpression:
 		if s.isArithOp(node.Operator) {
+			err = s.computeStaticExprType(node.Left)
+			if err != nil {
+				return err
+			}
 
+			err = s.computeStaticExprType(node.Right)
+			if err != nil {
+				return err
+			}
+
+			// TODO implement type checking on arithmetic operation
+
+			node.EvalType = node.Left.Attr("type")
 		}
 
 		if s.isRelationalOp(node.Operator) {
 			// TODO check that the left and right operands are orderable. If they are not, return a error
-			node.EvalType = s.SymbolTable.Resolve("Boolean")
+			node.EvalType = s.SymbolTable.Resolve("Boolean").GetName()
 		}
 
 	case *ast.FuncDesignator:
@@ -67,7 +79,7 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 			return fmt.Errorf("function %s not defined", node.Name.Name)
 		}
 
-		node.EvalType = funcSymbol.GetType()
+		node.EvalType = funcSymbol.GetType().GetName()
 
 	case *ast.FuncDeclaration:
 		for _, call := range node.Block.Callables {

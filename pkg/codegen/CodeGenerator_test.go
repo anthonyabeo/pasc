@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/anthonyabeo/pasc/pkg/parser"
-	"github.com/anthonyabeo/pasc/pkg/sematics"
+	"github.com/anthonyabeo/pasc/pkg/semantics"
 )
 
 func TestGenerateBrilProgramAssignment(t *testing.T) {
@@ -30,7 +30,7 @@ func TestGenerateBrilProgramAssignment(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
@@ -70,7 +70,7 @@ func TestGenerateBrilProgramArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
@@ -114,7 +114,7 @@ func TestGenerateBrilProgramIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
@@ -166,7 +166,7 @@ func TestGenerateBrilProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &sematics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
