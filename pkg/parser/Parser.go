@@ -279,7 +279,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
 	}
 
-	funcDecl.ReturnType = types.NewInteger(p.lookahead)
+	funcDecl.ReturnType = &types.Integer{Name: p.lookahead.Text}
 	if err = p.consume(); err != nil {
 		return nil, err
 	}

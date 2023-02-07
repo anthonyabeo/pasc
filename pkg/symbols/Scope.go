@@ -77,8 +77,8 @@ func NewGlobalScope(parent Scope) *GlobalScope {
 }
 
 func (g *GlobalScope) initTypeSystem() {
-	g.Define(NewIntegerSymbol("integer", TYPE, &types.BuiltInType{Name: "integer"}))
-	g.Define(NewBooleanSymbol("Boolean", TYPE, &types.BuiltInType{Name: "Boolean"}))
+	g.Define(NewIntegerSymbol("integer", TYPE, &types.Integer{Name: "integer"}))
+	g.Define(NewBooleanSymbol("Boolean", TYPE, &types.Boolean{Name: "Boolean"}))
 }
 
 // GetScopeName returns the name of the function

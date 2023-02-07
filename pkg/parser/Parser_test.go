@@ -221,7 +221,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: types.NewInteger(token.NewToken(token.Integer, "integer")),
+			Type: &types.Integer{Name: "integer"},
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "foo", "integer", params, 1, 1, 0) {
@@ -282,7 +282,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: types.NewInteger(token.NewToken(token.Integer, "integer")),
+			Type: &types.Integer{Name: "integer"},
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "max", "integer", paramList, 2, 1, 0) {
