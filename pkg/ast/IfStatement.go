@@ -17,6 +17,7 @@ type IfStatement struct {
 // TokenLiteral returns the text value this node's token.
 func (f *IfStatement) TokenLiteral() string { return f.Token.Text }
 
+// TokenKind returns this node's token's kind
 func (f *IfStatement) TokenKind() token.Kind { return f.Token.Kind }
 
 // StatNode ...

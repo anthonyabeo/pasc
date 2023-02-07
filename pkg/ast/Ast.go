@@ -18,5 +18,8 @@ type Statement interface {
 type Expression interface {
 	Node
 	exprNode()
-	Attr(string) interface{}
+	Attr(string) any
+	RValue() Expression
+	LValue() Expression
+	String() string
 }

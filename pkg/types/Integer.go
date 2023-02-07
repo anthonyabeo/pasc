@@ -1,18 +1,15 @@
 package types
 
-import "github.com/anthonyabeo/pasc/pkg/token"
-
 // Integer is an integer data type
 type Integer struct {
-	Token token.Token
-}
-
-// NewInteger ...
-func NewInteger(tt token.Token) *Integer {
-	return &Integer{Token: tt}
+	Name string
 }
 
 // GetName ...
 func (i *Integer) GetName() string {
-	return i.Token.Text
+	return i.Name
+}
+
+func (i *Integer) isBuiltIn() bool {
+	return true
 }

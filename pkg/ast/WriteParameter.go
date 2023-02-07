@@ -24,10 +24,16 @@ func (w *WriteParameter) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (w *WriteParameter) Attr(attr string) interface{} {
-	return nil
+func (w *WriteParameter) Attr(attr string) any {
+	return ""
 }
 
 func (w *WriteParameter) String() string {
 	return fmt.Sprintf("%v:%v:%v", w.E, w.TotalWidth, w.FracDigits)
 }
+
+// RValue ...
+func (w *WriteParameter) RValue() Expression { return nil }
+
+// LValue ...
+func (w *WriteParameter) LValue() Expression { return nil }

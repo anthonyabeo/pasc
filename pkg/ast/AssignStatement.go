@@ -18,6 +18,7 @@ func (as *AssignStatement) TokenLiteral() string {
 	return as.Token.Text
 }
 
+// TokenKind returns this node's token kind
 func (as *AssignStatement) TokenKind() token.Kind {
 	return as.Token.Kind
 }

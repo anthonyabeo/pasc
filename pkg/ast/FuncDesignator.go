@@ -30,15 +30,21 @@ func (f *FuncDesignator) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (f *FuncDesignator) Attr(attr string) interface{} {
+func (f *FuncDesignator) Attr(attr string) any {
 	switch attr {
 	case "type":
-		return f.EvalType.GetName()
+		return f.EvalType
 	default:
-		return nil
+		return ""
 	}
 }
 
 func (f *FuncDesignator) String() string {
 	return fmt.Sprintf("%v(%v)", f.Name, f.Parameters)
 }
+
+// RValue ...
+func (f *FuncDesignator) RValue() Expression { return nil }
+
+// LValue ...
+func (f *FuncDesignator) LValue() Expression { return nil }

@@ -88,7 +88,10 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	program := &ast.ProgramAST{Name: programName, ParamList: programParams}
+	program := &ast.ProgramAST{
+		Name:      programName,
+		ParamList: programParams,
+		Token:     token.NewToken(token.Program, "program")}
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
@@ -276,7 +279,7 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
 	}
 
-	funcDecl.ReturnType = types.NewInteger(p.lookahead)
+	funcDecl.ReturnType = &types.Integer{Name: p.lookahead.Text}
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
@@ -914,7 +917,6 @@ func (p *Parser) isRelationalOp() bool {
 		p.lookahead.Kind == token.LessThanOrEqual ||
 		p.lookahead.Kind == token.GreaterThanOrEqual ||
 		p.lookahead.Kind == token.In
-
 }
 
 func (p *Parser) isSign() bool {

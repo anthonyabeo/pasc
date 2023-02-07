@@ -1,9 +1,8 @@
 package ast
 
 import (
-	"go/types"
-
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // NilValue represents node for nil values.
@@ -23,15 +22,21 @@ func (n *NilValue) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (n *NilValue) Attr(attr string) interface{} {
+func (n *NilValue) Attr(attr string) any {
 	switch attr {
 	case "type":
 		return n.EvalType
 	default:
-		return nil
+		return ""
 	}
 }
 
 func (n *NilValue) String() string {
 	return "nil"
 }
+
+// RValue ...
+func (n *NilValue) RValue() Expression { return nil }
+
+// LValue ...
+func (n *NilValue) LValue() Expression { return nil }

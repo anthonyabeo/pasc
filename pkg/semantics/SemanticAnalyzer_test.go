@@ -1,4 +1,4 @@
-package sematics
+package semantics
 
 import (
 	"testing"
@@ -30,7 +30,7 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
@@ -62,7 +62,7 @@ func TestStaticCheckIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
@@ -106,7 +106,7 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{ast: prog, SymbolTable: pars.SymbolTable()}
+	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
 	if err := semAnal.Run(); err != nil {
 		t.Error(err)
 	}
