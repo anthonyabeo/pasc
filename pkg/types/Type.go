@@ -14,10 +14,12 @@ func IsTypeIdentifier(tt token.Kind) bool {
 	return true
 }
 
+// BuiltInType represents a non-user-defined data type
 type BuiltInType struct {
 	Name string
 }
 
+// GetName retuns the name of the current Type
 func (b *BuiltInType) GetName() string {
 	return b.Name
 }
