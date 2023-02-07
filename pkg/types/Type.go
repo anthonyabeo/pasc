@@ -14,12 +14,14 @@ func IsTypeIdentifier(tt token.Kind) bool {
 	return true
 }
 
-// BuiltInType represents a non-user-defined data type
-type BuiltInType struct {
-	Name string
+// BuiltIn represents a generic non-user-defined data type
+type BuiltIn interface {
+	Type
+	isBuiltIn() bool
 }
 
-// GetName retuns the name of the current Type
-func (b *BuiltInType) GetName() string {
-	return b.Name
+// UserDefined represents a generic user-defined type
+type UserDefined interface {
+	Type
+	isUserDefined() bool
 }
