@@ -29,9 +29,6 @@ func (v *VarDeclaration) String() string {
 	return fmt.Sprintf("%v", v.Decls)
 }
 
-// Gen creates and emits BRIL code for this node
-func (v *VarDeclaration) Gen() {}
-
 // VarDecl ...
 type VarDecl struct {
 	Names []*Identifier
@@ -39,17 +36,6 @@ type VarDecl struct {
 	Scope symbols.Scope
 }
 
-// TokenLiteral returns the text value this node's token.
-func (v *VarDecl) TokenLiteral() string { return "var" }
-
-// StatNode ...
-func (v *VarDecl) StatNode() string {
-	return fmt.Sprintf("%v: %v", v.Names, v.Type.GetName())
-}
-
 func (v *VarDecl) String() string {
 	return fmt.Sprintf("%v: %v", v.Names, v.Type.GetName())
 }
-
-// Gen creates and emits BRIL code for this node
-func (v *VarDecl) Gen() {}
