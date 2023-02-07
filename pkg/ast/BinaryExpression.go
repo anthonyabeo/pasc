@@ -4,13 +4,14 @@ import (
 	"fmt"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // BinaryExpression ...
 type BinaryExpression struct {
 	Left, Right Expression
 	Operator    token.Token
-	EvalType    string
+	EvalType    types.Type
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -24,7 +25,7 @@ func (b *BinaryExpression) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (b *BinaryExpression) Attr(attr string) string {
+func (b *BinaryExpression) Attr(attr string) any {
 	switch attr {
 	case "type":
 		return b.EvalType

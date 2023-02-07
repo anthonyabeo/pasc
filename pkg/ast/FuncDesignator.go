@@ -5,13 +5,14 @@ import (
 
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // FuncDesignator is the node that represents a function call
 type FuncDesignator struct {
 	Name       *Identifier
 	Parameters []Expression
-	EvalType   string
+	EvalType   types.Type
 	Scope      symbols.Scope
 }
 
@@ -29,7 +30,7 @@ func (f *FuncDesignator) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (f *FuncDesignator) Attr(attr string) string {
+func (f *FuncDesignator) Attr(attr string) any {
 	switch attr {
 	case "type":
 		return f.EvalType

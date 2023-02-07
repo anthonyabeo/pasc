@@ -24,7 +24,7 @@ func (w *WriteParameter) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (w *WriteParameter) Attr(attr string) string {
+func (w *WriteParameter) Attr(attr string) any {
 	return ""
 }
 

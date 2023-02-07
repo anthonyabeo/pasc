@@ -2,12 +2,13 @@ package ast
 
 import (
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // NilValue represents node for nil values.
 type NilValue struct {
 	Token    token.Token
-	EvalType string
+	EvalType types.Type
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -21,7 +22,7 @@ func (n *NilValue) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (n *NilValue) Attr(attr string) string {
+func (n *NilValue) Attr(attr string) any {
 	switch attr {
 	case "type":
 		return n.EvalType

@@ -25,10 +25,10 @@ func (u *UIntegerLiteral) TokenKind() token.Kind {
 }
 
 // Attr ...
-func (u *UIntegerLiteral) Attr(attr string) string {
+func (u *UIntegerLiteral) Attr(attr string) any {
 	switch attr {
 	case "type":
-		return u.EvalType.GetName()
+		return u.EvalType
 	default:
 		return ""
 	}
