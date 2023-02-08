@@ -610,11 +610,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 	return stmt, nil
 }
 
-// simple-statement := empty-statement
-//
-//			| assignment-statement
-//		    | procedure-statement
-//	        | goto-statement .
+// simple-statement := empty-statement | assignment-statement | procedure-statement | goto-statement .
 func (p *Parser) simpleStatement() (ast.Statement, error) {
 	var (
 		err  error
@@ -788,15 +784,10 @@ func (p *Parser) term() (ast.Expression, error) {
 	return expr, nil
 }
 
+// TODO: implements only 'bounded-identifier' alternative
+// factor > bound-identifier
+// factor > variable-access | unsigned-constant | function-designator | set-constructor | '(' expression ')' | 'not' factor
 func (p *Parser) factor() (ast.Expression, error) {
-	// TODO: implements only 'bounded-identifier' alternative
-	// factor > bound-identifier
-	// factor > variable-access
-	//		  | unsigned-constant
-	//		  | function-designator
-	//		  | set-constructor
-	//		  | '(' expression ')'
-	//		  | 'not' factor
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
@@ -834,12 +825,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 	}
 }
 
-// variable-access :=
-//
-//	    | entire-variable      ===> identifier
-//	    | component-variable
-//		| identified-variable
-//		| buffer-variable .
+// variable-access := entire-variable | component-variable | identified-variable | buffer-variable .
 func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	// if err := p.consume(); err != nil {
 	// 	return nil, err
@@ -848,13 +834,10 @@ func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	return &ast.Identifier{Token: t, Name: t.Text, Scope: p.curScope}, nil
 }
 
+// TODO: complete implementation
+// unsigned-constant := unsigned-number | character-string | constant-identier | 'nil' .
+// constant-identifier = identifier .
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
-	// TODO: complete implementation
-	// unsigned-constant := unsigned-number
-	//					 | character-string
-	//					 | constant-identier
-	//					 | 'nil' .
-	// constant-identifier = identifier .
 
 	tt := p.lookahead
 
@@ -876,12 +859,10 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	}
 }
 
+// unsigned-number := unsigned-integer | unsigned-real .
+// unsigned-integer := digit-sequence .
+// unsigned-real := digit-sequence '.' fractional-part [ 'e' scale-factor ] | digit-sequence 'e' scale-factor .
 func (p *Parser) unsignedNumber(tt token.Token) (ast.Expression, error) {
-	// unsigned-number := unsigned-integer
-	//                 | unsigned-real .
-	// unsigned-integer := digit-sequence .
-	// unsigned-real := digit-sequence '.' fractional-part [ 'e' scale-factor ]
-	//                | digit-sequence 'e' scale-factor .
 
 	switch tt.Kind {
 	case token.UIntLiteral:
@@ -926,7 +907,6 @@ func (p *Parser) isSign() bool {
 
 // if-statement := 'if' Boolean-expression 'then' statement [ else-part ] .
 // Boolean-expression := expression .
-// else-part := 'else' statement .
 func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 	var err error
 
@@ -960,6 +940,7 @@ func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 	return ifStmt, nil
 }
 
+// else-part := 'else' statement .
 func (p *Parser) elsePart() (ast.Statement, error) {
 	if err := p.match(token.Else); err != nil {
 		return nil, err
@@ -1024,11 +1005,7 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	return paramList, nil
 }
 
-// actual-parameter := expression
-//
-//			         | variable-access
-//					 | procedure-identitier
-//	                 | function-identitier .
+// actual-parameter := expression | variable-access | procedure-identitier | function-identitier .
 func (p *Parser) actualParameter() (ast.Expression, error) {
 	expr, err := p.expression()
 	if err != nil {
