@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
@@ -115,7 +116,16 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			}
 
 			if lex.isDigit() {
-				return token.Token{Kind: token.UIntLiteral, Text: lex.readIntLiteral()}, nil
+				uNum := lex.readUnsignedNumber()
+				if strings.Contains(uNum, "e") || strings.Contains(uNum, ".") {
+					return token.Token{
+						Kind: token.URealLiteral,
+						Text: uNum}, nil
+				}
+
+				return token.Token{
+					Kind: token.UIntLiteral,
+					Text: uNum}, nil
 			}
 
 			return token.Token{}, fmt.Errorf("invalid character: %v", string(lex.curChar))
@@ -153,6 +163,49 @@ func (lex *Lexer) readStringLiteral() string {
 
 func (lex *Lexer) readIntLiteral() string {
 	pos := lex.curCharPos
+	for lex.isDigit() {
+		lex.consume()
+	}
+
+	return lex.input[pos:lex.curCharPos]
+}
+
+func (lex *Lexer) readUnsignedNumber() string {
+	pos := lex.curCharPos
+	for lex.isDigit() {
+		lex.consume()
+	}
+
+	// Unsigned real
+	if lex.curChar == '.' {
+		lex.consume()
+
+		// fractional-part
+		for lex.isDigit() {
+			lex.consume()
+		}
+
+		if lex.curChar == 'e' {
+			lex.consume()
+		}
+
+		if lex.curChar == '+' || lex.curChar == '-' {
+			lex.consume()
+		}
+
+		for lex.isDigit() {
+			lex.consume()
+		}
+	}
+
+	if lex.curChar == 'e' {
+		lex.consume()
+	}
+
+	if lex.curChar == '+' || lex.curChar == '-' {
+		lex.consume()
+	}
+
 	for lex.isDigit() {
 		lex.consume()
 	}

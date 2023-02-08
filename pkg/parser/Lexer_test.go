@@ -172,3 +172,48 @@ func TestOperators(t *testing.T) {
 		}
 	}
 }
+
+func TestTokenizingUnsignedReal(t *testing.T) {
+	input := `
+		854.32
+		6.023e-23
+		123e+4
+		1.2
+		0.000232
+		0.000232e-4837294
+		3.142
+		1.2e4938
+	`
+
+	tests := []struct {
+		expKind token.Kind
+		expText string
+	}{
+		{token.URealLiteral, "854.32"},
+		{token.URealLiteral, "6.023e-23"},
+		{token.URealLiteral, "123e+4"},
+		{token.URealLiteral, "1.2"},
+		{token.URealLiteral, "0.000232"},
+		{token.URealLiteral, "0.000232e-4837294"},
+		{token.URealLiteral, "3.142"},
+		{token.URealLiteral, "1.2e4938"},
+	}
+
+	lex := NewLexer(input)
+
+	for _, tt := range tests {
+		tok, err := lex.NextToken()
+		if err != nil {
+			t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
+		}
+
+		if tok.Text != tt.expText {
+			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", tt.expText, tok.Text)
+		}
+
+		if tok.Kind != tt.expKind {
+			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
+				tt.expText, token.GetTokenName(tok.Kind))
+		}
+	}
+}
