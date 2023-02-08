@@ -828,8 +828,15 @@ func (p *Parser) factor() (ast.Expression, error) {
 
 		return expr, nil
 	case token.Not:
+		uExpr := &ast.UnaryExpression{Operator: p.lookahead}
+		expr, err := p.factor()
+		if err != nil {
+			return nil, err
+		}
 
-		return nil, nil
+		uExpr.Operand = expr
+
+		return uExpr, nil
 	default:
 		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
 	}
