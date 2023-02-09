@@ -642,13 +642,15 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 	return stmt, nil
 }
 
+// procedure-statement = procedure-identitier ( [ actual-parameter-list ]
+//
+//	                               | read-parameter-list
+//	                               | readln-parameter-list
+//	                               | write-parameter-list
+//									  | writeln-parameter-list ) .
 func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, error) {
 	// TODO: complete implementation
-	// procedure-statement = procedure-identitier ( [ actual-parameter-list ]
-	//                                | read-parameter-list
-	//                                | readln-parameter-list
-	//                                | write-parameter-list
-	//								  | writeln-parameter-list ) .
+
 	var err error
 
 	ps := ast.NewProcedureStatement(&ast.Identifier{Token: tt, Name: tt.Text})
@@ -784,11 +786,18 @@ func (p *Parser) term() (ast.Expression, error) {
 	return expr, nil
 }
 
+<<<<<<< HEAD
 // TODO: implements only 'bounded-identifier' alternative
 // factor > bound-identifier
 // factor > variable-access | unsigned-constant | function-designator | set-constructor | '(' expression ')' | 'not' factor
 func (p *Parser) factor() (ast.Expression, error) {
 
+=======
+// factor > bound-identifier
+// factor > variable-access | unsigned-constant | function-designator | set-constructor | '(' expression ')' | 'not' factor
+func (p *Parser) factor() (ast.Expression, error) {
+	// TODO: incomplete implementation
+>>>>>>> a4f8b35 (cosmetic changes)
 	switch p.lookahead.Kind {
 	case token.Identifier:
 		tt := p.lookahead
@@ -819,6 +828,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 
 		return expr, nil
 	case token.Not:
+
 		return nil, nil
 	default:
 		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
@@ -850,7 +860,7 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 		return p.unsignedNumber(tt)
 	case token.CharString:
 		return &ast.CharString{Token: tt, Value: tt.Text}, nil
-	case token.ConstIdentifier:
+	case token.Identifier:
 		return &ast.Identifier{Token: tt, Name: tt.Text}, nil
 	case token.Nil:
 		return &ast.NilValue{Token: tt}, nil
@@ -1006,6 +1016,10 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 
 // actual-parameter := expression | variable-access | procedure-identitier | function-identitier .
 func (p *Parser) actualParameter() (ast.Expression, error) {
+<<<<<<< HEAD
+=======
+	// TODO only implements expression path
+>>>>>>> a4f8b35 (cosmetic changes)
 	expr, err := p.expression()
 	if err != nil {
 		return nil, err
