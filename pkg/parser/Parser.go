@@ -862,15 +862,14 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 // unsigned-number := unsigned-integer | unsigned-real .
 // unsigned-integer := digit-sequence .
 // unsigned-real := digit-sequence '.' fractional-part [ 'e' scale-factor ] | digit-sequence 'e' scale-factor .
+// fractional-part = digit-sequence .
+// scale-factor = [ sign ] digit-sequence .
 func (p *Parser) unsignedNumber(tt token.Token) (ast.Expression, error) {
-
 	switch tt.Kind {
 	case token.UIntLiteral:
 		return &ast.UIntegerLiteral{Token: tt, Value: tt.Text}, nil
 	case token.URealLiteral:
-		// TODO: implement
-		// return ast.NewURealLiteral()
-		return nil, nil
+		return &ast.URealLiteral{Token: tt, Value: tt.Text}, nil
 	default:
 		return nil, fmt.Errorf("expected unsigned real or integer, instead got, %v", p.lookahead.Text)
 	}
