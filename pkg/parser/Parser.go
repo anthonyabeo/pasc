@@ -844,10 +844,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 
 // variable-access := entire-variable | component-variable | identified-variable | buffer-variable .
 func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
-	// if err := p.consume(); err != nil {
-	// 	return nil, err
-	// }
-
+	// TODO incomplete. Only implements 'entire-variable' path
 	return &ast.Identifier{Token: t, Name: t.Text, Scope: p.curScope}, nil
 }
 
