@@ -32,6 +32,9 @@ const (
 	Case
 	Nil
 	Not
+	To
+	DownTo
+	Do
 
 	Identifier
 	SemiColon
@@ -119,6 +122,12 @@ func GetTokenName(t Kind) string {
 		return "nil"
 	case 23:
 		return "not"
+	case 24:
+		return "to"
+	case 25:
+		return "downto"
+	case 26:
+		return "do"
 	default:
 		return ""
 	}
@@ -155,5 +164,8 @@ func init() {
 		"case":      Case,
 		"nil":       Nil,
 		"not":       Not,
+		"to":        To,
+		"downto":    DownTo,
+		"do":        Do,
 	}
 }
