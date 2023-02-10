@@ -236,7 +236,7 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 // procedure-identier := identier .
 func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 	var (
-		err error
+		err       error
 		paramList []*ast.Parameter
 	)
 
@@ -265,7 +265,6 @@ func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 	var (
 		err       error
-		// funcName  string
 		typ       types.Type
 		paramList []*ast.Parameter
 	)
@@ -275,9 +274,7 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 		return nil, err
 	}
 
-	// funcName = p.lookahead.Text
 	fHead.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
-
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -294,42 +291,18 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 
 	typ = p.symTable.Resolve(p.lookahead.Text)
 	if typ == nil {
-		return nil, fmt.Errorf("")
+		return nil, fmt.Errorf("Parse Error: symbol %v not found", p.lookahead.Text)
 	}
-	
 	fHead.ReturnType = typ
 
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
 
-	// // define the function symbol and update the current symbol table to the new function scope
-	// funcSymbol := symbols.NewFunctionSymbol(funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
-	// p.curScope.Define(funcSymbol)
-	// fHead.Scope = p.curScope
-	// p.curScope = funcSymbol.Scope
-
-	// for _, param := range fHead.Parameters {
-	// 	if paramBuiltinType := p.symTable.Resolve(param.Type.GetName()); paramBuiltinType != nil {
-	// 		typ = paramBuiltinType
-	// 	} else {
-	// 		// typ = some user-defined type
-	// 		// it must therefore be defined somewhere in the scope tree
-	// 		// if not found, return error
-	// 		// otherwise, typ = <<user-defined-type>>
-	// 	}
-
-	// 	for _, name := range param.Names {
-	// 		p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
-	// 	}
-	// }
-
-	// funcSymbol.Type = fHead.ReturnType
-
 	return fHead, nil
 }
 
-// function-declaration := function-heading ';' directive | function-identification ';' function-block | function-heading ';' function-block . 
+// function-declaration := function-heading ';' directive | function-identification ';' function-block | function-heading ';' function-block .
 func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	var typ types.Type
 
@@ -337,20 +310,10 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	funcDecl := &ast.FuncDeclaration{Heading: fHead}
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
-	}
-
-	switch p.lookahead.Kind {
-	case token.Identifier:
-		funcDecl.Directive = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
-	default:
-		funcDecl.Block, err = p.block()
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	// define the function symbol and update the current symbol table to the new function scope
@@ -374,8 +337,17 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 			p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
 		}
 	}
-
 	funcSymbol.Type = funcDecl.Heading.ReturnType
+
+	switch p.lookahead.Kind {
+	case token.Identifier:
+		funcDecl.Directive = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+	default:
+		funcDecl.Block, err = p.block()
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
@@ -390,11 +362,6 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 //                          | procedural-parameter-specification
 //                          | functional-parameter-specification .
 // formal-parameter-section > conformant-array-parameter-specification .
-//
-// value-parameter-specication = identifier-list ':' type-identifier .
-// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
-// procedural-parameter-specification = procedure-heading .
-// functional-parameter-specification = function-heading .
 func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 	var (
 		err       error
@@ -410,6 +377,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 		p.lookahead.Kind == token.Procedure || p.lookahead.Kind == token.Function {
 
 		switch p.lookahead.Kind {
+		// value-parameter-specication = identifier-list ':' type-identifier .
 		case token.Identifier:
 			names, err := p.identifierList()
 			if err != nil {
@@ -431,6 +399,8 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
+
+		// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
 		case token.Var:
 			if err := p.match(token.Var); err != nil {
 				return nil, err
@@ -441,7 +411,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 				return nil, err
 			}
 			params := &ast.Parameter{Names: names}
-			
+
 			if err := p.match(token.Colon); err != nil {
 				return nil, err
 			}
@@ -461,6 +431,8 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
+
+		// procedural-parameter-specification = procedure-heading .
 		case token.Procedure:
 			pHead, err := p.procedureHeading()
 			if err != nil {
@@ -468,6 +440,8 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			}
 
 			paramList = append(paramList, pHead.Parameters...)
+
+		// functional-parameter-specification = function-heading .
 		case token.Function:
 			fHead, err := p.functionHeading()
 			if err != nil {
@@ -478,7 +452,6 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 		default:
 			return nil, fmt.Errorf("Parse Error: unexpected token %v", p.lookahead.Text)
 		}
-
 	}
 
 	if err = p.match(token.RParen); err != nil {
