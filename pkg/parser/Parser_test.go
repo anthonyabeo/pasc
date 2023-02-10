@@ -715,31 +715,31 @@ func testFuncDeclaration(
 		return false
 	}
 
-	if funcDecl.Token.Kind != token.Function {
-		t.Errorf("function declaration has wrong token type, %v", funcDecl.Token.Text)
+	if funcDecl.Heading.Token.Kind != token.Function {
+		t.Errorf("function declaration has wrong token type, %v", funcDecl.Heading.Token.Text)
 		return false
 	}
 
-	if funcDecl.Name.TokenLiteral() != funcName {
-		t.Errorf("expected function name to be %v, got %v instead", funcName, funcDecl.Name.TokenLiteral())
+	if funcDecl.Heading.Name.TokenLiteral() != funcName {
+		t.Errorf("expected function name to be %v, got %v instead", funcName, funcDecl.Heading.Name.TokenLiteral())
 		return false
 	}
 
-	if funcDecl.ReturnType.GetName() != retType {
-		t.Errorf("expected return type to be %v, got %v instead", retType, funcDecl.ReturnType.GetName())
+	if funcDecl.Heading.ReturnType.GetName() != retType {
+		t.Errorf("expected return type to be %v, got %v instead", retType, funcDecl.Heading.ReturnType.GetName())
 	}
 
-	for i, j := 0, 0; i < len(paramList) && j < len(funcDecl.Parameters); i, j = i+1, j+1 {
-		if paramList[i].Type.GetName() != funcDecl.Parameters[j].Type.GetName() {
+	for i, j := 0, 0; i < len(paramList) && j < len(funcDecl.Heading.Parameters); i, j = i+1, j+1 {
+		if paramList[i].Type.GetName() != funcDecl.Heading.Parameters[j].Type.GetName() {
 			t.Errorf("expected parameter type to be %v, got %v instead",
-				paramList[i].Type.GetName(), funcDecl.Parameters[j].Type.GetName())
+				paramList[i].Type.GetName(), funcDecl.Heading.Parameters[j].Type.GetName())
 
 			return false
 		}
 
-		for m, n := 0, 0; m < len(paramList[i].Names) && n < len(funcDecl.Parameters[j].Names); m, n = m+1, n+1 {
-			if paramList[i].Names[m].Name != funcDecl.Parameters[j].Names[n].Name {
-				t.Errorf("unmatched parameter names, %v and %v", paramList[i].Names[m], funcDecl.Parameters[j].Names[n])
+		for m, n := 0, 0; m < len(paramList[i].Names) && n < len(funcDecl.Heading.Parameters[j].Names); m, n = m+1, n+1 {
+			if paramList[i].Names[m].Name != funcDecl.Heading.Parameters[j].Names[n].Name {
+				t.Errorf("unmatched parameter names, %v and %v", paramList[i].Names[m], funcDecl.Heading.Parameters[j].Names[n])
 				return false
 			}
 		}

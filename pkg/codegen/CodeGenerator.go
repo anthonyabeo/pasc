@@ -195,14 +195,14 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 
 	case *ast.FuncDeclaration:
 		var params []string
-		for _, param := range node.Parameters {
+		for _, param := range node.Heading.Parameters {
 			for _, name := range param.Names {
 				params = append(params, fmt.Sprintf("%s:%s", name.Name, c.brilType(param.Type.GetName())))
 			}
 		}
 
 		funcHeader := fmt.Sprintf(
-			"@%s(%s): %s {\n", node.Name.Name, strings.Join(params, ", "), c.brilType(node.ReturnType.GetName()))
+			"@%s(%s): %s {\n", node.Heading.Name.Name, strings.Join(params, ", "), c.brilType(node.Heading.ReturnType.GetName()))
 
 		if err := c.emit(funcHeader); err != nil {
 			return err
