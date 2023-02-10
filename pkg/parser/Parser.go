@@ -206,19 +206,12 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 	// procedural-parameter-specification = procedure-heading .
 	// functional-parameter-specification = function-heading .
 	//
-	// function-heading = 'function' identifier [ formal-parameter-list ] ':' result-type .
-	// procedure-heading = 'procedure' identifier [ formal-parameter-list ] .
-	//
 	// result-type = simple-type-identifier | pointer-type-identifier .
 	// simple-type-identifier = type-identifier .
 	// pointer-type-identifier = type-identifier .
 	//
 	// type-identifier = identifier .
 	//
-	//
-	// function-declaration := function-heading ';' directive
-	//                      | function-identification ';' function-block
-	//                      | function-heading ';' function-block .       <---- implementing this
 	// function-identification = 'function' function-identifier .
 	// function-identifier = identifier .
 	// function-block = block .
@@ -243,6 +236,7 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 	return callables, nil
 }
 
+// function-heading = 'function' identifier [ formal-parameter-list ] ':' result-type .
 func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	var (
 		err       error
@@ -275,11 +269,17 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 	}
 
 	//TODO: Fix this
-	if !types.IsTypeIdentifier(p.lookahead.Kind) {
-		return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+	// if !types.IsTypeIdentifier(p.lookahead.Kind) {
+	// 	return nil, fmt.Errorf("expected type identifier; got %v", p.lookahead.Text)
+	// }
+	typ = p.symTable.Resolve(p.lookahead.Text)
+	if typ == nil {
+		return nil, fmt.Errorf("")
 	}
+	
+	funcDecl.ReturnType = typ
 
-	funcDecl.ReturnType = &types.Integer{Name: p.lookahead.Text}
+	// funcDecl.ReturnType = &types.Integer{Name: p.lookahead.Text}
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
@@ -302,17 +302,18 @@ func (p *Parser) functionHeading() (*ast.FuncDeclaration, error) {
 		}
 	}
 
-	if retType := p.symTable.Resolve(funcDecl.ReturnType.GetName()); retType != nil {
-		typ = retType
-	} else {
-		// typ = some user-defined type
-	}
+	// if retType := p.symTable.Resolve(funcDecl.ReturnType.GetName()); retType != nil {
+	// 	typ = retType
+	// } else {
+	// 	// typ = some user-defined type
+	// }
 
-	funcSymbol.Type = typ
+	funcSymbol.Type = funcDecl.ReturnType
 
 	return funcDecl, nil
 }
 
+// function-declaration := function-heading ';' directive | function-identification ';' function-block | function-heading ';' function-block . 
 func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	funcDecl, err := p.functionHeading()
 	if err != nil {
@@ -335,8 +336,8 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	return funcDecl, nil
 }
 
+// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
 func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
-	// formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
 	var (
 		err       error
 		typ       types.Type
@@ -642,12 +643,7 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 	return stmt, nil
 }
 
-// procedure-statement = procedure-identitier ( [ actual-parameter-list ]
-//
-//	                               | read-parameter-list
-//	                               | readln-parameter-list
-//	                               | write-parameter-list
-//									  | writeln-parameter-list ) .
+// procedure-statement = procedure-identitier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
 func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, error) {
 	// TODO: complete implementation
 
