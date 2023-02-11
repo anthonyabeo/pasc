@@ -196,9 +196,19 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 	case *ast.FuncDeclaration:
 		var params []string
 		for _, param := range node.Heading.Parameters {
-			for _, name := range param.Names {
-				params = append(params, fmt.Sprintf("%s:%s", name.Name, c.brilType(param.Type.GetName())))
+			switch pm := param.(type) {
+			case *ast.ValueParam:
+				for _, name := range pm.Names {
+					params = append(params, fmt.Sprintf("%s:%s", name.Name, c.brilType(pm.Type.GetName())))
+				}
+			case *ast.VariableParam:
+				for _, name := range pm.Names {
+					params = append(params, fmt.Sprintf("%s:%s", name.Name, c.brilType(pm.Type.GetName())))
+				}
+			default:
+				return fmt.Errorf("%v is not a value or variable parameter specification", pm)
 			}
+
 		}
 
 		funcHeader := fmt.Sprintf(

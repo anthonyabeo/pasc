@@ -74,7 +74,7 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 	var 
 		a, b, sum : integer;
 
-	function max(n, m integer): integer;
+	function max(n, m : integer): integer;
 	var result: integer;
 
 	begin

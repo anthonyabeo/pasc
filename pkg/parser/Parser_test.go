@@ -185,7 +185,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	input := `
 	program MaxProgram;
 
-	function foo(n, m integer): integer;
+	function foo(n, m :integer): integer;
 	var result: integer;
 
 	begin
@@ -215,8 +215,8 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		return
 	}
 
-	params := []*ast.Parameter{
-		{
+	params := []ast.FormalParameter{
+		&ast.ValueParam{
 			Names: []*ast.Identifier{
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
@@ -241,7 +241,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	var 
 		a, b, sum : integer;
 
-	function max(n, m integer): integer;
+	function max(n, m : integer): integer;
 	var result: integer;
 
 	begin
@@ -276,8 +276,8 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		return
 	}
 
-	paramList := []*ast.Parameter{
-		{
+	paramList := []ast.FormalParameter{
+		&ast.ValueParam{
 			Names: []*ast.Identifier{
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
@@ -457,7 +457,7 @@ func TestSymbolTableGenerated(t *testing.T) {
 	var 
 		a, b, sum : integer;
 
-	function max(n, m integer): integer;
+	function max(n, m :integer): integer;
 	var result: integer;
 
 	begin
@@ -706,7 +706,7 @@ func testFuncDeclaration(
 	t *testing.T,
 	fd ast.Statement,
 	funcName, retType string,
-	paramList []*ast.Parameter,
+	paramList []ast.FormalParameter,
 	numStmts, numVarDefs, numCallables int,
 ) bool {
 	funcDecl, ok := fd.(*ast.FuncDeclaration)
@@ -730,19 +730,19 @@ func testFuncDeclaration(
 	}
 
 	for i, j := 0, 0; i < len(paramList) && j < len(funcDecl.Heading.Parameters); i, j = i+1, j+1 {
-		if paramList[i].Type.GetName() != funcDecl.Heading.Parameters[j].Type.GetName() {
+		if paramList[i].String() != funcDecl.Heading.Parameters[j].String() {
 			t.Errorf("expected parameter type to be %v, got %v instead",
-				paramList[i].Type.GetName(), funcDecl.Heading.Parameters[j].Type.GetName())
+				paramList[i].String(), funcDecl.Heading.Parameters[j].String())
 
 			return false
 		}
 
-		for m, n := 0, 0; m < len(paramList[i].Names) && n < len(funcDecl.Heading.Parameters[j].Names); m, n = m+1, n+1 {
-			if paramList[i].Names[m].Name != funcDecl.Heading.Parameters[j].Names[n].Name {
-				t.Errorf("unmatched parameter names, %v and %v", paramList[i].Names[m], funcDecl.Heading.Parameters[j].Names[n])
-				return false
-			}
-		}
+		// for m, n := 0, 0; m < len(paramList[i].Names) && n < len(funcDecl.Heading.Parameters[j].Names); m, n = m+1, n+1 {
+		// 	if paramList[i].Names[m].Name != funcDecl.Heading.Parameters[j].Names[n].Name {
+		// 		t.Errorf("unmatched parameter names, %v and %v", paramList[i].Names[m], funcDecl.Heading.Parameters[j].Names[n])
+		// 		return false
+		// 	}
+		// }
 	}
 
 	if !testBlock(t, funcDecl.Block, numStmts, numVarDefs, numCallables) {

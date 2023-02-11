@@ -237,7 +237,7 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 	var (
 		err       error
-		paramList []*ast.Parameter
+		paramList []ast.FormalParameter
 	)
 
 	pHead := &ast.ProcedureHeading{Token: p.lookahead}
@@ -266,7 +266,7 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 	var (
 		err       error
 		typ       types.Type
-		paramList []*ast.Parameter
+		paramList []ast.FormalParameter
 	)
 
 	fHead := &ast.FuncHeading{Token: p.lookahead}
@@ -324,17 +324,35 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	p.curScope = funcSymbol.Scope
 
 	for _, param := range funcDecl.Heading.Parameters {
-		if paramBuiltinType := p.symTable.Resolve(param.Type.GetName()); paramBuiltinType != nil {
-			typ = paramBuiltinType
-		} else {
-			// typ = some user-defined type
-			// it must therefore be defined somewhere in the scope tree
-			// if not found, return error
-			// otherwise, typ = <<user-defined-type>>
-		}
+		switch pm := param.(type) {
+		case *ast.ValueParam:
+			if paramBuiltinType := p.symTable.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
+				typ = paramBuiltinType
+			} else {
+				// typ = some user-defined type
+				// it must therefore be defined somewhere in the scope tree
+				// if not found, return error
+				// otherwise, typ = <<user-defined-type>>
+			}
 
-		for _, name := range param.Names {
-			p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+			for _, name := range pm.Names {
+				p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+			}
+		case *ast.VariableParam:
+			if paramBuiltinType := p.symTable.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
+				typ = paramBuiltinType
+			} else {
+				// typ = some user-defined type
+				// it must therefore be defined somewhere in the scope tree
+				// if not found, return error
+				// otherwise, typ = <<user-defined-type>>
+			}
+
+			for _, name := range pm.Names {
+				p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+			}
+		default:
+			return nil, fmt.Errorf("%v is not ast.ValueParam or ast.VariableParam type", pm)
 		}
 	}
 	funcSymbol.Type = funcDecl.Heading.ReturnType
@@ -362,11 +380,11 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 //                          | procedural-parameter-specification
 //                          | functional-parameter-specification .
 // formal-parameter-section > conformant-array-parameter-specification .
-func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
+func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	var (
 		err       error
 		typ       types.Type
-		paramList []*ast.Parameter
+		paramList []ast.FormalParameter
 	)
 
 	if err = p.match(token.LParen); err != nil {
@@ -383,7 +401,10 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			if err != nil {
 				return nil, err
 			}
-			params := &ast.Parameter{Names: names}
+
+			if err := p.match(token.Colon); err != nil {
+				return nil, err
+			}
 
 			if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
 				typ = dtype
@@ -393,8 +414,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 				// if not found, return error
 				// otherwise, typ = <<user-defined-type>>
 			}
-			params.Type = typ
-			paramList = append(paramList, params)
+			paramList = append(paramList, &ast.ValueParam{Names: names, Type: typ})
 
 			if err = p.consume(); err != nil {
 				return nil, err
@@ -410,7 +430,6 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 			if err != nil {
 				return nil, err
 			}
-			params := &ast.Parameter{Names: names}
 
 			if err := p.match(token.Colon); err != nil {
 				return nil, err
@@ -425,8 +444,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 				// otherwise, typ = <<user-defined-type>>
 			}
 
-			params.Type = typ
-			paramList = append(paramList, params)
+			paramList = append(paramList, &ast.VariableParam{Token: token.Var, Names: names, Type: typ})
 
 			if err = p.consume(); err != nil {
 				return nil, err
@@ -439,7 +457,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 				return nil, err
 			}
 
-			paramList = append(paramList, pHead.Parameters...)
+			paramList = append(paramList, pHead)
 
 		// functional-parameter-specification = function-heading .
 		case token.Function:
@@ -448,7 +466,7 @@ func (p *Parser) formalParameterList() ([]*ast.Parameter, error) {
 				return nil, err
 			}
 
-			paramList = append(paramList, fHead.Parameters...)
+			paramList = append(paramList, fHead)
 		default:
 			return nil, fmt.Errorf("Parse Error: unexpected token %v", p.lookahead.Text)
 		}
