@@ -10,10 +10,10 @@ import (
 
 // FuncDeclaration is the node type for a function declaration in the AST
 type FuncDeclaration struct {
-	Heading *FuncHeading
-	Block      *Block
+	Heading   *FuncHeading
+	Block     *Block
 	Directive *Identifier
-	Scope      symbols.Scope
+	Scope     symbols.Scope
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -31,9 +31,21 @@ func (f *FuncDeclaration) String() string {
 	return fmt.Sprintf("function(%v):%v", f.Heading.Parameters, f.Heading.ReturnType)
 }
 
+// FuncHeading denotes a function's signature.
 type FuncHeading struct {
 	Token      token.Token
 	Name       *Identifier
-	Parameters []*Parameter
+	Parameters []FormalParameter
 	ReturnType types.Type
+}
+
+func (f *FuncHeading) formalParam() {}
+
+func (f *FuncHeading) String() string {
+	var pList []string
+	for _, p := range f.Parameters {
+		pList = append(pList, p.String())
+	}
+
+	return fmt.Sprintf("function %s(%s):%s", f.Name.Name, pList, f.ReturnType.GetName())
 }

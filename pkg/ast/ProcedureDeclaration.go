@@ -1,4 +1,4 @@
-package ast 
+package ast
 
 import (
 	"fmt"
@@ -6,9 +6,10 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
+// ProcedureDeclaration denotes a procedure declaration
 type ProcedureDeclaration struct {
-	Heading *ProcedureHeading
-	Block      *Block
+	Heading   *ProcedureHeading
+	Block     *Block
 	Directive *Identifier
 }
 
@@ -27,9 +28,20 @@ func (p *ProcedureDeclaration) String() string {
 	return fmt.Sprintf("%s()", p.Heading.Name)
 }
 
-
+// ProcedureHeading denotes a procedure's signature.
 type ProcedureHeading struct {
-	Token token.Token
+	Token      token.Token
 	Name       *Identifier
-	Parameters []*Parameter
+	Parameters []FormalParameter
+}
+
+func (f *ProcedureHeading) formalParam() {}
+
+func (f *ProcedureHeading) String() string {
+	var pList []string
+	for _, p := range f.Parameters {
+		pList = append(pList, p.String())
+	}
+
+	return fmt.Sprintf("function %s(%s)", f.Name.Name, pList)
 }
