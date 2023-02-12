@@ -8,10 +8,11 @@ import (
 
 // Identifier models an identifier node in the AST
 type Identifier struct {
-	Token    token.Token
-	Name     string
-	Scope    symbols.Scope
-	EvalType types.Type
+	Token     token.Token
+	Name      string
+	Scope     symbols.Scope
+	EvalType  types.Type
+	EvalValue Expression
 }
 
 // TokenLiteral returns the text value this node's token.
