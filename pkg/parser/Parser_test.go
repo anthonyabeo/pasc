@@ -513,6 +513,115 @@ func TestSymbolTableGenerated(t *testing.T) {
 	}
 }
 
+func TestParseForStatement(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		i, sum : integer;
+
+	begin
+		for i := 1 to 5 do
+			sum := sum + i;
+
+		writeln( sum )
+	end.
+`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0) {
+		return
+	}
+
+	initVal := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "1"), Value: "1"}
+	finalVal := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5"), Value: "5"}
+	body := &ast.AssignStatement{
+		Token:    token.NewToken(token.Initialize, ":="),
+		Variable: &ast.Identifier{Token: token.NewToken(token.Identifier, "sum")},
+		Value: &ast.BinaryExpression{
+			Operator: token.NewToken(token.Plus, "+"),
+			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "sum")},
+			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "i")},
+		},
+	}
+
+	stmt := &ast.ForStatement{
+		Token:      token.NewToken(token.For, "for"),
+		CtrlID:     &ast.Identifier{Token: token.NewToken(token.Identifier, "i")},
+		InitValue:  initVal,
+		FinalValue: finalVal,
+		Body:       body,
+		Direction:  token.To,
+	}
+
+	if !testForStatement(t, stmt, "i", initVal, finalVal, token.To, body) {
+		return
+	}
+}
+
+func testForStatement(
+	t *testing.T,
+	stmt ast.Statement,
+	ctrlVar string,
+	initValue, finalValue ast.Expression,
+	direction token.Kind,
+	body ast.Statement,
+) bool {
+	forStmt, ok := stmt.(*ast.ForStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.ForStatement; found %v", forStmt)
+		return false
+	}
+
+	if forStmt.CtrlID.TokenKind() != token.Identifier {
+		t.Errorf("expected variable to be of kind %v, got %v",
+			token.GetTokenName(token.Identifier), token.GetTokenName(forStmt.CtrlID.Token.Kind))
+		return false
+	}
+
+	if forStmt.CtrlID.TokenLiteral() != ctrlVar {
+		t.Errorf("expected assignment value to be %v. got %v instead",
+			ctrlVar, forStmt.CtrlID.TokenLiteral())
+
+		return false
+	}
+
+	if forStmt.InitValue.String() != initValue.String() {
+		t.Errorf("expected initial value to be %s, got %v instead",
+			initValue.String(), forStmt.InitValue.String())
+		return false
+	}
+
+	if forStmt.FinalValue.String() != finalValue.String() {
+		t.Errorf("expected final value to be %s, got %v instead",
+			finalValue.String(), forStmt.FinalValue.String())
+		return false
+	}
+
+	if forStmt.Direction != direction {
+		t.Errorf("expected loop iteration direction to %s, got %s instead",
+			token.GetTokenName(direction), token.GetTokenName(forStmt.Direction))
+
+		return false
+	}
+
+	if forStmt.Body.StatNode() != body.StatNode() {
+		t.Errorf("expected body to be %s, got %s instead", body.StatNode(), forStmt.Body.StatNode())
+		return false
+	}
+
+	return true
+}
+
 func testGlobalSymbolTable(
 	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
 ) bool {

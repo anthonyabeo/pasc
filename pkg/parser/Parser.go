@@ -647,25 +647,11 @@ func (p *Parser) statement() (ast.Statement, error) {
 		stmt ast.Statement
 	)
 
-	// structured-statement := compound-statement
-	//                      | conditional-statement
-	//                      | repetitive-statement
-	//                      | with-statement .
-	//
-	// repetitive-statement := repeat-statement
-	//						| while-statement
-	//						| for-statement .
 	// repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
 	// while-statement = 'while' Boolean-expression 'do' statement .
-	// for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) fi nal-value 'do' statement .
-	//
-	// compound-statement := 'begin' statement-sequence 'end' .
 	//
 	// with-statement := 'with' record-variable-list 'do' statement .
 	//
-	// conditional-statement := if-statement
-	//					     | case-statement .
-	// if-statement = 'if' Boolean-expression 'then' statement [ else-part ] .
 	// case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
 
 	// TODO: optional label
@@ -687,6 +673,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 		case token.Case:
 		case token.Repeat:
 		case token.For:
+			return p.forStatement()
 		default:
 
 		}
@@ -699,6 +686,70 @@ func (p *Parser) statement() (ast.Statement, error) {
 	}
 
 	return stmt, nil
+}
+
+// for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) final-value 'do' statement .
+// control-variable = entire-variable .
+// initial-value = expression .
+// final-value = expression .
+func (p *Parser) forStatement() (*ast.ForStatement, error) {
+	var (
+		err               error
+		initVal, finalVal ast.Expression
+	)
+
+	forStmt := &ast.ForStatement{Token: p.lookahead}
+
+	if err = p.match(token.For); err != nil {
+		return nil, err
+	}
+
+	ctrlID := p.lookahead
+	if err = p.match(token.Identifier); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Initialize); err != nil {
+		return nil, err
+	}
+
+	initVal, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	forStmt.CtrlID = &ast.Identifier{
+		Token: ctrlID,
+		Name:  ctrlID.Text,
+		Scope: p.curScope,
+	}
+	forStmt.InitValue = initVal
+
+	if p.lookahead.Kind != token.To && p.lookahead.Kind != token.DownTo {
+		return nil, fmt.Errorf("expecting %v or %v; found %v",
+			token.GetTokenName(token.To), token.GetTokenName(token.DownTo), p.lookahead.Text)
+	}
+	forStmt.Direction = p.lookahead.Kind
+	if err := p.consume(); err != nil {
+		return nil, err
+	}
+
+	finalVal, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+	forStmt.FinalValue = finalVal
+
+	if err = p.match(token.Do); err != nil {
+		return nil, err
+	}
+
+	forStmt.Body, err = p.statement()
+	if err != nil {
+		return nil, err
+	}
+
+	return forStmt, err
 }
 
 // simple-statement := empty-statement | assignment-statement | procedure-statement | goto-statement .
@@ -926,13 +977,10 @@ func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
 	return &ast.Identifier{Token: t, Name: t.Text, Scope: p.curScope}, nil
 }
 
-// TODO: complete implementation
-// unsigned-constant := unsigned-number | character-string | constant-identier | 'nil' .
+// unsigned-constant := unsigned-number | character-string | constant-identifier | 'nil' .
 // constant-identifier = identifier .
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
-
 	tt := p.lookahead
-
 	if err := p.consume(); err != nil {
 		return nil, err
 	}
