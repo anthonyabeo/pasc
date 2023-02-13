@@ -32,6 +32,7 @@ const (
 	Case
 	Nil
 	Not
+	Const
 
 	Identifier
 	SemiColon
@@ -155,5 +156,6 @@ func init() {
 		"case":      Case,
 		"nil":       Nil,
 		"not":       Not,
+		"const":     Const,
 	}
 }
