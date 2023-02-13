@@ -513,6 +513,37 @@ func TestSymbolTableGenerated(t *testing.T) {
 	}
 }
 
+func TestParsingConstantDefinition(t *testing.T) {
+	input := `
+	program HelloWorld;
+	
+	const 
+		eps = 1e-10;
+		pi = 3.142;
+		foo = 'bar';
+		baz = -45;
+		c = eps;
+
+	begin
+		writeln('Hello, world!')
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 0) {
+		return
+	}
+}
+
 func testGlobalSymbolTable(
 	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
 ) bool {

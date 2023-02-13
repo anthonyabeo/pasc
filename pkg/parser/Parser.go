@@ -153,33 +153,150 @@ func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 
 func (p *Parser) block() (*ast.Block, error) {
 	var (
-		err          error
-		varDecl      *ast.VarDeclaration
-		callables    []ast.Statement
-		compoundStmt *ast.CompoundStatement
+		err             error
+		varDecl         *ast.VarDeclaration
+		callables       []ast.Statement
+		constDefinition *ast.ConstDefinition
+		compoundStmt    *ast.CompoundStatement
 	)
 
 	block := &ast.Block{}
 
-	if p.lookahead.Kind == token.Var {
-		if varDecl, err = p.variableDeclarationPart(); err != nil {
+	if p.lookahead.Kind == token.Const {
+		constDefinition, err = p.constDefinitionPart()
+		if err != nil {
 			return nil, err
 		}
 	}
 
-	if callables, err = p.procedureAndFunctionDeclarationPart(); err != nil {
-		return nil, err
+	if p.lookahead.Kind == token.Var {
+		varDecl, err = p.variableDeclarationPart()
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	if compoundStmt, err = p.compoundStatement(); err != nil {
-		return nil, err
+	if p.lookahead.Kind == token.Procedure || p.lookahead.Kind == token.Function {
+		callables, err = p.procedureAndFunctionDeclarationPart()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if p.lookahead.Kind == token.Begin {
+		compoundStmt, err = p.compoundStatement()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	block.VarDeclaration = varDecl
+	block.Consts = constDefinition
 	block.Stats = append(block.Stats, compoundStmt.Statements...)
 	block.Callables = append(block.Callables, callables...)
 
 	return block, nil
+}
+
+// constant-definition-part = [ 'const' constant-definition ';' { constant-definition ';' } ] .
+func (p *Parser) constDefinitionPart() (*ast.ConstDefinition, error) {
+	var (
+		err      error
+		constDef *ast.ConstDef
+	)
+
+	constDefinition := &ast.ConstDefinition{Token: p.lookahead}
+	if err = p.match(token.Const); err != nil {
+		return nil, err
+	}
+
+	constDef, err = p.constDefinition()
+	if err != nil {
+		return nil, err
+	}
+	constDefinition.Consts = append(constDefinition.Consts, constDef)
+
+	if err = p.match(token.SemiColon); err != nil {
+		return nil, err
+	}
+
+	for p.lookahead.Kind == token.Identifier {
+		constDef, err = p.constDefinition()
+		if err != nil {
+			return nil, err
+		}
+		constDefinition.Consts = append(constDefinition.Consts, constDef)
+
+		if err = p.match(token.SemiColon); err != nil {
+			return nil, err
+		}
+	}
+
+	return constDefinition, nil
+}
+
+// constant-definition = identifier '=' constant .
+func (p *Parser) constDefinition() (*ast.ConstDef, error) {
+	var err error
+
+	constDef := &ast.ConstDef{Name: &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}}
+	if err = p.match(token.Identifier); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Equal); err != nil {
+		return nil, err
+	}
+
+	constDef.Value, err = p.constant()
+	if err != nil {
+		return nil, err
+	}
+
+	return constDef, nil
+}
+
+// constant = [ sign ] ( unsigned-number | constant-identifier ) | character-string .
+// constant-identifier = identifier .
+func (p *Parser) constant() (ast.Expression, error) {
+	var (
+		err  error
+		sign token.Token
+		expr ast.Expression
+	)
+
+	switch p.lookahead.Kind {
+	case token.CharString:
+		expr = &ast.CharString{Token: p.lookahead, Value: p.lookahead.Text}
+	default:
+		if p.isSign() {
+			sign = p.lookahead
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+		}
+
+		if p.lookahead.Kind == token.UIntLiteral {
+			expr = &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+		} else if p.lookahead.Kind == token.URealLiteral {
+			expr = &ast.URealLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+		} else if p.lookahead.Kind == token.Identifier {
+			expr = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
+		} else {
+			return nil, fmt.Errorf(
+				"expected unsigned number or identifier, got %s instead", token.GetTokenName(p.lookahead.Kind))
+		}
+
+		if !reflect.DeepEqual(sign, token.Token{}) {
+			expr = &ast.UnaryExpression{Operator: sign, Operand: expr}
+		}
+	}
+
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
+
+	return expr, nil
 }
 
 // procedure-and-function-declaration-part = { ( procedure-declaration | function-declaration ) ';' } .
@@ -590,6 +707,7 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	return names, nil
 }
 
+// compound-statement := 'begin' statement-sequence 'end' .
 func (p *Parser) compoundStatement() (*ast.CompoundStatement, error) {
 	var (
 		err     error
@@ -659,7 +777,6 @@ func (p *Parser) statement() (ast.Statement, error) {
 	// while-statement = 'while' Boolean-expression 'do' statement .
 	// for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) fi nal-value 'do' statement .
 	//
-	// compound-statement := 'begin' statement-sequence 'end' .
 	//
 	// with-statement := 'with' record-variable-list 'do' statement .
 	//
