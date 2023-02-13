@@ -5,7 +5,10 @@ import "fmt"
 // Block is a block type node in the AST. These include function and procedure blocks
 type Block struct {
 	// label definition part
+
 	// constant definition part
+	Consts *ConstDefinition
+
 	// type definition part
 
 	// variable declaration part
