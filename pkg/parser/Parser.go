@@ -805,9 +805,6 @@ func (p *Parser) statement() (ast.Statement, error) {
 		stmt ast.Statement
 	)
 
-	// repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
-
-	//
 	// with-statement := 'with' record-variable-list 'do' statement .
 	//
 	// case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
@@ -817,6 +814,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 	// }
 
+	// TODO if p.isStructuredStatement()
 	if p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
 		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
 		p.lookahead.Kind == token.For {
@@ -837,6 +835,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 		}
 	} else if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto {
+		// TODO if p.isSimpleStatement()
 		if stmt, err = p.simpleStatement(); err != nil {
 			return nil, err
 		}
@@ -845,6 +844,32 @@ func (p *Parser) statement() (ast.Statement, error) {
 	}
 
 	return stmt, nil
+}
+
+// repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
+func (p *Parser) repeatStatement() (*ast.RepeatStatement, error) {
+	var err error
+
+	repeatStmt := &ast.RepeatStatement{Token: p.lookahead}
+	if err = p.match(token.Repeat); err != nil {
+		return nil, err
+	}
+
+	repeatStmt.StmtSeq, err = p.statementSequence()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Until); err != nil {
+		return nil, err
+	}
+
+	repeatStmt.BoolExpr, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	return repeatStmt, nil
 }
 
 // while-statement = 'while' Boolean-expression 'do' statement .
