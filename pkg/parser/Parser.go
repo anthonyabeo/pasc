@@ -814,11 +814,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 	// }
 
-	// TODO if p.isStructuredStatement()
-	if p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
-		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
-		p.lookahead.Kind == token.For {
-
+	if p.isStructuredStatement() {
 		switch p.lookahead.Kind {
 		case token.If:
 			return p.ifStatement()
@@ -835,8 +831,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 		default:
 
 		}
-	} else if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto {
-		// TODO if p.isSimpleStatement()
+	} else if p.isSimpleStatement() {
 		if stmt, err = p.simpleStatement(); err != nil {
 			return nil, err
 		}
@@ -845,6 +840,16 @@ func (p *Parser) statement() (ast.Statement, error) {
 	}
 
 	return stmt, nil
+}
+
+func (p *Parser) isStructuredStatement() bool {
+	return p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
+		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
+		p.lookahead.Kind == token.For
+}
+
+func (p *Parser) isSimpleStatement() bool {
+	return p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto
 }
 
 // repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
