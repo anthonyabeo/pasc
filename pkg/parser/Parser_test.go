@@ -1177,3 +1177,52 @@ func testVarDeclaration(
 
 	return true
 }
+
+func TestParseRepeatStatement(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		i, sum : integer;
+
+	begin
+		repeat
+			k := i mod j;
+			i := j;
+			j := k
+		until j = 0;			
+
+		writeln( sum )
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0) {
+		return
+	}
+
+	if !testRepeatStatement(t, prog.Block.Stats[0]) {
+		return
+	}
+}
+
+func testRepeatStatement(t *testing.T, stmt ast.Statement) bool {
+	repeatStmt, ok := stmt.(*ast.RepeatStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.RepeatStatement; found %v", repeatStmt)
+		return false
+	}
+
+	testBinaryExpression(
+		t, repeatStmt.BoolExpr, token.NewToken(token.Equal, "="), "j", "0")
+
+	return true
+}

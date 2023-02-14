@@ -829,6 +829,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 		case token.With:
 		case token.Case:
 		case token.Repeat:
+			return p.repeatStatement()
 		case token.For:
 			return p.forStatement()
 		default:
