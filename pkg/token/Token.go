@@ -36,6 +36,7 @@ const (
 	DownTo
 	Do
 	Const
+	Until
 
 	Identifier
 	SemiColon
@@ -131,6 +132,8 @@ func GetTokenName(t Kind) string {
 		return "do"
 	case 27:
 		return "const"
+	case 28:
+		return "until"
 	default:
 		return ""
 	}
@@ -171,5 +174,6 @@ func init() {
 		"downto":    DownTo,
 		"do":        Do,
 		"const":     Const,
+		"until":     Until,
 	}
 }
