@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -47,5 +48,5 @@ func (f *FuncHeading) String() string {
 		pList = append(pList, p.String())
 	}
 
-	return fmt.Sprintf("function %s(%s):%s", f.Name.Name, pList, f.ReturnType.GetName())
+	return fmt.Sprintf("function %s(%s):%s", f.Name.Name, strings.Join(pList, ", "), f.ReturnType.GetName())
 }
