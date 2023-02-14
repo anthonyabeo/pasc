@@ -313,9 +313,21 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 
 			callables = append(callables, funcDecl)
 		case token.Procedure:
+			procedureDecl, err := p.procedureDeclaration()
+			if err != nil {
+				return nil, err
+			}
+
+			callables = append(callables, procedureDecl)
 		default:
-			return nil, nil
+			return nil, fmt.Errorf(
+				"Parse Error: expected 'procedure' or 'function', got %v instead",
+				p.lookahead.Text)
 		}
+	}
+
+	if err := p.match(token.SemiColon); err != nil {
+		return nil, err
 	}
 
 	return callables, nil
@@ -484,10 +496,6 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 		}
 	}
 
-	if err = p.match(token.SemiColon); err != nil {
-		return nil, err
-	}
-
 	return funcDecl, nil
 }
 
@@ -500,7 +508,7 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	var (
 		err       error
-		typ       types.Type
+		param     ast.FormalParameter
 		paramList []ast.FormalParameter
 	)
 
@@ -508,85 +516,28 @@ func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Var ||
+	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Var ||
 		p.lookahead.Kind == token.Procedure || p.lookahead.Kind == token.Function {
 
-		switch p.lookahead.Kind {
-		// value-parameter-specication = identifier-list ':' type-identifier .
-		case token.Identifier:
-			names, err := p.identifierList()
-			if err != nil {
-				return nil, err
-			}
-
-			if err := p.match(token.Colon); err != nil {
-				return nil, err
-			}
-
-			if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
-				typ = dtype
-			} else {
-				// must be a user-defined type
-				// it must therefore be defined somewhere in the scope tree
-				// if not found, return error
-				// otherwise, typ = <<user-defined-type>>
-			}
-			paramList = append(paramList, &ast.ValueParam{Names: names, Type: typ})
-
-			if err = p.consume(); err != nil {
-				return nil, err
-			}
-
-		// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
-		case token.Var:
-			if err := p.match(token.Var); err != nil {
-				return nil, err
-			}
-
-			names, err := p.identifierList()
-			if err != nil {
-				return nil, err
-			}
-
-			if err := p.match(token.Colon); err != nil {
-				return nil, err
-			}
-
-			if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
-				typ = dtype
-			} else {
-				// must be a user-defined type
-				// it must therefore be defined somewhere in the scope tree
-				// if not found, return error
-				// otherwise, typ = <<user-defined-type>>
-			}
-
-			paramList = append(paramList, &ast.VariableParam{Token: token.Var, Names: names, Type: typ})
-
-			if err = p.consume(); err != nil {
-				return nil, err
-			}
-
-		// procedural-parameter-specification = procedure-heading .
-		case token.Procedure:
-			pHead, err := p.procedureHeading()
-			if err != nil {
-				return nil, err
-			}
-
-			paramList = append(paramList, pHead)
-
-		// functional-parameter-specification = function-heading .
-		case token.Function:
-			fHead, err := p.functionHeading()
-			if err != nil {
-				return nil, err
-			}
-
-			paramList = append(paramList, fHead)
-		default:
-			return nil, fmt.Errorf("Parse Error: unexpected token %v", p.lookahead.Text)
+		param, err = p.formalParameterSection()
+		if err != nil {
+			return nil, err
 		}
+
+		paramList = append(paramList, param)
+	}
+
+	for p.lookahead.Kind == token.SemiColon {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		param, err = p.formalParameterSection()
+		if err != nil {
+			return nil, err
+		}
+
+		paramList = append(paramList, param)
 	}
 
 	if err = p.match(token.RParen); err != nil {
@@ -594,6 +545,93 @@ func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	}
 
 	return paramList, nil
+}
+
+func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
+	var (
+		typ   types.Type
+		param ast.FormalParameter
+	)
+
+	switch p.lookahead.Kind {
+	// value-parameter-specication = identifier-list ':' type-identifier .
+	case token.Identifier:
+		names, err := p.identifierList()
+		if err != nil {
+			return nil, err
+		}
+
+		if err := p.match(token.Colon); err != nil {
+			return nil, err
+		}
+
+		if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+			typ = dtype
+		} else {
+			// must be a user-defined type
+			// it must therefore be defined somewhere in the scope tree
+			// if not found, return error
+			// otherwise, typ = <<user-defined-type>>
+		}
+		param = &ast.ValueParam{Names: names, Type: typ}
+
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+	// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
+	case token.Var:
+		if err := p.match(token.Var); err != nil {
+			return nil, err
+		}
+
+		names, err := p.identifierList()
+		if err != nil {
+			return nil, err
+		}
+
+		if err := p.match(token.Colon); err != nil {
+			return nil, err
+		}
+
+		if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+			typ = dtype
+		} else {
+			// must be a user-defined type
+			// it must therefore be defined somewhere in the scope tree
+			// if not found, return error
+			// otherwise, typ = <<user-defined-type>>
+		}
+
+		param = &ast.VariableParam{Token: token.Var, Names: names, Type: typ}
+
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+	// procedural-parameter-specification = procedure-heading .
+	case token.Procedure:
+		pHead, err := p.procedureHeading()
+		if err != nil {
+			return nil, err
+		}
+
+		param = pHead
+
+	// functional-parameter-specification = function-heading .
+	case token.Function:
+		fHead, err := p.functionHeading()
+		if err != nil {
+			return nil, err
+		}
+
+		param = fHead
+
+	default:
+		return nil, fmt.Errorf("Parse Error: unexpected token %v", p.lookahead.Text)
+	}
+
+	return param, nil
 }
 
 // variable-declaration-part = [ 'var' variable-declaration ';' { variable-declaration ';' } ] .
@@ -820,6 +858,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 
 // simple-statement := empty-statement | assignment-statement | procedure-statement | goto-statement .
 func (p *Parser) simpleStatement() (ast.Statement, error) {
+	//TODO resolve the first and follow set of the empty statement alternative
 	var (
 		err  error
 		stmt ast.Statement
@@ -842,6 +881,7 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 				return nil, err
 			}
 		}
+	case token.Goto:
 
 	default:
 		return nil, fmt.Errorf("expecting procedure_name, goto or assignment; found %v", p.lookahead)

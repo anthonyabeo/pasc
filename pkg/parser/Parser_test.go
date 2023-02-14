@@ -544,6 +544,135 @@ func TestParsingConstantDefinition(t *testing.T) {
 	}
 }
 
+func TestParsingProcedureDeclaration(t *testing.T) {
+	input := `
+	program HelloWorld;
+	procedure bisect (function f(x : real) : real;
+						      a, b         : real;
+					  var     result       : real);
+	const
+		eps = 1e-10;
+	var
+		midpoint : real;
+	begin
+		foo := 2
+	end;
+
+	begin
+		writeln('Hello, world!')
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 1) {
+		return
+	}
+
+	procDecl := &ast.ProcedureDeclaration{
+		Heading: &ast.ProcedureHeading{
+			Token: token.NewToken(token.Procedure, "procedure"),
+			Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "bisect")},
+			Parameters: []ast.FormalParameter{
+				&ast.FuncHeading{
+					Token: token.NewToken(token.Function, "function"),
+					Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "f"), Name: "f"},
+					Parameters: []ast.FormalParameter{
+						&ast.ValueParam{
+							Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "x"), Name: "x"}},
+							Type:  &types.Real{Name: "real"},
+						},
+					},
+					ReturnType: &types.Real{Name: "real"},
+				},
+				&ast.ValueParam{
+					Names: []*ast.Identifier{
+						{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
+						{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
+					},
+					Type: &types.Real{Name: "real"},
+				},
+				&ast.VariableParam{
+					Token: token.Var,
+					Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "result"), Name: "result"}},
+					Type:  &types.Real{Name: "real"},
+				},
+			},
+		},
+		Block: &ast.Block{
+			Consts: &ast.ConstDefinition{
+				Token: token.NewToken(token.Const, "const"),
+				Consts: []*ast.ConstDef{
+					{
+						Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "eps"), Name: "eps"},
+						Value: &ast.URealLiteral{Token: token.NewToken(token.URealLiteral, "real"), Value: "1e-10"},
+					},
+				},
+			},
+			VarDeclaration: &ast.VarDeclaration{
+				Token: token.NewToken(token.Var, "var"),
+				Decls: []*ast.VarDecl{
+					{
+						Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "midpoint"), Name: "real"}},
+						Type:  &types.Real{Name: "real"},
+					},
+				},
+			},
+		},
+	}
+
+	if !testProcedureDeclaration(t, procDecl, "bisect", prog.Block.Callables[0].(*ast.ProcedureDeclaration)) {
+		return
+	}
+}
+
+func testProcedureDeclaration(
+	t *testing.T,
+	pd ast.Statement,
+	procedureName string,
+	progPD *ast.ProcedureDeclaration,
+) bool {
+	procDecl, ok := pd.(*ast.ProcedureDeclaration)
+	if !ok {
+		t.Errorf("expected procedure declaration type, got %v", procDecl)
+		return false
+	}
+
+	if procDecl.Heading.Token.Kind != token.Procedure {
+		t.Errorf("procedure declaration has wrong token type, %v", procDecl.Heading.Token.Text)
+		return false
+	}
+
+	if procDecl.Heading.Name.TokenLiteral() != procedureName {
+		t.Errorf("expected procedure name to be %v, got %v instead", procedureName, procDecl.Heading.Name.TokenLiteral())
+		return false
+	}
+
+	paramList := progPD.Heading.Parameters
+	for i, j := 0, 0; i < len(paramList) && j < len(procDecl.Heading.Parameters); i, j = i+1, j+1 {
+		if paramList[i].String() != procDecl.Heading.Parameters[j].String() {
+			t.Errorf("expected parameter type to be %v, got %v instead",
+				procDecl.Heading.Parameters[j].String(), paramList[i].String())
+
+			return false
+		}
+	}
+
+	if !testBlock(t, procDecl.Block, len(procDecl.Block.Stats), len(procDecl.Block.VarDeclaration.Decls), len(procDecl.Block.Callables)) {
+		return false
+	}
+
+	return true
+}
+
 func testGlobalSymbolTable(
 	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
 ) bool {
@@ -767,13 +896,6 @@ func testFuncDeclaration(
 
 			return false
 		}
-
-		// for m, n := 0, 0; m < len(paramList[i].Names) && n < len(funcDecl.Heading.Parameters[j].Names); m, n = m+1, n+1 {
-		// 	if paramList[i].Names[m].Name != funcDecl.Heading.Parameters[j].Names[n].Name {
-		// 		t.Errorf("unmatched parameter names, %v and %v", paramList[i].Names[m], funcDecl.Heading.Parameters[j].Names[n])
-		// 		return false
-		// 	}
-		// }
 	}
 
 	if !testBlock(t, funcDecl.Block, numStmts, numVarDefs, numCallables) {

@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
@@ -43,5 +44,5 @@ func (f *ProcedureHeading) String() string {
 		pList = append(pList, p.String())
 	}
 
-	return fmt.Sprintf("function %s(%s)", f.Name.Name, pList)
+	return fmt.Sprintf("function %s(%s)", f.Name.Name, strings.Join(pList, ", "))
 }
