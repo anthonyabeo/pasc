@@ -688,6 +688,58 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 	}
 }
 
+func TestParseWhileStatement(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		i, sum : integer;
+
+	begin
+		while i < 5 do
+			sum := sum + i;
+
+		writeln( sum )
+	end.
+	`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0) {
+		return
+	}
+
+	if !testWhileStatement(t, prog.Block.Stats[0]) {
+		return
+	}
+}
+
+func testWhileStatement(t *testing.T, stmt ast.Statement) bool {
+	whileStmt, ok := stmt.(*ast.WhileStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.WhileStatement; found %v", whileStmt)
+		return false
+	}
+
+	if whileStmt.Token.Kind != token.While {
+		t.Errorf("expected token to kind 'while', got '%v' instead.", whileStmt.Token.Text)
+		return false
+	}
+
+	testBinaryExpression(
+		t, whileStmt.BoolExpr, token.Token{Kind: token.LessThan, Text: "<"}, "i", "5")
+
+	return true
+}
+
 func testForStatement(
 	t *testing.T,
 	stmt ast.Statement,

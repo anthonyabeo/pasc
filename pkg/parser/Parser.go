@@ -501,9 +501,11 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 
 // formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
 // formal-parameter-section > value-parameter-specification
-//                          | variable-parameter-specification
-//                          | procedural-parameter-specification
-//                          | functional-parameter-specification .
+//
+//	| variable-parameter-specification
+//	| procedural-parameter-specification
+//	| functional-parameter-specification .
+//
 // formal-parameter-section > conformant-array-parameter-specification .
 func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	var (
@@ -804,7 +806,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 	)
 
 	// repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
-	// while-statement = 'while' Boolean-expression 'do' statement .
+
 	//
 	// with-statement := 'with' record-variable-list 'do' statement .
 	//
@@ -825,6 +827,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 		case token.Begin:
 			return p.compoundStatement()
 		case token.While:
+			return p.whileStatement()
 		case token.With:
 		case token.Case:
 		case token.Repeat:
@@ -842,6 +845,32 @@ func (p *Parser) statement() (ast.Statement, error) {
 	}
 
 	return stmt, nil
+}
+
+// while-statement = 'while' Boolean-expression 'do' statement .
+func (p *Parser) whileStatement() (*ast.WhileStatement, error) {
+	var err error
+
+	whileStmt := &ast.WhileStatement{Token: p.lookahead}
+	if err = p.match(token.While); err != nil {
+		return nil, err
+	}
+
+	whileStmt.BoolExpr, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Do); err != nil {
+		return nil, err
+	}
+
+	whileStmt.Body, err = p.statement()
+	if err != nil {
+		return nil, err
+	}
+
+	return whileStmt, nil
 }
 
 // for-statement = 'for' control-variable ':=' initial-value ( 'to' | 'downto' ) final-value 'do' statement .
