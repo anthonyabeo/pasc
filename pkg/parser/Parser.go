@@ -805,10 +805,6 @@ func (p *Parser) statement() (ast.Statement, error) {
 		stmt ast.Statement
 	)
 
-	// with-statement := 'with' record-variable-list 'do' statement .
-	//
-	// case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
-
 	// TODO: optional label
 	// if p.lookahead.Kind == token.UIntLiteral {
 
@@ -823,7 +819,9 @@ func (p *Parser) statement() (ast.Statement, error) {
 		case token.While:
 			return p.whileStatement()
 		case token.With:
+			return p.withStatement()
 		case token.Case:
+			return p.caseStatement()
 		case token.Repeat:
 			return p.repeatStatement()
 		case token.For:
@@ -850,6 +848,160 @@ func (p *Parser) isStructuredStatement() bool {
 
 func (p *Parser) isSimpleStatement() bool {
 	return p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto
+}
+
+// case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
+// case-list-element = case-constant-list ':' statement .
+// case-index = expression .
+func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
+	var err error
+
+	caseStmt := &ast.CaseStatement{Token: p.lookahead}
+	if err = p.match(token.Case); err != nil {
+		return nil, err
+	}
+
+	caseStmt.Index, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Of); err != nil {
+		return nil, err
+	}
+
+	element, err := p.caseListElement()
+	if err != nil {
+		return nil, err
+	}
+	caseStmt.List = append(caseStmt.List, element)
+
+	for p.lookahead.Kind == token.SemiColon {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		element, err := p.caseListElement()
+		if err != nil {
+			return nil, err
+		}
+		caseStmt.List = append(caseStmt.List, element)
+	}
+
+	if p.lookahead.Kind == token.SemiColon {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+	}
+
+	if err = p.match(token.End); err != nil {
+		return nil, err
+	}
+
+	return caseStmt, nil
+}
+
+// case-list-element = case-constant-list ':' statement .
+func (p *Parser) caseListElement() (*ast.CaseElement, error) {
+	var (
+		err      error
+		caseElem *ast.CaseElement
+	)
+
+	caseElem.ConstList, err = p.caseConstantList()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Colon); err != nil {
+		return nil, err
+	}
+
+	caseElem.Body, err = p.statement()
+	if err != nil {
+		return nil, err
+	}
+
+	return caseElem, nil
+}
+
+// case-constant-list = case-constant { ',' case-constant } .
+// case-constant = constant .
+func (p *Parser) caseConstantList() ([]ast.Expression, error) {
+	var caseConstList []ast.Expression
+
+	constant, err := p.constant()
+	if err != nil {
+		return nil, err
+	}
+	caseConstList = append(caseConstList, constant)
+
+	for p.lookahead.Kind == token.Comma {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		constant, err := p.constant()
+		if err != nil {
+			return nil, err
+		}
+		caseConstList = append(caseConstList, constant)
+	}
+
+	return caseConstList, nil
+}
+
+// with-statement := 'with' record-variable-list 'do' statement .
+func (p *Parser) withStatement() (*ast.WithStatement, error) {
+	var err error
+
+	withStmt := &ast.WithStatement{Token: p.lookahead}
+	if err = p.match(token.With); err != nil {
+		return nil, err
+	}
+
+	withStmt.RecordVarList, err = p.recordVariableList()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Do); err != nil {
+		return nil, err
+	}
+
+	withStmt.Body, err = p.statement()
+	if err != nil {
+		return nil, err
+	}
+
+	return withStmt, nil
+}
+
+// record-variable-list = record-variable { ',' record-variable } .
+// record-variable = variable-access .
+func (p *Parser) recordVariableList() ([]ast.Expression, error) {
+	var recVarList []ast.Expression
+
+	variable, err := p.variableAccess(p.lookahead)
+	if err != nil {
+		return nil, err
+	}
+	recVarList = append(recVarList, variable)
+
+	if p.lookahead.Kind == token.Comma {
+		if err := p.consume(); err != nil {
+			return nil, err
+		}
+
+		variable, err := p.variableAccess(p.lookahead)
+		if err != nil {
+			return nil, err
+		}
+
+		recVarList = append(recVarList, variable)
+	}
+
+	return recVarList, nil
 }
 
 // repeat-statement = 'repeat' statement-sequence 'until' Boolean-expression .
@@ -915,7 +1067,6 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 	)
 
 	forStmt := &ast.ForStatement{Token: p.lookahead}
-
 	if err = p.match(token.For); err != nil {
 		return nil, err
 	}
