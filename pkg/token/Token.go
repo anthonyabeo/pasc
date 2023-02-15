@@ -37,6 +37,7 @@ const (
 	Do
 	Const
 	Until
+	Of
 
 	Identifier
 	SemiColon
@@ -134,6 +135,8 @@ func GetTokenName(t Kind) string {
 		return "const"
 	case 28:
 		return "until"
+	case 29:
+		return "of"
 	default:
 		return ""
 	}
@@ -175,5 +178,6 @@ func init() {
 		"do":        Do,
 		"const":     Const,
 		"until":     Until,
+		"of":        Of,
 	}
 }
