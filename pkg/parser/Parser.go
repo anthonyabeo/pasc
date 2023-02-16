@@ -500,13 +500,6 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 }
 
 // formal-parameter-list := '(' formal-parameter-section { ';' formal-parameter-section } ')' .
-// formal-parameter-section > value-parameter-specification
-//
-//	| variable-parameter-specification
-//	| procedural-parameter-specification
-//	| functional-parameter-specification .
-//
-// formal-parameter-section > conformant-array-parameter-specification .
 func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	var (
 		err       error
@@ -549,6 +542,8 @@ func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	return paramList, nil
 }
 
+// formal-parameter-section > value-parameter-specification | variable-parameter-specification | procedural-parameter-specification | functional-parameter-specification .
+// formal-parameter-section > conformant-array-parameter-specification .
 func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 	var (
 		typ   types.Type
@@ -988,7 +983,7 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 	}
 	recVarList = append(recVarList, variable)
 
-	if p.lookahead.Kind == token.Comma {
+	for p.lookahead.Kind == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
@@ -1145,7 +1140,17 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 			}
 		}
 	case token.Goto:
+		gotoStmt := &ast.GotoStatement{Token: p.lookahead}
+		if err = p.match(token.Goto); err != nil {
+			return nil, err
+		}
 
+		gotoStmt.Label = &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+		if err = p.match(token.UIntLiteral); err != nil {
+			return nil, err
+		}
+
+		stmt = gotoStmt
 	default:
 		return nil, fmt.Errorf("expecting procedure_name, goto or assignment; found %v", p.lookahead)
 	}
@@ -1495,7 +1500,7 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	paramList = append(paramList, param)
 
 	for p.lookahead.Kind == token.Comma {
-		if err := p.match(token.Comma); err != nil {
+		if err := p.consume(); err != nil {
 			return nil, err
 		}
 
@@ -1544,8 +1549,8 @@ func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
 		}
 		writelnParamList = append(writelnParamList, writeParam)
 
-		for p.lookahead.Kind != token.Comma {
-			if err = p.match(token.Comma); err != nil {
+		for p.lookahead.Kind == token.Comma {
+			if err = p.consume(); err != nil {
 				return nil, err
 			}
 
@@ -1554,6 +1559,10 @@ func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
 				return nil, err
 			}
 			writelnParamList = append(writelnParamList, writeParam)
+		}
+
+		if err = p.match(token.RParen); err != nil {
+			return nil, err
 		}
 	}
 
