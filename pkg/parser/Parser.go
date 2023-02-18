@@ -1066,7 +1066,11 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 		return nil, err
 	}
 
-	ctrlID := p.lookahead
+	forStmt.CtrlID = &ast.Identifier{
+		Token: p.lookahead,
+		Name:  p.lookahead.Text,
+		Scope: p.curScope,
+	}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1078,12 +1082,6 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 	initVal, err = p.expression()
 	if err != nil {
 		return nil, err
-	}
-
-	forStmt.CtrlID = &ast.Identifier{
-		Token: ctrlID,
-		Name:  ctrlID.Text,
-		Scope: p.curScope,
 	}
 	forStmt.InitValue = initVal
 
