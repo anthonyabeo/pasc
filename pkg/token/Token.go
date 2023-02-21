@@ -33,6 +33,12 @@ const (
 	Nil
 	Not
 	Const
+	Type
+	Array
+	Record
+	File
+	Set
+	Packed
 
 	Identifier
 	SemiColon
@@ -120,6 +126,20 @@ func GetTokenName(t Kind) string {
 		return "nil"
 	case 23:
 		return "not"
+	case 25:
+		return "const"
+	case 26:
+		return "type"
+	case 27:
+		return "array"
+	case 28:
+		return "record"
+	case 29:
+		return "file"
+	case 30:
+		return "set"
+	case 31:
+		return "packed"
 	default:
 		return ""
 	}
@@ -157,5 +177,11 @@ func init() {
 		"nil":       Nil,
 		"not":       Not,
 		"const":     Const,
+		"type":      Type,
+		"array":     Array,
+		"record":    Record,
+		"file":      File,
+		"set":       Set,
+		"packed":    Packed,
 	}
 }
