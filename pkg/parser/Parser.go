@@ -157,45 +157,168 @@ func (p *Parser) block() (*ast.Block, error) {
 		varDecl         *ast.VarDeclaration
 		callables       []ast.Statement
 		constDefinition *ast.ConstDefinition
+		typeDefinition  *ast.TypeDefinition
 		compoundStmt    *ast.CompoundStatement
 	)
 
 	block := &ast.Block{}
 
-	if p.lookahead.Kind == token.Const {
-		constDefinition, err = p.constDefinitionPart()
-		if err != nil {
-			return nil, err
+	for p.lookahead.Kind == token.Type || p.lookahead.Kind == token.Var || p.lookahead.Kind == token.Procedure ||
+		p.lookahead.Kind == token.Function || p.lookahead.Kind == token.Const || p.lookahead.Kind == token.Begin {
+		switch p.lookahead.Kind {
+		case token.Type:
+			typeDefinition, err = p.typeDefinitionPart()
+			if err != nil {
+				return nil, err
+			}
+		case token.Const:
+			constDefinition, err = p.constDefinitionPart()
+			if err != nil {
+				return nil, err
+			}
+		case token.Var:
+			varDecl, err = p.variableDeclarationPart()
+			if err != nil {
+				return nil, err
+			}
+		case token.Procedure, token.Function:
+			callables, err = p.procedureAndFunctionDeclarationPart()
+			if err != nil {
+				return nil, err
+			}
+		case token.Begin:
+			compoundStmt, err = p.compoundStatement()
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	if p.lookahead.Kind == token.Var {
-		varDecl, err = p.variableDeclarationPart()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if p.lookahead.Kind == token.Procedure || p.lookahead.Kind == token.Function {
-		callables, err = p.procedureAndFunctionDeclarationPart()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if p.lookahead.Kind == token.Begin {
-		compoundStmt, err = p.compoundStatement()
-		if err != nil {
-			return nil, err
-		}
-	}
-
+	block.Types = typeDefinition
 	block.VarDeclaration = varDecl
 	block.Consts = constDefinition
 	block.Stats = append(block.Stats, compoundStmt.Statements...)
 	block.Callables = append(block.Callables, callables...)
 
 	return block, nil
+}
+
+// [ 'type' type-definition ';' { type-definition ';' } ] .
+func (p *Parser) typeDefinitionPart() (*ast.TypeDefinition, error) {
+	var (
+		err     error
+		typeDef *ast.TypeDef
+	)
+
+	typeDefinition := &ast.TypeDefinition{Token: p.lookahead}
+	if err = p.match(token.Type); err != nil {
+		return nil, err
+	}
+
+	typeDef, err = p.typeDefinition()
+	if err != nil {
+		return nil, err
+	}
+	typeDefinition.Types = append(typeDefinition.Types, typeDef)
+
+	if err = p.match(token.SemiColon); err != nil {
+		return nil, err
+	}
+
+	for p.lookahead.Kind == token.Identifier {
+		typeDef, err = p.typeDefinition()
+		if err != nil {
+			return nil, err
+		}
+		typeDefinition.Types = append(typeDefinition.Types, typeDef)
+
+		if err = p.match(token.SemiColon); err != nil {
+			return nil, err
+		}
+	}
+
+	return typeDefinition, nil
+}
+
+// type-definition = identifier '=' type-denoter .
+func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
+	var (
+		err     error
+		typeDef *ast.TypeDef
+	)
+
+	typeDef = &ast.TypeDef{Name: &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}}
+	if err = p.match(token.Identifier); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Equal); err != nil {
+		return nil, err
+	}
+
+	typeDef.TypeDenoter, err = p.typeDenoter()
+	if err != nil {
+		return nil, err
+	}
+
+	return typeDef, nil
+}
+
+// type-denoter = type-identifier | new-type .
+// type-identifier = identifier .
+func (p *Parser) typeDenoter() (types.Type, error) {
+	var (
+		err error
+		typ types.Type
+	)
+
+	if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+		typ = dtype
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+	} else if p.isNewType() {
+		switch p.lookahead.Kind {
+		case token.Array:
+		case token.LParen:
+			if err = p.match(token.LParen); err != nil {
+				return nil, err
+			}
+
+			list, err := p.identifierList()
+			if err != nil {
+				return nil, err
+			}
+
+			if err = p.match(token.RParen); err != nil {
+				return nil, err
+			}
+
+			var enumList []string
+			for _, id := range list {
+				enumList = append(enumList, id.Name)
+			}
+
+			typ = &types.Enumerated{List: enumList}
+		case token.Record:
+		case token.File:
+		case token.Set:
+		case token.Const:
+		case token.Packed:
+		}
+	}
+
+	return typ, nil
+}
+
+func (p *Parser) isNewType() bool {
+	return p.lookahead.Kind == token.LParen ||
+		p.lookahead.Kind == token.Const ||
+		p.lookahead.Kind == token.Packed ||
+		p.lookahead.Kind == token.Array ||
+		p.lookahead.Kind == token.Record ||
+		p.lookahead.Kind == token.Set ||
+		p.lookahead.Kind == token.File
 }
 
 // constant-definition-part = [ 'const' constant-definition ';' { constant-definition ';' } ] .
