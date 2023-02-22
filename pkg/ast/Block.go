@@ -10,6 +10,7 @@ type Block struct {
 	Consts *ConstDefinition
 
 	// type definition part
+	Types *TypeDefinition
 
 	// variable declaration part
 	VarDeclaration *VarDeclaration

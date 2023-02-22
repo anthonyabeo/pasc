@@ -38,6 +38,12 @@ const (
 	Const
 	Until
 	Of
+	Type
+	Array
+	Record
+	File
+	Set
+	Packed
 
 	Identifier
 	SemiColon
@@ -137,6 +143,20 @@ func GetTokenName(t Kind) string {
 		return "until"
 	case 29:
 		return "of"
+	case 30:
+		return "const"
+	case 31:
+		return "type"
+	case 32:
+		return "array"
+	case 33:
+		return "record"
+	case 34:
+		return "file"
+	case 35:
+		return "set"
+	case 36:
+		return "packed"
 	default:
 		return ""
 	}
@@ -179,5 +199,11 @@ func init() {
 		"const":     Const,
 		"until":     Until,
 		"of":        Of,
+		"type":      Type,
+		"array":     Array,
+		"record":    Record,
+		"file":      File,
+		"set":       Set,
+		"packed":    Packed,
 	}
 }

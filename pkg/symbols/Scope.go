@@ -80,6 +80,7 @@ func (g *GlobalScope) initTypeSystem() {
 	g.Define(NewIntegerSymbol("integer", TYPE, &types.Integer{Name: "integer"}))
 	g.Define(NewBooleanSymbol("Boolean", TYPE, &types.Boolean{Name: "Boolean"}))
 	g.Define(NewRealSymbol("real", TYPE, &types.Real{Name: "real"}))
+	g.Define(NewCharSymbol("char", TYPE, &types.Char{Name: "char"}))
 }
 
 // GetScopeName returns the name of the function
