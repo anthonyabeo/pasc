@@ -217,3 +217,50 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 		}
 	}
 }
+
+func TestTokenizeSubRangeType(t *testing.T) {
+	input := `
+		1900..1999
+		red..green
+		'0'..'9'
+		-10..+10
+	`
+
+	tests := []struct {
+		expKind token.Kind
+		expText string
+	}{
+		{token.UIntLiteral, "1900"},
+		{token.Range, ".."},
+		{token.UIntLiteral, "1999"},
+		{token.Identifier, "red"},
+		{token.Range, ".."},
+		{token.Identifier, "green"},
+		{token.CharString, "0"},
+		{token.Range, ".."},
+		{token.CharString, "9"},
+		{token.Minus, "-"},
+		{token.UIntLiteral, "10"},
+		{token.Range, ".."},
+		{token.Plus, "+"},
+		{token.UIntLiteral, "10"},
+	}
+
+	lex := NewLexer(input)
+
+	for _, tt := range tests {
+		tok, err := lex.NextToken()
+		if err != nil {
+			t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
+		}
+
+		if tok.Text != tt.expText {
+			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", tt.expText, tok.Text)
+		}
+
+		if tok.Kind != tt.expKind {
+			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
+				tt.expText, token.GetTokenName(tok.Kind))
+		}
+	}
+}

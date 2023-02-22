@@ -59,6 +59,11 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			return tok, nil
 		case '.':
 			lex.consume()
+			if lex.curChar == '.' {
+				lex.consume()
+				return token.Token{Kind: token.Range, Text: ".."}, nil
+			}
+
 			return token.Token{Kind: token.Period, Text: "."}, nil
 
 		case '+':
@@ -174,6 +179,10 @@ func (lex *Lexer) readUnsignedNumber() string {
 	pos := lex.curCharPos
 	for lex.isDigit() {
 		lex.consume()
+	}
+
+	if lex.input[lex.curCharPos] == '.' && lex.input[lex.curReadPos] == '.' {
+		return lex.input[pos:lex.curCharPos]
 	}
 
 	// Unsigned real
