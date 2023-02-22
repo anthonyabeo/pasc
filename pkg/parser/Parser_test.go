@@ -1254,6 +1254,8 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		range = integer;
 		colour = (red, yellow, green, blue);
 		sex = (male, female);
+		year = 1900..1999;
+		volume = -10..+10;
 
 	begin
 		writeln('Hello, world!')

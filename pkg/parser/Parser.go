@@ -8,6 +8,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // Parser performs syntactic analysis to validate the correctness of the input string.
@@ -294,16 +295,31 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 				return nil, err
 			}
 
-			var enumList []string
-			for _, id := range list {
-				enumList = append(enumList, id.Name)
-			}
-
-			typ = &types.Enumerated{List: enumList}
+			typ = &structured.Enumerated{List: list}
 		case token.Record:
 		case token.File:
 		case token.Set:
-		case token.Const:
+		case token.Plus, token.Minus, token.UIntLiteral, token.CharString, token.URealLiteral, token.Identifier:
+			var (
+				err        error
+				start, end ast.Expression
+			)
+
+			start, err = p.constant()
+			if err != nil {
+				return nil, err
+			}
+
+			if err = p.match(token.Range); err != nil {
+				return nil, err
+			}
+
+			end, err = p.constant()
+			if err != nil {
+				return nil, err
+			}
+
+			typ = &structured.SubRange{Start: start, End: end}
 		case token.Packed:
 		}
 	}
@@ -318,7 +334,13 @@ func (p *Parser) isNewType() bool {
 		p.lookahead.Kind == token.Array ||
 		p.lookahead.Kind == token.Record ||
 		p.lookahead.Kind == token.Set ||
-		p.lookahead.Kind == token.File
+		p.lookahead.Kind == token.File ||
+		p.lookahead.Kind == token.Plus ||
+		p.lookahead.Kind == token.Minus ||
+		p.lookahead.Kind == token.UIntLiteral ||
+		p.lookahead.Kind == token.CharString ||
+		p.lookahead.Kind == token.URealLiteral ||
+		p.lookahead.Kind == token.Identifier
 }
 
 // constant-definition-part = [ 'const' constant-definition ';' { constant-definition ';' } ] .
