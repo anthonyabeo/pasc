@@ -67,6 +67,7 @@ const (
 	GreaterThanOrEqual
 	URealLiteral
 	ConstIdentifier
+	Range
 )
 
 // Token defines a type of token
