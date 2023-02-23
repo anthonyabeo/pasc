@@ -1,6 +1,5 @@
 package types
 
-
 // Type represents some data type
 type Type interface {
 	GetName() string
@@ -16,4 +15,10 @@ type BuiltIn interface {
 type UserDefined interface {
 	Type
 	isUserDefined() bool
+}
+
+// Ordinal is the generic parent of ordinal types
+type Ordinal interface {
+	Type
+	Ord()
 }

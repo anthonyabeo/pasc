@@ -11,3 +11,5 @@ type Enumerated struct {
 func (e *Enumerated) GetName() string {
 	return "enumerated-type"
 }
+
+func (e *Enumerated) Ord() {}

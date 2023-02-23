@@ -13,3 +13,5 @@ func (c *Char) GetName() string {
 func (c *Char) isBuiltIn() bool {
 	return true
 }
+
+func (c *Char) Ord() {}

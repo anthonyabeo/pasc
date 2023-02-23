@@ -13,3 +13,5 @@ func (b *Boolean) GetName() string {
 func (b *Boolean) isBuiltIn() bool {
 	return true
 }
+
+func (b *Boolean) Ord() {}

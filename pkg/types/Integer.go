@@ -13,3 +13,5 @@ func (i *Integer) GetName() string {
 func (i *Integer) isBuiltIn() bool {
 	return true
 }
+
+func (i *Integer) Ord() {}
