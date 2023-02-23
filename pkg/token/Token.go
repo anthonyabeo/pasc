@@ -44,6 +44,9 @@ const (
 	File
 	Set
 	Packed
+	Real
+	Boolean
+	Char
 
 	Identifier
 	SemiColon
@@ -68,6 +71,8 @@ const (
 	URealLiteral
 	ConstIdentifier
 	Range
+	LSqBrace
+	RSqBrace
 )
 
 // Token defines a type of token
@@ -158,6 +163,12 @@ func GetTokenName(t Kind) string {
 		return "set"
 	case 36:
 		return "packed"
+	case 37:
+		return "real"
+	case 38:
+		return "Boolean"
+	case 39:
+		return "char"
 	default:
 		return ""
 	}
@@ -206,5 +217,8 @@ func init() {
 		"file":      File,
 		"set":       Set,
 		"packed":    Packed,
+		"real":      Real,
+		"Boolean":   Boolean,
+		"char":      Char,
 	}
 }
