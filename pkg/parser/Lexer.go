@@ -65,7 +65,12 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			}
 
 			return token.Token{Kind: token.Period, Text: "."}, nil
-
+		case '[':
+			lex.consume()
+			return token.Token{Kind: token.LSqBrace, Text: "["}, nil
+		case ']':
+			lex.consume()
+			return token.Token{Kind: token.RSqBrace, Text: "]"}, nil
 		case '+':
 			lex.consume()
 			return token.Token{Kind: token.Plus, Text: "+"}, nil
