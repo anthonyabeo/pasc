@@ -296,109 +296,142 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 		if p.isNewType() {
 			switch p.lookahead.Kind {
 			case token.Array:
-				var (
-					err     error
-					idxType types.Ordinal
-				)
-
-				arrayType := &structured.Array{Token: p.lookahead}
-				if err = p.match(token.Array); err != nil {
-					return nil, err
-				}
-
-				if err = p.match(token.LSqBrace); err != nil {
-					return nil, err
-				}
-
-				idxType, err = p.indexType()
+				typ, err = p.arrayType()
 				if err != nil {
 					return nil, err
 				}
-				arrayType.Indices = append(arrayType.Indices, idxType)
-
-				for p.lookahead.Kind == token.Comma {
-					idxType, err = p.indexType()
-					if err != nil {
-						return nil, err
-					}
-					arrayType.Indices = append(arrayType.Indices, idxType)
-				}
-
-				if err = p.match(token.RSqBrace); err != nil {
-					return nil, err
-				}
-
-				if err = p.match(token.Of); err != nil {
-					return nil, err
-				}
-
-				arrayType.ComponentType, err = p.typeDenoter()
-				if err != nil {
-					return nil, err
-				}
-
-				typ = arrayType
 			case token.LParen:
-				if err = p.match(token.LParen); err != nil {
-					return nil, err
-				}
-
-				list, err := p.identifierList()
+				typ, err = p.enumType()
 				if err != nil {
 					return nil, err
 				}
-
-				if err = p.match(token.RParen); err != nil {
-					return nil, err
-				}
-
-				typ = &structured.Enumerated{List: list}
 			case token.Record:
+
 			case token.File:
+
 			case token.Set:
-				set := &structured.Set{Token: p.lookahead}
-				if err = p.match(token.Set); err != nil {
-					return nil, err
-				}
-
-				if err = p.match(token.Of); err != nil {
-					return nil, err
-				}
-
-				set.BaseType, err = p.ordinalType()
+				typ, err = p.setType()
 				if err != nil {
 					return nil, err
 				}
-
-				typ = set
-
 			case token.Plus, token.Minus, token.UIntLiteral, token.CharString, token.URealLiteral, token.Identifier:
-				var (
-					err        error
-					start, end ast.Expression
-				)
-
-				start, err = p.constant()
+				typ, err = p.subRangeType()
 				if err != nil {
 					return nil, err
 				}
-
-				if err = p.match(token.Range); err != nil {
-					return nil, err
-				}
-
-				end, err = p.constant()
-				if err != nil {
-					return nil, err
-				}
-
-				typ = &structured.SubRange{Start: start, End: end}
 			case token.Packed:
 			}
 		}
 	}
 
 	return typ, nil
+}
+
+func (p *Parser) subRangeType() (*structured.SubRange, error) {
+	var (
+		err        error
+		start, end ast.Expression
+	)
+
+	start, err = p.constant()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Range); err != nil {
+		return nil, err
+	}
+
+	end, err = p.constant()
+	if err != nil {
+		return nil, err
+	}
+
+	return &structured.SubRange{Start: start, End: end}, nil
+}
+
+func (p *Parser) enumType() (*structured.Enumerated, error) {
+	var err error
+
+	if err = p.match(token.LParen); err != nil {
+		return nil, err
+	}
+
+	list, err := p.identifierList()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.RParen); err != nil {
+		return nil, err
+	}
+
+	return &structured.Enumerated{List: list}, nil
+}
+
+func (p *Parser) setType() (*structured.Set, error) {
+	var err error
+
+	set := &structured.Set{Token: p.lookahead}
+	if err := p.match(token.Set); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Of); err != nil {
+		return nil, err
+	}
+
+	set.BaseType, err = p.ordinalType()
+	if err != nil {
+		return nil, err
+	}
+
+	return set, nil
+}
+
+func (p *Parser) arrayType() (*structured.Array, error) {
+	var (
+		err     error
+		idxType types.Ordinal
+	)
+
+	arrayType := &structured.Array{Token: p.lookahead}
+	if err = p.match(token.Array); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.LSqBrace); err != nil {
+		return nil, err
+	}
+
+	idxType, err = p.indexType()
+	if err != nil {
+		return nil, err
+	}
+	arrayType.Indices = append(arrayType.Indices, idxType)
+
+	for p.lookahead.Kind == token.Comma {
+		idxType, err = p.indexType()
+		if err != nil {
+			return nil, err
+		}
+		arrayType.Indices = append(arrayType.Indices, idxType)
+	}
+
+	if err = p.match(token.RSqBrace); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Of); err != nil {
+		return nil, err
+	}
+
+	arrayType.ComponentType, err = p.typeDenoter()
+	if err != nil {
+		return nil, err
+	}
+
+	return arrayType, nil
 }
 
 func (p *Parser) ordinalType() (types.Ordinal, error) {
