@@ -356,6 +356,22 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 			case token.Record:
 			case token.File:
 			case token.Set:
+				set := &structured.Set{Token: p.lookahead}
+				if err = p.match(token.Set); err != nil {
+					return nil, err
+				}
+
+				if err = p.match(token.Of); err != nil {
+					return nil, err
+				}
+
+				set.BaseType, err = p.ordinalType()
+				if err != nil {
+					return nil, err
+				}
+
+				typ = set
+
 			case token.Plus, token.Minus, token.UIntLiteral, token.CharString, token.URealLiteral, token.Identifier:
 				var (
 					err        error
@@ -385,7 +401,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 	return typ, nil
 }
 
-func (p *Parser) indexType() (types.Ordinal, error) {
+func (p *Parser) ordinalType() (types.Ordinal, error) {
 	var (
 		err     error
 		idxType types.Ordinal
@@ -451,6 +467,10 @@ func (p *Parser) indexType() (types.Ordinal, error) {
 	}
 
 	return idxType, nil
+}
+
+func (p *Parser) indexType() (types.Ordinal, error) {
+	return p.ordinalType()
 }
 
 func (p *Parser) isNewType() bool {

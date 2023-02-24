@@ -1260,6 +1260,8 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		vector = array [year] of integer;
 		arr = array [Boolean] of colour;
 		punchedcard = array [1..80] of char;
+		uniq = set of char;
+		cards = set of (club, diamond, heart, spade);	
 
 	begin
 		writeln('Hello, world!')
