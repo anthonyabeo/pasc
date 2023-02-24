@@ -1256,6 +1256,10 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		sex = (male, female);
 		year = 1900..1999;
 		volume = -10..+10;
+		list = array [1..100] of real;
+		vector = array [year] of integer;
+		arr = array [Boolean] of colour;
+		punchedcard = array [1..80] of char;
 
 	begin
 		writeln('Hello, world!')

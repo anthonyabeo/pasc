@@ -204,7 +204,7 @@ func (p *Parser) block() (*ast.Block, error) {
 	return block, nil
 }
 
-// [ 'type' type-definition ';' { type-definition ';' } ] .
+// type-definition-part = [ 'type' type-definition ';' { type-definition ';' } ] .
 func (p *Parser) typeDefinitionPart() (*ast.TypeDefinition, error) {
 	var (
 		err     error
@@ -262,6 +262,9 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 		return nil, err
 	}
 
+	p.curScope.Define(
+		symbols.NewTypeDefSymbol(typeDef.Name.Name, symbols.TYPE, typeDef.TypeDenoter))
+
 	return typeDef, nil
 }
 
@@ -273,58 +276,181 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 		typ types.Type
 	)
 
-	if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
-		typ = dtype
-		if err = p.consume(); err != nil {
-			return nil, err
+	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Integer ||
+		p.lookahead.Kind == token.Boolean || p.lookahead.Kind == token.Char || p.lookahead.Kind == token.Real {
+
+		sym := p.symTable.Resolve(p.lookahead.Text)
+		if sym == nil {
+			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+		} else if sym.GetKind() != symbols.TYPE {
+			return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+		} else {
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+
+			return sym.GetType(), nil
 		}
-	} else if p.isNewType() {
-		switch p.lookahead.Kind {
-		case token.Array:
-		case token.LParen:
-			if err = p.match(token.LParen); err != nil {
-				return nil, err
+
+	} else {
+		if p.isNewType() {
+			switch p.lookahead.Kind {
+			case token.Array:
+				var (
+					err     error
+					idxType types.Ordinal
+				)
+
+				arrayType := &structured.Array{Token: p.lookahead}
+				if err = p.match(token.Array); err != nil {
+					return nil, err
+				}
+
+				if err = p.match(token.LSqBrace); err != nil {
+					return nil, err
+				}
+
+				idxType, err = p.indexType()
+				if err != nil {
+					return nil, err
+				}
+				arrayType.Indices = append(arrayType.Indices, idxType)
+
+				for p.lookahead.Kind == token.Comma {
+					idxType, err = p.indexType()
+					if err != nil {
+						return nil, err
+					}
+					arrayType.Indices = append(arrayType.Indices, idxType)
+				}
+
+				if err = p.match(token.RSqBrace); err != nil {
+					return nil, err
+				}
+
+				if err = p.match(token.Of); err != nil {
+					return nil, err
+				}
+
+				arrayType.ComponentType, err = p.typeDenoter()
+				if err != nil {
+					return nil, err
+				}
+
+				typ = arrayType
+			case token.LParen:
+				if err = p.match(token.LParen); err != nil {
+					return nil, err
+				}
+
+				list, err := p.identifierList()
+				if err != nil {
+					return nil, err
+				}
+
+				if err = p.match(token.RParen); err != nil {
+					return nil, err
+				}
+
+				typ = &structured.Enumerated{List: list}
+			case token.Record:
+			case token.File:
+			case token.Set:
+			case token.Plus, token.Minus, token.UIntLiteral, token.CharString, token.URealLiteral, token.Identifier:
+				var (
+					err        error
+					start, end ast.Expression
+				)
+
+				start, err = p.constant()
+				if err != nil {
+					return nil, err
+				}
+
+				if err = p.match(token.Range); err != nil {
+					return nil, err
+				}
+
+				end, err = p.constant()
+				if err != nil {
+					return nil, err
+				}
+
+				typ = &structured.SubRange{Start: start, End: end}
+			case token.Packed:
 			}
-
-			list, err := p.identifierList()
-			if err != nil {
-				return nil, err
-			}
-
-			if err = p.match(token.RParen); err != nil {
-				return nil, err
-			}
-
-			typ = &structured.Enumerated{List: list}
-		case token.Record:
-		case token.File:
-		case token.Set:
-		case token.Plus, token.Minus, token.UIntLiteral, token.CharString, token.URealLiteral, token.Identifier:
-			var (
-				err        error
-				start, end ast.Expression
-			)
-
-			start, err = p.constant()
-			if err != nil {
-				return nil, err
-			}
-
-			if err = p.match(token.Range); err != nil {
-				return nil, err
-			}
-
-			end, err = p.constant()
-			if err != nil {
-				return nil, err
-			}
-
-			typ = &structured.SubRange{Start: start, End: end}
-		case token.Packed:
 		}
 	}
 
 	return typ, nil
+}
+
+func (p *Parser) indexType() (types.Ordinal, error) {
+	var (
+		err     error
+		idxType types.Ordinal
+	)
+
+	switch p.lookahead.Kind {
+	case token.LParen:
+		if err = p.match(token.LParen); err != nil {
+			return nil, err
+		}
+
+		list, err := p.identifierList()
+		if err != nil {
+			return nil, err
+		}
+
+		if err = p.match(token.RParen); err != nil {
+			return nil, err
+		}
+
+		idxType = &structured.Enumerated{List: list}
+	case token.Plus, token.Minus, token.UIntLiteral, token.CharString:
+		var (
+			err        error
+			start, end ast.Expression
+		)
+
+		start, err = p.constant()
+		if err != nil {
+			return nil, err
+		}
+
+		if err = p.match(token.Range); err != nil {
+			return nil, err
+		}
+
+		end, err = p.constant()
+		if err != nil {
+			return nil, err
+		}
+
+		idxType = &structured.SubRange{Start: start, End: end}
+	default:
+		sym := p.symTable.Resolve(p.lookahead.Text)
+		if sym == nil {
+			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+		} else if sym.GetKind() != symbols.TYPE {
+			return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+		} else {
+			typ, ok := sym.GetType().(types.Ordinal)
+			if !ok {
+				return nil, fmt.Errorf(
+					"%v cannot be used as array index type. Array index type must be one of integer, Boolean, char, enum, subrange",
+					p.lookahead.Text)
+			}
+
+			idxType = typ
+
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return idxType, nil
 }
 
 func (p *Parser) isNewType() bool {
@@ -867,7 +993,6 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	)
 
 	names = append(names, &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope})
-
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -878,7 +1003,6 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		}
 
 		names = append(names, &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope})
-
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}
