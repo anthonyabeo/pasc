@@ -291,7 +291,6 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 
 			return sym.GetType(), nil
 		}
-
 	} else {
 		if p.isNewType() {
 			switch p.lookahead.Kind {
@@ -306,7 +305,10 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 					return nil, err
 				}
 			case token.Record:
-
+				typ, err = p.recordType()
+				if err != nil {
+					return nil, err
+				}
 			case token.File:
 
 			case token.Set:
@@ -325,6 +327,214 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 	}
 
 	return typ, nil
+}
+
+// record-type = 'record' field-list 'end' .
+func (p *Parser) recordType() (*structured.Record, error) {
+	var err error
+
+	record := &structured.Record{Token: p.lookahead}
+	if err = p.match(token.Record); err != nil {
+		return nil, err
+	}
+
+	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Case {
+		record.FieldList, err = p.fieldList()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if err = p.match(token.End); err != nil {
+		return nil, err
+	}
+
+	return record, nil
+
+}
+
+//  field-list = [ ( fixed-part [ ';' variant-part ] | variant-part ) [ ';' ] ] .
+func (p *Parser) fieldList() ([]structured.Field, error) {
+	var (
+		err       error
+		varPart   *structured.VariantPart
+		fieldList []structured.Field
+	)
+
+	if p.lookahead.Kind == token.Case {
+		varPart, err = p.variantPart()
+		if err != nil {
+			return nil, err
+		}
+		fieldList = append(fieldList, varPart)
+	} else {
+		fixedPart := &structured.FixedPart{}
+
+		recordSec, err := p.recordSection()
+		if err != nil {
+			return nil, err
+		}
+		fixedPart.Entry = append(fixedPart.Entry, recordSec)
+		fieldList = append(fieldList, fixedPart)
+
+		for p.lookahead.Kind == token.SemiColon {
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+
+			if p.lookahead.Kind == token.Case {
+				varPart, err = p.variantPart()
+				if err != nil {
+					return nil, err
+				}
+				fieldList = append(fieldList, varPart)
+			} else {
+				recordSec, err := p.recordSection()
+				if err != nil {
+					return nil, err
+				}
+				fixedPart.Entry = append(fixedPart.Entry, recordSec)
+				fieldList = append(fieldList, fixedPart)
+			}
+		}
+	}
+
+	if p.lookahead.Kind == token.SemiColon {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+	}
+
+	return fieldList, nil
+}
+
+// record-section = identifier-list ':' type-denoter .
+func (p *Parser) recordSection() (*structured.RecordSection, error) {
+	var err error
+
+	recordSec := &structured.RecordSection{}
+	recordSec.List, err = p.identifierList()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Colon); err != nil {
+		return nil, err
+	}
+
+	recordSec.Type, err = p.typeDenoter()
+	if err != nil {
+		return nil, err
+	}
+
+	return recordSec, nil
+}
+
+// variant-part = 'case' variant-selector 'of' variant { ';' variant } .
+func (p *Parser) variantPart() (*structured.VariantPart, error) {
+	var err error
+
+	variantPart := &structured.VariantPart{Token: p.lookahead}
+	if err = p.match(token.Case); err != nil {
+		return nil, err
+	}
+
+	variantPart.VariantSelector, err = p.variantSelector()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Of); err != nil {
+		return nil, err
+	}
+
+	variant, err := p.variant()
+	if err != nil {
+		return nil, err
+	}
+	variantPart.Variants = append(variantPart.Variants, variant)
+
+	for p.lookahead.Kind == token.SemiColon {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		variant, err := p.variant()
+		if err != nil {
+			return nil, err
+		}
+		variantPart.Variants = append(variantPart.Variants, variant)
+	}
+
+	return variantPart, nil
+}
+
+// variant-selector = [ tag-field ':' ] tag-type .
+// tag-field = identifier .
+// tag-type = ordinal-type-identifier .
+func (p *Parser) variantSelector() (*structured.VariantSelector, error) {
+	var err error
+
+	selector := &structured.VariantSelector{}
+	if p.lookahead.Kind == token.Identifier {
+		selector.TagField = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		if err = p.match(token.Colon); err != nil {
+			return nil, err
+		}
+	}
+
+	sym := p.symTable.Resolve(p.lookahead.Text)
+	if sym == nil {
+		return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+	} else if sym.GetKind() != symbols.TYPE {
+		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+	} else {
+		typ, ok := sym.GetType().(types.Ordinal)
+		if !ok {
+			return nil, fmt.Errorf(
+				"%v is not an ordinal type. Must be one of integer, Boolean, char, enum, subrange",
+				p.lookahead.Text)
+		}
+
+		selector.TagType = typ
+
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+	}
+
+	return selector, nil
+}
+
+// variant = case-constant-list ':' '(' field-list ')' .
+func (p *Parser) variant() (*structured.Variant, error) {
+	caseConstList, err := p.caseConstantList()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Colon); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.LParen); err != nil {
+		return nil, err
+	}
+
+	fieldList, err := p.fieldList()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.RParen); err != nil {
+		return nil, err
+	}
+
+	return &structured.Variant{CaseConstList: caseConstList, FieldList: fieldList}, nil
 }
 
 func (p *Parser) subRangeType() (*structured.SubRange, error) {

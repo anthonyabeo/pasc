@@ -1262,6 +1262,21 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		punchedcard = array [1..80] of char;
 		uniq = set of char;
 		cards = set of (club, diamond, heart, spade);	
+		polar = record
+			r : real;
+			theta : volume
+		end;
+		persondetails = record
+			name, firstname : integer;
+			age : integer;
+			married : Boolean;
+			father, child, sibling : uniq;
+			case s : sex of
+			male :
+				(enlisted, bearded : Boolean);
+			female :
+				(mother, programmer : Boolean)
+		end;
 
 	begin
 		writeln('Hello, world!')
