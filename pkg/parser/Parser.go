@@ -1188,7 +1188,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 		return nil, err
 	}
 
-	if p.lookahead.Kind == token.Identifier {
+	for p.lookahead.Kind == token.Identifier {
 		if d, err = p.variableDeclaration(); err != nil {
 			return nil, err
 		}
@@ -1208,12 +1208,10 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	var (
 		err   error
-		typ   types.Type
 		names []*ast.Identifier
 	)
 
 	varDecl := new(ast.VarDecl)
-
 	if names, err = p.identifierList(); err != nil {
 		return nil, err
 	}
@@ -1224,23 +1222,15 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 		return nil, err
 	}
 
-	if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
-		typ = dtype
-	} else {
-		// must be a user-defined type
-		// it must therefore be defined somewhere in the scope tree
-		// if not found, return error
-		// otherwise, typ = <<user-defined-type>>
+	varDecl.Type, err = p.typeDenoter()
+	if err != nil {
+		return nil, err
 	}
-	varDecl.Type = typ
 
 	// add variables to symbol table
 	for _, n := range names {
-		p.curScope.Define(symbols.NewVariableSymbol(n.Name, symbols.VARIABLE, typ))
-	}
-
-	if err = p.consume(); err != nil {
-		return nil, err
+		p.curScope.Define(
+			symbols.NewVariableSymbol(n.Name, symbols.VARIABLE, varDecl.Type))
 	}
 
 	varDecl.Scope = p.curScope
@@ -1255,7 +1245,11 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		names []*ast.Identifier
 	)
 
-	names = append(names, &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope})
+	names = append(names, &ast.Identifier{
+		Token: p.lookahead,
+		Name:  p.lookahead.Text,
+		Scope: p.curScope})
+
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1265,7 +1259,11 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 			return nil, err
 		}
 
-		names = append(names, &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope})
+		names = append(names, &ast.Identifier{
+			Token: p.lookahead,
+			Name:  p.lookahead.Text,
+			Scope: p.curScope})
+
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}

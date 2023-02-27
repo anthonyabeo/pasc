@@ -14,7 +14,7 @@ type SubRange struct {
 
 // GetName ...
 func (s *SubRange) GetName() string {
-	return "sub-range"
+	return "subrange"
 }
 
 func (s *SubRange) Ord() {}

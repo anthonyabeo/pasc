@@ -9,7 +9,7 @@ type Enumerated struct {
 
 // GetName ...
 func (e *Enumerated) GetName() string {
-	return "enumerated-type"
+	return "enum"
 }
 
 func (e *Enumerated) Ord() {}

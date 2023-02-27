@@ -362,6 +362,16 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	var 
 		a, b, sum : integer;
 		c, d : integer;
+		x, y, z, max : real;
+		i, j : integer;
+		k : 0..9;
+		p, q, r : Boolean;
+		operator : (plus, minus, times);
+		a : array [0..63] of real;
+		date : record
+			month : 1..12;
+			year : integer
+		end;
 
 	begin
 		writeln('Hello, world!')
@@ -378,16 +388,28 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 0, 0) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 9, 0, 0) {
 		return
 	}
 
 	names := [][]string{
 		{"a", "b", "sum"},
 		{"c", "d"},
+		{"x", "y", "z", "max"},
+		{"i", "j"},
+		{"k"},
+		{"p", "q", "r"},
+		{"operator"},
+		{"a"},
+		{"date"},
 	}
 	if !testVarDeclaration(
-		t, prog.Block.VarDeclaration, token.NewToken(token.Var, "var"), 2, names, []string{"integer", "integer"},
+		t,
+		prog.Block.VarDeclaration,
+		token.NewToken(token.Var, "var"),
+		9,
+		names,
+		[]string{"integer", "integer", "real", "integer", "subrange", "Boolean", "enum", "array", "record"},
 	) {
 		return
 	}
@@ -1186,7 +1208,7 @@ func testVarDeclaration(
 		}
 
 		if decl.Type.GetName() != varType[idx] {
-			t.Errorf("expected variable type to be %v, got %v instead", varType, decl.Type.GetName())
+			t.Errorf("expected variable type to be %v, got %v instead", varType[idx], decl.Type.GetName())
 			return false
 		}
 	}
