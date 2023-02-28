@@ -73,6 +73,7 @@ const (
 	Range
 	LSqBrace
 	RSqBrace
+	Dot
 )
 
 // Token defines a type of token
