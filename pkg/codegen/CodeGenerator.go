@@ -59,7 +59,13 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		}
 
 	case *ast.AssignStatement:
-		sym := node.Variable.Scope.Resolve(node.Variable.Name)
+		id, ok := node.Variable.(*ast.Identifier)
+		if !ok {
+			return fmt.Errorf(
+				"LHS of assignment statement, %v is not an identifier", id)
+		}
+
+		sym := id.Scope.Resolve(id.Name)
 		if sym != nil && sym.GetKind() == symbols.FUNCTION {
 			if err := c.emit(fmt.Sprintf("\tret %s;\n", node.Value.String())); err != nil {
 				return err
