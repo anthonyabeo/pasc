@@ -1,4 +1,4 @@
-package types
+package base
 
 // Boolean is an integer data type
 type Boolean struct {

@@ -1,4 +1,4 @@
-package types
+package base
 
 // Real is an real data type
 type Real struct {

@@ -6,7 +6,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
-	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
 func TestParseBasicProgram(t *testing.T) {
@@ -226,7 +226,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: &types.Integer{Name: "integer"},
+			Type: &base.Integer{Name: "integer"},
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0) {
@@ -289,7 +289,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
 				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
 			},
-			Type: &types.Integer{Name: "integer"},
+			Type: &base.Integer{Name: "integer"},
 		},
 	}
 	if !testFuncDeclaration(t, prog.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0) {
@@ -688,22 +688,22 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 					Parameters: []ast.FormalParameter{
 						&ast.ValueParam{
 							Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "x"), Name: "x"}},
-							Type:  &types.Real{Name: "real"},
+							Type:  &base.Real{Name: "real"},
 						},
 					},
-					ReturnType: &types.Real{Name: "real"},
+					ReturnType: &base.Real{Name: "real"},
 				},
 				&ast.ValueParam{
 					Names: []*ast.Identifier{
 						{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
 						{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
 					},
-					Type: &types.Real{Name: "real"},
+					Type: &base.Real{Name: "real"},
 				},
 				&ast.VariableParam{
 					Token: token.Var,
 					Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "result"), Name: "result"}},
-					Type:  &types.Real{Name: "real"},
+					Type:  &base.Real{Name: "real"},
 				},
 			},
 		},
@@ -722,7 +722,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 				Decls: []*ast.VarDecl{
 					{
 						Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "midpoint"), Name: "real"}},
-						Type:  &types.Real{Name: "real"},
+						Type:  &base.Real{Name: "real"},
 					},
 				},
 			},

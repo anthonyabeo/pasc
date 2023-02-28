@@ -1,6 +1,6 @@
 package symbols
 
-import "github.com/anthonyabeo/pasc/pkg/types"
+import "github.com/anthonyabeo/pasc/pkg/types/base"
 
 // Scope denotes a generic scope. Any entity that has a scope implements this interface
 type Scope interface {
@@ -77,10 +77,10 @@ func NewGlobalScope(parent Scope) *GlobalScope {
 }
 
 func (g *GlobalScope) initTypeSystem() {
-	g.Define(NewIntegerSymbol("integer", TYPE, &types.Integer{Name: "integer"}))
-	g.Define(NewBooleanSymbol("Boolean", TYPE, &types.Boolean{Name: "Boolean"}))
-	g.Define(NewRealSymbol("real", TYPE, &types.Real{Name: "real"}))
-	g.Define(NewCharSymbol("char", TYPE, &types.Char{Name: "char"}))
+	g.Define(NewIntegerSymbol("integer", TYPE, &base.Integer{Name: "integer"}))
+	g.Define(NewBooleanSymbol("Boolean", TYPE, &base.Boolean{Name: "Boolean"}))
+	g.Define(NewRealSymbol("real", TYPE, &base.Real{Name: "real"}))
+	g.Define(NewCharSymbol("char", TYPE, &base.Char{Name: "char"}))
 }
 
 // GetScopeName returns the name of the function

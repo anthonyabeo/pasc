@@ -1,4 +1,4 @@
-package types
+package base
 
 // Integer is an integer data type
 type Integer struct {

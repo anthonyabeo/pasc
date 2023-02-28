@@ -1,4 +1,4 @@
-package types
+package base
 
 // Char models a data type for single characters
 type Char struct {
