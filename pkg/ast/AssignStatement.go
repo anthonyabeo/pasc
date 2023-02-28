@@ -9,7 +9,7 @@ import (
 // AssignStatement is the node used to represent Pascal assignments in the AST
 type AssignStatement struct {
 	Token    token.Token
-	Variable *Identifier
+	Variable Expression
 	Value    Expression
 }
 
