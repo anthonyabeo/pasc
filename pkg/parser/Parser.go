@@ -1238,6 +1238,43 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	return varDecl, nil
 }
 
+// indexed-variable = array-variable '[' index-expression, { ',' index-expression } ']' .
+// array-variable = variable-access .
+// index-expression = expression .
+func (p *Parser) indexedVariable(arrayVar *ast.Identifier) (*ast.IndexedVariable, error) {
+	var err error
+
+	indexedVar := &ast.IndexedVariable{ArrayVar: arrayVar}
+
+	if err = p.match(token.LSqBrace); err != nil {
+		return nil, err
+	}
+
+	idxExpr, err := p.expression()
+	if err != nil {
+		return nil, err
+	}
+	indexedVar.IndexExpr = append(indexedVar.IndexExpr, idxExpr)
+
+	for p.lookahead.Kind == token.Comma {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		idxExpr, err := p.expression()
+		if err != nil {
+			return nil, err
+		}
+		indexedVar.IndexExpr = append(indexedVar.IndexExpr, idxExpr)
+	}
+
+	if err = p.match(token.RSqBrace); err != nil {
+		return nil, err
+	}
+
+	return indexedVar, nil
+}
+
 // identifier-list = identifier { ',' identifier } .
 func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	var (
@@ -1507,7 +1544,7 @@ func (p *Parser) withStatement() (*ast.WithStatement, error) {
 func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 	var recVarList []ast.Expression
 
-	variable, err := p.variableAccess(p.lookahead)
+	variable, err := p.variableAccess()
 	if err != nil {
 		return nil, err
 	}
@@ -1518,7 +1555,7 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 			return nil, err
 		}
 
-		variable, err := p.variableAccess(p.lookahead)
+		variable, err := p.variableAccess()
 		if err != nil {
 			return nil, err
 		}
@@ -1652,21 +1689,19 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		ident := p.lookahead
-
-		if err := p.consume(); err != nil {
-			return nil, err
-		}
-
-		if p.lookahead.Kind == token.LParen {
-			if stmt, err = p.procedureStatement(ident); err != nil {
+		// if the identifier is a user defined or built in procedure
+		if p.lookahead.Text == "writeln" || p.lookahead.Text == "write" {
+			stmt, err = p.procedureStatement()
+			if err != nil {
 				return nil, err
 			}
-		} else if p.lookahead.Kind == token.Initialize {
-			if stmt, err = p.assignmentStatement(ident); err != nil {
+		} else {
+			stmt, err = p.assignmentStatement()
+			if err != nil {
 				return nil, err
 			}
 		}
+
 	case token.Goto:
 		gotoStmt := &ast.GotoStatement{Token: p.lookahead}
 		if err = p.match(token.Goto); err != nil {
@@ -1687,12 +1722,18 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 }
 
 // procedure-statement = procedure-identitier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
-func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, error) {
+func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
 	// TODO: complete implementation
 
 	var err error
 
-	ps := ast.NewProcedureStatement(&ast.Identifier{Token: tt, Name: tt.Text, Scope: p.curScope})
+	ps := ast.NewProcedureStatement(&ast.Identifier{
+		Token: p.lookahead,
+		Name:  p.lookahead.Text,
+		Scope: p.curScope})
+	if err = p.match(token.Identifier); err != nil {
+		return nil, err
+	}
 
 	actualParamList, err := p.actualParameterList()
 	if err != nil {
@@ -1711,12 +1752,20 @@ func (p *Parser) procedureStatement(tt token.Token) (*ast.ProcedureStatement, er
 }
 
 // assignment-statement = ( variable-access | function-identifier ) ':=' expression .
-func (p *Parser) assignmentStatement(tt token.Token) (*ast.AssignStatement, error) {
-	var err error
+func (p *Parser) assignmentStatement() (*ast.AssignStatement, error) {
+	var (
+		err error
+		lhs ast.Expression
+	)
+
+	lhs, err = p.variableAccess()
+	if err != nil {
+		return nil, err
+	}
 
 	as := &ast.AssignStatement{
 		Token:    token.NewToken(p.lookahead.Kind, p.lookahead.Text),
-		Variable: &ast.Identifier{Token: tt, Name: tt.Text, Scope: p.curScope}}
+		Variable: lhs}
 
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
@@ -1831,16 +1880,17 @@ func (p *Parser) factor() (ast.Expression, error) {
 	// TODO: incomplete implementation
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		tt := p.lookahead
-		if err := p.consume(); err != nil {
+		expr, err := p.variableAccess()
+		if err != nil {
 			return nil, err
 		}
 
 		if p.lookahead.Kind == token.LParen {
+			tt := token.NewToken(token.Identifier, expr.String())
 			return p.functionDesignator(tt)
 		}
 
-		return p.variableAccess(tt)
+		return expr, nil
 	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil, token.ConstIdentifier:
 		return p.unsignedConstant()
 	case token.LParen:
@@ -1874,9 +1924,36 @@ func (p *Parser) factor() (ast.Expression, error) {
 }
 
 // variable-access := entire-variable | component-variable | identified-variable | buffer-variable .
-func (p *Parser) variableAccess(t token.Token) (ast.Expression, error) {
-	// TODO incomplete. Only implements 'entire-variable' path
-	return &ast.Identifier{Token: t, Name: t.Text, Scope: p.curScope}, nil
+func (p *Parser) variableAccess() (ast.Expression, error) {
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	id := p.lookahead
+	sym := p.curScope.Resolve(id.Text)
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
+
+	if sym == nil {
+		return nil, fmt.Errorf("undefined symbol %v", id.Text)
+	} else if sym.GetType().GetName() == "array" {
+		expr, err = p.indexedVariable(&ast.Identifier{Token: id, Name: id.Text})
+		if err != nil {
+			return nil, err
+		}
+	} else if sym.GetType().GetName() == "record" {
+
+	} else if sym.GetType().GetName() == "file" {
+
+	} else if sym.GetType().GetName() == "pointer" {
+
+	} else {
+		expr = &ast.Identifier{Token: id, Name: id.Text, Scope: p.curScope}
+	}
+
+	return expr, nil
 }
 
 // unsigned-constant := unsigned-number | character-string | constant-identifier | 'nil' .
@@ -1952,7 +2029,6 @@ func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 	var err error
 
 	ifStmt := &ast.IfStatement{Token: p.lookahead}
-
 	if err = p.match(token.If); err != nil {
 		return nil, err
 	}
@@ -2000,7 +2076,8 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
 	var err error
 
-	funcCall := &ast.FuncDesignator{Name: &ast.Identifier{Token: tt, Name: tt.Text}, Scope: p.curScope}
+	funcCall := &ast.FuncDesignator{
+		Name: &ast.Identifier{Token: tt, Name: tt.Text}, Scope: p.curScope}
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
 		return nil, err

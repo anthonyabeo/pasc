@@ -185,12 +185,17 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	input := `
 	program MaxProgram;
 
-	function foo(n, m :integer): integer;
-	var result: integer;
+	var 
+		a, b : integer;
 
-	begin
-		foo := 2
-	end;
+	function 
+		foo(n, m :integer): integer;
+		var 
+			result: integer;
+
+		begin
+			foo := 2
+		end;
 
 	begin
 		a := 100;
@@ -211,7 +216,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 0, 1, 0) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 1, 1, 0) {
 		return
 	}
 
@@ -241,17 +246,19 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	var 
 		a, b, sum : integer;
 
-	function max(n, m : integer): integer;
-	var result: integer;
+	function 
+		max(n, m : integer): integer;
+		var 
+			result: integer;
 
-	begin
-		if (n > m) then
-			result := n
-		else
-			result := m;
+		begin
+			if (n > m) then
+				result := n
+			else
+				result := m;
 
-		max := result
-	end;
+			max := result
+		end;
 
 	begin
 		a := 100;
@@ -314,13 +321,29 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 func TestParseProgramWithFunctionCall(t *testing.T) {
 	input := `
 	program MaxProgram;
+	var
+		a, b : integer;
+	
+	function 
+		max(n, m : integer): integer;
+		var 
+			result: integer;
+
+		begin
+			if (n > m) then
+				result := n
+			else
+				result := m;
+
+			max := result
+		end;
 
 	begin
 		a := 100;
 		b := 200;
 		result := max(a, b);
 
-		writeln(res)
+		writeln(result)
 	end.
 	`
 
@@ -335,7 +358,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 4, 0, 0, 0) {
+	if !testProgramAST(t, prog, "MaxProgram", []string{}, 4, 1, 1, 0) {
 		return
 	}
 
@@ -419,7 +442,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	input := `
 	program HelloWorld;
 	var
-		a, b, sum : integer;
+		a, b, c, d, e, f, sum, foo : integer;
 
 	begin
 		sum := a * b * c;
@@ -630,6 +653,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 		eps = 1e-10;
 	var
 		midpoint : real;
+		foo : integer;
 	begin
 		foo := 2
 	end;
@@ -944,14 +968,14 @@ func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, v
 		return false
 	}
 
-	if assignStmt.Variable.Token.Kind != token.Identifier {
+	if assignStmt.Variable.TokenKind() != token.Identifier {
 		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.Token.Kind))
+			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.TokenKind()))
 		return false
 	}
 
-	if assignStmt.Variable.Name != variable {
-		t.Errorf("expected variable to be %v, got %v instead,", variable, assignStmt.Variable.Name)
+	if assignStmt.Variable.String() != variable {
+		t.Errorf("expected variable to be %v, got %v instead,", variable, assignStmt.Variable.String())
 		return false
 	}
 
@@ -1220,7 +1244,7 @@ func TestParseRepeatStatement(t *testing.T) {
 	input := `
 	program HelloWorld;
 	var
-		i, sum : integer;
+		i, j, k, sum : integer;
 
 	begin
 		repeat
@@ -1316,6 +1340,38 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 	}
 
 	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 1) {
+		return
+	}
+}
+
+func TestParsingIndexedVariables(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+	type
+		punchedcard = array [1..80] of char;
+
+	begin
+		punchedcard[0] := 1;
+		a := 17;
+		punchedcard[5] := 2;
+
+		writeln('Hello, world!')
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 4, 1, 0, 1) {
 		return
 	}
 }
