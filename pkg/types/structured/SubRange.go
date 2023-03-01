@@ -8,8 +8,8 @@ import (
 
 // SubRange ...
 type SubRange struct {
-	Start, End ast.Expression
-	HostType   types.Type
+	Range    *ast.Range
+	HostType types.Type
 }
 
 // GetName ...
