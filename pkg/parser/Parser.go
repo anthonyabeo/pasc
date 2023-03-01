@@ -557,7 +557,8 @@ func (p *Parser) subRangeType() (*structured.SubRange, error) {
 		return nil, err
 	}
 
-	return &structured.SubRange{Start: start, End: end}, nil
+	return &structured.SubRange{
+		Range: &ast.Range{Start: start, End: end}}, nil
 }
 
 func (p *Parser) enumType() (*structured.Enumerated, error) {
@@ -686,7 +687,7 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 			return nil, err
 		}
 
-		idxType = &structured.SubRange{Start: start, End: end}
+		idxType = &structured.SubRange{Range: &ast.Range{Start: start, End: end}}
 	default:
 		sym := p.symTable.Resolve(p.lookahead.Text)
 		if sym == nil {
@@ -1877,8 +1878,41 @@ func (p *Parser) term() (ast.Expression, error) {
 // factor > bound-identifier
 // factor > variable-access | unsigned-constant | function-designator | set-constructor | '(' expression ')' | 'not' factor
 func (p *Parser) factor() (ast.Expression, error) {
-	// TODO: incomplete implementation
 	switch p.lookahead.Kind {
+	case token.LSqBrace:
+		var (
+			err    error
+			member ast.Expression
+		)
+
+		setConst := &ast.SetConstructor{Token: token.NewToken(token.Set, "set")}
+		if err = p.match(token.LSqBrace); err != nil {
+			return nil, err
+		}
+
+		member, err = p.memberDesignator()
+		if err != nil {
+			return nil, err
+		}
+		setConst.Members = append(setConst.Members, member)
+
+		for p.lookahead.Kind == token.Comma {
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+
+			member, err = p.memberDesignator()
+			if err != nil {
+				return nil, err
+			}
+			setConst.Members = append(setConst.Members, member)
+		}
+
+		if err = p.match(token.RSqBrace); err != nil {
+			return nil, err
+		}
+
+		return setConst, nil
 	case token.Identifier:
 		expr, err := p.variableAccess()
 		if err != nil {
@@ -1910,6 +1944,10 @@ func (p *Parser) factor() (ast.Expression, error) {
 		return expr, nil
 	case token.Not:
 		uExpr := &ast.UnaryExpression{Operator: p.lookahead}
+		if err := p.match(token.Not); err != nil {
+			return nil, err
+		}
+
 		expr, err := p.factor()
 		if err != nil {
 			return nil, err
@@ -1921,6 +1959,36 @@ func (p *Parser) factor() (ast.Expression, error) {
 	default:
 		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
 	}
+}
+
+func (p *Parser) memberDesignator() (ast.Expression, error) {
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	expr, err = p.expression()
+	if err != nil {
+		return nil, err
+	}
+
+	if p.lookahead.Kind == token.Range {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		rng := &ast.Range{Start: expr}
+
+		expr, err = p.expression()
+		if err != nil {
+			return nil, err
+		}
+		rng.End = expr
+
+		return rng, nil
+	}
+
+	return expr, nil
 }
 
 // variable-access := entire-variable | component-variable | identified-variable | buffer-variable .
