@@ -1391,7 +1391,7 @@ func TestParseExpressions(t *testing.T) {
 	function 
 		sin(n: integer): real;
 		begin
-			writeln('Hello, world!')
+			
 		end;
 
 	begin

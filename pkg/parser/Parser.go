@@ -1410,7 +1410,7 @@ func (p *Parser) isStructuredStatement() bool {
 }
 
 func (p *Parser) isSimpleStatement() bool {
-	return p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto
+	return p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto || p.lookahead.Kind == token.End
 }
 
 // case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
@@ -1682,13 +1682,13 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 
 // simple-statement := empty-statement | assignment-statement | procedure-statement | goto-statement .
 func (p *Parser) simpleStatement() (ast.Statement, error) {
-	//TODO resolve the first and follow set of the empty statement alternative
 	var (
 		err  error
 		stmt ast.Statement
 	)
 
 	switch p.lookahead.Kind {
+	case token.End:
 	case token.Identifier:
 		// if the identifier is a user defined or built in procedure
 		if p.lookahead.Text == "writeln" || p.lookahead.Text == "write" {
@@ -1702,7 +1702,6 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 				return nil, err
 			}
 		}
-
 	case token.Goto:
 		gotoStmt := &ast.GotoStatement{Token: p.lookahead}
 		if err = p.match(token.Goto); err != nil {
