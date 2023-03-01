@@ -1375,3 +1375,64 @@ func TestParsingIndexedVariables(t *testing.T) {
 		return
 	}
 }
+
+func TestParseExpressions(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, c, i, j, k, red, green : integer;
+		x, y, z : real;
+		p, q, r : Boolean;
+	
+	type
+		hue1 = set of integer;
+		hue2 = set of integer;
+
+	function 
+		sin(n: integer): real;
+		begin
+			writeln('Hello, world!')
+		end;
+
+	begin
+		a := 15;
+		a := (x + y + z);
+		a := sin(x + y);
+		hue1 := [red, c, green];
+		hue2 := [1, 5, 10..19, 23];
+		a := not p;
+
+		b := x * y;
+		b := i / (1 - i);
+		b := (x <= y) and (y < z);
+
+		c := p or q;
+		c := x + y;
+		c := -x;
+		c := hue1 + hue2;
+		c := i * j + 1;
+
+		x := 1.5;
+		r := p <= q;
+		r := p = q and r;
+		r := (i < j) = (j < k);
+		r := c in hue1;
+
+		writeln('Hello, world!')
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 20, 3, 1, 1) {
+		return
+	}
+}
