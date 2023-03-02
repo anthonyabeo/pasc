@@ -91,7 +91,7 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 		b := 200;
 		result := max(a, b);
 
-		writeln(max)
+		writeln(result)
 	end.
 	`
 
