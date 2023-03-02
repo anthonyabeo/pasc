@@ -2193,8 +2193,24 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 
 // actual-parameter := expression | variable-access | procedure-identitier | function-identitier .
 func (p *Parser) actualParameter() (ast.Expression, error) {
-	// TODO only implements expression path
-	expr, err := p.expression()
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	if p.lookahead.Kind == token.Identifier {
+		sym := p.curScope.Resolve(p.lookahead.Text)
+		if sym == nil {
+			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+		}
+
+		if sym.GetKind() == symbols.FUNCTION || sym.GetKind() == symbols.PROCEDURE {
+			return &ast.Identifier{
+				Token: p.lookahead, Name: p.lookahead.Text}, nil
+		}
+	}
+
+	expr, err = p.expression()
 	if err != nil {
 		return nil, err
 	}
