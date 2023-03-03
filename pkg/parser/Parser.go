@@ -279,7 +279,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Integer ||
 		p.lookahead.Kind == token.Boolean || p.lookahead.Kind == token.Char || p.lookahead.Kind == token.Real {
 
-		sym := p.symTable.Resolve(p.lookahead.Text)
+		sym := p.curScope.Resolve(p.lookahead.Text)
 		if sym == nil {
 			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
 		} else if sym.GetKind() != symbols.TYPE {
@@ -487,7 +487,7 @@ func (p *Parser) variantSelector() (*structured.VariantSelector, error) {
 		}
 	}
 
-	sym := p.symTable.Resolve(p.lookahead.Text)
+	sym := p.curScope.Resolve(p.lookahead.Text)
 	if sym == nil {
 		return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
 	} else if sym.GetKind() != symbols.TYPE {
@@ -689,7 +689,7 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 
 		idxType = &structured.SubRange{Range: &ast.Range{Start: start, End: end}}
 	default:
-		sym := p.symTable.Resolve(p.lookahead.Text)
+		sym := p.curScope.Resolve(p.lookahead.Text)
 		if sym == nil {
 			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
 		} else if sym.GetKind() != symbols.TYPE {
@@ -953,7 +953,7 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 		return nil, err
 	}
 
-	typ = p.symTable.Resolve(p.lookahead.Text)
+	typ = p.curScope.Resolve(p.lookahead.Text)
 	if typ == nil {
 		return nil, fmt.Errorf("Parse Error: symbol %v not found", p.lookahead.Text)
 	}
@@ -990,7 +990,7 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	for _, param := range funcDecl.Heading.Parameters {
 		switch pm := param.(type) {
 		case *ast.ValueParam:
-			if paramBuiltinType := p.symTable.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
+			if paramBuiltinType := p.curScope.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
 				typ = paramBuiltinType
 			} else {
 				// typ = some user-defined type
@@ -1003,7 +1003,7 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 				p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
 			}
 		case *ast.VariableParam:
-			if paramBuiltinType := p.symTable.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
+			if paramBuiltinType := p.curScope.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
 				typ = paramBuiltinType
 			} else {
 				// typ = some user-defined type
@@ -1097,7 +1097,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+		if dtype := p.curScope.Resolve(p.lookahead.Text); dtype != nil {
 			typ = dtype
 		} else {
 			// must be a user-defined type
@@ -1126,7 +1126,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		if dtype := p.symTable.Resolve(p.lookahead.Text); dtype != nil {
+		if dtype := p.curScope.Resolve(p.lookahead.Text); dtype != nil {
 			typ = dtype
 		} else {
 			// must be a user-defined type
