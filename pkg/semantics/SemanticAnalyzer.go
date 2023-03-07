@@ -7,6 +7,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
 // SemanticAnalyzer ...
@@ -32,6 +33,9 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 
 	case *ast.UIntegerLiteral:
 		node.EvalType = s.SymbolTable.Resolve("integer")
+
+	case *ast.URealLiteral:
+		node.EvalType = s.SymbolTable.Resolve("real")
 
 	case *ast.Identifier:
 		node.EvalType = node.Scope.Resolve(node.Name).GetType()
@@ -64,13 +68,10 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 				return err
 			}
 
-			// TODO implement type checking on arithmetic operation
-
-			expr, ok := node.Left.Attr("type").(types.Type)
-			if !ok {
-
+			node.EvalType, err = s.arithmeticTypeComputation(node)
+			if err != nil {
+				return err
 			}
-			node.EvalType = expr
 		}
 
 		if s.isRelationalOp(node.Operator) {
@@ -113,6 +114,46 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 	}
 
 	return nil
+}
+
+func (s *SemanticAnalyzer) arithmeticTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+	var typ types.Type
+
+	lhsType := n.Left.Attr("type").(types.Type).GetName()
+	rhsType := n.Right.Attr("type").(types.Type).GetName()
+
+	switch n.Operator.Kind {
+	case token.Plus, token.Minus, token.Star:
+		if (lhsType != "integer" && lhsType != "real") ||
+			(rhsType != "integer" && rhsType != "real") {
+
+			return nil, fmt.Errorf(
+				"operands of type %v and %v not supported for '+', '-' and '*' operations. They must of type integer or real", lhsType, rhsType)
+		} else if lhsType == "integer" && rhsType == "integer" {
+			typ = &base.Integer{Name: "integer"}
+		} else {
+			typ = &base.Real{Name: "real"}
+		}
+
+	case token.FwdSlash:
+		if lhsType != "integer" && lhsType != "real" &&
+			rhsType != "integer" && rhsType != "real" {
+
+			return nil, fmt.Errorf(
+				"operands of type %v and %v not supported for '/' operation. They must of type integer or real", lhsType, rhsType)
+		}
+
+		typ = &base.Real{Name: "real"}
+	case token.Div, token.Mod:
+		if lhsType != "integer" && rhsType != "integer" {
+			return nil, fmt.Errorf(
+				"operands of type %v and %v not supported for 'mod' operation. They must of type integer type", lhsType, rhsType)
+		}
+
+		typ = &base.Integer{Name: "integer"}
+	}
+
+	return typ, nil
 }
 
 func (s *SemanticAnalyzer) staticTypeCheck(node ast.Node) error {
