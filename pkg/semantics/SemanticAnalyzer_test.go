@@ -24,6 +24,8 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 		z := a + x;
 		z := a / b;
 
+		a := -23;
+		
 		writeln( z )
 	end.
 `

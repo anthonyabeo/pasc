@@ -79,6 +79,20 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 			node.EvalType = s.SymbolTable.Resolve("Boolean").(types.Type)
 		}
 
+	case *ast.UnaryExpression:
+		if err := s.computeStaticExprType(node.Operand); err != nil {
+			return err
+		}
+
+		operandType := node.Operand.Attr("type").(types.Type).GetName()
+
+		if operandType != "integer" && operandType != "real" {
+			return fmt.Errorf(
+				"operands of type %v not supported for '/' operation. They must of type integer or real", operandType)
+		}
+
+		node.EvalType = node.Operand.Attr("type").(types.Type)
+
 	case *ast.FuncDesignator:
 		funcSymbol := node.Scope.Resolve(node.Name.Name)
 		if funcSymbol == nil {

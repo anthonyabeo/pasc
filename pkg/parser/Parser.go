@@ -74,8 +74,6 @@ func (p *Parser) match(t token.Kind) error {
 // The grammer production rules for Program is as follows:
 //
 // program = program-heading ';' program-block '.' .
-// program-heading = 'program' identifier [ '(' program-parameter-list ')' ] .
-// program-parameter-list = identifier-list .
 // program-block = block .
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
@@ -111,6 +109,7 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 	return program, nil
 }
 
+// program-heading = 'program' identifier [ '(' program-parameter-list ')' ] .
 func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
 	var (
 		err           error
@@ -148,6 +147,7 @@ func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
 	return programName, programParams, nil
 }
 
+// program-parameter-list = identifier-list .
 func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 	return p.identifierList()
 }
