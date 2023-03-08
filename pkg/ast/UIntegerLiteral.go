@@ -37,9 +37,3 @@ func (u *UIntegerLiteral) Attr(attr string) any {
 func (u *UIntegerLiteral) String() string {
 	return u.Value
 }
-
-// RValue ...
-func (u *UIntegerLiteral) RValue() Expression { return nil }
-
-// LValue ...
-func (u *UIntegerLiteral) LValue() Expression { return nil }

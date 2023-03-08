@@ -31,9 +31,3 @@ func (w *WriteParameter) Attr(attr string) any {
 func (w *WriteParameter) String() string {
 	return fmt.Sprintf("%v:%v:%v", w.E, w.TotalWidth, w.FracDigits)
 }
-
-// RValue ...
-func (w *WriteParameter) RValue() Expression { return nil }
-
-// LValue ...
-func (w *WriteParameter) LValue() Expression { return nil }

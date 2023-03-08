@@ -37,9 +37,3 @@ func (b *BinaryExpression) Attr(attr string) any {
 func (b *BinaryExpression) String() string {
 	return fmt.Sprintf("%s %s %s", b.Left, b.Operator.Text, b.Right)
 }
-
-// RValue ...
-func (b *BinaryExpression) RValue() Expression { return nil }
-
-// LValue ...
-func (b *BinaryExpression) LValue() Expression { return nil }

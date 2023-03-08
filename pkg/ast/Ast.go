@@ -1,6 +1,8 @@
 package ast
 
-import "github.com/anthonyabeo/pasc/pkg/token"
+import (
+	"github.com/anthonyabeo/pasc/pkg/token"
+)
 
 // Node defines a generic node in the AST
 type Node interface {
@@ -19,7 +21,5 @@ type Expression interface {
 	Node
 	exprNode()
 	Attr(string) any
-	RValue() Expression
-	LValue() Expression
 	String() string
 }

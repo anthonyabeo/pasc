@@ -37,9 +37,3 @@ func (ur *URealLiteral) Attr(attr string) any {
 		return ""
 	}
 }
-
-// RValue ...
-func (ur *URealLiteral) RValue() Expression { return nil }
-
-// LValue ...
-func (ur *URealLiteral) LValue() Expression { return nil }

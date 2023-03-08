@@ -1,6 +1,8 @@
 package ast
 
-import "github.com/anthonyabeo/pasc/pkg/token"
+import (
+	"github.com/anthonyabeo/pasc/pkg/token"
+)
 
 // StringLiteral defines a string value node in the AST
 type StringLiteral struct {

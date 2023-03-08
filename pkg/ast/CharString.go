@@ -35,9 +35,3 @@ func (c *CharString) Attr(attr string) any {
 func (c *CharString) String() string {
 	return c.Value
 }
-
-// RValue ...
-func (c *CharString) RValue() Expression { return nil }
-
-// LValue ...
-func (c *CharString) LValue() Expression { return nil }

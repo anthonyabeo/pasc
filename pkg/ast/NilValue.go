@@ -34,9 +34,3 @@ func (n *NilValue) Attr(attr string) any {
 func (n *NilValue) String() string {
 	return "nil"
 }
-
-// RValue ...
-func (n *NilValue) RValue() Expression { return nil }
-
-// LValue ...
-func (n *NilValue) LValue() Expression { return nil }

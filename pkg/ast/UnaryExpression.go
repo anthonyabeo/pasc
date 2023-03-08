@@ -37,9 +37,3 @@ func (u *UnaryExpression) Attr(attr string) any {
 func (u *UnaryExpression) String() string {
 	return fmt.Sprintf("%v%v", u.Operator.Text, u.Operand)
 }
-
-// RValue ...
-func (u *UnaryExpression) RValue() Expression { return nil }
-
-// LValue ...
-func (u *UnaryExpression) LValue() Expression { return nil }

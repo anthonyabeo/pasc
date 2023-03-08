@@ -35,9 +35,3 @@ func (r *Range) Attr(attr string) any {
 func (r *Range) String() string {
 	return "range"
 }
-
-// RValue ...
-func (r *Range) RValue() Expression { return nil }
-
-// LValue ...
-func (r *Range) LValue() Expression { return nil }

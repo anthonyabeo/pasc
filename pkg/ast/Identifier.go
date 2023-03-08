@@ -40,11 +40,3 @@ func (id *Identifier) Attr(attr string) any {
 func (id *Identifier) String() string {
 	return id.Name
 }
-
-// RValue ...
-func (id *Identifier) RValue() Expression {
-	return id
-}
-
-// LValue ...
-func (id *Identifier) LValue() Expression { return nil }

@@ -35,9 +35,3 @@ func (s *SetConstructor) Attr(attr string) any {
 func (s *SetConstructor) String() string {
 	return "nil"
 }
-
-// RValue ...
-func (s *SetConstructor) RValue() Expression { return nil }
-
-// LValue ...
-func (s *SetConstructor) LValue() Expression { return nil }

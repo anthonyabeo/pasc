@@ -37,14 +37,6 @@ func (id *IndexedVariable) Attr(attr string) any {
 	}
 }
 
-// RValue ...
-func (id *IndexedVariable) RValue() Expression {
-	return id
-}
-
-// LValue ...
-func (id *IndexedVariable) LValue() Expression { return nil }
-
 func (id *IndexedVariable) String() string {
 	var idxExprList []string
 	for _, expr := range id.IndexExpr {
