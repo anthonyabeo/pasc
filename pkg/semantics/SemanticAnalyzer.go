@@ -40,6 +40,13 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 	case *ast.Identifier:
 		node.EvalType = node.Scope.Resolve(node.Name).GetType()
 
+	case *ast.CharString:
+		if len(node.Value) > 1 {
+			node.EvalType = &base.String{Name: "string"}
+		}
+
+		node.EvalType = &base.Char{Name: "char"}
+
 	case *ast.IfStatement:
 		err = s.computeStaticExprType(node.BoolExpr)
 		if err != nil {
@@ -57,17 +64,17 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 		}
 
 	case *ast.BinaryExpression:
+		err = s.computeStaticExprType(node.Left)
+		if err != nil {
+			return err
+		}
+
+		err = s.computeStaticExprType(node.Right)
+		if err != nil {
+			return err
+		}
+
 		if s.isArithOp(node.Operator) {
-			err = s.computeStaticExprType(node.Left)
-			if err != nil {
-				return err
-			}
-
-			err = s.computeStaticExprType(node.Right)
-			if err != nil {
-				return err
-			}
-
 			node.EvalType, err = s.arithmeticTypeComputation(node)
 			if err != nil {
 				return err
@@ -75,8 +82,10 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 		}
 
 		if s.isRelationalOp(node.Operator) {
-			// TODO check that the left and right operands are orderable. If they are not, return a error
-			node.EvalType = s.SymbolTable.Resolve("Boolean").(types.Type)
+			node.EvalType, err = s.relExprTypeComputation(node)
+			if err != nil {
+				return err
+			}
 		}
 
 	case *ast.UnaryExpression:
@@ -128,6 +137,42 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 	}
 
 	return nil
+}
+
+func (s *SemanticAnalyzer) relExprTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+	// TODO complete implementation
+
+	lhsType := n.Left.Attr("type").(types.Type)
+	rhsType := n.Right.Attr("type").(types.Type)
+
+	operandsSimpleType := isSimpleType(lhsType) && isSimpleType(rhsType)
+	operandsStringType := lhsType.GetName() == "string" && rhsType.GetName() == "string"
+	operandsPointerType := lhsType.GetName() == "pointer" && rhsType.GetName() == "pointer"
+
+	switch n.Operator.Kind {
+	case token.Equal, token.LessThanGreaterThan:
+		if !operandsSimpleType && !operandsStringType || operandsPointerType {
+			return nil, fmt.Errorf(
+				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+		}
+
+	case token.LessThan, token.GreaterThan:
+		if !operandsSimpleType && !operandsStringType {
+			return nil, fmt.Errorf(
+				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+		}
+
+	case token.LessThanOrEqual, token.GreaterThanOrEqual:
+		if !operandsSimpleType && !operandsStringType {
+			return nil, fmt.Errorf(
+				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+		}
+
+	case token.In:
+
+	}
+
+	return &base.Boolean{Name: "Boolean"}, nil
 }
 
 func (s *SemanticAnalyzer) arithmeticTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
@@ -296,4 +341,12 @@ func areAssignmentCompatible(src, dest types.Type) bool {
 
 func equals(a, b types.Type) bool {
 	return a.GetName() == b.GetName()
+}
+
+func isSimpleType(t types.Type) bool {
+	return t.GetName() == "integer" ||
+		t.GetName() == "char" ||
+		t.GetName() == "Boolean" ||
+		t.GetName() == "enum" ||
+		t.GetName() == "subrange"
 }
