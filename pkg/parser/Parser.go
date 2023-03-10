@@ -74,8 +74,6 @@ func (p *Parser) match(t token.Kind) error {
 // The grammer production rules for Program is as follows:
 //
 // program = program-heading ';' program-block '.' .
-// program-heading = 'program' identifier [ '(' program-parameter-list ')' ] .
-// program-parameter-list = identifier-list .
 // program-block = block .
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
@@ -111,6 +109,7 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 	return program, nil
 }
 
+// program-heading = 'program' identifier [ '(' program-parameter-list ')' ] .
 func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
 	var (
 		err           error
@@ -148,6 +147,7 @@ func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
 	return programName, programParams, nil
 }
 
+// program-parameter-list = identifier-list .
 func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 	return p.identifierList()
 }
@@ -164,8 +164,7 @@ func (p *Parser) block() (*ast.Block, error) {
 
 	block := &ast.Block{}
 
-	for p.lookahead.Kind == token.Type || p.lookahead.Kind == token.Var || p.lookahead.Kind == token.Procedure ||
-		p.lookahead.Kind == token.Function || p.lookahead.Kind == token.Const || p.lookahead.Kind == token.Begin {
+	for p.isBlockComponent() {
 		switch p.lookahead.Kind {
 		case token.Type:
 			typeDefinition, err = p.typeDefinitionPart()
@@ -202,6 +201,15 @@ func (p *Parser) block() (*ast.Block, error) {
 	block.Callables = append(block.Callables, callables...)
 
 	return block, nil
+}
+
+func (p *Parser) isBlockComponent() bool {
+	return p.lookahead.Kind == token.Type ||
+		p.lookahead.Kind == token.Var ||
+		p.lookahead.Kind == token.Procedure ||
+		p.lookahead.Kind == token.Function ||
+		p.lookahead.Kind == token.Const ||
+		p.lookahead.Kind == token.Begin
 }
 
 // type-definition-part = [ 'type' type-definition ';' { type-definition ';' } ] .
@@ -1404,8 +1412,12 @@ func (p *Parser) statement() (ast.Statement, error) {
 }
 
 func (p *Parser) isStructuredStatement() bool {
-	return p.lookahead.Kind == token.Begin || p.lookahead.Kind == token.With || p.lookahead.Kind == token.If ||
-		p.lookahead.Kind == token.Case || p.lookahead.Kind == token.Repeat || p.lookahead.Kind == token.While ||
+	return p.lookahead.Kind == token.Begin ||
+		p.lookahead.Kind == token.With ||
+		p.lookahead.Kind == token.If ||
+		p.lookahead.Kind == token.Case ||
+		p.lookahead.Kind == token.Repeat ||
+		p.lookahead.Kind == token.While ||
 		p.lookahead.Kind == token.For
 }
 
@@ -1763,10 +1775,7 @@ func (p *Parser) assignmentStatement() (*ast.AssignStatement, error) {
 		return nil, err
 	}
 
-	as := &ast.AssignStatement{
-		Token:    token.NewToken(p.lookahead.Kind, p.lookahead.Text),
-		Variable: lhs}
-
+	as := &ast.AssignStatement{Token: p.lookahead, Variable: lhs}
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
 	}

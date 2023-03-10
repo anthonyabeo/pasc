@@ -7,6 +7,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
 // SemanticAnalyzer ...
@@ -33,8 +34,18 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 	case *ast.UIntegerLiteral:
 		node.EvalType = s.SymbolTable.Resolve("integer")
 
+	case *ast.URealLiteral:
+		node.EvalType = s.SymbolTable.Resolve("real")
+
 	case *ast.Identifier:
 		node.EvalType = node.Scope.Resolve(node.Name).GetType()
+
+	case *ast.CharString:
+		if len(node.Value) > 1 {
+			node.EvalType = &base.String{Name: "string"}
+		}
+
+		node.EvalType = &base.Char{Name: "char"}
 
 	case *ast.IfStatement:
 		err = s.computeStaticExprType(node.BoolExpr)
@@ -53,30 +64,43 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 		}
 
 	case *ast.BinaryExpression:
+		err = s.computeStaticExprType(node.Left)
+		if err != nil {
+			return err
+		}
+
+		err = s.computeStaticExprType(node.Right)
+		if err != nil {
+			return err
+		}
+
 		if s.isArithOp(node.Operator) {
-			err = s.computeStaticExprType(node.Left)
+			node.EvalType, err = s.arithmeticTypeComputation(node)
 			if err != nil {
 				return err
 			}
-
-			err = s.computeStaticExprType(node.Right)
-			if err != nil {
-				return err
-			}
-
-			// TODO implement type checking on arithmetic operation
-
-			expr, ok := node.Left.Attr("type").(types.Type)
-			if !ok {
-
-			}
-			node.EvalType = expr
 		}
 
 		if s.isRelationalOp(node.Operator) {
-			// TODO check that the left and right operands are orderable. If they are not, return a error
-			node.EvalType = s.SymbolTable.Resolve("Boolean").(types.Type)
+			node.EvalType, err = s.relExprTypeComputation(node)
+			if err != nil {
+				return err
+			}
 		}
+
+	case *ast.UnaryExpression:
+		if err := s.computeStaticExprType(node.Operand); err != nil {
+			return err
+		}
+
+		operandType := node.Operand.Attr("type").(types.Type).GetName()
+
+		if operandType != "integer" && operandType != "real" {
+			return fmt.Errorf(
+				"operands of type %v not supported for '/' operation. They must of type integer or real", operandType)
+		}
+
+		node.EvalType = node.Operand.Attr("type").(types.Type)
 
 	case *ast.FuncDesignator:
 		funcSymbol := node.Scope.Resolve(node.Name.Name)
@@ -113,6 +137,82 @@ func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
 	}
 
 	return nil
+}
+
+func (s *SemanticAnalyzer) relExprTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+	// TODO complete implementation
+
+	lhsType := n.Left.Attr("type").(types.Type)
+	rhsType := n.Right.Attr("type").(types.Type)
+
+	operandsSimpleType := isSimpleType(lhsType) && isSimpleType(rhsType)
+	operandsStringType := lhsType.GetName() == "string" && rhsType.GetName() == "string"
+	operandsPointerType := lhsType.GetName() == "pointer" && rhsType.GetName() == "pointer"
+
+	switch n.Operator.Kind {
+	case token.Equal, token.LessThanGreaterThan:
+		if !operandsSimpleType && !operandsStringType || operandsPointerType {
+			return nil, fmt.Errorf(
+				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+		}
+
+	case token.LessThan, token.GreaterThan:
+		if !operandsSimpleType && !operandsStringType {
+			return nil, fmt.Errorf(
+				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+		}
+
+	case token.LessThanOrEqual, token.GreaterThanOrEqual:
+		if !operandsSimpleType && !operandsStringType {
+			return nil, fmt.Errorf(
+				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+		}
+
+	case token.In:
+
+	}
+
+	return &base.Boolean{Name: "Boolean"}, nil
+}
+
+func (s *SemanticAnalyzer) arithmeticTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+	var typ types.Type
+
+	lhsType := n.Left.Attr("type").(types.Type).GetName()
+	rhsType := n.Right.Attr("type").(types.Type).GetName()
+
+	switch n.Operator.Kind {
+	case token.Plus, token.Minus, token.Star:
+		if (lhsType != "integer" && lhsType != "real") ||
+			(rhsType != "integer" && rhsType != "real") {
+
+			return nil, fmt.Errorf(
+				"operands of type %v and %v not supported for '+', '-' and '*' operations. They must of type integer or real", lhsType, rhsType)
+		} else if lhsType == "integer" && rhsType == "integer" {
+			typ = &base.Integer{Name: "integer"}
+		} else {
+			typ = &base.Real{Name: "real"}
+		}
+
+	case token.FwdSlash:
+		if lhsType != "integer" && lhsType != "real" &&
+			rhsType != "integer" && rhsType != "real" {
+
+			return nil, fmt.Errorf(
+				"operands of type %v and %v not supported for '/' operation. They must of type integer or real", lhsType, rhsType)
+		}
+
+		typ = &base.Real{Name: "real"}
+	case token.Div, token.Mod:
+		if lhsType != "integer" && rhsType != "integer" {
+			return nil, fmt.Errorf(
+				"operands of type %v and %v not supported for 'mod' operation. They must of type integer type", lhsType, rhsType)
+		}
+
+		typ = &base.Integer{Name: "integer"}
+	}
+
+	return typ, nil
 }
 
 func (s *SemanticAnalyzer) staticTypeCheck(node ast.Node) error {
@@ -241,4 +341,12 @@ func areAssignmentCompatible(src, dest types.Type) bool {
 
 func equals(a, b types.Type) bool {
 	return a.GetName() == b.GetName()
+}
+
+func isSimpleType(t types.Type) bool {
+	return t.GetName() == "integer" ||
+		t.GetName() == "char" ||
+		t.GetName() == "Boolean" ||
+		t.GetName() == "enum" ||
+		t.GetName() == "subrange"
 }
