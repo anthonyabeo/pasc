@@ -1,2 +1,3 @@
 .vscode/
 pkg/codegen/*.bril
+pkg/codegen/*.ll

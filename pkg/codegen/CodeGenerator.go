@@ -83,7 +83,7 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 		}
 
 		if node.Value.TokenKind() == token.Identifier {
-			err := c.emit(fmt.Sprintf("id %s;\n", node.Value.RValue()))
+			err := c.emit(fmt.Sprintf("id %s;\n", node.Value.String()))
 			if err != nil {
 				return err
 			}
@@ -126,7 +126,7 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 				return err
 			}
 
-			err := c.emit(fmt.Sprintf(" %s %s;\n", node.Left.RValue(), node.Right.RValue()))
+			err := c.emit(fmt.Sprintf(" %s %s;\n", node.Left.String(), node.Right.String()))
 			if err != nil {
 				return err
 			}
@@ -143,7 +143,7 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 				return err
 			}
 
-			if err := c.emit(fmt.Sprintf(" %s %s;\n", node.Left.RValue(), node.Right.RValue())); err != nil {
+			if err := c.emit(fmt.Sprintf(" %s %s;\n", node.Left.String(), node.Right.String())); err != nil {
 				return err
 			}
 
@@ -191,7 +191,7 @@ func (c *CodeGenerator) Gen(node ast.Node) error {
 	case *ast.FuncDesignator:
 		var params []string
 		for _, param := range node.Parameters {
-			params = append(params, param.RValue().String())
+			params = append(params, param.String())
 		}
 
 		f := fmt.Sprintf("call @%s %s;\n", node.Name.Name, strings.Join(params, " "))
