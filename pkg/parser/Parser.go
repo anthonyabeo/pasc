@@ -782,7 +782,8 @@ func (p *Parser) constDefinitionPart() (*ast.ConstDefinition, error) {
 func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	var err error
 
-	constDef := &ast.ConstDef{Name: &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}}
+	constDef := &ast.ConstDef{
+		Name: &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -796,6 +797,10 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 		return nil, err
 	}
 
+	p.curScope.Define(
+		symbols.NewConstSymbol(
+			constDef.Name.Name, symbols.CONST, p.getTypeOf(constDef.Value)),
+	)
 	return constDef, nil
 }
 
@@ -824,7 +829,7 @@ func (p *Parser) constant() (ast.Expression, error) {
 		} else if p.lookahead.Kind == token.URealLiteral {
 			expr = &ast.URealLiteral{Token: p.lookahead, Value: p.lookahead.Text}
 		} else if p.lookahead.Kind == token.Identifier {
-			expr = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
+			expr = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
 		} else {
 			return nil, fmt.Errorf(
 				"expected unsigned number or identifier, got %s instead", token.GetTokenName(p.lookahead.Kind))

@@ -1,9 +1,8 @@
 package structured
 
 import (
-	"go/types"
-
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // SubRange ...
