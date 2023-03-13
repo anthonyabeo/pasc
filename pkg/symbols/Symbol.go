@@ -10,6 +10,7 @@ const (
 	FUNCTION
 	PROCEDURE
 	TYPE
+	CONST
 )
 
 // Symbol denotes a generic symbol
