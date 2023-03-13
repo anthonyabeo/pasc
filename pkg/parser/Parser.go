@@ -158,6 +158,7 @@ func (p *Parser) block() (*ast.Block, error) {
 		varDecl         *ast.VarDeclaration
 		callables       []ast.Statement
 		constDefinition *ast.ConstDefinition
+		labelDefinition *ast.LabelDefinition
 		typeDefinition  *ast.TypeDefinition
 		compoundStmt    *ast.CompoundStatement
 	)
@@ -166,6 +167,11 @@ func (p *Parser) block() (*ast.Block, error) {
 
 	for p.isBlockComponent() {
 		switch p.lookahead.Kind {
+		case token.Label:
+			labelDefinition, err = p.labelDefinitionPart()
+			if err != nil {
+				return nil, err
+			}
 		case token.Type:
 			typeDefinition, err = p.typeDefinitionPart()
 			if err != nil {
@@ -197,10 +203,42 @@ func (p *Parser) block() (*ast.Block, error) {
 	block.Types = typeDefinition
 	block.VarDeclaration = varDecl
 	block.Consts = constDefinition
+	block.Labels = labelDefinition
 	block.Stats = append(block.Stats, compoundStmt.Statements...)
 	block.Callables = append(block.Callables, callables...)
 
 	return block, nil
+}
+
+func (p *Parser) labelDefinitionPart() (*ast.LabelDefinition, error) {
+	labelDefinition := &ast.LabelDefinition{Token: p.lookahead}
+	if err := p.match(token.Label); err != nil {
+		return nil, err
+	}
+
+	label := &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+	if err := p.match(token.UIntLiteral); err != nil {
+		return nil, err
+	}
+	labelDefinition.Labels = append(labelDefinition.Labels, label)
+
+	for p.lookahead.Kind == token.Comma {
+		if err := p.consume(); err != nil {
+			return nil, err
+		}
+
+		label := &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+		if err := p.match(token.UIntLiteral); err != nil {
+			return nil, err
+		}
+		labelDefinition.Labels = append(labelDefinition.Labels, label)
+	}
+
+	if err := p.match(token.SemiColon); err != nil {
+		return nil, err
+	}
+
+	return labelDefinition, nil
 }
 
 func (p *Parser) isBlockComponent() bool {
