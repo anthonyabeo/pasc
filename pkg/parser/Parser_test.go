@@ -587,6 +587,10 @@ func TestParsingConstantDefinition(t *testing.T) {
 	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 0, 0) {
 		return
 	}
+
+	if !testGlobalSymbolTable(t, pars.symTable, nil, "global", 9) {
+		return
+	}
 }
 
 func TestParseForStatement(t *testing.T) {
