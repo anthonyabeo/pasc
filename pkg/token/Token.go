@@ -47,6 +47,7 @@ const (
 	Real
 	Boolean
 	Char
+	Label
 
 	Identifier
 	SemiColon
@@ -168,6 +169,8 @@ func GetTokenName(t Kind) string {
 		return "Boolean"
 	case 39:
 		return "char"
+	case 40:
+		return "label"
 	default:
 		return ""
 	}
@@ -219,5 +222,6 @@ func init() {
 		"real":      Real,
 		"Boolean":   Boolean,
 		"char":      Char,
+		"label":     Label,
 	}
 }
