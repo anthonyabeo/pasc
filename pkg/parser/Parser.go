@@ -1933,7 +1933,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 		}
 
 		return expr, nil
-	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil, token.ConstIdentifier:
+	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil:
 		return p.unsignedConstant()
 	case token.LParen:
 		if err := p.match(token.LParen); err != nil {

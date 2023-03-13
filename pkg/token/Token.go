@@ -69,11 +69,9 @@ const (
 	GreaterThan
 	GreaterThanOrEqual
 	URealLiteral
-	ConstIdentifier
 	Range
 	LSqBrace
 	RSqBrace
-	Dot
 )
 
 // Token defines a type of token
