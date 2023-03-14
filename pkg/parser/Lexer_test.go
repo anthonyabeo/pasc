@@ -264,3 +264,49 @@ func TestTokenizeSubRangeType(t *testing.T) {
 		}
 	}
 }
+
+func TestTokenizePointer(t *testing.T) {
+	input := `
+		p1^.mother := true
+		p1^.sibling^.father^
+	`
+
+	tests := []struct {
+		expKind token.Kind
+		expText string
+	}{
+		{token.Identifier, "p1"},
+		{token.Caret, "^"},
+		{token.Period, "."},
+		{token.Identifier, "mother"},
+		{token.Initialize, ":="},
+		{token.True, "true"},
+
+		{token.Identifier, "p1"},
+		{token.Caret, "^"},
+		{token.Period, "."},
+		{token.Identifier, "sibling"},
+		{token.Caret, "^"},
+		{token.Period, "."},
+		{token.Identifier, "father"},
+		{token.Caret, "^"},
+	}
+
+	lex := NewLexer(input)
+
+	for _, tt := range tests {
+		tok, err := lex.NextToken()
+		if err != nil {
+			t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
+		}
+
+		if tok.Text != tt.expText {
+			t.Errorf("lex.NextToken. Expected token text = %v, Got %v", tt.expText, tok.Text)
+		}
+
+		if tok.Kind != tt.expKind {
+			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
+				tt.expText, token.GetTokenName(tok.Kind))
+		}
+	}
+}

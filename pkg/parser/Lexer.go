@@ -110,6 +110,9 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 		case ',':
 			lex.consume()
 			return token.Token{Kind: token.Comma, Text: ","}, nil
+		case '^':
+			lex.consume()
+			return token.Token{Kind: token.Caret, Text: "^"}, nil
 		case ':':
 			lex.consume()
 			if lex.curChar == '=' {
