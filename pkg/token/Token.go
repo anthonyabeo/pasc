@@ -48,6 +48,8 @@ const (
 	Boolean
 	Char
 	Label
+	True
+	False
 
 	Identifier
 	SemiColon
@@ -73,6 +75,7 @@ const (
 	Range
 	LSqBrace
 	RSqBrace
+	Caret
 )
 
 // Token defines a type of token
@@ -171,6 +174,10 @@ func GetTokenName(t Kind) string {
 		return "char"
 	case 40:
 		return "label"
+	case 41:
+		return "true"
+	case 42:
+		return "false"
 	default:
 		return ""
 	}
@@ -223,5 +230,7 @@ func init() {
 		"Boolean":   Boolean,
 		"char":      Char,
 		"label":     Label,
+		"true":      True,
+		"false":     False,
 	}
 }
