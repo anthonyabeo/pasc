@@ -384,11 +384,9 @@ func (p *Parser) recordType() (*structured.Record, error) {
 		return nil, err
 	}
 
-	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Case {
-		record.FieldList, err = p.fieldList()
-		if err != nil {
-			return nil, err
-		}
+	record.FieldList, err = p.fieldList()
+	if err != nil {
+		return nil, err
 	}
 
 	if err = p.match(token.End); err != nil {
@@ -396,10 +394,9 @@ func (p *Parser) recordType() (*structured.Record, error) {
 	}
 
 	return record, nil
-
 }
 
-//  field-list = [ ( fixed-part [ ';' variant-part ] | variant-part ) [ ';' ] ] .
+// field-list = [ ( fixed-part [ ';' variant-part ] | variant-part ) [ ';' ] ] .
 func (p *Parser) fieldList() ([]structured.Field, error) {
 	var (
 		err       error
@@ -935,7 +932,8 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		procedureDecl.Directive = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+		procedureDecl.Directive = &ast.Identifier{
+			Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
 	default:
 		procedureDecl.Block, err = p.block()
 		if err != nil {
@@ -1033,7 +1031,8 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 
 	// define the function symbol and update the current symbol table to the new function scope
 	funcName := funcDecl.Heading.Name.Name
-	funcSymbol := symbols.NewFunctionSymbol(funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
+	funcSymbol := symbols.NewFunctionSymbol(
+		funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
 	p.curScope.Define(funcSymbol)
 	funcDecl.Scope = p.curScope
 	p.curScope = funcSymbol.Scope
@@ -1074,7 +1073,8 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 
 	switch p.lookahead.Kind {
 	case token.Identifier:
-		funcDecl.Directive = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+		funcDecl.Directive = &ast.Identifier{
+			Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
 	default:
 		funcDecl.Block, err = p.block()
 		if err != nil {
@@ -1465,7 +1465,9 @@ func (p *Parser) isStructuredStatement() bool {
 }
 
 func (p *Parser) isSimpleStatement() bool {
-	return p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Goto || p.lookahead.Kind == token.End
+	return p.lookahead.Kind == token.Identifier ||
+		p.lookahead.Kind == token.Goto ||
+		p.lookahead.Kind == token.End
 }
 
 // case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
@@ -2063,7 +2065,10 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 			return nil, err
 		}
 	} else if sym.GetType().GetName() == "record" {
-
+		expr, err = p.fieldDesignator(&ast.Identifier{Token: id, Name: id.Text})
+		if err != nil {
+			return nil, err
+		}
 	} else if sym.GetType().GetName() == "file" {
 
 	} else if sym.GetType().GetName() == "pointer" {
@@ -2073,6 +2078,41 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 	}
 
 	return expr, nil
+}
+
+// field-designator = record-variable '.' field-specifier | field-designator-identifier .
+func (p *Parser) fieldDesignator(recordVar *ast.Identifier) (*ast.FieldDesignator, error) {
+	fieldDesig := &ast.FieldDesignator{RecordVar: recordVar}
+
+	if err := p.match(token.Period); err != nil {
+		return nil, err
+	}
+
+	record := p.curScope.Resolve(recordVar.Name).GetType().(*structured.Record)
+	for _, field := range record.FieldList {
+		switch field := field.(type) {
+		case *structured.FixedPart:
+			for _, entry := range field.Entry {
+				for _, fieldName := range entry.List {
+					if fieldName.Name != p.lookahead.Text {
+						continue
+					}
+
+					fieldDesig.FieldSpec = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
+					if err := p.match(token.Identifier); err != nil {
+						return nil, err
+					}
+
+					return fieldDesig, nil
+				}
+			}
+
+			return nil, fmt.Errorf("%v has no field, '%v'", record, p.lookahead.Text)
+		case *structured.VariantPart:
+		}
+	}
+
+	return fieldDesig, nil
 }
 
 // unsigned-constant := unsigned-number | character-string | constant-identifier | 'nil' .

@@ -1440,3 +1440,44 @@ func TestParseExpressions(t *testing.T) {
 		return
 	}
 }
+
+func TestParseFieldDesignator(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+
+	type
+		sex = (male, female);
+		person = record
+			name, firstname : integer;
+			age : integer;
+			married : Boolean;
+			case s : sex of
+			male :
+				(enlisted, bearded : Boolean);
+			female :
+				(mother, programmer : Boolean)
+		end;
+
+	begin
+		person.firstname := 1;
+
+		writeln( person.firstname )
+	end.
+`
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0, 2) {
+		return
+	}
+}
