@@ -21,7 +21,7 @@ func TestLexingEmptyString(t *testing.T) {
 	}
 
 	if tok.Kind != token.EOF {
-		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", token.EOF, token.GetTokenName(tok.Kind))
+		t.Errorf("lex.NextToken. Expected token type = %v, Got %v", token.EOF, tok.Kind)
 	}
 }
 
@@ -64,7 +64,7 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 
 		if tok.Kind != test.expType {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				test.expText, token.GetTokenName(tok.Kind))
+				test.expText, tok.Kind)
 		}
 	}
 }
@@ -137,7 +137,7 @@ func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
 
 		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, token.GetTokenName(tok.Kind))
+				tt.expText, tok.Kind)
 		}
 	}
 }
@@ -168,7 +168,7 @@ func TestOperators(t *testing.T) {
 
 		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, token.GetTokenName(tok.Kind))
+				tt.expText, tok.Kind)
 		}
 	}
 }
@@ -213,7 +213,7 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 
 		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, token.GetTokenName(tok.Kind))
+				tt.expText, tok.Kind)
 		}
 	}
 }
@@ -260,7 +260,7 @@ func TestTokenizeSubRangeType(t *testing.T) {
 
 		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, token.GetTokenName(tok.Kind))
+				tt.expText, tok.Kind)
 		}
 	}
 }
@@ -306,7 +306,7 @@ func TestTokenizePointer(t *testing.T) {
 
 		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, token.GetTokenName(tok.Kind))
+				tt.expText, tok.Kind)
 		}
 	}
 }

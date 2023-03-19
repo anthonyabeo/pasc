@@ -65,7 +65,7 @@ func (p *Parser) match(t token.Kind) error {
 		return nil
 	}
 
-	return fmt.Errorf("expecting %v; found %v", token.GetTokenName(t), p.lookahead.Text)
+	return fmt.Errorf("expecting %v; found %v", t, p.lookahead.Text)
 }
 
 // Program represents the start symbol production rule in the grammer.
@@ -850,7 +850,7 @@ func (p *Parser) constant() (ast.Expression, error) {
 
 	switch p.lookahead.Kind {
 	case token.CharString:
-		expr = &ast.CharString{Token: p.lookahead, Value: p.lookahead.Text}
+		expr = ast.NewStringLiteral(p.lookahead, p.lookahead.Text)
 	default:
 		if p.isSign() {
 			sign = p.lookahead
@@ -867,7 +867,7 @@ func (p *Parser) constant() (ast.Expression, error) {
 			expr = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
 		} else {
 			return nil, fmt.Errorf(
-				"expected unsigned number or identifier, got %s instead", token.GetTokenName(p.lookahead.Kind))
+				"expected unsigned number or identifier, got %s instead", p.lookahead.Text)
 		}
 
 		if !reflect.DeepEqual(sign, token.Token{}) {
@@ -1712,7 +1712,7 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 
 	if p.lookahead.Kind != token.To && p.lookahead.Kind != token.DownTo {
 		return nil, fmt.Errorf("expecting %v or %v; found %v",
-			token.GetTokenName(token.To), token.GetTokenName(token.DownTo), p.lookahead.Text)
+			token.To, token.DownTo, p.lookahead.Text)
 	}
 	forStmt.Direction = p.lookahead.Kind
 	if err := p.consume(); err != nil {
@@ -2127,7 +2127,7 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	case token.UIntLiteral, token.URealLiteral:
 		return p.unsignedNumber(tt)
 	case token.CharString:
-		return &ast.CharString{Token: tt, Value: tt.Text}, nil
+		return ast.NewStringLiteral(tt, tt.Text), nil
 	case token.Identifier:
 		return &ast.Identifier{Token: tt, Name: tt.Text, Scope: p.curScope}, nil
 	case token.Nil:

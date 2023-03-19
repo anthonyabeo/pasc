@@ -806,7 +806,7 @@ func testForStatement(
 
 	if forStmt.CtrlID.TokenKind() != token.Identifier {
 		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(forStmt.CtrlID.Token.Kind))
+			token.Identifier, forStmt.CtrlID.Token.Kind)
 		return false
 	}
 
@@ -831,7 +831,7 @@ func testForStatement(
 
 	if forStmt.Direction != direction {
 		t.Errorf("expected loop iteration direction to %s, got %s instead",
-			token.GetTokenName(direction), token.GetTokenName(forStmt.Direction))
+			direction, forStmt.Direction)
 
 		return false
 	}
@@ -974,7 +974,7 @@ func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, v
 
 	if assignStmt.Variable.TokenKind() != token.Identifier {
 		t.Errorf("expected variable to be of kind %v, got %v",
-			token.GetTokenName(token.Identifier), token.GetTokenName(assignStmt.Variable.TokenKind()))
+			token.Identifier, assignStmt.Variable.TokenKind())
 		return false
 	}
 
@@ -1145,7 +1145,7 @@ func testIfStatement(
 	}
 
 	if ifStmt.Token.Kind != token.If {
-		t.Errorf("expected token type to be %v, got %v", token.GetTokenName(token.If), ifStmt.Token.Text)
+		t.Errorf("expected token type to be %v, got %v", token.If, ifStmt.Token.Text)
 		return false
 	}
 

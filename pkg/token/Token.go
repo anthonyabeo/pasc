@@ -5,6 +5,10 @@ import "fmt"
 // Kind defines the category of a token. E.g. Keyword, Identifier etc
 type Kind byte
 
+func (k Kind) String() string {
+	return tokenKindStrings[k]
+}
+
 const (
 	EOF Kind = iota
 
@@ -89,98 +93,74 @@ func NewToken(kind Kind, text string) Token {
 	return Token{Kind: kind, Text: text}
 }
 
-// GetTokenName returns the textual form of a token given its TokenType value
-func GetTokenName(t Kind) string {
-	switch t {
-	case 0:
-		return "EOF"
-	case 1:
-		return "program"
-	case 2:
-		return "begin"
-	case 3:
-		return "end"
-	case 4:
-		return "var"
-	case 5:
-		return "integer"
-	case 6:
-		return "goto"
-	case 7:
-		return "div"
-	case 8:
-		return "mod"
-	case 9:
-		return "and"
-	case 10:
-		return "or"
-	case 11:
-		return "in"
-	case 12:
-		return "function"
-	case 13:
-		return "procedure"
-	case 14:
-		return "if"
-	case 15:
-		return "then"
-	case 16:
-		return "else"
-	case 17:
-		return "with"
-	case 18:
-		return "for"
-	case 19:
-		return "repeat"
-	case 20:
-		return "while"
-	case 21:
-		return "case"
-	case 22:
-		return "nil"
-	case 23:
-		return "not"
-	case 24:
-		return "to"
-	case 25:
-		return "downto"
-	case 26:
-		return "do"
-	case 27:
-		return "const"
-	case 28:
-		return "until"
-	case 29:
-		return "of"
-	case 30:
-		return "const"
-	case 31:
-		return "type"
-	case 32:
-		return "array"
-	case 33:
-		return "record"
-	case 34:
-		return "file"
-	case 35:
-		return "set"
-	case 36:
-		return "packed"
-	case 37:
-		return "real"
-	case 38:
-		return "Boolean"
-	case 39:
-		return "char"
-	case 40:
-		return "label"
-	case 41:
-		return "true"
-	case 42:
-		return "false"
-	default:
-		return ""
-	}
+var tokenKindStrings = [...]string{
+	EOF:       "EOF",
+	Program:   "program",
+	Begin:     "begin",
+	End:       "end",
+	Var:       "var",
+	Integer:   "integer",
+	Goto:      "goto",
+	Div:       "div",
+	Mod:       "mod",
+	And:       "and",
+	Or:        "or",
+	In:        "in",
+	Function:  "function",
+	Procedure: "procedure",
+	If:        "if",
+	Then:      "then",
+	Else:      "else",
+	With:      "with",
+	For:       "for",
+	Repeat:    "repeat",
+	While:     "while",
+	Case:      "case",
+	Nil:       "nil",
+	Not:       "not",
+	To:        "to",
+	DownTo:    "downto",
+	Do:        "do",
+	Const:     "const",
+	Until:     "until",
+	Of:        "of",
+	Type:      "type",
+	Array:     "array",
+	Record:    "record",
+	File:      "file",
+	Set:       "set",
+	Packed:    "packed",
+	Real:      "real",
+	Boolean:   "Boolean",
+	Char:      "char",
+	Label:     "label",
+	True:      "true",
+	False:     "false",
+
+	Identifier:          "identifier",
+	SemiColon:           ";",
+	CharString:          "char-string",
+	Period:              ".",
+	LParen:              "(",
+	RParen:              ")",
+	Initialize:          ":=",
+	Plus:                "+",
+	Colon:               ":",
+	UIntLiteral:         "uint-literal",
+	Comma:               ",",
+	Star:                "*",
+	FwdSlash:            "/",
+	Minus:               "-",
+	Equal:               "=",
+	LessThan:            "<",
+	LessThanGreaterThan: "<>",
+	LessThanOrEqual:     "<=",
+	GreaterThan:         ">",
+	GreaterThanOrEqual:  ">=",
+	Range:               "..",
+	LSqBrace:            "[",
+	RSqBrace:            "]",
+	Caret:               "^",
 }
 
 func (t *Token) String() string {
@@ -232,5 +212,6 @@ func init() {
 		"label":     Label,
 		"true":      True,
 		"false":     False,
+		"goto":      Goto,
 	}
 }
