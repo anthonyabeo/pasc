@@ -30,10 +30,12 @@ func TestGenerateBrilProgramAssignment(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &semantics.SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 
 	cg, err := NewCodeGenerator(prog.Name.Name)
 	if err != nil {
@@ -70,10 +72,12 @@ func TestGenerateBrilProgramArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &semantics.SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 
 	cg, err := NewCodeGenerator(prog.Name.Name)
 	if err != nil {
@@ -114,10 +118,12 @@ func TestGenerateBrilProgramIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &semantics.SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 
 	cg, err := NewCodeGenerator(prog.Name.Name)
 	if err != nil {
@@ -166,10 +172,12 @@ func TestGenerateBrilProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &semantics.SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 
 	cg, err := NewCodeGenerator(prog.Name.Name)
 	if err != nil {

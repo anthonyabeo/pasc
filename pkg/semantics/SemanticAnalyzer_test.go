@@ -40,10 +40,12 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 }
 
 func TestStaticCheckIfStatement(t *testing.T) {
@@ -72,10 +74,12 @@ func TestStaticCheckIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 }
 
 func TestStaticCheckMaxProgram(t *testing.T) {
@@ -116,10 +120,12 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 }
 
 func TestStaticTypeCheckArithmeticOperation(t *testing.T) {
@@ -148,8 +154,10 @@ func TestStaticTypeCheckArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 }

@@ -30,10 +30,12 @@ func TestLLVMIRCodeGenIntegerLiteral(t *testing.T) {
 		t.Error(err)
 	}
 
-	semAnal := &semantics.SemanticAnalyzer{Ast: prog, SymbolTable: pars.SymbolTable()}
-	if err := semAnal.Run(); err != nil {
-		t.Error(err)
+	sema := &semantics.SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
 	}
+	sema.Run()
 
 	cg := NewLLVMIRCodeGenerator(prog)
 	err = cg.CodeGen()

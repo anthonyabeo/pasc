@@ -2138,10 +2138,6 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 }
 
 // unsigned-number := unsigned-integer | unsigned-real .
-// unsigned-integer := digit-sequence .
-// unsigned-real := digit-sequence '.' fractional-part [ 'e' scale-factor ] | digit-sequence 'e' scale-factor .
-// fractional-part = digit-sequence .
-// scale-factor = [ sign ] digit-sequence .
 func (p *Parser) unsignedNumber(tt token.Token) (ast.Expression, error) {
 	switch tt.Kind {
 	case token.UIntLiteral:

@@ -1,312 +1,307 @@
 package semantics
 
 import (
-	"fmt"
-
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/symbols"
-	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
-	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
 // SemanticAnalyzer ...
-type SemanticAnalyzer struct {
-	Ast         *ast.ProgramAST
-	SymbolTable symbols.Scope
-}
+// type SemanticAnalyzer struct {
+// 	Ast         *ast.ProgramAST
+// 	SymbolTable symbols.Scope
+// }
 
-func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
-	var err error
+// func (s *SemanticAnalyzer) computeStaticExprType(node ast.Node) error {
+// 	var err error
 
-	switch node := node.(type) {
-	case *ast.AssignStatement:
-		err = s.computeStaticExprType(node.Variable)
-		if err != nil {
-			return err
-		}
+// 	switch node := node.(type) {
+// 	case *ast.AssignStatement:
+// 		err = s.computeStaticExprType(node.Variable)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		err = s.computeStaticExprType(node.Value)
-		if err != nil {
-			return err
-		}
+// 		err = s.computeStaticExprType(node.Value)
+// 		if err != nil {
+// 			return err
+// 		}
 
-	case *ast.UIntegerLiteral:
-		node.EvalType = s.SymbolTable.Resolve("integer")
+// 	case *ast.UIntegerLiteral:
+// 		node.EvalType = s.SymbolTable.Resolve("integer")
 
-	case *ast.URealLiteral:
-		node.EvalType = s.SymbolTable.Resolve("real")
+// 	case *ast.URealLiteral:
+// 		node.EvalType = s.SymbolTable.Resolve("real")
 
-	case *ast.Identifier:
-		node.EvalType = node.Scope.Resolve(node.Name).GetType()
+// 	case *ast.Identifier:
+// 		node.EvalType = node.Scope.Resolve(node.Name).GetType()
 
-	case *ast.CharString:
-		if len(node.Value) > 1 {
-			node.EvalType = &base.String{Name: "string"}
-		}
+// 	case *ast.CharString:
+// 		if len(node.Value) > 1 {
+// 			node.EvalType = &base.String{Name: "string"}
+// 		}
 
-		node.EvalType = &base.Char{Name: "char"}
+// 		node.EvalType = &base.Char{Name: "char"}
 
-	case *ast.IfStatement:
-		err = s.computeStaticExprType(node.BoolExpr)
-		if err != nil {
-			return err
-		}
+// 	case *ast.IfStatement:
+// 		err = s.computeStaticExprType(node.BoolExpr)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		err = s.computeStaticExprType(node.TruePath)
-		if err != nil {
-			return err
-		}
+// 		err = s.computeStaticExprType(node.TruePath)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		err = s.computeStaticExprType(node.ElsePath)
-		if err != nil {
-			return err
-		}
+// 		err = s.computeStaticExprType(node.ElsePath)
+// 		if err != nil {
+// 			return err
+// 		}
 
-	case *ast.BinaryExpression:
-		err = s.computeStaticExprType(node.Left)
-		if err != nil {
-			return err
-		}
+// 	case *ast.BinaryExpression:
+// 		err = s.computeStaticExprType(node.Left)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		err = s.computeStaticExprType(node.Right)
-		if err != nil {
-			return err
-		}
+// 		err = s.computeStaticExprType(node.Right)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		if s.isArithOp(node.Operator) {
-			node.EvalType, err = s.arithmeticTypeComputation(node)
-			if err != nil {
-				return err
-			}
-		}
+// 		if s.isArithOp(node.Operator) {
+// 			node.EvalType, err = s.arithmeticTypeComputation(node)
+// 			if err != nil {
+// 				return err
+// 			}
+// 		}
 
-		if s.isRelationalOp(node.Operator) {
-			node.EvalType, err = s.relExprTypeComputation(node)
-			if err != nil {
-				return err
-			}
-		}
+// 		if s.isRelationalOp(node.Operator) {
+// 			node.EvalType, err = s.relExprTypeComputation(node)
+// 			if err != nil {
+// 				return err
+// 			}
+// 		}
 
-	case *ast.UnaryExpression:
-		if err := s.computeStaticExprType(node.Operand); err != nil {
-			return err
-		}
+// 	case *ast.UnaryExpression:
+// 		if err := s.computeStaticExprType(node.Operand); err != nil {
+// 			return err
+// 		}
 
-		operandType := node.Operand.Attr("type").(types.Type).GetName()
+// 		operandType := node.Operand.Attr("type").(types.Type).GetName()
 
-		if operandType != "integer" && operandType != "real" {
-			return fmt.Errorf(
-				"operands of type %v not supported for '/' operation. They must of type integer or real", operandType)
-		}
+// 		if operandType != "integer" && operandType != "real" {
+// 			return fmt.Errorf(
+// 				"operands of type %v not supported for '/' operation. They must of type integer or real", operandType)
+// 		}
 
-		node.EvalType = node.Operand.Attr("type").(types.Type)
+// 		node.EvalType = node.Operand.Attr("type").(types.Type)
 
-	case *ast.FuncDesignator:
-		funcSymbol := node.Scope.Resolve(node.Name.Name)
-		if funcSymbol == nil {
-			return fmt.Errorf("function %s not defined", node.Name.Name)
-		}
+// 	case *ast.FuncDesignator:
+// 		funcSymbol := node.Scope.Resolve(node.Name.Name)
+// 		if funcSymbol == nil {
+// 			return fmt.Errorf("function %s not defined", node.Name.Name)
+// 		}
 
-		node.EvalType = funcSymbol.GetType()
+// 		node.EvalType = funcSymbol.GetType()
 
-	case *ast.FuncDeclaration:
-		for _, call := range node.Block.Callables {
-			err = s.computeStaticExprType(call)
-			if err != nil {
-				return err
-			}
+// 	case *ast.FuncDeclaration:
+// 		for _, call := range node.Block.Callables {
+// 			err = s.computeStaticExprType(call)
+// 			if err != nil {
+// 				return err
+// 			}
 
-			err := s.staticTypeCheck(call)
-			if err != nil {
-				return err
-			}
-		}
+// 			err := s.staticTypeCheck(call)
+// 			if err != nil {
+// 				return err
+// 			}
+// 		}
 
-		for _, stmt := range node.Block.Stats {
-			err = s.computeStaticExprType(stmt)
-			if err != nil {
-				return err
-			}
+// 		for _, stmt := range node.Block.Stats {
+// 			err = s.computeStaticExprType(stmt)
+// 			if err != nil {
+// 				return err
+// 			}
 
-			err = s.staticTypeCheck(stmt)
-			if err != nil {
-				return err
-			}
-		}
-	}
+// 			err = s.staticTypeCheck(stmt)
+// 			if err != nil {
+// 				return err
+// 			}
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (s *SemanticAnalyzer) relExprTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
-	// TODO complete implementation
+// func (s *SemanticAnalyzer) relExprTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+// 	// TODO complete implementation
 
-	lhsType := n.Left.Attr("type").(types.Type)
-	rhsType := n.Right.Attr("type").(types.Type)
+// 	lhsType := n.Left.Attr("type").(types.Type)
+// 	rhsType := n.Right.Attr("type").(types.Type)
 
-	operandsSimpleType := isSimpleType(lhsType) && isSimpleType(rhsType)
-	operandsStringType := lhsType.GetName() == "string" && rhsType.GetName() == "string"
-	operandsPointerType := lhsType.GetName() == "pointer" && rhsType.GetName() == "pointer"
+// 	operandsSimpleType := isSimpleType(lhsType) && isSimpleType(rhsType)
+// 	operandsStringType := lhsType.GetName() == "string" && rhsType.GetName() == "string"
+// 	operandsPointerType := lhsType.GetName() == "pointer" && rhsType.GetName() == "pointer"
 
-	switch n.Operator.Kind {
-	case token.Equal, token.LessThanGreaterThan:
-		if !operandsSimpleType && !operandsStringType || operandsPointerType {
-			return nil, fmt.Errorf(
-				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
-		}
+// 	switch n.Operator.Kind {
+// 	case token.Equal, token.LessThanGreaterThan:
+// 		if !operandsSimpleType && !operandsStringType || operandsPointerType {
+// 			return nil, fmt.Errorf(
+// 				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+// 		}
 
-	case token.LessThan, token.GreaterThan:
-		if !operandsSimpleType && !operandsStringType {
-			return nil, fmt.Errorf(
-				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
-		}
+// 	case token.LessThan, token.GreaterThan:
+// 		if !operandsSimpleType && !operandsStringType {
+// 			return nil, fmt.Errorf(
+// 				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+// 		}
 
-	case token.LessThanOrEqual, token.GreaterThanOrEqual:
-		if !operandsSimpleType && !operandsStringType {
-			return nil, fmt.Errorf(
-				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
-		}
+// 	case token.LessThanOrEqual, token.GreaterThanOrEqual:
+// 		if !operandsSimpleType && !operandsStringType {
+// 			return nil, fmt.Errorf(
+// 				"invalid operand types, %v and %v", lhsType.GetName(), rhsType.GetName())
+// 		}
 
-	case token.In:
+// 	case token.In:
 
-	}
+// 	}
 
-	return &base.Boolean{Name: "Boolean"}, nil
-}
+// 	return &base.Boolean{Name: "Boolean"}, nil
+// }
 
-func (s *SemanticAnalyzer) arithmeticTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
-	var typ types.Type
+// func (s *SemanticAnalyzer) arithmeticTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+// 	var typ types.Type
 
-	lhsType := n.Left.Attr("type").(types.Type).GetName()
-	rhsType := n.Right.Attr("type").(types.Type).GetName()
+// 	lhsType := n.Left.Attr("type").(types.Type).GetName()
+// 	rhsType := n.Right.Attr("type").(types.Type).GetName()
 
-	switch n.Operator.Kind {
-	case token.Plus, token.Minus, token.Star:
-		if (lhsType != "integer" && lhsType != "real") ||
-			(rhsType != "integer" && rhsType != "real") {
+// 	switch n.Operator.Kind {
+// 	case token.Plus, token.Minus, token.Star:
+// 		if (lhsType != "integer" && lhsType != "real") ||
+// 			(rhsType != "integer" && rhsType != "real") {
 
-			return nil, fmt.Errorf(
-				"operands of type %v and %v not supported for '+', '-' and '*' operations. They must of type integer or real", lhsType, rhsType)
-		} else if lhsType == "integer" && rhsType == "integer" {
-			typ = &base.Integer{Name: "integer"}
-		} else {
-			typ = &base.Real{Name: "real"}
-		}
+// 			return nil, fmt.Errorf(
+// 				"operands of type %v and %v not supported for '+', '-' and '*' operations. They must of type integer or real", lhsType, rhsType)
+// 		} else if lhsType == "integer" && rhsType == "integer" {
+// 			typ = &base.Integer{Name: "integer"}
+// 		} else {
+// 			typ = &base.Real{Name: "real"}
+// 		}
 
-	case token.FwdSlash:
-		if lhsType != "integer" && lhsType != "real" &&
-			rhsType != "integer" && rhsType != "real" {
+// 	case token.FwdSlash:
+// 		if lhsType != "integer" && lhsType != "real" &&
+// 			rhsType != "integer" && rhsType != "real" {
 
-			return nil, fmt.Errorf(
-				"operands of type %v and %v not supported for '/' operation. They must of type integer or real", lhsType, rhsType)
-		}
+// 			return nil, fmt.Errorf(
+// 				"operands of type %v and %v not supported for '/' operation. They must of type integer or real", lhsType, rhsType)
+// 		}
 
-		typ = &base.Real{Name: "real"}
-	case token.Div, token.Mod:
-		if lhsType != "integer" && rhsType != "integer" {
-			return nil, fmt.Errorf(
-				"operands of type %v and %v not supported for 'mod' operation. They must of type integer type", lhsType, rhsType)
-		}
+// 		typ = &base.Real{Name: "real"}
+// 	case token.Div, token.Mod:
+// 		if lhsType != "integer" && rhsType != "integer" {
+// 			return nil, fmt.Errorf(
+// 				"operands of type %v and %v not supported for 'mod' operation. They must of type integer type", lhsType, rhsType)
+// 		}
 
-		typ = &base.Integer{Name: "integer"}
-	}
+// 		typ = &base.Integer{Name: "integer"}
+// 	}
 
-	return typ, nil
-}
+// 	return typ, nil
+// }
 
-func (s *SemanticAnalyzer) staticTypeCheck(node ast.Node) error {
-	var err error
+// func (s *SemanticAnalyzer) staticTypeCheck(node ast.Node) error {
+// 	var err error
 
-	switch node := node.(type) {
-	case *ast.AssignStatement:
-		err = s.tcAssignStmt(node)
-		if err != nil {
-			return err
-		}
+// 	switch node := node.(type) {
+// 	case *ast.AssignStatement:
+// 		err = s.tcAssignStmt(node)
+// 		if err != nil {
+// 			return err
+// 		}
 
-	case *ast.IfStatement:
-		err = s.tcIfStatement(node)
-		if err != nil {
-			return err
-		}
+// 	case *ast.IfStatement:
+// 		err = s.tcIfStatement(node)
+// 		if err != nil {
+// 			return err
+// 		}
 
-	}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (s *SemanticAnalyzer) tcAssignStmt(node *ast.AssignStatement) error {
-	if !areAssignmentCompatible(node.Variable.Attr("type").(types.Type), node.Value.Attr("type").(types.Type)) {
-		return fmt.Errorf(
-			"TypeError: cannot assign value of type %s to variable of type %s",
-			node.Value.Attr("type"), node.Variable.Attr("type"),
-		)
-	}
+// func (s *SemanticAnalyzer) tcAssignStmt(node *ast.AssignStatement) error {
+// 	if !areAssignmentCompatible(node.Variable.Attr("type").(types.Type), node.Value.Attr("type").(types.Type)) {
+// 		return fmt.Errorf(
+// 			"TypeError: cannot assign value of type %s to variable of type %s",
+// 			node.Value.Attr("type"), node.Variable.Attr("type"),
+// 		)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (s *SemanticAnalyzer) tcIfStatement(node *ast.IfStatement) error {
-	if node.BoolExpr.Attr("type").(types.Type).GetName() != "Boolean" {
-		return fmt.Errorf("if-statement condition does not evaluate to boolean type")
-	}
-	return nil
-}
+// func (s *SemanticAnalyzer) tcIfStatement(node *ast.IfStatement) error {
+// 	if node.BoolExpr.Attr("type").(types.Type).GetName() != "Boolean" {
+// 		return fmt.Errorf("if-statement condition does not evaluate to boolean type")
+// 	}
+// 	return nil
+// }
 
-func (s *SemanticAnalyzer) isMultiplyOp(t token.Token) bool {
-	return t.Kind == token.Star ||
-		t.Kind == token.FwdSlash ||
-		t.Kind == token.Div ||
-		t.Kind == token.Mod ||
-		t.Kind == token.And
-}
+// func (s *SemanticAnalyzer) isMultiplyOp(t token.Token) bool {
+// 	return t.Kind == token.Star ||
+// 		t.Kind == token.FwdSlash ||
+// 		t.Kind == token.Div ||
+// 		t.Kind == token.Mod ||
+// 		t.Kind == token.And
+// }
 
-func (s *SemanticAnalyzer) isAddingOp(t token.Token) bool {
-	return t.Kind == token.Plus ||
-		t.Kind == token.Minus ||
-		t.Kind == token.Or
-}
+// func (s *SemanticAnalyzer) isAddingOp(t token.Token) bool {
+// 	return t.Kind == token.Plus ||
+// 		t.Kind == token.Minus ||
+// 		t.Kind == token.Or
+// }
 
-func (s *SemanticAnalyzer) isRelationalOp(t token.Token) bool {
-	return t.Kind == token.Equal ||
-		t.Kind == token.LessThanGreaterThan ||
-		t.Kind == token.LessThan ||
-		t.Kind == token.GreaterThan ||
-		t.Kind == token.LessThanOrEqual ||
-		t.Kind == token.GreaterThanOrEqual ||
-		t.Kind == token.In
+// func (s *SemanticAnalyzer) isRelationalOp(t token.Token) bool {
+// 	return t.Kind == token.Equal ||
+// 		t.Kind == token.LessThanGreaterThan ||
+// 		t.Kind == token.LessThan ||
+// 		t.Kind == token.GreaterThan ||
+// 		t.Kind == token.LessThanOrEqual ||
+// 		t.Kind == token.GreaterThanOrEqual ||
+// 		t.Kind == token.In
 
-}
+// }
 
-func (s *SemanticAnalyzer) isArithOp(t token.Token) bool {
-	return s.isAddingOp(t) || s.isMultiplyOp(t)
-}
+// func (s *SemanticAnalyzer) isArithOp(t token.Token) bool {
+// 	return s.isAddingOp(t) || s.isMultiplyOp(t)
+// }
 
 // Run ...
-func (s *SemanticAnalyzer) Run() error {
-	for _, call := range s.Ast.Block.Callables {
-		if err := s.computeStaticExprType(call); err != nil {
-			return err
-		}
+// func (s *SemanticAnalyzer) Run() error {
+// 	for _, call := range s.Ast.Block.Callables {
+// 		if err := s.computeStaticExprType(call); err != nil {
+// 			return err
+// 		}
 
-		if err := s.staticTypeCheck(call); err != nil {
-			return err
-		}
-	}
+// 		if err := s.staticTypeCheck(call); err != nil {
+// 			return err
+// 		}
+// 	}
 
-	for _, stmt := range s.Ast.Block.Stats {
-		if err := s.computeStaticExprType(stmt); err != nil {
-			return err
-		}
+// 	for _, stmt := range s.Ast.Block.Stats {
+// 		if err := s.computeStaticExprType(stmt); err != nil {
+// 			return err
+// 		}
 
-		if err := s.staticTypeCheck(stmt); err != nil {
-			return err
-		}
-	}
+// 		if err := s.staticTypeCheck(stmt); err != nil {
+// 			return err
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // TODO complete implementation
 // a) T1 and T2 are the same type.
@@ -349,4 +344,25 @@ func isSimpleType(t types.Type) bool {
 		t.GetName() == "Boolean" ||
 		t.GetName() == "enum" ||
 		t.GetName() == "subrange"
+}
+
+// SemanticAnalyzer ...
+type SemanticAnalyzer struct {
+	Ast               *ast.ProgramAST
+	ExprEval          *ExprEvalVisitor
+	StaticTypeChecker *StaticTypeCheckVisitor
+}
+
+// Run ...
+func (s *SemanticAnalyzer) Run() {
+	for _, call := range s.Ast.Block.Callables {
+		Walk(s.ExprEval, call)
+		Walk(s.StaticTypeChecker, call)
+	}
+
+	for _, stmt := range s.Ast.Block.Stats {
+		Walk(s.ExprEval, stmt)
+		Walk(s.StaticTypeChecker, stmt)
+	}
+
 }
