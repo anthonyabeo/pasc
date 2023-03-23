@@ -161,3 +161,41 @@ func TestStaticTypeCheckArithmeticOperation(t *testing.T) {
 	}
 	sema.Run()
 }
+
+func TestTypeCheckWhileStatement(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+
+	begin
+		sum := 0;
+		a := 5;
+
+		while a >= 0 do
+		begin
+			sum := sum + a;
+			a := a - 1
+		end;
+
+		writeln(sum)
+	end.
+`
+	lex := parser.NewLexer(input)
+	pars, err := parser.NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil || prog == nil {
+		t.Error(err)
+	}
+
+	sema := &SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &StaticTypeCheckVisitor{},
+	}
+	sema.Run()
+}
