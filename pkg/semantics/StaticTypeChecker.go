@@ -31,6 +31,9 @@ func (v *StaticTypeCheckVisitor) Visit(node ast.Node) {
 			err = fmt.Errorf("if-statement condition does not evaluate to boolean type")
 			panic(err)
 		}
+
+		v.Visit(node.TruePath)
+		v.Visit(node.ElsePath)
 	case *ast.WhileStatement:
 		if node.BoolExpr.Attr("type").(types.Type).GetName() != "Boolean" {
 			err = fmt.Errorf("if-statement condition does not evaluate to boolean type")
@@ -42,6 +45,7 @@ func (v *StaticTypeCheckVisitor) Visit(node ast.Node) {
 		for _, stmt := range node.Statements {
 			v.Visit(stmt)
 		}
+	case *ast.ForStatement:
 	default:
 		panic(fmt.Sprintf("Visit: unexpected node type %T", node))
 	}
