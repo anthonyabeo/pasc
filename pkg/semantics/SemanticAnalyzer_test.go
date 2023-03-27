@@ -199,3 +199,40 @@ func TestTypeCheckWhileStatement(t *testing.T) {
 	}
 	sema.Run()
 }
+
+func TestTypeCheckForStatement(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		i, max : integer;
+
+	type
+		arr = array [integer] of integer;
+
+	begin
+		for i := 2 to 63 do
+			if arr[i] > max then 
+				max := arr[i];
+
+		writeln(max)
+	end.
+`
+
+	lex := parser.NewLexer(input)
+	pars, err := parser.NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil || prog == nil {
+		t.Error(err)
+	}
+
+	sema := &SemanticAnalyzer{
+		Ast:               prog,
+		ExprEval:          &ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
+		StaticTypeChecker: &StaticTypeCheckVisitor{},
+	}
+	sema.Run()
+}
