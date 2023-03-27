@@ -1297,7 +1297,6 @@ func (p *Parser) indexedVariable(arrayVar *ast.Identifier) (*ast.IndexedVariable
 	var err error
 
 	indexedVar := &ast.IndexedVariable{ArrayVar: arrayVar}
-
 	if err = p.match(token.LSqBrace); err != nil {
 		return nil, err
 	}
@@ -2060,7 +2059,7 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 	if sym == nil {
 		return nil, fmt.Errorf("undefined symbol %v", id.Text)
 	} else if sym.GetType().GetName() == "array" {
-		expr, err = p.indexedVariable(&ast.Identifier{Token: id, Name: id.Text})
+		expr, err = p.indexedVariable(&ast.Identifier{Token: id, Name: id.Text, Scope: p.curScope})
 		if err != nil {
 			return nil, err
 		}
