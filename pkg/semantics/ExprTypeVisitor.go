@@ -8,6 +8,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // ExprEvalVisitor ...
@@ -32,7 +33,9 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 	case *ast.IfStatement:
 		v.Visit(node.BoolExpr)
 		v.Visit(node.TruePath)
-		v.Visit(node.ElsePath)
+		if node.ElsePath != nil {
+			v.Visit(node.ElsePath)
+		}
 	case *ast.FuncDeclaration:
 		for _, call := range node.Block.Callables {
 			v.Visit(call)
@@ -51,7 +54,11 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 	case *ast.UIntegerLiteral:
 		node.EvalType = v.SymbolTable.Resolve("integer")
 	case *ast.Identifier:
-		node.EvalType = node.Scope.Resolve(node.Name).GetType()
+		sym := node.Scope.Resolve(node.Name)
+		if sym == nil {
+			panic(fmt.Sprintf("symbol %v is undefined", node.Name))
+		}
+		node.EvalType = sym.GetType()
 	case *ast.CharString:
 		if len(node.Value) > 1 {
 			node.EvalType = &base.String{Name: "string"}
@@ -95,6 +102,28 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 		for _, stmt := range node.Statements {
 			v.Visit(stmt)
 		}
+	case *ast.ForStatement:
+		v.Visit(node.CtrlID)
+		v.Visit(node.InitValue)
+		v.Visit(node.FinalValue)
+		v.Visit(node.Body)
+	case *ast.IndexedVariable:
+		v.Visit(node.ArrayVar)
+		for _, idxExpr := range node.IndexExpr {
+			v.Visit(idxExpr)
+		}
+
+		t := node.ArrayVar.Attr("type").(types.Type)
+		for i := 0; i < len(node.IndexExpr); i++ {
+			arr, ok := t.(*structured.Array)
+			if !ok {
+				panic(fmt.Sprintf("expected array type, got %T instead", arr))
+			}
+
+			t = arr.ComponentType
+		}
+
+		node.EvalType = t
 	default:
 		panic(fmt.Sprintf("Visit: unexpected expression type %T", node))
 	}
