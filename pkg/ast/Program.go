@@ -26,14 +26,3 @@ func (p *ProgramAST) TokenKind() token.Kind { return p.Token.Kind }
 func (p *ProgramAST) String() string {
 	return fmt.Sprintf("program %v(%v)", p.Name.String(), p.ParamList)
 }
-
-// Gen creates and emits BRIL code for this node
-func (p *ProgramAST) Gen() error {
-	// p.emit("@main {\n")
-	// for _, stmt := range p.Block.Stats {
-	// 	stmt.Gen()
-	// }
-	// p.emit("}\n")
-
-	return nil
-}
