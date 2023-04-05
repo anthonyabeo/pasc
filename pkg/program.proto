@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package Pasc;
+option go_package = "pkg/codegen/serialize";
+
+enum TokenKind {
+    PROGRAM = 0;
+    ASSIGN = 1;
+    IDENTIFIER = 2;
+    UINTLIT = 3;
+} 
+
+//////////////////////////////////
+//  PROGRAM
+//////////////////////////////////
+message Program {
+    TokenKind kind = 1;
+    string name = 2;
+    repeated string params = 3; 
+    Block block = 4;
+}
+
+message Block {
+    repeated VarDeclaration varDeclrs = 1;
+    repeated Statement stmts = 2;
+}
+
+message VarDeclaration {
+    Identifier name = 1;
+    Type type = 2;
+}
+
+//////////////////////////////////
+//  STATEMENTS
+//////////////////////////////////
+message AssignStmt {
+    Identifier variable = 1;
+    Expression value = 2;
+}
+
+message ProcedureStmt {
+    Identifier name = 1;
+    repeated Expression args = 2;
+}
+
+message Statement {
+    TokenKind kind = 1;
+    oneof stmt {
+        AssignStmt assignStmt = 2;
+        ProcedureStmt procStmt = 3;
+    }
+}
+
+//////////////////////////////////
+//  EXPRESSIONS
+//////////////////////////////////
+message Expression {
+    TokenKind kind = 1;
+    oneof expr {
+        Identifier id = 2;
+        UIntLiteral uint = 3;
+    }
+}
+
+message Identifier {
+    string name = 1;
+}
+
+message UIntLiteral {
+    int32 value = 1;
+}
+
+//////////////////////////////////
+//  TYPES
+//////////////////////////////////
+enum TypeKind {
+    INTEGER = 0;
+    REAL = 1;
+    BOOLEAN = 2;
+    CHAR = 3;
+}
+
+message Type {
+    TypeKind tk = 1;
+    oneof type {
+        Integer int = 2;
+        Real real = 3;
+        Boolean bool = 4;
+        Char char = 5;
+    }
+}
+
+message Integer {
+    string name = 1;
+}
+
+message Boolean {
+    string name = 1;
+}
+
+message Real {
+    string name = 1;
+}
+
+message Char {
+    string name = 1;
+}
