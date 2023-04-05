@@ -1,3 +1,5 @@
 .vscode/
 pkg/codegen/*.bril
 pkg/codegen/*.ll
+pkg/codegen/out/
+pkg/codegen/build/
