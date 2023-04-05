@@ -1,8 +1,11 @@
 module github.com/anthonyabeo/pasc
 
-go 1.19
+go 1.20
 
-require github.com/llir/llvm v0.3.6
+require (
+	github.com/llir/llvm v0.3.6
+	google.golang.org/protobuf v1.26.0
+)
 
 require (
 	github.com/mewmew/float v0.0.0-20211212214546-4fe539893335 // indirect
