@@ -1181,9 +1181,9 @@ class Identifier : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
-  // string name = 2;
+  // string name = 1;
   void clear_name();
-  static const int kNameFieldNumber = 2;
+  static const int kNameFieldNumber = 1;
   const ::std::string& name() const;
   void set_name(const ::std::string& value);
   #if LANG_CXX11
@@ -2738,7 +2738,7 @@ inline Expression::ExprCase Expression::expr_case() const {
 
 // Identifier
 
-// string name = 2;
+// string name = 1;
 inline void Identifier::clear_name() {
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

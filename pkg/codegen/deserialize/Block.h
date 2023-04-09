@@ -2,14 +2,14 @@
 #define BLOCK_H
 
 #include "Declaration.h"
-#include "Statement.h"
+// #include "Statement.h"
 #include "program.pb.h"
 
 struct Block {
-    std::vector<std::unique_ptr<VariableDeclaration>> VarDeclrs;
-    std::vector<std::unique_ptr<Statement>> Stmts;
+  std::vector<std::unique_ptr<VariableDeclaration>> VarDeclrs;
+  std::vector<std::unique_ptr<Statement>> Stmts;
 
-    Block(const Pasc::Block&);
+  Block(const Pasc::Block &);
 };
 
 #endif // BLOCK_H

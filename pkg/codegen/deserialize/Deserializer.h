@@ -7,23 +7,22 @@
 #include <fstream>
 #include <string>
 
-#include "program.pb.h"
 #include "Program.h"
+#include "program.pb.h"
 
 Pasc::Program DeserialiseProtobufFile(std::string &filePath);
 
-std::unique_ptr<ProgramIR> CreateInternalIRFromProtobuf(const Pasc::Program&);
+std::unique_ptr<ProgramIR> CreateInternalIRFromProtobuf(const Pasc::Program &);
 
-/// @brief DeserialiseProtobufException 
+/// @brief DeserialiseProtobufException
 class DeserialiseProtobufException : public std::exception {
   std::string errorMessage;
 
- public:
+public:
   DeserialiseProtobufException(const char msg[]) {
     std::string errorMessage(msg);
   }
   const char *what() const throw() { return errorMessage.c_str(); }
 };
-
 
 #endif // DESERIALIZE_H

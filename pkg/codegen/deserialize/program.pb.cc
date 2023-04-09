@@ -525,7 +525,7 @@ void AddDescriptorsImpl() {
       "\001 \001(\0162\017.Pasc.TokenKind\022\036\n\002id\030\002 \001(\0132\020.Pas"
       "c.IdentifierH\000\022!\n\004uint\030\003 \001(\0132\021.Pasc.UInt"
       "LiteralH\000B\006\n\004expr\"\032\n\nIdentifier\022\014\n\004name\030"
-      "\002 \001(\t\"\034\n\013UIntLiteral\022\r\n\005value\030\001 \001(\005\"\237\001\n\004"
+      "\001 \001(\t\"\034\n\013UIntLiteral\022\r\n\005value\030\001 \001(\005\"\237\001\n\004"
       "Type\022\032\n\002tk\030\001 \001(\0162\016.Pasc.TypeKind\022\034\n\003int\030"
       "\002 \001(\0132\r.Pasc.IntegerH\000\022\032\n\004real\030\003 \001(\0132\n.P"
       "asc.RealH\000\022\035\n\004bool\030\004 \001(\0132\r.Pasc.BooleanH"
@@ -2931,10 +2931,10 @@ bool Identifier::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string name = 2;
-      case 2: {
+      // string name = 1;
+      case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_name()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -2973,14 +2973,14 @@ void Identifier::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 2;
+  // string name = 1;
   if (this->name().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "Pasc.Identifier.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->name(), output);
+      1, this->name(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2997,7 +2997,7 @@ void Identifier::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string name = 2;
+  // string name = 1;
   if (this->name().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
@@ -3005,7 +3005,7 @@ void Identifier::SerializeWithCachedSizes(
       "Pasc.Identifier.name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->name(), target);
+        1, this->name(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3025,7 +3025,7 @@ size_t Identifier::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // string name = 2;
+  // string name = 1;
   if (this->name().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(

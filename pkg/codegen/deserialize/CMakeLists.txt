@@ -24,3 +24,23 @@ target_link_libraries(
     -lprotobuf
     -L/usr/local/lib
 )
+
+
+add_library(
+    CodeGen
+
+    IRCodeGenVisitor.cc
+)
+
+target_include_directories(
+    CodeGen
+
+    INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PUBLIC "/usr/local/include"
+)
+
+target_link_libraries(
+    CodeGen
+    
+    -L/usr/local/lib
+)
