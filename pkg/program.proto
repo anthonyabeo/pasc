@@ -1,13 +1,14 @@
 syntax = "proto3";
 
 package Pasc;
-option go_package = "pkg/codegen/serialize";
+option go_package = "pkg/codegen/serializer";
 
 enum TokenKind {
     PROGRAM = 0;
     ASSIGN = 1;
     IDENTIFIER = 2;
     UINTLIT = 3;
+    PROCEDURE = 4;
 } 
 
 //////////////////////////////////
@@ -26,7 +27,7 @@ message Block {
 }
 
 message VarDeclaration {
-    Identifier name = 1;
+    Expression name = 1;
     Type type = 2;
 }
 
@@ -34,12 +35,12 @@ message VarDeclaration {
 //  STATEMENTS
 //////////////////////////////////
 message AssignStmt {
-    Identifier variable = 1;
+    Expression variable = 1;
     Expression value = 2;
 }
 
 message ProcedureStmt {
-    Identifier name = 1;
+    Expression name = 1;
     repeated Expression args = 2;
 }
 
