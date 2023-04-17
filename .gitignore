@@ -3,3 +3,4 @@ pkg/codegen/*.bril
 pkg/codegen/*.ll
 pkg/codegen/out/
 pkg/codegen/backend/build/
+pkg/codegen/backend/.idea/
