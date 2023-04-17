@@ -3,21 +3,21 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 
+#include "deserialize/Program.h"
 #include "llvm_ir/IRCodeGenVisitor.h"
 #include "llvm_ir/SymbolTable.h"
 
 #include <memory>
 
-IRCodegenVisitor::IRCodegenVisitor() {
+IRCodegenVisitor::IRCodegenVisitor(std::string& moduleName) {
   ctx = std::make_unique<llvm::LLVMContext>();
   builder = std::make_unique<llvm::IRBuilder<>>(*ctx);
+  module = std::make_unique<llvm::Module>(moduleName, *ctx);
 
   symTable = std::make_unique<LLVMSymbolTable>("main", nullptr);
 }
 
 void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
-  module = std::make_unique<llvm::Module>(program.name, *ctx);
-
   llvm::FunctionType *mainType = llvm::FunctionType::get(
       llvm::IntegerType::getInt32Ty(*ctx),
       std::vector<llvm::Type *>(),
@@ -29,9 +29,9 @@ void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
       "main",
       module.get());
 
-  llvm::BasicBlock *mainBasicBlock =
+  llvm::BasicBlock *entryBB =
       llvm::BasicBlock::Create(*ctx, "entry", main);
-  builder->SetInsertPoint(mainBasicBlock);
+  builder->SetInsertPoint(entryBB);
 
   codegenBlock(*program.block);
 
@@ -40,6 +40,16 @@ void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
 }
 
 void IRCodegenVisitor::dumpLLVMIR() { module->print(llvm::outs(), nullptr); }
+
+
+std::string IRCodegenVisitor::dumpLLVMIRToString() {
+  std::string out_str;
+  llvm::raw_string_ostream oss(out_str);
+
+  module->print(oss, nullptr);
+
+  return oss.str();
+}
 
 llvm::Type* IRCodegenVisitor::getLLVMTypeOf(const Type &t) {
    if (t.GetName() == "integer") {

@@ -11,7 +11,7 @@
 #include "deserialize/IRVisitor.h"
 
 class IRCodegenVisitor : public IRVisitor {
-protected:
+private:
   std::unique_ptr<llvm::LLVMContext> ctx;
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> module;
@@ -19,14 +19,14 @@ protected:
   std::unique_ptr<LLVMSymbolTable> symTable;
 
 public:
-  IRCodegenVisitor();
-  ~IRCodegenVisitor() override= default;
+  explicit IRCodegenVisitor(std::string&);
 
   void codegenProgram(const ProgramIR &);
   void codegenBlock(const Block &);
   void dumpLLVMIR();
+  std::string dumpLLVMIRToString();
 
- llvm::Type* getLLVMTypeOf(const Type &);
+  llvm::Type* getLLVMTypeOf(const Type &);
 
   // Expressions
   llvm::Value *codegen(const IdentifierIR &) override;

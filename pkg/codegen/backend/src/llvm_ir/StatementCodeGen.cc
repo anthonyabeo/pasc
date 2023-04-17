@@ -36,15 +36,14 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
     auto printfFunc = module->getOrInsertFunction(
         "printf",
         llvm::FunctionType::get(llvm::Type::getInt32Ty(*ctx),
-                                printfArgsTypes,
-                                true));
+                                  printfArgsTypes,
+                                  true));
 
     // The format string for the printf function, declared as a global literal
     llvm::Value *str = builder->CreateGlobalStringPtr("%d\n", "str");
 
 
     std::vector<llvm::Value *> argsV({str});
-
     for (auto& p : stmt.params) {
       auto val = p->codegen(*this);
       auto load = builder->CreateLoad(val->getType(), val);
@@ -52,7 +51,7 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
       argsV.push_back(load);
     }
 
-    return builder->CreateCall(printfFunc, argsV, "call_tmp");
+    return builder->CreateCall(printfFunc, argsV, "call");
   }
 
   return nullptr;
