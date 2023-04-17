@@ -1,15 +1,19 @@
-#include "Type.h"
+#include <memory>
+
 #include "program.pb.h"
+
+#include "Type.h"
+#include "Deserializer.h"
 
 std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
   switch (t.type_case()) {
   case Pasc::Type::kInt:
-    return std::unique_ptr<IntegerType>(new IntegerType(t.int_()));
-    break;
-
+    return std::make_unique<IntegerType>(t.int_());
   default:
-    return nullptr;
+    throw DeserializeProtobufException("invalid case");
   }
 }
 
 IntegerType::IntegerType(const Pasc::Integer &i) { name = i.name(); }
+
+std::string IntegerType::GetName() const { return name; }

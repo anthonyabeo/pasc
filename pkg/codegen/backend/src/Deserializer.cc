@@ -1,5 +1,5 @@
 #include <fstream>
-#include <stdlib.h>
+#include <memory>
 #include <string>
 
 #include "program.pb.h"
@@ -7,16 +7,16 @@
 #include "Deserializer.h"
 #include "Program.h"
 
-Pasc::Program DeserialiseProtobufFile(std::string &filePath) {
+Pasc::Program DeserializeProtobufFile(std::string &filePath) {
   Pasc::Program program;
 
   std::fstream fileIn(filePath, std::ios::in | std::ios::binary);
   if (!fileIn) {
-    throw DeserialiseProtobufException("File not found.");
+    throw DeserializeProtobufException("File not found.");
   }
 
   if (!program.ParseFromIstream(&fileIn)) {
-    throw DeserialiseProtobufException("Protobuf not deserialised from file.");
+    throw DeserializeProtobufException("Protobuf not deserialized from file.");
   }
 
   return program;
@@ -24,5 +24,5 @@ Pasc::Program DeserialiseProtobufFile(std::string &filePath) {
 
 std::unique_ptr<ProgramIR>
 CreateInternalIRFromProtobuf(const Pasc::Program &program) {
-  return std::unique_ptr<ProgramIR>(new ProgramIR(program));
+  return std::make_unique<ProgramIR>(program);
 }

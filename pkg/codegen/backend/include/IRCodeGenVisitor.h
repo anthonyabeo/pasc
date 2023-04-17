@@ -8,6 +8,7 @@
 #include "Expr.h"
 #include "IRVisitor.h"
 #include "Program.h"
+#include "SymbolTable.h"
 
 class IRCodegenVisitor : public IRVisitor {
 protected:
@@ -15,20 +16,25 @@ protected:
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> module;
 
+  std::unique_ptr<LLVMSymbolTable> symTable;
+
 public:
   IRCodegenVisitor();
-  virtual ~IRCodegenVisitor(){};
+  ~IRCodegenVisitor() override= default;
 
   void codegenProgram(const ProgramIR &);
+  void codegenBlock(const Block &);
   void dumpLLVMIR();
 
+ llvm::Type* getLLVMTypeOf(const Type &);
+
   // Expressions
-  virtual llvm::Value *codegen(const IdentifierIR &) override;
-  virtual llvm::Value *codegen(const UIntegerLiteral &) override;
+  llvm::Value *codegen(const IdentifierIR &) override;
+  llvm::Value *codegen(const UIntegerLiteral &) override;
 
   // Statements
-  virtual llvm::Value *codegen(const AssignStmt &) override;
-  virtual llvm::Value *codegen(const ProcedureStatement &) override;
+  llvm::Value *codegen(const AssignStmt &) override;
+  llvm::Value *codegen(const ProcedureStatement &) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation
@@ -36,9 +42,9 @@ class IRCodegenException : public std::exception {
   std::string errorMessage;
 
 public:
-  IRCodegenException(std::string msg)
+  explicit IRCodegenException(const std::string& msg)
       : errorMessage("IR Codegen Error: " + msg){};
-  const char *what() const throw() { return errorMessage.c_str(); }
+  [[nodiscard]] const char *what() const noexcept override { return errorMessage.c_str(); }
 };
 
 #endif // IR_CODEGEN_VISITOR

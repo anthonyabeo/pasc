@@ -1,5 +1,5 @@
-#ifndef IR_VISITOR
-#define IR_VISITOR
+#ifndef IR_VISITOR_H
+#define IR_VISITOR_H
 
 #include "llvm/IR/Value.h"
 
@@ -9,6 +9,8 @@
 
 class IRVisitor {
 public:
+  virtual ~IRVisitor() = default;
+
   virtual llvm::Value *codegen(const IdentifierIR &) = 0;
   virtual llvm::Value *codegen(const UIntegerLiteral &) = 0;
 
@@ -16,4 +18,4 @@ public:
   virtual llvm::Value *codegen(const ProcedureStatement &) = 0;
 };
 
-#endif // IR_VISITOR
+#endif // IR_VISITOR_H

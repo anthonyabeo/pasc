@@ -115,12 +115,13 @@ enum TokenKind {
   ASSIGN = 1,
   IDENTIFIER = 2,
   UINTLIT = 3,
+  PROCEDURE = 4,
   TokenKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   TokenKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool TokenKind_IsValid(int value);
 const TokenKind TokenKind_MIN = PROGRAM;
-const TokenKind TokenKind_MAX = UINTLIT;
+const TokenKind TokenKind_MAX = PROCEDURE;
 const int TokenKind_ARRAYSIZE = TokenKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* TokenKind_descriptor();
@@ -521,17 +522,17 @@ class VarDeclaration : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   bool has_name() const;
   void clear_name();
   static const int kNameFieldNumber = 1;
   private:
-  const ::Pasc::Identifier& _internal_name() const;
+  const ::Pasc::Expression& _internal_name() const;
   public:
-  const ::Pasc::Identifier& name() const;
-  ::Pasc::Identifier* release_name();
-  ::Pasc::Identifier* mutable_name();
-  void set_allocated_name(::Pasc::Identifier* name);
+  const ::Pasc::Expression& name() const;
+  ::Pasc::Expression* release_name();
+  ::Pasc::Expression* mutable_name();
+  void set_allocated_name(::Pasc::Expression* name);
 
   // .Pasc.Type type = 2;
   bool has_type() const;
@@ -549,7 +550,7 @@ class VarDeclaration : public ::google::protobuf::Message /* @@protoc_insertion_
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::Pasc::Identifier* name_;
+  ::Pasc::Expression* name_;
   ::Pasc::Type* type_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_program_2eproto::TableStruct;
@@ -643,17 +644,17 @@ class AssignStmt : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
-  // .Pasc.Identifier variable = 1;
+  // .Pasc.Expression variable = 1;
   bool has_variable() const;
   void clear_variable();
   static const int kVariableFieldNumber = 1;
   private:
-  const ::Pasc::Identifier& _internal_variable() const;
+  const ::Pasc::Expression& _internal_variable() const;
   public:
-  const ::Pasc::Identifier& variable() const;
-  ::Pasc::Identifier* release_variable();
-  ::Pasc::Identifier* mutable_variable();
-  void set_allocated_variable(::Pasc::Identifier* variable);
+  const ::Pasc::Expression& variable() const;
+  ::Pasc::Expression* release_variable();
+  ::Pasc::Expression* mutable_variable();
+  void set_allocated_variable(::Pasc::Expression* variable);
 
   // .Pasc.Expression value = 2;
   bool has_value() const;
@@ -671,7 +672,7 @@ class AssignStmt : public ::google::protobuf::Message /* @@protoc_insertion_poin
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::Pasc::Identifier* variable_;
+  ::Pasc::Expression* variable_;
   ::Pasc::Expression* value_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_program_2eproto::TableStruct;
@@ -777,24 +778,24 @@ class ProcedureStmt : public ::google::protobuf::Message /* @@protoc_insertion_p
   const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
       args() const;
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   bool has_name() const;
   void clear_name();
   static const int kNameFieldNumber = 1;
   private:
-  const ::Pasc::Identifier& _internal_name() const;
+  const ::Pasc::Expression& _internal_name() const;
   public:
-  const ::Pasc::Identifier& name() const;
-  ::Pasc::Identifier* release_name();
-  ::Pasc::Identifier* mutable_name();
-  void set_allocated_name(::Pasc::Identifier* name);
+  const ::Pasc::Expression& name() const;
+  ::Pasc::Expression* release_name();
+  ::Pasc::Expression* mutable_name();
+  void set_allocated_name(::Pasc::Expression* name);
 
   // @@protoc_insertion_point(class_scope:Pasc.ProcedureStmt)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > args_;
-  ::Pasc::Identifier* name_;
+  ::Pasc::Expression* name_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_program_2eproto::TableStruct;
 };
@@ -2196,7 +2197,7 @@ Block::stmts() const {
 
 // VarDeclaration
 
-// .Pasc.Identifier name = 1;
+// .Pasc.Expression name = 1;
 inline bool VarDeclaration::has_name() const {
   return this != internal_default_instance() && name_ != NULL;
 }
@@ -2206,32 +2207,32 @@ inline void VarDeclaration::clear_name() {
   }
   name_ = NULL;
 }
-inline const ::Pasc::Identifier& VarDeclaration::_internal_name() const {
+inline const ::Pasc::Expression& VarDeclaration::_internal_name() const {
   return *name_;
 }
-inline const ::Pasc::Identifier& VarDeclaration::name() const {
-  const ::Pasc::Identifier* p = name_;
+inline const ::Pasc::Expression& VarDeclaration::name() const {
+  const ::Pasc::Expression* p = name_;
   // @@protoc_insertion_point(field_get:Pasc.VarDeclaration.name)
-  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Identifier*>(
-      &::Pasc::_Identifier_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
 }
-inline ::Pasc::Identifier* VarDeclaration::release_name() {
+inline ::Pasc::Expression* VarDeclaration::release_name() {
   // @@protoc_insertion_point(field_release:Pasc.VarDeclaration.name)
   
-  ::Pasc::Identifier* temp = name_;
+  ::Pasc::Expression* temp = name_;
   name_ = NULL;
   return temp;
 }
-inline ::Pasc::Identifier* VarDeclaration::mutable_name() {
+inline ::Pasc::Expression* VarDeclaration::mutable_name() {
   
   if (name_ == NULL) {
-    auto* p = CreateMaybeMessage<::Pasc::Identifier>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
     name_ = p;
   }
   // @@protoc_insertion_point(field_mutable:Pasc.VarDeclaration.name)
   return name_;
 }
-inline void VarDeclaration::set_allocated_name(::Pasc::Identifier* name) {
+inline void VarDeclaration::set_allocated_name(::Pasc::Expression* name) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete name_;
@@ -2308,7 +2309,7 @@ inline void VarDeclaration::set_allocated_type(::Pasc::Type* type) {
 
 // AssignStmt
 
-// .Pasc.Identifier variable = 1;
+// .Pasc.Expression variable = 1;
 inline bool AssignStmt::has_variable() const {
   return this != internal_default_instance() && variable_ != NULL;
 }
@@ -2318,32 +2319,32 @@ inline void AssignStmt::clear_variable() {
   }
   variable_ = NULL;
 }
-inline const ::Pasc::Identifier& AssignStmt::_internal_variable() const {
+inline const ::Pasc::Expression& AssignStmt::_internal_variable() const {
   return *variable_;
 }
-inline const ::Pasc::Identifier& AssignStmt::variable() const {
-  const ::Pasc::Identifier* p = variable_;
+inline const ::Pasc::Expression& AssignStmt::variable() const {
+  const ::Pasc::Expression* p = variable_;
   // @@protoc_insertion_point(field_get:Pasc.AssignStmt.variable)
-  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Identifier*>(
-      &::Pasc::_Identifier_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
 }
-inline ::Pasc::Identifier* AssignStmt::release_variable() {
+inline ::Pasc::Expression* AssignStmt::release_variable() {
   // @@protoc_insertion_point(field_release:Pasc.AssignStmt.variable)
   
-  ::Pasc::Identifier* temp = variable_;
+  ::Pasc::Expression* temp = variable_;
   variable_ = NULL;
   return temp;
 }
-inline ::Pasc::Identifier* AssignStmt::mutable_variable() {
+inline ::Pasc::Expression* AssignStmt::mutable_variable() {
   
   if (variable_ == NULL) {
-    auto* p = CreateMaybeMessage<::Pasc::Identifier>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
     variable_ = p;
   }
   // @@protoc_insertion_point(field_mutable:Pasc.AssignStmt.variable)
   return variable_;
 }
-inline void AssignStmt::set_allocated_variable(::Pasc::Identifier* variable) {
+inline void AssignStmt::set_allocated_variable(::Pasc::Expression* variable) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete variable_;
@@ -2420,7 +2421,7 @@ inline void AssignStmt::set_allocated_value(::Pasc::Expression* value) {
 
 // ProcedureStmt
 
-// .Pasc.Identifier name = 1;
+// .Pasc.Expression name = 1;
 inline bool ProcedureStmt::has_name() const {
   return this != internal_default_instance() && name_ != NULL;
 }
@@ -2430,32 +2431,32 @@ inline void ProcedureStmt::clear_name() {
   }
   name_ = NULL;
 }
-inline const ::Pasc::Identifier& ProcedureStmt::_internal_name() const {
+inline const ::Pasc::Expression& ProcedureStmt::_internal_name() const {
   return *name_;
 }
-inline const ::Pasc::Identifier& ProcedureStmt::name() const {
-  const ::Pasc::Identifier* p = name_;
+inline const ::Pasc::Expression& ProcedureStmt::name() const {
+  const ::Pasc::Expression* p = name_;
   // @@protoc_insertion_point(field_get:Pasc.ProcedureStmt.name)
-  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Identifier*>(
-      &::Pasc::_Identifier_default_instance_);
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
 }
-inline ::Pasc::Identifier* ProcedureStmt::release_name() {
+inline ::Pasc::Expression* ProcedureStmt::release_name() {
   // @@protoc_insertion_point(field_release:Pasc.ProcedureStmt.name)
   
-  ::Pasc::Identifier* temp = name_;
+  ::Pasc::Expression* temp = name_;
   name_ = NULL;
   return temp;
 }
-inline ::Pasc::Identifier* ProcedureStmt::mutable_name() {
+inline ::Pasc::Expression* ProcedureStmt::mutable_name() {
   
   if (name_ == NULL) {
-    auto* p = CreateMaybeMessage<::Pasc::Identifier>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
     name_ = p;
   }
   // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStmt.name)
   return name_;
 }
-inline void ProcedureStmt::set_allocated_name(::Pasc::Identifier* name) {
+inline void ProcedureStmt::set_allocated_name(::Pasc::Expression* name) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete name_;

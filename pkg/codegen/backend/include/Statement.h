@@ -1,36 +1,33 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
-// #include "llvm/IR/Value.h"
+ #include "llvm/IR/Value.h"
 
-// #include "Expr.h"
-// #include "IRVisitor.h"
+ #include "Expr.h"
 
-// class IRVisitor;
+ class IRVisitor;
 
-// struct Statement {
-//   virtual ~Statement() = default;
-//   virtual llvm::Value *codegen(IRVisitor &v) = 0;
-// };
+struct Statement {
+  virtual ~Statement() = default;
+  virtual llvm::Value *codegen(IRVisitor &v) = 0;
+};
 
-// std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &);
+std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &);
 
-// struct AssignStmt : public Statement {
-// private:
-//   std::unique_ptr<Identifier> variable;
-//   std::unique_ptr<Expr> value;
+struct AssignStmt : public Statement {
+  std::unique_ptr<IdentifierIR> variable;
+  std::unique_ptr<Expr> value;
 
-// public:
-//   AssignStmt(const Pasc::AssignStmt &stmt);
-//   virtual llvm::Value *codegen(IRVisitor &) override;
-// };
+  explicit AssignStmt(const Pasc::AssignStmt &stmt);
+  llvm::Value *codegen(IRVisitor &) override;
+};
 
-// struct ProcedureStatement : public Statement {
-//   std::unique_ptr<Identifier> name;
-//   std::vector<std::unique_ptr<Expr>> params;
+struct ProcedureStatement : public Statement {
+  std::unique_ptr<IdentifierIR> name;
+  std::vector<std::unique_ptr<Expr>> params;
 
-//   ProcedureStatement(const Pasc::ProcedureStmt &stmt);
-//   virtual llvm::Value *codegen(IRVisitor &) override;
-// };
+  explicit ProcedureStatement(const Pasc::ProcedureStmt &stmt);
+  llvm::Value *codegen(IRVisitor &) override;
+};
 
 #endif // STATEMENT_H

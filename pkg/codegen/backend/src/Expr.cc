@@ -1,6 +1,9 @@
 #include "program.pb.h"
 
 #include "Expr.h"
+#include "Deserializer.h"
+
+#include <memory>
 #include "IRVisitor.h"
 
 /// @brief
@@ -9,13 +12,11 @@
 std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
   switch (expr.expr_case()) {
   case Pasc::Expression::kId:
-    return std::unique_ptr<IdentifierIR>(new IdentifierIR(expr.id()));
-    break;
+    return std::make_unique<IdentifierIR>(expr);
   case Pasc::Expression::kUint:
-    return std::unique_ptr<UIntegerLiteral>(new UIntegerLiteral(expr.uint()));
-    break;
+    return std::make_unique<UIntegerLiteral>(expr.uint());
   default:
-    return nullptr;
+    throw DeserializeProtobufException("invalid case");
   }
 }
 
@@ -32,54 +33,9 @@ llvm::Value *UIntegerLiteral::codegen(IRVisitor &v) { return v.codegen(*this); }
 
 /// @brief
 /// @param id
-IdentifierIR::IdentifierIR(const Pasc::Identifier &id) { name = id.name(); }
+IdentifierIR::IdentifierIR(const Pasc::Expression &expr) { name = expr.id().name(); }
 
 /// @brief
 /// @param v
 /// @return
 llvm::Value *IdentifierIR::codegen(IRVisitor &v) { return v.codegen(*this); }
-
-/////////////////////////////
-// STATEMENTS
-/////////////////////////////
-/// @brief
-/// @param stmt
-/// @return
-std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
-  switch (stmt.stmt_case()) {
-  case Pasc::Statement::kAssignStmt:
-    return std::unique_ptr<AssignStmt>(new AssignStmt(stmt.assignstmt()));
-    break;
-  case Pasc::Statement::kProcStmt:
-    return std::unique_ptr<ProcedureStatement>(
-        new ProcedureStatement(stmt.procstmt()));
-    break;
-  default:
-    return nullptr;
-  }
-}
-
-/// @brief
-/// @param stmt
-AssignStmt::AssignStmt(const Pasc::AssignStmt &stmt) {
-  variable = std::unique_ptr<IdentifierIR>(new IdentifierIR(stmt.variable()));
-  value = deserializeExpr(stmt.value());
-}
-
-/// @brief
-/// @param v
-/// @return
-llvm::Value *AssignStmt::codegen(IRVisitor &v) { return v.codegen(*this); }
-
-/// @brief
-/// @param stmt
-ProcedureStatement::ProcedureStatement(const Pasc::ProcedureStmt &stmt) {
-  name = std::unique_ptr<IdentifierIR>(new IdentifierIR(stmt.name()));
-  for (size_t i = 0; i < stmt.args_size(); i++) {
-    params.push_back(deserializeExpr(stmt.args(i)));
-  }
-}
-
-llvm::Value *ProcedureStatement::codegen(IRVisitor &v) {
-  return v.codegen(*this);
-}

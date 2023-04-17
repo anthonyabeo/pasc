@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <string>
 
 #include "include/Deserializer.h"
@@ -6,8 +5,8 @@
 
 int main(int argc, char **argv) {
   std::string filePath(argv[1]);
-  auto programIR =
-      CreateInternalIRFromProtobuf(DeserialiseProtobufFile(filePath));
+  auto f = DeserializeProtobufFile(filePath);
+  auto programIR= CreateInternalIRFromProtobuf(f);
   try {
     IRCodegenVisitor codeGen;
     codeGen.codegenProgram(*programIR);

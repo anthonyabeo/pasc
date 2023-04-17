@@ -26,10 +26,10 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::int
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Integer;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Real;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_UIntLiteral;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_AssignStmt;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_AssignStmt;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStmt;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_Block;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_Expression;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_ProcedureStmt;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_Statement;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_VarDeclaration;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_program_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_Type;
@@ -159,7 +159,7 @@ static void InitDefaultsVarDeclaration() {
 
 ::google::protobuf::internal::SCCInfo<2> scc_info_VarDeclaration =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsVarDeclaration}, {
-      &protobuf_program_2eproto::scc_info_Identifier.base,
+      &protobuf_program_2eproto::scc_info_Expression.base,
       &protobuf_program_2eproto::scc_info_Type.base,}};
 
 static void InitDefaultsAssignStmt() {
@@ -173,9 +173,8 @@ static void InitDefaultsAssignStmt() {
   ::Pasc::AssignStmt::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<2> scc_info_AssignStmt =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsAssignStmt}, {
-      &protobuf_program_2eproto::scc_info_Identifier.base,
+::google::protobuf::internal::SCCInfo<1> scc_info_AssignStmt =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsAssignStmt}, {
       &protobuf_program_2eproto::scc_info_Expression.base,}};
 
 static void InitDefaultsProcedureStmt() {
@@ -189,9 +188,8 @@ static void InitDefaultsProcedureStmt() {
   ::Pasc::ProcedureStmt::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<2> scc_info_ProcedureStmt =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsProcedureStmt}, {
-      &protobuf_program_2eproto::scc_info_Identifier.base,
+::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStmt =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsProcedureStmt}, {
       &protobuf_program_2eproto::scc_info_Expression.base,}};
 
 static void InitDefaultsStatement() {
@@ -513,11 +511,11 @@ void AddDescriptorsImpl() {
       "k\"P\n\005Block\022\'\n\tvarDeclrs\030\001 \003(\0132\024.Pasc.Var"
       "Declaration\022\036\n\005stmts\030\002 \003(\0132\017.Pasc.Statem"
       "ent\"J\n\016VarDeclaration\022\036\n\004name\030\001 \001(\0132\020.Pa"
-      "sc.Identifier\022\030\n\004type\030\002 \001(\0132\n.Pasc.Type\""
-      "Q\n\nAssignStmt\022\"\n\010variable\030\001 \001(\0132\020.Pasc.I"
-      "dentifier\022\037\n\005value\030\002 \001(\0132\020.Pasc.Expressi"
+      "sc.Expression\022\030\n\004type\030\002 \001(\0132\n.Pasc.Type\""
+      "Q\n\nAssignStmt\022\"\n\010variable\030\001 \001(\0132\020.Pasc.E"
+      "xpression\022\037\n\005value\030\002 \001(\0132\020.Pasc.Expressi"
       "on\"O\n\rProcedureStmt\022\036\n\004name\030\001 \001(\0132\020.Pasc"
-      ".Identifier\022\036\n\004args\030\002 \003(\0132\020.Pasc.Express"
+      ".Expression\022\036\n\004args\030\002 \003(\0132\020.Pasc.Express"
       "ion\"\203\001\n\tStatement\022\035\n\004kind\030\001 \001(\0162\017.Pasc.T"
       "okenKind\022&\n\nassignStmt\030\002 \001(\0132\020.Pasc.Assi"
       "gnStmtH\000\022\'\n\010procStmt\030\003 \001(\0132\023.Pasc.Proced"
@@ -532,14 +530,14 @@ void AddDescriptorsImpl() {
       "\000\022\032\n\004char\030\005 \001(\0132\n.Pasc.CharH\000B\006\n\004type\"\027\n"
       "\007Integer\022\014\n\004name\030\001 \001(\t\"\027\n\007Boolean\022\014\n\004nam"
       "e\030\001 \001(\t\"\024\n\004Real\022\014\n\004name\030\001 \001(\t\"\024\n\004Char\022\014\n"
-      "\004name\030\001 \001(\t*A\n\tTokenKind\022\013\n\007PROGRAM\020\000\022\n\n"
-      "\006ASSIGN\020\001\022\016\n\nIDENTIFIER\020\002\022\013\n\007UINTLIT\020\003*8"
-      "\n\010TypeKind\022\013\n\007INTEGER\020\000\022\010\n\004REAL\020\001\022\013\n\007BOO"
-      "LEAN\020\002\022\010\n\004CHAR\020\003B\027Z\025pkg/codegen/serializ"
-      "eb\006proto3"
+      "\004name\030\001 \001(\t*P\n\tTokenKind\022\013\n\007PROGRAM\020\000\022\n\n"
+      "\006ASSIGN\020\001\022\016\n\nIDENTIFIER\020\002\022\013\n\007UINTLIT\020\003\022\r"
+      "\n\tPROCEDURE\020\004*8\n\010TypeKind\022\013\n\007INTEGER\020\000\022\010"
+      "\n\004REAL\020\001\022\013\n\007BOOLEAN\020\002\022\010\n\004CHAR\020\003B\030Z\026pkg/c"
+      "odegen/serializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1169);
+      descriptor, 1185);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "program.proto", &protobuf_RegisterTypes);
 }
@@ -566,6 +564,7 @@ bool TokenKind_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -1250,8 +1249,8 @@ void Block::InternalSwap(Block* other) {
 // ===================================================================
 
 void VarDeclaration::InitAsDefaultInstance() {
-  ::Pasc::_VarDeclaration_default_instance_._instance.get_mutable()->name_ = const_cast< ::Pasc::Identifier*>(
-      ::Pasc::Identifier::internal_default_instance());
+  ::Pasc::_VarDeclaration_default_instance_._instance.get_mutable()->name_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
   ::Pasc::_VarDeclaration_default_instance_._instance.get_mutable()->type_ = const_cast< ::Pasc::Type*>(
       ::Pasc::Type::internal_default_instance());
 }
@@ -1272,7 +1271,7 @@ VarDeclaration::VarDeclaration(const VarDeclaration& from)
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_name()) {
-    name_ = new ::Pasc::Identifier(*from.name_);
+    name_ = new ::Pasc::Expression(*from.name_);
   } else {
     name_ = NULL;
   }
@@ -1341,7 +1340,7 @@ bool VarDeclaration::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .Pasc.Identifier name = 1;
+      // .Pasc.Expression name = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -1391,7 +1390,7 @@ void VarDeclaration::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   if (this->has_name()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->_internal_name(), output);
@@ -1417,7 +1416,7 @@ void VarDeclaration::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   if (this->has_name()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
@@ -1448,7 +1447,7 @@ size_t VarDeclaration::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   if (this->has_name()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -1490,7 +1489,7 @@ void VarDeclaration::MergeFrom(const VarDeclaration& from) {
   (void) cached_has_bits;
 
   if (from.has_name()) {
-    mutable_name()->::Pasc::Identifier::MergeFrom(from.name());
+    mutable_name()->::Pasc::Expression::MergeFrom(from.name());
   }
   if (from.has_type()) {
     mutable_type()->::Pasc::Type::MergeFrom(from.type());
@@ -1535,8 +1534,8 @@ void VarDeclaration::InternalSwap(VarDeclaration* other) {
 // ===================================================================
 
 void AssignStmt::InitAsDefaultInstance() {
-  ::Pasc::_AssignStmt_default_instance_._instance.get_mutable()->variable_ = const_cast< ::Pasc::Identifier*>(
-      ::Pasc::Identifier::internal_default_instance());
+  ::Pasc::_AssignStmt_default_instance_._instance.get_mutable()->variable_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
   ::Pasc::_AssignStmt_default_instance_._instance.get_mutable()->value_ = const_cast< ::Pasc::Expression*>(
       ::Pasc::Expression::internal_default_instance());
 }
@@ -1557,7 +1556,7 @@ AssignStmt::AssignStmt(const AssignStmt& from)
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_variable()) {
-    variable_ = new ::Pasc::Identifier(*from.variable_);
+    variable_ = new ::Pasc::Expression(*from.variable_);
   } else {
     variable_ = NULL;
   }
@@ -1626,7 +1625,7 @@ bool AssignStmt::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .Pasc.Identifier variable = 1;
+      // .Pasc.Expression variable = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -1676,7 +1675,7 @@ void AssignStmt::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Pasc.Identifier variable = 1;
+  // .Pasc.Expression variable = 1;
   if (this->has_variable()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->_internal_variable(), output);
@@ -1702,7 +1701,7 @@ void AssignStmt::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Pasc.Identifier variable = 1;
+  // .Pasc.Expression variable = 1;
   if (this->has_variable()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
@@ -1733,7 +1732,7 @@ size_t AssignStmt::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // .Pasc.Identifier variable = 1;
+  // .Pasc.Expression variable = 1;
   if (this->has_variable()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -1775,7 +1774,7 @@ void AssignStmt::MergeFrom(const AssignStmt& from) {
   (void) cached_has_bits;
 
   if (from.has_variable()) {
-    mutable_variable()->::Pasc::Identifier::MergeFrom(from.variable());
+    mutable_variable()->::Pasc::Expression::MergeFrom(from.variable());
   }
   if (from.has_value()) {
     mutable_value()->::Pasc::Expression::MergeFrom(from.value());
@@ -1820,8 +1819,8 @@ void AssignStmt::InternalSwap(AssignStmt* other) {
 // ===================================================================
 
 void ProcedureStmt::InitAsDefaultInstance() {
-  ::Pasc::_ProcedureStmt_default_instance_._instance.get_mutable()->name_ = const_cast< ::Pasc::Identifier*>(
-      ::Pasc::Identifier::internal_default_instance());
+  ::Pasc::_ProcedureStmt_default_instance_._instance.get_mutable()->name_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ProcedureStmt::kNameFieldNumber;
@@ -1841,7 +1840,7 @@ ProcedureStmt::ProcedureStmt(const ProcedureStmt& from)
       args_(from.args_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_name()) {
-    name_ = new ::Pasc::Identifier(*from.name_);
+    name_ = new ::Pasc::Expression(*from.name_);
   } else {
     name_ = NULL;
   }
@@ -1899,7 +1898,7 @@ bool ProcedureStmt::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .Pasc.Identifier name = 1;
+      // .Pasc.Expression name = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -1949,7 +1948,7 @@ void ProcedureStmt::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   if (this->has_name()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->_internal_name(), output);
@@ -1978,7 +1977,7 @@ void ProcedureStmt::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   if (this->has_name()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
@@ -2021,7 +2020,7 @@ size_t ProcedureStmt::ByteSizeLong() const {
     }
   }
 
-  // .Pasc.Identifier name = 1;
+  // .Pasc.Expression name = 1;
   if (this->has_name()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -2057,7 +2056,7 @@ void ProcedureStmt::MergeFrom(const ProcedureStmt& from) {
 
   args_.MergeFrom(from.args_);
   if (from.has_name()) {
-    mutable_name()->::Pasc::Identifier::MergeFrom(from.name());
+    mutable_name()->::Pasc::Expression::MergeFrom(from.name());
   }
 }
 

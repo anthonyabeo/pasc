@@ -2,33 +2,38 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
-#include "llvm/IR/Value.h"
 
 #include "IRCodeGenVisitor.h"
+#include "SymbolTable.h"
+
+#include <memory>
 
 IRCodegenVisitor::IRCodegenVisitor() {
-  ctx = std::unique_ptr<llvm::LLVMContext>(new llvm::LLVMContext());
-  builder = std::unique_ptr<llvm::IRBuilder<>>(new llvm::IRBuilder<>(*ctx));
+  ctx = std::make_unique<llvm::LLVMContext>();
+  builder = std::make_unique<llvm::IRBuilder<>>(*ctx);
+
+  symTable = std::make_unique<LLVMSymbolTable>("main", nullptr);
 }
 
 void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
-  module = std::unique_ptr<llvm::Module>(new llvm::Module(program.name, *ctx));
+  module = std::make_unique<llvm::Module>(program.name, *ctx);
 
-  llvm::FunctionType *mainType =
-      llvm::FunctionType::get(llvm::IntegerType::getInt32Ty(*ctx),
-                              std::vector<llvm::Type *>(), false /* isVarArgs */
-      );
+  llvm::FunctionType *mainType = llvm::FunctionType::get(
+      llvm::IntegerType::getInt32Ty(*ctx),
+      std::vector<llvm::Type *>(),
+      false);
 
   llvm::Function *main = llvm::Function::Create(
-      mainType, llvm::Function::ExternalLinkage, "main", module.get());
+      mainType,
+      llvm::Function::ExternalLinkage,
+      "main",
+      module.get());
 
   llvm::BasicBlock *mainBasicBlock =
       llvm::BasicBlock::Create(*ctx, "entry", main);
   builder->SetInsertPoint(mainBasicBlock);
 
-  for (auto &stmt : program.block->Stmts) {
-    stmt->codegen(*this);
-  }
+  codegenBlock(*program.block);
 
   llvm::APInt retVal(32 /* bitSize */, (uint32_t)0, true /* signed */);
   builder->CreateRet(llvm::ConstantInt::get(*(ctx), retVal));
@@ -36,32 +41,29 @@ void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
 
 void IRCodegenVisitor::dumpLLVMIR() { module->print(llvm::outs(), nullptr); }
 
-/////////////////////
-// STATEMENTS
-////////////////////
+llvm::Type* IRCodegenVisitor::getLLVMTypeOf(const Type &t) {
+   if (t.GetName() == "integer") {
+     return llvm::Type::getInt32Ty(*ctx);
+   } else {
+     return nullptr;
+   }
+ }
 
-/// @brief
-/// @param stmt
-/// @return
-llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
-  return nullptr;
-}
+void IRCodegenVisitor::codegenBlock(const Block &blk) {
+  for (auto &varDecl : blk.VarDeclrs) {
+     auto typ = getLLVMTypeOf(*varDecl->type);
 
-/// @brief
-/// @param stmt
-/// @return
-llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
-  return nullptr;
-}
+     llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
+     llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+                           TheFunction->getEntryBlock().begin());
 
-////////////////////////
-// EXPRESSIONS
-////////////////////////
-llvm::Value *IRCodegenVisitor::codegen(const IdentifierIR &id) {
-  return nullptr;
-}
+    auto alloca = TmpB.CreateAlloca(typ,
+                                    nullptr, varDecl->name->name);
 
-llvm::Value *IRCodegenVisitor::codegen(const UIntegerLiteral &uintlit) {
-  return llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*ctx),
-                                      uintlit.value);
+    symTable->Define(varDecl->name->name, alloca);
+  }
+
+  for (auto &stmt : blk.Stmts) {
+    stmt->codegen(*this);
+  }
 }

@@ -16,26 +16,26 @@ public:
   virtual ~LLVMScope() = default;
 
   virtual std::string GetScopeName() = 0;
-  virtual std::unique_ptr<LLVMScope> GetEnclosingScope() = 0;
+  virtual std::shared_ptr<LLVMScope> GetEnclosingScope() = 0;
   virtual void Define(std::string, llvm::AllocaInst *) = 0;
-  virtual std::unique_ptr<llvm::AllocaInst> Resolve(std::string) = 0;
+  virtual std::shared_ptr<llvm::AllocaInst> Resolve(std::string) = 0;
 };
 
 class LLVMSymbolTable : public LLVMScope {
 private:
   std::string name;
-  std::map<std::string, std::unique_ptr<llvm::AllocaInst>> symbols;
-  std::unique_ptr<LLVMScope> parent;
+  std::map<std::string, std::shared_ptr<llvm::AllocaInst>> symbols;
+  std::shared_ptr<LLVMScope> parent;
 
 public:
-  LLVMSymbolTable(){};
+  LLVMSymbolTable()= default;
   LLVMSymbolTable(std::string, LLVMSymbolTable *);
-  virtual ~LLVMSymbolTable(){};
+  ~LLVMSymbolTable() override= default;
 
-  virtual std::string GetScopeName() override;
-  virtual std::unique_ptr<LLVMScope> GetEnclosingScope() override;
-  virtual void Define(std::string, llvm::AllocaInst *) override;
-  virtual std::unique_ptr<llvm::AllocaInst> Resolve(std::string) override;
+  std::string GetScopeName() override;
+  std::shared_ptr<LLVMScope> GetEnclosingScope() override;
+  void Define(std::string, llvm::AllocaInst *) override;
+  std::shared_ptr<llvm::AllocaInst> Resolve(std::string) override;
 };
 
 #endif // SYMBOL_TABLE_H

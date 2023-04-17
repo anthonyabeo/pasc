@@ -12,13 +12,14 @@ add_library(
     Deserializer
 
     Deserializer.cc
-    "${PARENT_DIR}/include/program.pb.cc"
     Program.cc
     Block.cc
     Declaration.cc
     Expr.cc
     Statement.cc
     Type.cc
+    SymbolTable.cc
+    "${PARENT_DIR}/include/program.pb.cc"
 )
 
 target_include_directories(
@@ -45,6 +46,8 @@ add_library(
     IRCodeGenVisitor
 
     IRCodeGenVisitor.cc
+    ExprCodeGen.cc
+    StatementCodeGen.cc
 )
 
 llvm_map_components_to_libnames(llvm_libs support core irreader)

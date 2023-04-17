@@ -1,4 +1,6 @@
 #include "Program.h"
+
+#include <memory>
 #include "Block.h"
 
 ProgramIR::ProgramIR(const Pasc::Program &program) {
@@ -9,6 +11,6 @@ ProgramIR::ProgramIR(const Pasc::Program &program) {
   }
 
   if (program.has_block()) {
-    block = std::unique_ptr<Block>(new Block(program.block()));
+    block = std::make_unique<Block>(program.block());
   }
 }

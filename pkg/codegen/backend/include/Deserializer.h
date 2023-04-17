@@ -2,26 +2,26 @@
 #define DESERIALIZE_H
 
 #pragma once
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <fstream>
 #include <string>
 
 #include "Program.h"
 
-Pasc::Program DeserialiseProtobufFile(std::string &filePath);
+Pasc::Program DeserializeProtobufFile(std::string &filePath);
 
 std::unique_ptr<ProgramIR> CreateInternalIRFromProtobuf(const Pasc::Program &);
 
-/// @brief DeserialiseProtobufException
-class DeserialiseProtobufException : public std::exception {
-  std::string errorMessage;
+/// @brief DeserializeProtobufException
+class DeserializeProtobufException : public std::exception {
+  std::string err_msg;
 
 public:
-  DeserialiseProtobufException(const char msg[]) {
+  explicit DeserializeProtobufException(const char msg[]) {
     std::string errorMessage(msg);
   }
-  const char *what() const throw() { return errorMessage.c_str(); }
+  [[nodiscard]] const char *what() const noexcept override { return err_msg.c_str(); }
 };
 
 #endif // DESERIALIZE_H
