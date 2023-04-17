@@ -4,8 +4,8 @@
 
 #include "program.pb.h"
 
-#include "Deserializer.h"
-#include "Program.h"
+#include "deserialize/Deserializer.h"
+#include "deserialize/Program.h"
 
 Pasc::Program DeserializeProtobufFile(std::string &filePath) {
   Pasc::Program program;

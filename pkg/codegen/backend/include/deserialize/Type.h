@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "program.pb.h"
+#include "../program.pb.h"
 
 struct Type {
   virtual ~Type() = default;

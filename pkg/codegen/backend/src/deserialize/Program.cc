@@ -1,7 +1,8 @@
-#include "Program.h"
-
 #include <memory>
-#include "Block.h"
+
+#include "deserialize/Program.h"
+#include "deserialize/Block.h"
+
 
 ProgramIR::ProgramIR(const Pasc::Program &program) {
   name = program.name();

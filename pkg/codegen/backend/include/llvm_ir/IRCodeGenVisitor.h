@@ -5,10 +5,10 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 
-#include "Expr.h"
-#include "IRVisitor.h"
-#include "Program.h"
 #include "SymbolTable.h"
+#include "deserialize/Expr.h"
+#include "deserialize/Program.h"
+#include "deserialize/IRVisitor.h"
 
 class IRCodegenVisitor : public IRVisitor {
 protected:

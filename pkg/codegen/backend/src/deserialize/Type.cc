@@ -2,8 +2,8 @@
 
 #include "program.pb.h"
 
-#include "Type.h"
-#include "Deserializer.h"
+#include "deserialize/Deserializer.h"
+#include "deserialize/Type.h"
 
 std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
   switch (t.type_case()) {

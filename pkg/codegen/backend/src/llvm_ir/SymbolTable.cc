@@ -1,4 +1,4 @@
-#include "SymbolTable.h"
+#include "llvm_ir/SymbolTable.h"
 
 LLVMSymbolTable::LLVMSymbolTable(std::string n, LLVMSymbolTable *p) {
   name = n;

@@ -1,5 +1,5 @@
-#include "Block.h"
-#include "Declaration.h"
+#include "deserialize/Block.h"
+#include "deserialize/Declaration.h"
 #include "program.pb.h"
 
 Block::Block(const Pasc::Block &blk) {

@@ -1,4 +1,4 @@
-#include "IRCodeGenVisitor.h"
+#include "llvm_ir/IRCodeGenVisitor.h"
 
 llvm::Value *IRCodegenVisitor::codegen(const IdentifierIR &id) {
   auto alloca = symTable->Resolve(id.name);

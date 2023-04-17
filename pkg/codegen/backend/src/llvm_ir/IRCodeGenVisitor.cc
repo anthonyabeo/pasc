@@ -3,8 +3,8 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 
-#include "IRCodeGenVisitor.h"
-#include "SymbolTable.h"
+#include "llvm_ir/IRCodeGenVisitor.h"
+#include "llvm_ir/SymbolTable.h"
 
 #include <memory>
 
