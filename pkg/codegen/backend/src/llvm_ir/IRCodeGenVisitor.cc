@@ -35,7 +35,7 @@ void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
 
   codegenBlock(*program.block);
 
-  llvm::APInt retVal(32 /* bitSize */, (uint32_t)0, true /* signed */);
+  llvm::APInt retVal(32,(uint32_t)0, true);
   builder->CreateRet(llvm::ConstantInt::get(*(ctx), retVal));
 }
 

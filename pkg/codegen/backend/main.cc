@@ -1,7 +1,7 @@
 #include <string>
 
-#include "deserialize/Deserializer.h"
-#include "llvm_ir/IRCodeGenVisitor.h"
+#include "include/deserialize/Deserializer.h"
+#include "include/llvm_ir/IRCodeGenVisitor.h"
 
 int main(int argc, char **argv) {
   std::string filePath(argv[1]);

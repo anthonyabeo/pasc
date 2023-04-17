@@ -21,11 +21,9 @@ add_library(
 target_include_directories(
     Deserializer
 
-#    INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"
     INTERFACE ../../include
 
     PRIVATE "${LLVM_INCLUDE_DIR}"
-    PRIVATE "/usr/local/include"
 )
 
 target_link_libraries(
