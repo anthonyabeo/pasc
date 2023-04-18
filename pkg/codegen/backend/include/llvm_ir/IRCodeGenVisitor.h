@@ -1,5 +1,5 @@
-#ifndef IR_CODEGEN_VISITOR
-#define IR_CODEGEN_VISITOR
+#ifndef IR_CODEGEN_VISITOR_H
+#define IR_CODEGEN_VISITOR_H
 
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
@@ -47,4 +47,4 @@ public:
   [[nodiscard]] const char *what() const noexcept override { return errorMessage.c_str(); }
 };
 
-#endif // IR_CODEGEN_VISITOR
+#endif // IR_CODEGEN_VISITOR_H

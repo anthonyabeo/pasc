@@ -9,8 +9,6 @@
 
 class IRVisitor {
 public:
-  virtual ~IRVisitor() = default;
-
   virtual llvm::Value *codegen(const IdentifierIR &) = 0;
   virtual llvm::Value *codegen(const UIntegerLiteral &) = 0;
 

@@ -2,7 +2,7 @@
 
 llvm::Value *IRCodegenVisitor::codegen(const IdentifierIR &id) {
   auto alloca = symTable->Resolve(id.name);
-  if (alloca == nullptr) {
+  if (!alloca) {
     throw IRCodegenException("undefined name, " + id.name);
   }
 

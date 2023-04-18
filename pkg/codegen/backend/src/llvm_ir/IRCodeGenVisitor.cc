@@ -2,6 +2,7 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/Verifier.h"
 
 #include "deserialize/Program.h"
 #include "llvm_ir/IRCodeGenVisitor.h"
@@ -11,8 +12,8 @@
 
 IRCodegenVisitor::IRCodegenVisitor(std::string& moduleName) {
   ctx = std::make_unique<llvm::LLVMContext>();
-  builder = std::make_unique<llvm::IRBuilder<>>(*ctx);
   module = std::make_unique<llvm::Module>(moduleName, *ctx);
+  builder = std::make_unique<llvm::IRBuilder<>>(*ctx);
 
   symTable = std::make_unique<LLVMSymbolTable>("main", nullptr);
 }
@@ -37,6 +38,8 @@ void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
 
   llvm::APInt retVal(32,(uint32_t)0, true);
   builder->CreateRet(llvm::ConstantInt::get(*(ctx), retVal));
+
+  llvm::verifyFunction(main->getFunction());
 }
 
 void IRCodegenVisitor::dumpLLVMIR() { module->print(llvm::outs(), nullptr); }
@@ -53,7 +56,11 @@ std::string IRCodegenVisitor::dumpLLVMIRToString() {
 
 llvm::Type* IRCodegenVisitor::getLLVMTypeOf(const Type &t) {
    if (t.GetName() == "integer") {
-     return llvm::Type::getInt32Ty(*ctx);
+      return llvm::Type::getInt32Ty(*ctx);
+   } else if (t.GetName() == "Boolean") {
+     return llvm::Type::getInt1Ty(*ctx);
+   } else if (t.GetName() == "real") {
+     return llvm::Type::getFloatTy(*ctx);
    } else {
      return nullptr;
    }
