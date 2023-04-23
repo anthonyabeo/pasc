@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     auto llvm_out = codeGen.dumpLLVMIRToString();
 
     std::ostringstream file_name;
-    file_name << programIR->name << ".ll";
+    file_name << "bin/" << programIR->name << ".ll";
 
     std::ofstream out(file_name.str());
     out << llvm_out;
