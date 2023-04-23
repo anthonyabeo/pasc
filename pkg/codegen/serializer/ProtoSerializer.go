@@ -1,6 +1,7 @@
 package serializer
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -156,11 +157,15 @@ func Serialize(program *Program) error {
 		return fmt.Errorf("Serialization error: %s", err.Error())
 	}
 
-	if err = os.Mkdir("out", 0755); err != nil {
-		return err
+	outPath := "pkg/codegen/out"
+	if _, err := os.Stat(outPath); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir(outPath, 0755)
+		if err != nil {
+			return err
+		}
 	}
 
-	fileName := fmt.Sprintf("out/%s.bin", program.Name)
+	fileName := fmt.Sprintf("%s/%s.bin", outPath, program.Name)
 	if err := ioutil.WriteFile(fileName, out, 0644); err != nil {
 		return fmt.Errorf("Write File Error: %s ", err.Error())
 	}
