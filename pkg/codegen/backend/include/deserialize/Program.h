@@ -11,7 +11,7 @@ struct ProgramIR {
   std::vector<std::string> params;
   std::unique_ptr<Block> block;
 
-  ProgramIR(const Pasc::Program &);
+  explicit ProgramIR(const Pasc::Program &);
 };
 
 #endif // PROGRAM_H

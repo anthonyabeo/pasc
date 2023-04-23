@@ -21,17 +21,19 @@ include_directories(${LLVM_INCLUDE_DIR})
 link_directories(${LLVM_LIB_DIR})
 add_definitions(${LLVM_DEFINITIONS})
 
-add_executable(Pasc main.cc)
+add_executable(PascBackend main.cc)
 target_link_libraries(
-    Pasc
+    PascBackend
 
     PRIVATE Deserializer
     PRIVATE IRCodeGenVisitor
 )
 
 target_include_directories(
-    Pasc
+    PascBackend
 
     INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include"
     INTERFACE "${LLVM_INCLUDE_DIR}"
 )
+
+install(TARGETS PascBackend DESTINATION bin)
