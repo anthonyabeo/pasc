@@ -14,7 +14,7 @@ import (
 
 // AstToProtoAst transforms the Go AST into a form that can be
 // serialized into protocol buffers
-func AstToProtoAst(Ast ast.ProgramAST) *Program {
+func AstToProtoAst(Ast ast.Program) *Program {
 	program := &Program{Kind: TokenKind_PROGRAM, Name: Ast.Name.Name}
 	for _, param := range Ast.ParamList {
 		program.Params = append(program.Params, param.Name)

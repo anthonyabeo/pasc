@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	serde "github.com/anthonyabeo/pasc/pkg/codegen/serializer"
 	"github.com/anthonyabeo/pasc/pkg/parser"
@@ -15,7 +15,7 @@ func Run(args []string) error {
 		return fmt.Errorf("program file missing")
 	}
 
-	input, err := ioutil.ReadFile(args[0])
+	input, err := os.ReadFile(args[0])
 	if err != nil {
 		return err
 	}

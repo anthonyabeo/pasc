@@ -6,7 +6,7 @@ import (
 
 // SemanticAnalyzer ...
 type SemanticAnalyzer struct {
-	Ast               *ast.ProgramAST
+	Ast               *ast.Program
 	ExprEval          *ExprEvalVisitor
 	StaticTypeChecker *StaticTypeCheckVisitor
 }

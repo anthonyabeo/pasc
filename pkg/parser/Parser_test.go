@@ -994,7 +994,7 @@ func testAssignmentStatment(t *testing.T, stmt ast.Statement, variable string, v
 }
 
 func testProgramAST(
-	t *testing.T, p *ast.ProgramAST, progName string, paramList []string, numStmts, numVarDefs, numCallables, numTypeDefs int,
+	t *testing.T, p *ast.Program, progName string, paramList []string, numStmts, numVarDefs, numCallables, numTypeDefs int,
 ) bool {
 	if p == nil {
 		t.Error("AST not created")

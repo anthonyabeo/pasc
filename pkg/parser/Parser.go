@@ -75,7 +75,7 @@ func (p *Parser) match(t token.Kind) error {
 //
 // program = program-heading ';' program-block '.' .
 // program-block = block .
-func (p *Parser) Program() (*ast.ProgramAST, error) {
+func (p *Parser) Program() (*ast.Program, error) {
 	var (
 		err           error
 		programName   *ast.Identifier
@@ -86,7 +86,7 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 		return nil, err
 	}
 
-	program := &ast.ProgramAST{
+	program := &ast.Program{
 		Name:      programName,
 		ParamList: programParams,
 		Token:     token.Token{Kind: token.Program, Text: "program"}}
