@@ -3,7 +3,6 @@ package serializer
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 
@@ -42,11 +41,11 @@ func translateBlock(blk *ast.Block) *Block {
 	}
 
 	if blk.VarDeclaration != nil {
-		for _, declr := range blk.VarDeclaration.Decls {
-			for _, name := range declr.Names {
+		for _, decl := range blk.VarDeclaration.Decls {
+			for _, name := range decl.Names {
 				v := &VarDeclaration{
 					Name: translateExpr(name),
-					Type: translateType(declr.Type),
+					Type: translateType(decl.Type),
 				}
 				block.VarDeclrs = append(block.VarDeclrs, v)
 			}
@@ -150,7 +149,7 @@ func translateType(typ types.Type) *Type {
 }
 
 // Serialize accepts `program`, an AST created from calling `serde.AstToProtoAst`,
-// and converts it into a protol buffers binary file, to be deserialized later.
+// and converts it into a protocol buffers binary file, to be deserialized later.
 func Serialize(program *Program) error {
 	out, err := proto.Marshal(program)
 	if err != nil {
@@ -166,7 +165,7 @@ func Serialize(program *Program) error {
 	}
 
 	fileName := fmt.Sprintf("%s/%s.bin", outPath, program.Name)
-	if err := ioutil.WriteFile(fileName, out, 0644); err != nil {
+	if err := os.WriteFile(fileName, out, 0644); err != nil {
 		return fmt.Errorf("Write File Error: %s ", err.Error())
 	}
 
