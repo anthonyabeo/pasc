@@ -15,7 +15,7 @@ import (
 //
 // It implements an LL(1) Recursive-Descent Parser that relies on a stream of tokens
 // from the lexer. The Parser checks and ensures that the input tokens stream conforms
-// to the grammer of the language or returns an appropriate error otherwise.
+// to the grammar of the language or returns an appropriate error otherwise.
 type Parser struct {
 	input     Lexer
 	lookahead token.Token
@@ -68,17 +68,16 @@ func (p *Parser) match(t token.Kind) error {
 	return fmt.Errorf("expecting %v; found %v", t, p.lookahead.Text)
 }
 
-// Program represents the start symbol production rule in the grammer.
+// Program represents the start symbol production rule in the grammar.
 // It is the starting point in the parsing process.
 //
-// The grammer production rules for Program is as follows:
+// The grammar production rules for Program is as follows:
 //
 // program = program-heading ';' program-block '.' .
 // program-block = block .
 func (p *Parser) Program() (*ast.ProgramAST, error) {
 	var (
 		err           error
-		block         *ast.Block
 		programName   *ast.Identifier
 		programParams []*ast.Identifier
 	)
@@ -90,17 +89,16 @@ func (p *Parser) Program() (*ast.ProgramAST, error) {
 	program := &ast.ProgramAST{
 		Name:      programName,
 		ParamList: programParams,
-		Token:     token.NewToken(token.Program, "program")}
+		Token:     token.Token{Kind: token.Program, Text: "program"}}
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
 	}
 
-	if block, err = p.block(); err != nil {
+	program.Block, err = p.block()
+	if err != nil {
 		return nil, err
 	}
-
-	program.Block = block
 
 	if err = p.match(token.Period); err != nil {
 		return nil, err
@@ -314,6 +312,28 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 	return typeDef, nil
 }
 
+func (p *Parser) typeIdentifier() (types.Type, error) {
+	var (
+		err error
+		typ types.Type
+	)
+
+	sym := p.curScope.Resolve(p.lookahead.Text)
+	if sym == nil {
+		return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+	} else if sym.GetKind() != symbols.TYPE {
+		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+	} else {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		typ = sym.GetType()
+	}
+
+	return typ, nil
+}
+
 // type-denoter = type-identifier | new-type .
 // type-identifier = identifier .
 func (p *Parser) typeDenoter() (types.Type, error) {
@@ -325,17 +345,9 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Integer ||
 		p.lookahead.Kind == token.Boolean || p.lookahead.Kind == token.Char || p.lookahead.Kind == token.Real {
 
-		sym := p.curScope.Resolve(p.lookahead.Text)
-		if sym == nil {
-			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
-		} else if sym.GetKind() != symbols.TYPE {
-			return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
-		} else {
-			if err = p.consume(); err != nil {
-				return nil, err
-			}
-
-			return sym.GetType(), nil
+		typ, err = p.typeIdentifier()
+		if err != nil {
+			return nil, err
 		}
 	} else {
 		if p.isNewType() {
@@ -904,7 +916,7 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 			callables = append(callables, procedureDecl)
 		default:
 			return nil, fmt.Errorf(
-				"Parse Error: expected 'procedure' or 'function', got %v instead",
+				"parse Error: expected 'procedure' or 'function', got %v instead",
 				p.lookahead.Text)
 		}
 	}
@@ -916,7 +928,7 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 	return callables, nil
 }
 
-// procedure-declaration := procedure-heading ';' directive | procedure-identication ';' procedure-block | procedure-heading ';' procedure-block .
+// procedure-declaration := procedure-heading ';' directive | procedure-identification ';' procedure-block | procedure-heading ';' procedure-block .
 // directive := letter { letter | digit } .
 // procedure-block := block .
 func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
@@ -945,8 +957,8 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 }
 
 // procedure-heading := 'procedure' identifier [ formal-parameter-list ] .
-// procedure-identication := 'procedure' procedure-identier .
-// procedure-identier := identier .
+// procedure-identification := 'procedure' procedure-identifier .
+// procedure-identifier := identifier .
 func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 	var (
 		err       error
@@ -1004,7 +1016,7 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 
 	typ = p.curScope.Resolve(p.lookahead.Text)
 	if typ == nil {
-		return nil, fmt.Errorf("Parse Error: symbol %v not found", p.lookahead.Text)
+		return nil, fmt.Errorf("parse Error: symbol %v not found", p.lookahead.Text)
 	}
 	fHead.ReturnType = typ
 
@@ -1097,16 +1109,11 @@ func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 		return nil, err
 	}
 
-	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Var ||
-		p.lookahead.Kind == token.Procedure || p.lookahead.Kind == token.Function {
-
-		param, err = p.formalParameterSection()
-		if err != nil {
-			return nil, err
-		}
-
-		paramList = append(paramList, param)
+	param, err = p.formalParameterSection()
+	if err != nil {
+		return nil, err
 	}
+	paramList = append(paramList, param)
 
 	for p.lookahead.Kind == token.SemiColon {
 		if err = p.consume(); err != nil {
@@ -1137,7 +1144,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 	)
 
 	switch p.lookahead.Kind {
-	// value-parameter-specication = identifier-list ':' type-identifier .
+	// value-parameter-specification = identifier-list ':' type-identifier .
 	case token.Identifier:
 		names, err := p.identifierList()
 		if err != nil {
@@ -1148,19 +1155,11 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		if dtype := p.curScope.Resolve(p.lookahead.Text); dtype != nil {
-			typ = dtype
-		} else {
-			// must be a user-defined type
-			// it must therefore be defined somewhere in the scope tree
-			// if not found, return error
-			// otherwise, typ = <<user-defined-type>>
-		}
-		param = &ast.ValueParam{Names: names, Type: typ}
-
-		if err = p.consume(); err != nil {
+		typ, err = p.typeIdentifier()
+		if err != nil {
 			return nil, err
 		}
+		param = &ast.ValueParam{Names: names, Type: typ}
 
 	// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
 	case token.Var:
@@ -1177,20 +1176,11 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		if dtype := p.curScope.Resolve(p.lookahead.Text); dtype != nil {
-			typ = dtype
-		} else {
-			// must be a user-defined type
-			// it must therefore be defined somewhere in the scope tree
-			// if not found, return error
-			// otherwise, typ = <<user-defined-type>>
-		}
-
-		param = &ast.VariableParam{Token: token.Var, Names: names, Type: typ}
-
-		if err = p.consume(); err != nil {
+		typ, err = p.typeIdentifier()
+		if err != nil {
 			return nil, err
 		}
+		param = &ast.VariableParam{Token: token.Var, Names: names, Type: typ}
 
 	// procedural-parameter-specification = procedure-heading .
 	case token.Procedure:
@@ -1211,7 +1201,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		param = fHead
 
 	default:
-		return nil, fmt.Errorf("Parse Error: unexpected token %v", p.lookahead.Text)
+		return nil, fmt.Errorf("parse Error: unexpected token %v", p.lookahead.Text)
 	}
 
 	return param, nil
@@ -1447,7 +1437,7 @@ func (p *Parser) statement() (ast.Statement, error) {
 			return nil, err
 		}
 	} else {
-		return nil, fmt.Errorf("Parser Error: unexpected token %v", p.lookahead.Text)
+		return nil, fmt.Errorf("parser Error: unexpected token %v", p.lookahead.Text)
 	}
 
 	return stmt, nil
@@ -1777,7 +1767,7 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 	return stmt, nil
 }
 
-// procedure-statement = procedure-identitier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
+// procedure-statement = procedure-identifier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
 func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
 	// TODO: complete implementation
 
@@ -2225,13 +2215,15 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 	return stmt, nil
 }
 
-// function-designator = function-identitier [ actual-parameter-list ] .
-// function-identitier = identitier .
+// function-designator = function-identifier [ actual-parameter-list ] .
+// function-identifier = identifier .
 func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
 	var err error
 
 	funcCall := &ast.FuncDesignator{
-		Name: &ast.Identifier{Token: tt, Name: tt.Text}, Scope: p.curScope}
+		Name:  &ast.Identifier{Token: tt, Name: tt.Text},
+		Scope: p.curScope}
+
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
 		return nil, err
@@ -2277,7 +2269,7 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	return paramList, nil
 }
 
-// actual-parameter := expression | variable-access | procedure-identitier | function-identitier .
+// actual-parameter := expression | variable-access | procedure-identifier | function-identifier .
 func (p *Parser) actualParameter() (ast.Expression, error) {
 	var (
 		err  error
@@ -2304,7 +2296,7 @@ func (p *Parser) actualParameter() (ast.Expression, error) {
 	return expr, nil
 }
 
-// writeln-parameter-list = [ '(' (  file-variable | write-parameter ) { ',' write-parameter } ')' ] .
+// writeln-parameter-list = [ '(' ( file-variable | write-parameter ) { ',' write-parameter } ')' ] .
 func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
 	var (
 		err              error
