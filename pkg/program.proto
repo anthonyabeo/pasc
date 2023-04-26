@@ -9,6 +9,9 @@ enum TokenKind {
     IDENTIFIER = 2;
     UINTLIT = 3;
     PROCEDURE = 4;
+    LESS = 5;
+    GREAT = 6;
+    IF = 7;
 } 
 
 //////////////////////////////////
@@ -44,11 +47,18 @@ message ProcedureStmt {
     repeated Expression args = 2;
 }
 
+message IfStmt {
+    Expression cond = 1;
+    Statement truePath = 2;
+    Statement elsePath = 3;
+}
+
 message Statement {
     TokenKind kind = 1;
     oneof stmt {
         AssignStmt assignStmt = 2;
         ProcedureStmt procStmt = 3;
+        IfStmt ifStmt = 4;
     }
 }
 
@@ -60,7 +70,12 @@ message Expression {
     oneof expr {
         Identifier id = 2;
         UIntLiteral uint = 3;
+        BinaryExpr binExpr = 4;
     }
+}
+message BinaryExpr {
+   Expression left = 1;
+   Expression right = 2;
 }
 
 message Identifier {
