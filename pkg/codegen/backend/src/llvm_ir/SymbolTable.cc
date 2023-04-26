@@ -1,8 +1,10 @@
 #include "llvm_ir/SymbolTable.h"
 
-LLVMSymbolTable::LLVMSymbolTable(std::string n, LLVMSymbolTable *p) {
-  name = n;
-  parent = std::shared_ptr<LLVMSymbolTable>(p);
+#include <utility>
+
+LLVMSymbolTable::LLVMSymbolTable(std::string n) {
+  name = std::move(n);
+  parent = nullptr;
 }
 
 std::string LLVMSymbolTable::GetScopeName() { return name; }
@@ -12,16 +14,16 @@ std::shared_ptr<LLVMScope> LLVMSymbolTable::GetEnclosingScope() {
 }
 
 void LLVMSymbolTable::Define(std::string n, llvm::AllocaInst *inst) {
-  symbols.insert({n, std::unique_ptr<llvm::AllocaInst>(inst)});
+  symbols.insert({n, inst});
 }
 
-std::shared_ptr<llvm::AllocaInst> LLVMSymbolTable::Resolve(std::string n) {
+llvm::AllocaInst* LLVMSymbolTable::Resolve(std::string n) {
   auto it = symbols.find(n);
   if (it != symbols.end()) {
     return it->second;
   }
 
-  if (parent != nullptr) {
+  if (!parent) {
     return parent->Resolve(name);
   }
 
