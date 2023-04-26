@@ -39,7 +39,7 @@ namespace protobuf_program_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[14];
+  static const ::google::protobuf::internal::ParseTable schema[16];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -50,6 +50,9 @@ namespace Pasc {
 class AssignStmt;
 class AssignStmtDefaultTypeInternal;
 extern AssignStmtDefaultTypeInternal _AssignStmt_default_instance_;
+class BinaryExpr;
+class BinaryExprDefaultTypeInternal;
+extern BinaryExprDefaultTypeInternal _BinaryExpr_default_instance_;
 class Block;
 class BlockDefaultTypeInternal;
 extern BlockDefaultTypeInternal _Block_default_instance_;
@@ -65,6 +68,9 @@ extern ExpressionDefaultTypeInternal _Expression_default_instance_;
 class Identifier;
 class IdentifierDefaultTypeInternal;
 extern IdentifierDefaultTypeInternal _Identifier_default_instance_;
+class IfStmt;
+class IfStmtDefaultTypeInternal;
+extern IfStmtDefaultTypeInternal _IfStmt_default_instance_;
 class Integer;
 class IntegerDefaultTypeInternal;
 extern IntegerDefaultTypeInternal _Integer_default_instance_;
@@ -93,11 +99,13 @@ extern VarDeclarationDefaultTypeInternal _VarDeclaration_default_instance_;
 namespace google {
 namespace protobuf {
 template<> ::Pasc::AssignStmt* Arena::CreateMaybeMessage<::Pasc::AssignStmt>(Arena*);
+template<> ::Pasc::BinaryExpr* Arena::CreateMaybeMessage<::Pasc::BinaryExpr>(Arena*);
 template<> ::Pasc::Block* Arena::CreateMaybeMessage<::Pasc::Block>(Arena*);
 template<> ::Pasc::Boolean* Arena::CreateMaybeMessage<::Pasc::Boolean>(Arena*);
 template<> ::Pasc::Char* Arena::CreateMaybeMessage<::Pasc::Char>(Arena*);
 template<> ::Pasc::Expression* Arena::CreateMaybeMessage<::Pasc::Expression>(Arena*);
 template<> ::Pasc::Identifier* Arena::CreateMaybeMessage<::Pasc::Identifier>(Arena*);
+template<> ::Pasc::IfStmt* Arena::CreateMaybeMessage<::Pasc::IfStmt>(Arena*);
 template<> ::Pasc::Integer* Arena::CreateMaybeMessage<::Pasc::Integer>(Arena*);
 template<> ::Pasc::ProcedureStmt* Arena::CreateMaybeMessage<::Pasc::ProcedureStmt>(Arena*);
 template<> ::Pasc::Program* Arena::CreateMaybeMessage<::Pasc::Program>(Arena*);
@@ -116,12 +124,15 @@ enum TokenKind {
   IDENTIFIER = 2,
   UINTLIT = 3,
   PROCEDURE = 4,
+  LESS = 5,
+  GREAT = 6,
+  IF = 7,
   TokenKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   TokenKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool TokenKind_IsValid(int value);
 const TokenKind TokenKind_MIN = PROGRAM;
-const TokenKind TokenKind_MAX = PROCEDURE;
+const TokenKind TokenKind_MAX = IF;
 const int TokenKind_ARRAYSIZE = TokenKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* TokenKind_descriptor();
@@ -801,6 +812,141 @@ class ProcedureStmt : public ::google::protobuf::Message /* @@protoc_insertion_p
 };
 // -------------------------------------------------------------------
 
+class IfStmt : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.IfStmt) */ {
+ public:
+  IfStmt();
+  virtual ~IfStmt();
+
+  IfStmt(const IfStmt& from);
+
+  inline IfStmt& operator=(const IfStmt& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  IfStmt(IfStmt&& from) noexcept
+    : IfStmt() {
+    *this = ::std::move(from);
+  }
+
+  inline IfStmt& operator=(IfStmt&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const IfStmt& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const IfStmt* internal_default_instance() {
+    return reinterpret_cast<const IfStmt*>(
+               &_IfStmt_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  void Swap(IfStmt* other);
+  friend void swap(IfStmt& a, IfStmt& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline IfStmt* New() const final {
+    return CreateMaybeMessage<IfStmt>(NULL);
+  }
+
+  IfStmt* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<IfStmt>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const IfStmt& from);
+  void MergeFrom(const IfStmt& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(IfStmt* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .Pasc.Expression cond = 1;
+  bool has_cond() const;
+  void clear_cond();
+  static const int kCondFieldNumber = 1;
+  private:
+  const ::Pasc::Expression& _internal_cond() const;
+  public:
+  const ::Pasc::Expression& cond() const;
+  ::Pasc::Expression* release_cond();
+  ::Pasc::Expression* mutable_cond();
+  void set_allocated_cond(::Pasc::Expression* cond);
+
+  // .Pasc.Statement truePath = 2;
+  bool has_truepath() const;
+  void clear_truepath();
+  static const int kTruePathFieldNumber = 2;
+  private:
+  const ::Pasc::Statement& _internal_truepath() const;
+  public:
+  const ::Pasc::Statement& truepath() const;
+  ::Pasc::Statement* release_truepath();
+  ::Pasc::Statement* mutable_truepath();
+  void set_allocated_truepath(::Pasc::Statement* truepath);
+
+  // .Pasc.Statement elsePath = 3;
+  bool has_elsepath() const;
+  void clear_elsepath();
+  static const int kElsePathFieldNumber = 3;
+  private:
+  const ::Pasc::Statement& _internal_elsepath() const;
+  public:
+  const ::Pasc::Statement& elsepath() const;
+  ::Pasc::Statement* release_elsepath();
+  ::Pasc::Statement* mutable_elsepath();
+  void set_allocated_elsepath(::Pasc::Statement* elsepath);
+
+  // @@protoc_insertion_point(class_scope:Pasc.IfStmt)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::Pasc::Expression* cond_;
+  ::Pasc::Statement* truepath_;
+  ::Pasc::Statement* elsepath_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_program_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class Statement : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.Statement) */ {
  public:
   Statement();
@@ -833,6 +979,7 @@ class Statement : public ::google::protobuf::Message /* @@protoc_insertion_point
   enum StmtCase {
     kAssignStmt = 2,
     kProcStmt = 3,
+    kIfStmt = 4,
     STMT_NOT_SET = 0,
   };
 
@@ -842,7 +989,7 @@ class Statement : public ::google::protobuf::Message /* @@protoc_insertion_point
                &_Statement_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   void Swap(Statement* other);
   friend void swap(Statement& a, Statement& b) {
@@ -924,12 +1071,25 @@ class Statement : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::Pasc::ProcedureStmt* mutable_procstmt();
   void set_allocated_procstmt(::Pasc::ProcedureStmt* procstmt);
 
+  // .Pasc.IfStmt ifStmt = 4;
+  bool has_ifstmt() const;
+  void clear_ifstmt();
+  static const int kIfStmtFieldNumber = 4;
+  private:
+  const ::Pasc::IfStmt& _internal_ifstmt() const;
+  public:
+  const ::Pasc::IfStmt& ifstmt() const;
+  ::Pasc::IfStmt* release_ifstmt();
+  ::Pasc::IfStmt* mutable_ifstmt();
+  void set_allocated_ifstmt(::Pasc::IfStmt* ifstmt);
+
   void clear_stmt();
   StmtCase stmt_case() const;
   // @@protoc_insertion_point(class_scope:Pasc.Statement)
  private:
   void set_has_assignstmt();
   void set_has_procstmt();
+  void set_has_ifstmt();
 
   inline bool has_stmt() const;
   inline void clear_has_stmt();
@@ -940,6 +1100,7 @@ class Statement : public ::google::protobuf::Message /* @@protoc_insertion_point
     StmtUnion() {}
     ::Pasc::AssignStmt* assignstmt_;
     ::Pasc::ProcedureStmt* procstmt_;
+    ::Pasc::IfStmt* ifstmt_;
   } stmt_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -980,6 +1141,7 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
   enum ExprCase {
     kId = 2,
     kUint = 3,
+    kBinExpr = 4,
     EXPR_NOT_SET = 0,
   };
 
@@ -989,7 +1151,7 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
                &_Expression_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   void Swap(Expression* other);
   friend void swap(Expression& a, Expression& b) {
@@ -1071,12 +1233,25 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::Pasc::UIntLiteral* mutable_uint();
   void set_allocated_uint(::Pasc::UIntLiteral* uint);
 
+  // .Pasc.BinaryExpr binExpr = 4;
+  bool has_binexpr() const;
+  void clear_binexpr();
+  static const int kBinExprFieldNumber = 4;
+  private:
+  const ::Pasc::BinaryExpr& _internal_binexpr() const;
+  public:
+  const ::Pasc::BinaryExpr& binexpr() const;
+  ::Pasc::BinaryExpr* release_binexpr();
+  ::Pasc::BinaryExpr* mutable_binexpr();
+  void set_allocated_binexpr(::Pasc::BinaryExpr* binexpr);
+
   void clear_expr();
   ExprCase expr_case() const;
   // @@protoc_insertion_point(class_scope:Pasc.Expression)
  private:
   void set_has_id();
   void set_has_uint();
+  void set_has_binexpr();
 
   inline bool has_expr() const;
   inline void clear_has_expr();
@@ -1087,10 +1262,133 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
     ExprUnion() {}
     ::Pasc::Identifier* id_;
     ::Pasc::UIntLiteral* uint_;
+    ::Pasc::BinaryExpr* binexpr_;
   } expr_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
 
+  friend struct ::protobuf_program_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class BinaryExpr : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.BinaryExpr) */ {
+ public:
+  BinaryExpr();
+  virtual ~BinaryExpr();
+
+  BinaryExpr(const BinaryExpr& from);
+
+  inline BinaryExpr& operator=(const BinaryExpr& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  BinaryExpr(BinaryExpr&& from) noexcept
+    : BinaryExpr() {
+    *this = ::std::move(from);
+  }
+
+  inline BinaryExpr& operator=(BinaryExpr&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BinaryExpr& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BinaryExpr* internal_default_instance() {
+    return reinterpret_cast<const BinaryExpr*>(
+               &_BinaryExpr_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  void Swap(BinaryExpr* other);
+  friend void swap(BinaryExpr& a, BinaryExpr& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BinaryExpr* New() const final {
+    return CreateMaybeMessage<BinaryExpr>(NULL);
+  }
+
+  BinaryExpr* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<BinaryExpr>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const BinaryExpr& from);
+  void MergeFrom(const BinaryExpr& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BinaryExpr* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .Pasc.Expression left = 1;
+  bool has_left() const;
+  void clear_left();
+  static const int kLeftFieldNumber = 1;
+  private:
+  const ::Pasc::Expression& _internal_left() const;
+  public:
+  const ::Pasc::Expression& left() const;
+  ::Pasc::Expression* release_left();
+  ::Pasc::Expression* mutable_left();
+  void set_allocated_left(::Pasc::Expression* left);
+
+  // .Pasc.Expression right = 2;
+  bool has_right() const;
+  void clear_right();
+  static const int kRightFieldNumber = 2;
+  private:
+  const ::Pasc::Expression& _internal_right() const;
+  public:
+  const ::Pasc::Expression& right() const;
+  ::Pasc::Expression* release_right();
+  ::Pasc::Expression* mutable_right();
+  void set_allocated_right(::Pasc::Expression* right);
+
+  // @@protoc_insertion_point(class_scope:Pasc.BinaryExpr)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::Pasc::Expression* left_;
+  ::Pasc::Expression* right_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_program_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -1130,7 +1428,7 @@ class Identifier : public ::google::protobuf::Message /* @@protoc_insertion_poin
                &_Identifier_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   void Swap(Identifier* other);
   friend void swap(Identifier& a, Identifier& b) {
@@ -1241,7 +1539,7 @@ class UIntLiteral : public ::google::protobuf::Message /* @@protoc_insertion_poi
                &_UIntLiteral_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   void Swap(UIntLiteral* other);
   friend void swap(UIntLiteral& a, UIntLiteral& b) {
@@ -1352,7 +1650,7 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
                &_Type_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   void Swap(Type* other);
   friend void swap(Type& a, Type& b) {
@@ -1521,7 +1819,7 @@ class Integer : public ::google::protobuf::Message /* @@protoc_insertion_point(c
                &_Integer_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   void Swap(Integer* other);
   friend void swap(Integer& a, Integer& b) {
@@ -1632,7 +1930,7 @@ class Boolean : public ::google::protobuf::Message /* @@protoc_insertion_point(c
                &_Boolean_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   void Swap(Boolean* other);
   friend void swap(Boolean& a, Boolean& b) {
@@ -1743,7 +2041,7 @@ class Real : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
                &_Real_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    14;
 
   void Swap(Real* other);
   friend void swap(Real& a, Real& b) {
@@ -1854,7 +2152,7 @@ class Char : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
                &_Char_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    15;
 
   void Swap(Char* other);
   friend void swap(Char& a, Char& b) {
@@ -2507,6 +2805,172 @@ ProcedureStmt::args() const {
 
 // -------------------------------------------------------------------
 
+// IfStmt
+
+// .Pasc.Expression cond = 1;
+inline bool IfStmt::has_cond() const {
+  return this != internal_default_instance() && cond_ != NULL;
+}
+inline void IfStmt::clear_cond() {
+  if (GetArenaNoVirtual() == NULL && cond_ != NULL) {
+    delete cond_;
+  }
+  cond_ = NULL;
+}
+inline const ::Pasc::Expression& IfStmt::_internal_cond() const {
+  return *cond_;
+}
+inline const ::Pasc::Expression& IfStmt::cond() const {
+  const ::Pasc::Expression* p = cond_;
+  // @@protoc_insertion_point(field_get:Pasc.IfStmt.cond)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* IfStmt::release_cond() {
+  // @@protoc_insertion_point(field_release:Pasc.IfStmt.cond)
+  
+  ::Pasc::Expression* temp = cond_;
+  cond_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* IfStmt::mutable_cond() {
+  
+  if (cond_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    cond_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.IfStmt.cond)
+  return cond_;
+}
+inline void IfStmt::set_allocated_cond(::Pasc::Expression* cond) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete cond_;
+  }
+  if (cond) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      cond = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, cond, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  cond_ = cond;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.IfStmt.cond)
+}
+
+// .Pasc.Statement truePath = 2;
+inline bool IfStmt::has_truepath() const {
+  return this != internal_default_instance() && truepath_ != NULL;
+}
+inline void IfStmt::clear_truepath() {
+  if (GetArenaNoVirtual() == NULL && truepath_ != NULL) {
+    delete truepath_;
+  }
+  truepath_ = NULL;
+}
+inline const ::Pasc::Statement& IfStmt::_internal_truepath() const {
+  return *truepath_;
+}
+inline const ::Pasc::Statement& IfStmt::truepath() const {
+  const ::Pasc::Statement* p = truepath_;
+  // @@protoc_insertion_point(field_get:Pasc.IfStmt.truePath)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Statement*>(
+      &::Pasc::_Statement_default_instance_);
+}
+inline ::Pasc::Statement* IfStmt::release_truepath() {
+  // @@protoc_insertion_point(field_release:Pasc.IfStmt.truePath)
+  
+  ::Pasc::Statement* temp = truepath_;
+  truepath_ = NULL;
+  return temp;
+}
+inline ::Pasc::Statement* IfStmt::mutable_truepath() {
+  
+  if (truepath_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Statement>(GetArenaNoVirtual());
+    truepath_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.IfStmt.truePath)
+  return truepath_;
+}
+inline void IfStmt::set_allocated_truepath(::Pasc::Statement* truepath) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete truepath_;
+  }
+  if (truepath) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      truepath = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, truepath, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  truepath_ = truepath;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.IfStmt.truePath)
+}
+
+// .Pasc.Statement elsePath = 3;
+inline bool IfStmt::has_elsepath() const {
+  return this != internal_default_instance() && elsepath_ != NULL;
+}
+inline void IfStmt::clear_elsepath() {
+  if (GetArenaNoVirtual() == NULL && elsepath_ != NULL) {
+    delete elsepath_;
+  }
+  elsepath_ = NULL;
+}
+inline const ::Pasc::Statement& IfStmt::_internal_elsepath() const {
+  return *elsepath_;
+}
+inline const ::Pasc::Statement& IfStmt::elsepath() const {
+  const ::Pasc::Statement* p = elsepath_;
+  // @@protoc_insertion_point(field_get:Pasc.IfStmt.elsePath)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Statement*>(
+      &::Pasc::_Statement_default_instance_);
+}
+inline ::Pasc::Statement* IfStmt::release_elsepath() {
+  // @@protoc_insertion_point(field_release:Pasc.IfStmt.elsePath)
+  
+  ::Pasc::Statement* temp = elsepath_;
+  elsepath_ = NULL;
+  return temp;
+}
+inline ::Pasc::Statement* IfStmt::mutable_elsepath() {
+  
+  if (elsepath_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Statement>(GetArenaNoVirtual());
+    elsepath_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.IfStmt.elsePath)
+  return elsepath_;
+}
+inline void IfStmt::set_allocated_elsepath(::Pasc::Statement* elsepath) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete elsepath_;
+  }
+  if (elsepath) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      elsepath = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, elsepath, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  elsepath_ = elsepath;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.IfStmt.elsePath)
+}
+
+// -------------------------------------------------------------------
+
 // Statement
 
 // .Pasc.TokenKind kind = 1;
@@ -2609,6 +3073,50 @@ inline ::Pasc::ProcedureStmt* Statement::mutable_procstmt() {
   }
   // @@protoc_insertion_point(field_mutable:Pasc.Statement.procStmt)
   return stmt_.procstmt_;
+}
+
+// .Pasc.IfStmt ifStmt = 4;
+inline bool Statement::has_ifstmt() const {
+  return stmt_case() == kIfStmt;
+}
+inline void Statement::set_has_ifstmt() {
+  _oneof_case_[0] = kIfStmt;
+}
+inline void Statement::clear_ifstmt() {
+  if (has_ifstmt()) {
+    delete stmt_.ifstmt_;
+    clear_has_stmt();
+  }
+}
+inline const ::Pasc::IfStmt& Statement::_internal_ifstmt() const {
+  return *stmt_.ifstmt_;
+}
+inline ::Pasc::IfStmt* Statement::release_ifstmt() {
+  // @@protoc_insertion_point(field_release:Pasc.Statement.ifStmt)
+  if (has_ifstmt()) {
+    clear_has_stmt();
+      ::Pasc::IfStmt* temp = stmt_.ifstmt_;
+    stmt_.ifstmt_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::Pasc::IfStmt& Statement::ifstmt() const {
+  // @@protoc_insertion_point(field_get:Pasc.Statement.ifStmt)
+  return has_ifstmt()
+      ? *stmt_.ifstmt_
+      : *reinterpret_cast< ::Pasc::IfStmt*>(&::Pasc::_IfStmt_default_instance_);
+}
+inline ::Pasc::IfStmt* Statement::mutable_ifstmt() {
+  if (!has_ifstmt()) {
+    clear_stmt();
+    set_has_ifstmt();
+    stmt_.ifstmt_ = CreateMaybeMessage< ::Pasc::IfStmt >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.Statement.ifStmt)
+  return stmt_.ifstmt_;
 }
 
 inline bool Statement::has_stmt() const {
@@ -2726,6 +3234,50 @@ inline ::Pasc::UIntLiteral* Expression::mutable_uint() {
   return expr_.uint_;
 }
 
+// .Pasc.BinaryExpr binExpr = 4;
+inline bool Expression::has_binexpr() const {
+  return expr_case() == kBinExpr;
+}
+inline void Expression::set_has_binexpr() {
+  _oneof_case_[0] = kBinExpr;
+}
+inline void Expression::clear_binexpr() {
+  if (has_binexpr()) {
+    delete expr_.binexpr_;
+    clear_has_expr();
+  }
+}
+inline const ::Pasc::BinaryExpr& Expression::_internal_binexpr() const {
+  return *expr_.binexpr_;
+}
+inline ::Pasc::BinaryExpr* Expression::release_binexpr() {
+  // @@protoc_insertion_point(field_release:Pasc.Expression.binExpr)
+  if (has_binexpr()) {
+    clear_has_expr();
+      ::Pasc::BinaryExpr* temp = expr_.binexpr_;
+    expr_.binexpr_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::Pasc::BinaryExpr& Expression::binexpr() const {
+  // @@protoc_insertion_point(field_get:Pasc.Expression.binExpr)
+  return has_binexpr()
+      ? *expr_.binexpr_
+      : *reinterpret_cast< ::Pasc::BinaryExpr*>(&::Pasc::_BinaryExpr_default_instance_);
+}
+inline ::Pasc::BinaryExpr* Expression::mutable_binexpr() {
+  if (!has_binexpr()) {
+    clear_expr();
+    set_has_binexpr();
+    expr_.binexpr_ = CreateMaybeMessage< ::Pasc::BinaryExpr >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.Expression.binExpr)
+  return expr_.binexpr_;
+}
+
 inline bool Expression::has_expr() const {
   return expr_case() != EXPR_NOT_SET;
 }
@@ -2735,6 +3287,118 @@ inline void Expression::clear_has_expr() {
 inline Expression::ExprCase Expression::expr_case() const {
   return Expression::ExprCase(_oneof_case_[0]);
 }
+// -------------------------------------------------------------------
+
+// BinaryExpr
+
+// .Pasc.Expression left = 1;
+inline bool BinaryExpr::has_left() const {
+  return this != internal_default_instance() && left_ != NULL;
+}
+inline void BinaryExpr::clear_left() {
+  if (GetArenaNoVirtual() == NULL && left_ != NULL) {
+    delete left_;
+  }
+  left_ = NULL;
+}
+inline const ::Pasc::Expression& BinaryExpr::_internal_left() const {
+  return *left_;
+}
+inline const ::Pasc::Expression& BinaryExpr::left() const {
+  const ::Pasc::Expression* p = left_;
+  // @@protoc_insertion_point(field_get:Pasc.BinaryExpr.left)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* BinaryExpr::release_left() {
+  // @@protoc_insertion_point(field_release:Pasc.BinaryExpr.left)
+  
+  ::Pasc::Expression* temp = left_;
+  left_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* BinaryExpr::mutable_left() {
+  
+  if (left_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    left_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.BinaryExpr.left)
+  return left_;
+}
+inline void BinaryExpr::set_allocated_left(::Pasc::Expression* left) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete left_;
+  }
+  if (left) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      left = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, left, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  left_ = left;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.BinaryExpr.left)
+}
+
+// .Pasc.Expression right = 2;
+inline bool BinaryExpr::has_right() const {
+  return this != internal_default_instance() && right_ != NULL;
+}
+inline void BinaryExpr::clear_right() {
+  if (GetArenaNoVirtual() == NULL && right_ != NULL) {
+    delete right_;
+  }
+  right_ = NULL;
+}
+inline const ::Pasc::Expression& BinaryExpr::_internal_right() const {
+  return *right_;
+}
+inline const ::Pasc::Expression& BinaryExpr::right() const {
+  const ::Pasc::Expression* p = right_;
+  // @@protoc_insertion_point(field_get:Pasc.BinaryExpr.right)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* BinaryExpr::release_right() {
+  // @@protoc_insertion_point(field_release:Pasc.BinaryExpr.right)
+  
+  ::Pasc::Expression* temp = right_;
+  right_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* BinaryExpr::mutable_right() {
+  
+  if (right_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    right_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.BinaryExpr.right)
+  return right_;
+}
+inline void BinaryExpr::set_allocated_right(::Pasc::Expression* right) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete right_;
+  }
+  if (right) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      right = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, right, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  right_ = right;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.BinaryExpr.right)
+}
+
 // -------------------------------------------------------------------
 
 // Identifier
@@ -3244,6 +3908,10 @@ inline void Char::set_allocated_name(::std::string* name) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
