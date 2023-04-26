@@ -6,8 +6,8 @@
 /// @param stmt
 /// @return
 llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
-  auto alloca = stmt.variable->codegen(*this);
-  if (!alloca) {
+  auto variable = stmt.variable->codegen(*this);
+  if (!variable) {
     std::ostringstream buf;
     buf << "attempt to assign to nonexistent LHS, ";
     buf << stmt.variable->name;
@@ -24,7 +24,9 @@ llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
     throw IRCodegenException(buf.str());
   }
 
-  return builder->CreateStore(val, alloca);
+  builder->CreateStore(val, variable);
+
+  return val;
 }
 
 /// @brief
@@ -55,4 +57,65 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
   }
 
   return nullptr;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
+  auto condV = is.cond->codegen(*this);
+  if (!condV)
+    throw IRCodegenException("Null condition expr for if-else statement");;
+
+  auto *TheFunction = builder->GetInsertBlock()->getParent();
+
+  llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*ctx, "then", TheFunction);
+  llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*ctx, "ifcont");
+  llvm::BasicBlock *ElseBB = nullptr;
+  if(is.else_path) {
+    ElseBB = llvm::BasicBlock::Create(*ctx, "else");
+  }
+
+  builder->CreateCondBr(condV, ThenBB, ElseBB);
+
+  // Emit then value.
+  builder->SetInsertPoint(ThenBB);
+
+  auto *ThenV = is.true_path->codegen(*this);
+  if (!ThenV)
+    return nullptr;
+
+  builder->CreateBr(MergeBB);
+
+  // Codegen of 'Then' can change the current block, update ThenBB for the PHI.
+  ThenBB = builder->GetInsertBlock();
+
+  // Emit else block.
+  llvm::Value* ElseV = nullptr;
+  if(is.else_path) {
+    TheFunction->insert(TheFunction->end(), ElseBB);
+    builder->SetInsertPoint(ElseBB);
+
+    ElseV = is.else_path->codegen(*this);
+    if (!ElseV)
+      return nullptr;
+
+    builder->CreateBr(MergeBB);
+    // Codegen of 'Else' can change the current block, update ElseBB for the PHI.
+    ElseBB = builder->GetInsertBlock();
+  }
+
+  // Emit merge block.
+  TheFunction->insert(TheFunction->end(), MergeBB);
+  builder->SetInsertPoint(MergeBB);
+
+  if (ThenV->getType() == llvm::Type::getVoidTy(*ctx) ||
+      ElseV->getType() == llvm::Type::getVoidTy(*ctx) ||
+      (ThenV->getType() != ElseV->getType())) {
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+  }
+
+  auto *PN = builder->CreatePHI(ThenV->getType(), 2, "iftmp");
+  PN->addIncoming(ThenV, ThenBB);
+  if(is.else_path)
+    PN->addIncoming(ElseV, ElseBB);
+
+  return PN;
 }
