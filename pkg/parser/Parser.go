@@ -13,21 +13,24 @@ import (
 
 // Parser performs syntactic analysis to validate the correctness of the input string.
 //
-// It implements an LL(1) Recursive-Descent Parser that relies on a stream of tokens
+// It implements an LL(3) Recursive-Descent Parser that relies on a stream of tokens
 // from the lexer. The Parser checks and ensures that the input tokens stream conforms
 // to the grammar of the language or returns an appropriate error otherwise.
 type Parser struct {
 	input     Lexer
-	lookahead token.Token
+	lookahead [3]token.Token
+	k, idx    int
 	curScope  symbols.Scope
 	symTable  *symbols.GlobalScope
 }
 
 // NewParser constructs and returns an instance of parser
 func NewParser(lexer Lexer) (*Parser, error) {
-	parser := Parser{input: lexer}
-	if err := parser.consume(); err != nil {
-		return nil, err
+	parser := Parser{input: lexer, k: 3, idx: 0}
+	for i := 0; i < parser.k; i++ {
+		if err := parser.consume(); err != nil {
+			return nil, err
+		}
 	}
 
 	globalScope := symbols.NewGlobalScope(nil)
@@ -38,14 +41,23 @@ func NewParser(lexer Lexer) (*Parser, error) {
 }
 
 func (p *Parser) consume() error {
-	token, err := p.input.NextToken()
+	t, err := p.input.NextToken()
 	if err != nil {
 		return err
 	}
 
-	p.lookahead = token
+	p.lookahead[p.idx] = t
+	p.idx = (p.idx + 1) % p.k
 
 	return nil
+}
+
+func (p *Parser) lAheadToken(i int) token.Token {
+	return p.lookahead[(p.idx+i-1)%p.k]
+}
+
+func (p *Parser) lAheadKind(i int) token.Kind {
+	return p.lAheadToken(i).Kind
 }
 
 // SymbolTable returns the scope tree constructed during parsing
@@ -57,7 +69,7 @@ func (p *Parser) SymbolTable() *symbols.GlobalScope {
 // type t, provided as an argument. If t is the token the parser expected,
 // Match proceeds to the next token.
 func (p *Parser) match(t token.Kind) error {
-	if p.lookahead.Kind == t {
+	if p.lAheadKind(1) == t {
 		if err := p.consume(); err != nil {
 			return err
 		}
@@ -65,7 +77,7 @@ func (p *Parser) match(t token.Kind) error {
 		return nil
 	}
 
-	return fmt.Errorf("expecting %v; found %v", t, p.lookahead.Text)
+	return fmt.Errorf("expecting %v; found %v", t, p.lAheadToken(1).Text)
 }
 
 // Program represents the start symbol production rule in the grammar.
@@ -120,15 +132,15 @@ func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
 	}
 
 	programName = &ast.Identifier{
-		Token: token.NewToken(token.Identifier, p.lookahead.Text),
-		Name:  p.lookahead.Text,
+		Token: token.NewToken(token.Identifier, p.lAheadToken(1).Text),
+		Name:  p.lAheadToken(1).Text,
 	}
 
 	if err = p.match(token.Identifier); err != nil {
 		return nil, nil, err
 	}
 
-	if p.lookahead.Kind == token.LParen {
+	if p.lAheadKind(1) == token.LParen {
 		if err = p.match(token.LParen); err != nil {
 			return nil, nil, err
 		}
@@ -164,7 +176,7 @@ func (p *Parser) block() (*ast.Block, error) {
 	block := &ast.Block{}
 
 	for p.isBlockComponent() {
-		switch p.lookahead.Kind {
+		switch p.lAheadKind(1) {
 		case token.Label:
 			labelDefinition, err = p.labelDefinitionPart()
 			if err != nil {
@@ -209,23 +221,23 @@ func (p *Parser) block() (*ast.Block, error) {
 }
 
 func (p *Parser) labelDefinitionPart() (*ast.LabelDefinition, error) {
-	labelDefinition := &ast.LabelDefinition{Token: p.lookahead}
+	labelDefinition := &ast.LabelDefinition{Token: p.lAheadToken(1)}
 	if err := p.match(token.Label); err != nil {
 		return nil, err
 	}
 
-	label := &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+	label := &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	if err := p.match(token.UIntLiteral); err != nil {
 		return nil, err
 	}
 	labelDefinition.Labels = append(labelDefinition.Labels, label)
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
 
-		label := &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+		label := &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 		if err := p.match(token.UIntLiteral); err != nil {
 			return nil, err
 		}
@@ -240,12 +252,12 @@ func (p *Parser) labelDefinitionPart() (*ast.LabelDefinition, error) {
 }
 
 func (p *Parser) isBlockComponent() bool {
-	return p.lookahead.Kind == token.Type ||
-		p.lookahead.Kind == token.Var ||
-		p.lookahead.Kind == token.Procedure ||
-		p.lookahead.Kind == token.Function ||
-		p.lookahead.Kind == token.Const ||
-		p.lookahead.Kind == token.Begin
+	return p.lAheadKind(1) == token.Type ||
+		p.lAheadKind(1) == token.Var ||
+		p.lAheadKind(1) == token.Procedure ||
+		p.lAheadKind(1) == token.Function ||
+		p.lAheadKind(1) == token.Const ||
+		p.lAheadKind(1) == token.Begin
 }
 
 // type-definition-part = [ 'type' type-definition ';' { type-definition ';' } ] .
@@ -255,7 +267,7 @@ func (p *Parser) typeDefinitionPart() (*ast.TypeDefinition, error) {
 		typeDef *ast.TypeDef
 	)
 
-	typeDefinition := &ast.TypeDefinition{Token: p.lookahead}
+	typeDefinition := &ast.TypeDefinition{Token: p.lAheadToken(1)}
 	if err = p.match(token.Type); err != nil {
 		return nil, err
 	}
@@ -270,7 +282,7 @@ func (p *Parser) typeDefinitionPart() (*ast.TypeDefinition, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Kind == token.Identifier {
+	for p.lAheadKind(1) == token.Identifier {
 		typeDef, err = p.typeDefinition()
 		if err != nil {
 			return nil, err
@@ -292,7 +304,7 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 		typeDef *ast.TypeDef
 	)
 
-	typeDef = &ast.TypeDef{Name: &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}}
+	typeDef = &ast.TypeDef{Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -318,11 +330,11 @@ func (p *Parser) typeIdentifier() (types.Type, error) {
 		typ types.Type
 	)
 
-	sym := p.curScope.Resolve(p.lookahead.Text)
+	sym := p.curScope.Resolve(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
 	} else if sym.GetKind() != symbols.TYPE {
-		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lAheadToken(1).Text)
 	} else {
 		if err = p.consume(); err != nil {
 			return nil, err
@@ -342,8 +354,8 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 		typ types.Type
 	)
 
-	if p.lookahead.Kind == token.Identifier || p.lookahead.Kind == token.Integer ||
-		p.lookahead.Kind == token.Boolean || p.lookahead.Kind == token.Char || p.lookahead.Kind == token.Real {
+	if p.lAheadKind(1) == token.Identifier || p.lAheadKind(1) == token.Integer ||
+		p.lAheadKind(1) == token.Boolean || p.lAheadKind(1) == token.Char || p.lAheadKind(1) == token.Real {
 
 		typ, err = p.typeIdentifier()
 		if err != nil {
@@ -351,7 +363,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 		}
 	} else {
 		if p.isNewType() {
-			switch p.lookahead.Kind {
+			switch p.lAheadKind(1) {
 			case token.Array:
 				typ, err = p.arrayType()
 				if err != nil {
@@ -391,7 +403,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 func (p *Parser) recordType() (*structured.Record, error) {
 	var err error
 
-	record := &structured.Record{Token: p.lookahead}
+	record := &structured.Record{Token: p.lAheadToken(1)}
 	if err = p.match(token.Record); err != nil {
 		return nil, err
 	}
@@ -416,7 +428,7 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 		fieldList []structured.Field
 	)
 
-	if p.lookahead.Kind == token.Case {
+	if p.lAheadKind(1) == token.Case {
 		varPart, err = p.variantPart()
 		if err != nil {
 			return nil, err
@@ -432,12 +444,12 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 		fixedPart.Entry = append(fixedPart.Entry, recordSec)
 		fieldList = append(fieldList, fixedPart)
 
-		for p.lookahead.Kind == token.SemiColon {
+		for p.lAheadKind(1) == token.SemiColon {
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
 
-			if p.lookahead.Kind == token.Case {
+			if p.lAheadKind(1) == token.Case {
 				varPart, err = p.variantPart()
 				if err != nil {
 					return nil, err
@@ -454,7 +466,7 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 		}
 	}
 
-	if p.lookahead.Kind == token.SemiColon {
+	if p.lAheadKind(1) == token.SemiColon {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -489,7 +501,7 @@ func (p *Parser) recordSection() (*structured.RecordSection, error) {
 func (p *Parser) variantPart() (*structured.VariantPart, error) {
 	var err error
 
-	variantPart := &structured.VariantPart{Token: p.lookahead}
+	variantPart := &structured.VariantPart{Token: p.lAheadToken(1)}
 	if err = p.match(token.Case); err != nil {
 		return nil, err
 	}
@@ -509,7 +521,7 @@ func (p *Parser) variantPart() (*structured.VariantPart, error) {
 	}
 	variantPart.Variants = append(variantPart.Variants, variant)
 
-	for p.lookahead.Kind == token.SemiColon {
+	for p.lAheadKind(1) == token.SemiColon {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -531,8 +543,8 @@ func (p *Parser) variantSelector() (*structured.VariantSelector, error) {
 	var err error
 
 	selector := &structured.VariantSelector{}
-	if p.lookahead.Kind == token.Identifier {
-		selector.TagField = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
+	if p.lAheadKind(1) == token.Identifier {
+		selector.TagField = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -542,17 +554,17 @@ func (p *Parser) variantSelector() (*structured.VariantSelector, error) {
 		}
 	}
 
-	sym := p.curScope.Resolve(p.lookahead.Text)
+	sym := p.curScope.Resolve(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
 	} else if sym.GetKind() != symbols.TYPE {
-		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lAheadToken(1).Text)
 	} else {
 		typ, ok := sym.GetType().(types.Ordinal)
 		if !ok {
 			return nil, fmt.Errorf(
 				"%v is not an ordinal type. Must be one of integer, Boolean, char, enum, subrange",
-				p.lookahead.Text)
+				p.lAheadToken(1).Text)
 		}
 
 		selector.TagType = typ
@@ -638,7 +650,7 @@ func (p *Parser) enumType() (*structured.Enumerated, error) {
 func (p *Parser) setType() (*structured.Set, error) {
 	var err error
 
-	set := &structured.Set{Token: p.lookahead}
+	set := &structured.Set{Token: p.lAheadToken(1)}
 	if err := p.match(token.Set); err != nil {
 		return nil, err
 	}
@@ -661,7 +673,7 @@ func (p *Parser) arrayType() (*structured.Array, error) {
 		idxType types.Ordinal
 	)
 
-	arrayType := &structured.Array{Token: p.lookahead}
+	arrayType := &structured.Array{Token: p.lAheadToken(1)}
 	if err = p.match(token.Array); err != nil {
 		return nil, err
 	}
@@ -676,7 +688,7 @@ func (p *Parser) arrayType() (*structured.Array, error) {
 	}
 	arrayType.Indices = append(arrayType.Indices, idxType)
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		idxType, err = p.indexType()
 		if err != nil {
 			return nil, err
@@ -706,7 +718,7 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 		idxType types.Ordinal
 	)
 
-	switch p.lookahead.Kind {
+	switch p.lAheadKind(1) {
 	case token.LParen:
 		if err = p.match(token.LParen); err != nil {
 			return nil, err
@@ -744,17 +756,17 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 
 		idxType = &structured.SubRange{Range: &ast.Range{Start: start, End: end}}
 	default:
-		sym := p.curScope.Resolve(p.lookahead.Text)
+		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
 		if sym == nil {
-			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+			return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
 		} else if sym.GetKind() != symbols.TYPE {
-			return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lookahead.Text)
+			return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lAheadToken(1).Text)
 		} else {
 			typ, ok := sym.GetType().(types.Ordinal)
 			if !ok {
 				return nil, fmt.Errorf(
 					"%v cannot be used as array index type. Array index type must be one of integer, Boolean, char, enum, subrange",
-					p.lookahead.Text)
+					p.lAheadToken(1).Text)
 			}
 
 			idxType = typ
@@ -773,19 +785,19 @@ func (p *Parser) indexType() (types.Ordinal, error) {
 }
 
 func (p *Parser) isNewType() bool {
-	return p.lookahead.Kind == token.LParen ||
-		p.lookahead.Kind == token.Const ||
-		p.lookahead.Kind == token.Packed ||
-		p.lookahead.Kind == token.Array ||
-		p.lookahead.Kind == token.Record ||
-		p.lookahead.Kind == token.Set ||
-		p.lookahead.Kind == token.File ||
-		p.lookahead.Kind == token.Plus ||
-		p.lookahead.Kind == token.Minus ||
-		p.lookahead.Kind == token.UIntLiteral ||
-		p.lookahead.Kind == token.CharString ||
-		p.lookahead.Kind == token.URealLiteral ||
-		p.lookahead.Kind == token.Identifier
+	return p.lAheadKind(1) == token.LParen ||
+		p.lAheadKind(1) == token.Const ||
+		p.lAheadKind(1) == token.Packed ||
+		p.lAheadKind(1) == token.Array ||
+		p.lAheadKind(1) == token.Record ||
+		p.lAheadKind(1) == token.Set ||
+		p.lAheadKind(1) == token.File ||
+		p.lAheadKind(1) == token.Plus ||
+		p.lAheadKind(1) == token.Minus ||
+		p.lAheadKind(1) == token.UIntLiteral ||
+		p.lAheadKind(1) == token.CharString ||
+		p.lAheadKind(1) == token.URealLiteral ||
+		p.lAheadKind(1) == token.Identifier
 }
 
 // constant-definition-part = [ 'const' constant-definition ';' { constant-definition ';' } ] .
@@ -795,7 +807,7 @@ func (p *Parser) constDefinitionPart() (*ast.ConstDefinition, error) {
 		constDef *ast.ConstDef
 	)
 
-	constDefinition := &ast.ConstDefinition{Token: p.lookahead}
+	constDefinition := &ast.ConstDefinition{Token: p.lAheadToken(1)}
 	if err = p.match(token.Const); err != nil {
 		return nil, err
 	}
@@ -810,7 +822,7 @@ func (p *Parser) constDefinitionPart() (*ast.ConstDefinition, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Kind == token.Identifier {
+	for p.lAheadKind(1) == token.Identifier {
 		constDef, err = p.constDefinition()
 		if err != nil {
 			return nil, err
@@ -830,7 +842,7 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	var err error
 
 	constDef := &ast.ConstDef{
-		Name: &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}}
+		Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -860,26 +872,33 @@ func (p *Parser) constant() (ast.Expression, error) {
 		expr ast.Expression
 	)
 
-	switch p.lookahead.Kind {
+	switch p.lAheadKind(1) {
 	case token.CharString:
-		expr = ast.NewStringLiteral(p.lookahead, p.lookahead.Text)
+		expr = ast.NewStringLiteral(p.lAheadToken(1), p.lAheadToken(1).Text)
 	default:
 		if p.isSign() {
-			sign = p.lookahead
+			sign = p.lAheadToken(1)
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
 		}
 
-		if p.lookahead.Kind == token.UIntLiteral {
-			expr = &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
-		} else if p.lookahead.Kind == token.URealLiteral {
-			expr = &ast.URealLiteral{Token: p.lookahead, Value: p.lookahead.Text}
-		} else if p.lookahead.Kind == token.Identifier {
-			expr = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+		if p.lAheadKind(1) == token.UIntLiteral {
+			expr = &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
+		} else if p.lAheadKind(1) == token.URealLiteral {
+			expr = &ast.URealLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
+		} else if p.lAheadKind(1) == token.Identifier {
+			sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+			if sym == nil {
+				return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+			} else if sym.GetKind() != symbols.CONST {
+				return nil, fmt.Errorf("symbol %v, is not a constant", p.lAheadToken(1).Text)
+			} else {
+				expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
+			}
 		} else {
 			return nil, fmt.Errorf(
-				"expected unsigned number or identifier, got %s instead", p.lookahead.Text)
+				"expected unsigned number or constant, got %s instead", p.lAheadToken(1).Text)
 		}
 
 		if !reflect.DeepEqual(sign, token.Token{}) {
@@ -898,8 +917,8 @@ func (p *Parser) constant() (ast.Expression, error) {
 func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) {
 	var callables []ast.Statement
 
-	for p.lookahead.Kind == token.Function || p.lookahead.Kind == token.Procedure {
-		switch p.lookahead.Kind {
+	for p.lAheadKind(1) == token.Function || p.lAheadKind(1) == token.Procedure {
+		switch p.lAheadKind(1) {
 		case token.Function:
 			funcDecl, err := p.functionDeclaration()
 			if err != nil {
@@ -917,7 +936,7 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 		default:
 			return nil, fmt.Errorf(
 				"parse Error: expected 'procedure' or 'function', got %v instead",
-				p.lookahead.Text)
+				p.lAheadToken(1).Text)
 		}
 	}
 
@@ -942,10 +961,10 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 		return nil, err
 	}
 
-	switch p.lookahead.Kind {
+	switch p.lAheadKind(1) {
 	case token.Identifier:
 		procedureDecl.Directive = &ast.Identifier{
-			Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+			Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 	default:
 		procedureDecl.Block, err = p.block()
 		if err != nil {
@@ -965,12 +984,12 @@ func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 		paramList []ast.FormalParameter
 	)
 
-	pHead := &ast.ProcedureHeading{Token: p.lookahead}
+	pHead := &ast.ProcedureHeading{Token: p.lAheadToken(1)}
 	if err = p.match(token.Procedure); err != nil {
 		return nil, err
 	}
 
-	pHead.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+	pHead.Name = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -994,12 +1013,12 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 		paramList []ast.FormalParameter
 	)
 
-	fHead := &ast.FuncHeading{Token: p.lookahead}
+	fHead := &ast.FuncHeading{Token: p.lAheadToken(1)}
 	if err = p.match(token.Function); err != nil {
 		return nil, err
 	}
 
-	fHead.Name = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+	fHead.Name = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1014,9 +1033,9 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 		return nil, err
 	}
 
-	typ = p.curScope.Resolve(p.lookahead.Text)
+	typ = p.curScope.Resolve(p.lAheadToken(1).Text)
 	if typ == nil {
-		return nil, fmt.Errorf("parse Error: symbol %v not found", p.lookahead.Text)
+		return nil, fmt.Errorf("parse Error: symbol %v not found", p.lAheadToken(1).Text)
 	}
 	fHead.ReturnType = typ
 
@@ -1083,10 +1102,10 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	}
 	funcSymbol.Type = funcDecl.Heading.ReturnType
 
-	switch p.lookahead.Kind {
+	switch p.lAheadKind(1) {
 	case token.Identifier:
 		funcDecl.Directive = &ast.Identifier{
-			Token: p.lookahead, Name: p.lookahead.Text, Scope: p.curScope}
+			Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 	default:
 		funcDecl.Block, err = p.block()
 		if err != nil {
@@ -1115,7 +1134,7 @@ func (p *Parser) formalParameterList() ([]ast.FormalParameter, error) {
 	}
 	paramList = append(paramList, param)
 
-	for p.lookahead.Kind == token.SemiColon {
+	for p.lAheadKind(1) == token.SemiColon {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1143,7 +1162,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		param ast.FormalParameter
 	)
 
-	switch p.lookahead.Kind {
+	switch p.lAheadKind(1) {
 	// value-parameter-specification = identifier-list ':' type-identifier .
 	case token.Identifier:
 		names, err := p.identifierList()
@@ -1201,7 +1220,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		param = fHead
 
 	default:
-		return nil, fmt.Errorf("parse Error: unexpected token %v", p.lookahead.Text)
+		return nil, fmt.Errorf("parse Error: unexpected token %v", p.lAheadToken(1).Text)
 	}
 
 	return param, nil
@@ -1230,7 +1249,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 		return nil, err
 	}
 
-	for p.lookahead.Kind == token.Identifier {
+	for p.lAheadKind(1) == token.Identifier {
 		if d, err = p.variableDeclaration(); err != nil {
 			return nil, err
 		}
@@ -1297,7 +1316,7 @@ func (p *Parser) indexedVariable(arrayVar *ast.Identifier) (*ast.IndexedVariable
 	}
 	indexedVar.IndexExpr = append(indexedVar.IndexExpr, idxExpr)
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1324,22 +1343,22 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	)
 
 	names = append(names, &ast.Identifier{
-		Token: p.lookahead,
-		Name:  p.lookahead.Text,
+		Token: p.lAheadToken(1),
+		Name:  p.lAheadToken(1).Text,
 		Scope: p.curScope})
 
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		if err = p.match(token.Comma); err != nil {
 			return nil, err
 		}
 
 		names = append(names, &ast.Identifier{
-			Token: p.lookahead,
-			Name:  p.lookahead.Text,
+			Token: p.lAheadToken(1),
+			Name:  p.lAheadToken(1).Text,
 			Scope: p.curScope})
 
 		if err = p.match(token.Identifier); err != nil {
@@ -1386,7 +1405,7 @@ func (p *Parser) statementSequence() ([]ast.Statement, error) {
 
 	stmtSeq = append(stmtSeq, stmt)
 
-	for p.lookahead.Kind == token.SemiColon {
+	for p.lAheadKind(1) == token.SemiColon {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1409,54 +1428,52 @@ func (p *Parser) statement() (ast.Statement, error) {
 	)
 
 	// TODO: optional label
-	// if p.lookahead.Kind == token.UIntLiteral {
+	// if p.lAheadKind(1) == token.UIntLiteral {
 
 	// }
 
 	if p.isStructuredStatement() {
-		switch p.lookahead.Kind {
+		switch p.lAheadKind(1) {
 		case token.If:
-			return p.ifStatement()
+			stmt, err = p.ifStatement()
 		case token.Begin:
-			return p.compoundStatement()
+			stmt, err = p.compoundStatement()
 		case token.While:
-			return p.whileStatement()
+			stmt, err = p.whileStatement()
 		case token.With:
-			return p.withStatement()
+			stmt, err = p.withStatement()
 		case token.Case:
-			return p.caseStatement()
+			stmt, err = p.caseStatement()
 		case token.Repeat:
-			return p.repeatStatement()
+			stmt, err = p.repeatStatement()
 		case token.For:
-			return p.forStatement()
+			stmt, err = p.forStatement()
 		default:
 
 		}
 	} else if p.isSimpleStatement() {
-		if stmt, err = p.simpleStatement(); err != nil {
-			return nil, err
-		}
+		stmt, err = p.simpleStatement()
 	} else {
-		return nil, fmt.Errorf("parser Error: unexpected token %v", p.lookahead.Text)
+		stmt, err = nil, fmt.Errorf("parser Error: unexpected token %v", p.lAheadToken(1).Text)
 	}
 
-	return stmt, nil
+	return stmt, err
 }
 
 func (p *Parser) isStructuredStatement() bool {
-	return p.lookahead.Kind == token.Begin ||
-		p.lookahead.Kind == token.With ||
-		p.lookahead.Kind == token.If ||
-		p.lookahead.Kind == token.Case ||
-		p.lookahead.Kind == token.Repeat ||
-		p.lookahead.Kind == token.While ||
-		p.lookahead.Kind == token.For
+	return p.lAheadKind(1) == token.Begin ||
+		p.lAheadKind(1) == token.With ||
+		p.lAheadKind(1) == token.If ||
+		p.lAheadKind(1) == token.Case ||
+		p.lAheadKind(1) == token.Repeat ||
+		p.lAheadKind(1) == token.While ||
+		p.lAheadKind(1) == token.For
 }
 
 func (p *Parser) isSimpleStatement() bool {
-	return p.lookahead.Kind == token.Identifier ||
-		p.lookahead.Kind == token.Goto ||
-		p.lookahead.Kind == token.End
+	return p.lAheadKind(1) == token.Identifier ||
+		p.lAheadKind(1) == token.Goto ||
+		p.lAheadKind(1) == token.End
 }
 
 // case-statement := 'case' case-index 'of' case-list-element { ';' case-list-element } [ ';' ] 'end' .
@@ -1465,7 +1482,7 @@ func (p *Parser) isSimpleStatement() bool {
 func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
 	var err error
 
-	caseStmt := &ast.CaseStatement{Token: p.lookahead}
+	caseStmt := &ast.CaseStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.Case); err != nil {
 		return nil, err
 	}
@@ -1485,7 +1502,7 @@ func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
 	}
 	caseStmt.List = append(caseStmt.List, element)
 
-	for p.lookahead.Kind == token.SemiColon {
+	for p.lAheadKind(1) == token.SemiColon {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1497,7 +1514,7 @@ func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
 		caseStmt.List = append(caseStmt.List, element)
 	}
 
-	if p.lookahead.Kind == token.SemiColon {
+	if p.lAheadKind(1) == token.SemiColon {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1545,7 +1562,7 @@ func (p *Parser) caseConstantList() ([]ast.Expression, error) {
 	}
 	caseConstList = append(caseConstList, constant)
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1564,7 +1581,7 @@ func (p *Parser) caseConstantList() ([]ast.Expression, error) {
 func (p *Parser) withStatement() (*ast.WithStatement, error) {
 	var err error
 
-	withStmt := &ast.WithStatement{Token: p.lookahead}
+	withStmt := &ast.WithStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.With); err != nil {
 		return nil, err
 	}
@@ -1597,7 +1614,7 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 	}
 	recVarList = append(recVarList, variable)
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
@@ -1617,7 +1634,7 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 func (p *Parser) repeatStatement() (*ast.RepeatStatement, error) {
 	var err error
 
-	repeatStmt := &ast.RepeatStatement{Token: p.lookahead}
+	repeatStmt := &ast.RepeatStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.Repeat); err != nil {
 		return nil, err
 	}
@@ -1643,7 +1660,7 @@ func (p *Parser) repeatStatement() (*ast.RepeatStatement, error) {
 func (p *Parser) whileStatement() (*ast.WhileStatement, error) {
 	var err error
 
-	whileStmt := &ast.WhileStatement{Token: p.lookahead}
+	whileStmt := &ast.WhileStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.While); err != nil {
 		return nil, err
 	}
@@ -1675,14 +1692,14 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 		initVal, finalVal ast.Expression
 	)
 
-	forStmt := &ast.ForStatement{Token: p.lookahead}
+	forStmt := &ast.ForStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.For); err != nil {
 		return nil, err
 	}
 
 	forStmt.CtrlID = &ast.Identifier{
-		Token: p.lookahead,
-		Name:  p.lookahead.Text,
+		Token: p.lAheadToken(1),
+		Name:  p.lAheadToken(1).Text,
 		Scope: p.curScope,
 	}
 	if err = p.match(token.Identifier); err != nil {
@@ -1699,11 +1716,11 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 	}
 	forStmt.InitValue = initVal
 
-	if p.lookahead.Kind != token.To && p.lookahead.Kind != token.DownTo {
+	if p.lAheadKind(1) != token.To && p.lAheadKind(1) != token.DownTo {
 		return nil, fmt.Errorf("expecting %v or %v; found %v",
-			token.To, token.DownTo, p.lookahead.Text)
+			token.To, token.DownTo, p.lAheadToken(1).Text)
 	}
-	forStmt.Direction = p.lookahead.Kind
+	forStmt.Direction = p.lAheadKind(1)
 	if err := p.consume(); err != nil {
 		return nil, err
 	}
@@ -1733,35 +1750,28 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 		stmt ast.Statement
 	)
 
-	switch p.lookahead.Kind {
+	switch p.lAheadKind(1) {
 	case token.End:
 	case token.Identifier:
-		// if the identifier is a user defined or built in procedure
-		if p.lookahead.Text == "writeln" || p.lookahead.Text == "write" {
+		if p.lAheadKind(2) == token.LParen {
 			stmt, err = p.procedureStatement()
-			if err != nil {
-				return nil, err
-			}
 		} else {
 			stmt, err = p.assignmentStatement()
-			if err != nil {
-				return nil, err
-			}
 		}
 	case token.Goto:
-		gotoStmt := &ast.GotoStatement{Token: p.lookahead}
+		gotoStmt := &ast.GotoStatement{Token: p.lAheadToken(1)}
 		if err = p.match(token.Goto); err != nil {
 			return nil, err
 		}
 
-		gotoStmt.Label = &ast.UIntegerLiteral{Token: p.lookahead, Value: p.lookahead.Text}
+		gotoStmt.Label = &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 		if err = p.match(token.UIntLiteral); err != nil {
 			return nil, err
 		}
 
 		stmt = gotoStmt
 	default:
-		return nil, fmt.Errorf("expecting procedure_name, goto or assignment; found %v", p.lookahead)
+		return nil, fmt.Errorf("expecting procedure_name, goto or assignment; found %v", p.lAheadToken(1))
 	}
 
 	return stmt, nil
@@ -1774,8 +1784,8 @@ func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
 	var err error
 
 	ps := ast.NewProcedureStatement(&ast.Identifier{
-		Token: p.lookahead,
-		Name:  p.lookahead.Text,
+		Token: p.lAheadToken(1),
+		Name:  p.lAheadToken(1).Text,
 		Scope: p.curScope})
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
@@ -1809,7 +1819,7 @@ func (p *Parser) assignmentStatement() (*ast.AssignStatement, error) {
 		return nil, err
 	}
 
-	as := &ast.AssignStatement{Token: p.lookahead, Variable: lhs}
+	as := &ast.AssignStatement{Token: p.lAheadToken(1), Variable: lhs}
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
 	}
@@ -1830,7 +1840,7 @@ func (p *Parser) expression() (ast.Expression, error) {
 	}
 
 	if p.isRelationalOp() {
-		relExpr := &ast.BinaryExpression{Operator: p.lookahead, Left: simpleExpr}
+		relExpr := &ast.BinaryExpression{Operator: p.lAheadToken(1), Left: simpleExpr}
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
@@ -1855,7 +1865,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	)
 
 	if p.isSign() {
-		sign = p.lookahead
+		sign = p.lAheadToken(1)
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1867,7 +1877,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	}
 
 	for p.isAddingOp() {
-		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lookahead}
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadToken(1)}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1901,7 +1911,7 @@ func (p *Parser) term() (ast.Expression, error) {
 	}
 
 	for p.isMultiplyOp() {
-		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lookahead}
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadToken(1)}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -1920,7 +1930,12 @@ func (p *Parser) term() (ast.Expression, error) {
 // factor > bound-identifier
 // factor > variable-access | unsigned-constant | function-designator | set-constructor | '(' expression ')' | 'not' factor
 func (p *Parser) factor() (ast.Expression, error) {
-	switch p.lookahead.Kind {
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	switch p.lAheadKind(1) {
 	case token.LSqBrace:
 		var (
 			err    error
@@ -1938,7 +1953,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 		}
 		setConst.Members = append(setConst.Members, member)
 
-		for p.lookahead.Kind == token.Comma {
+		for p.lAheadKind(1) == token.Comma {
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
@@ -1954,27 +1969,24 @@ func (p *Parser) factor() (ast.Expression, error) {
 			return nil, err
 		}
 
-		return setConst, nil
+		expr = setConst
 	case token.Identifier:
-		expr, err := p.variableAccess()
+		if p.lAheadKind(2) == token.LParen {
+			expr, err = p.functionDesignator()
+		} else {
+			expr, err = p.variableAccess()
+		}
+	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil:
+		expr, err = p.unsignedConstant()
 		if err != nil {
 			return nil, err
 		}
-
-		if p.lookahead.Kind == token.LParen {
-			tt := token.NewToken(token.Identifier, expr.String())
-			return p.functionDesignator(tt)
-		}
-
-		return expr, nil
-	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil:
-		return p.unsignedConstant()
 	case token.LParen:
 		if err := p.match(token.LParen); err != nil {
 			return nil, err
 		}
 
-		expr, err := p.expression()
+		expr, err = p.expression()
 		if err != nil {
 			return nil, err
 		}
@@ -1982,25 +1994,23 @@ func (p *Parser) factor() (ast.Expression, error) {
 		if err = p.match(token.RParen); err != nil {
 			return nil, err
 		}
-
-		return expr, nil
 	case token.Not:
-		uExpr := &ast.UnaryExpression{Operator: p.lookahead}
-		if err := p.match(token.Not); err != nil {
+		uExpr := &ast.UnaryExpression{Operator: p.lAheadToken(1)}
+		if err = p.match(token.Not); err != nil {
 			return nil, err
 		}
 
-		expr, err := p.factor()
+		uExpr.Operand, err = p.factor()
 		if err != nil {
 			return nil, err
 		}
 
-		uExpr.Operand = expr
-
-		return uExpr, nil
+		expr = uExpr
 	default:
-		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lookahead.Text)
+		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lAheadToken(1).Text)
 	}
+
+	return expr, nil
 }
 
 func (p *Parser) memberDesignator() (ast.Expression, error) {
@@ -2014,7 +2024,7 @@ func (p *Parser) memberDesignator() (ast.Expression, error) {
 		return nil, err
 	}
 
-	if p.lookahead.Kind == token.Range {
+	if p.lAheadKind(1) == token.Range {
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2034,13 +2044,23 @@ func (p *Parser) memberDesignator() (ast.Expression, error) {
 }
 
 // variable-access := entire-variable | component-variable | identified-variable | buffer-variable .
+
+// entire-variable = variable-identifier .
+// variable-identifier = identifier .
+
+// component-variable = indexed-variable | field-designator .
+// indexed-variable = array-variable '[' index-expression, { ',' index-expression } ']' .
+// array-variable = variable-access .
+
+// field-designator = record-variable '.' field-specifier | field-designator-identifier .
+// record-variable = variable-access .
 func (p *Parser) variableAccess() (ast.Expression, error) {
 	var (
 		err  error
 		expr ast.Expression
 	)
 
-	id := p.lookahead
+	id := p.lAheadToken(1)
 	sym := p.curScope.Resolve(id.Text)
 	if err = p.consume(); err != nil {
 		return nil, err
@@ -2083,11 +2103,11 @@ func (p *Parser) fieldDesignator(recordVar *ast.Identifier) (*ast.FieldDesignato
 		case *structured.FixedPart:
 			for _, entry := range field.Entry {
 				for _, fieldName := range entry.List {
-					if fieldName.Name != p.lookahead.Text {
+					if fieldName.Name != p.lAheadToken(1).Text {
 						continue
 					}
 
-					fieldDesig.FieldSpec = &ast.Identifier{Token: p.lookahead, Name: p.lookahead.Text}
+					fieldDesig.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 					if err := p.match(token.Identifier); err != nil {
 						return nil, err
 					}
@@ -2096,7 +2116,7 @@ func (p *Parser) fieldDesignator(recordVar *ast.Identifier) (*ast.FieldDesignato
 				}
 			}
 
-			return nil, fmt.Errorf("%v has no field, '%v'", record, p.lookahead.Text)
+			return nil, fmt.Errorf("%v has no field, '%v'", record, p.lAheadToken(1).Text)
 		case *structured.VariantPart:
 		}
 	}
@@ -2107,64 +2127,70 @@ func (p *Parser) fieldDesignator(recordVar *ast.Identifier) (*ast.FieldDesignato
 // unsigned-constant := unsigned-number | character-string | constant-identifier | 'nil' .
 // constant-identifier = identifier .
 func (p *Parser) unsignedConstant() (ast.Expression, error) {
-	tt := p.lookahead
-	if err := p.consume(); err != nil {
+	var (
+		err  error
+		expr ast.Expression
+	)
+
+	switch p.lAheadKind(1) {
+	case token.UIntLiteral, token.URealLiteral:
+		expr, err = p.unsignedNumber()
+	case token.CharString:
+		expr = ast.NewStringLiteral(p.lAheadToken(1), p.lAheadToken(1).Text)
+	case token.Identifier:
+		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
+	case token.Nil:
+		expr = &ast.NilValue{Token: p.lAheadToken(1)}
+	default:
+		return nil, fmt.Errorf("expected unsigned constant type, instead got, %v", p.lAheadToken(1).Text)
+	}
+
+	if err = p.consume(); err != nil {
 		return nil, err
 	}
 
-	switch tt.Kind {
-	case token.UIntLiteral, token.URealLiteral:
-		return p.unsignedNumber(tt)
-	case token.CharString:
-		return ast.NewStringLiteral(tt, tt.Text), nil
-	case token.Identifier:
-		return &ast.Identifier{Token: tt, Name: tt.Text, Scope: p.curScope}, nil
-	case token.Nil:
-		return &ast.NilValue{Token: tt}, nil
-	default:
-		return nil, fmt.Errorf("expected unsigned constant type, instead got, %v", tt.Text)
-	}
+	return expr, nil
 }
 
 // unsigned-number := unsigned-integer | unsigned-real .
-func (p *Parser) unsignedNumber(tt token.Token) (ast.Expression, error) {
-	switch tt.Kind {
+func (p *Parser) unsignedNumber() (ast.Expression, error) {
+	switch p.lAheadKind(1) {
 	case token.UIntLiteral:
-		return &ast.UIntegerLiteral{Token: tt, Value: tt.Text}, nil
+		return &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}, nil
 	case token.URealLiteral:
-		return &ast.URealLiteral{Token: tt, Value: tt.Text}, nil
+		return &ast.URealLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}, nil
 	default:
-		return nil, fmt.Errorf("expected unsigned real or integer, instead got, %v", p.lookahead.Text)
+		return nil, fmt.Errorf("expected unsigned real or integer, instead got, %v", p.lAheadToken(1).Text)
 	}
 }
 
 func (p *Parser) isMultiplyOp() bool {
-	return p.lookahead.Kind == token.Star ||
-		p.lookahead.Kind == token.FwdSlash ||
-		p.lookahead.Kind == token.Div ||
-		p.lookahead.Kind == token.Mod ||
-		p.lookahead.Kind == token.And
+	return p.lAheadKind(1) == token.Star ||
+		p.lAheadKind(1) == token.FwdSlash ||
+		p.lAheadKind(1) == token.Div ||
+		p.lAheadKind(1) == token.Mod ||
+		p.lAheadKind(1) == token.And
 }
 
 func (p *Parser) isAddingOp() bool {
-	return p.lookahead.Kind == token.Plus ||
-		p.lookahead.Kind == token.Minus ||
-		p.lookahead.Kind == token.Or
+	return p.lAheadKind(1) == token.Plus ||
+		p.lAheadKind(1) == token.Minus ||
+		p.lAheadKind(1) == token.Or
 }
 
 func (p *Parser) isRelationalOp() bool {
-	return p.lookahead.Kind == token.Equal ||
-		p.lookahead.Kind == token.LessThanGreaterThan ||
-		p.lookahead.Kind == token.LessThan ||
-		p.lookahead.Kind == token.GreaterThan ||
-		p.lookahead.Kind == token.LessThanOrEqual ||
-		p.lookahead.Kind == token.GreaterThanOrEqual ||
-		p.lookahead.Kind == token.In
+	return p.lAheadKind(1) == token.Equal ||
+		p.lAheadKind(1) == token.LessThanGreaterThan ||
+		p.lAheadKind(1) == token.LessThan ||
+		p.lAheadKind(1) == token.GreaterThan ||
+		p.lAheadKind(1) == token.LessThanOrEqual ||
+		p.lAheadKind(1) == token.GreaterThanOrEqual ||
+		p.lAheadKind(1) == token.In
 }
 
 func (p *Parser) isSign() bool {
-	return p.lookahead.Kind == token.Plus ||
-		p.lookahead.Kind == token.Minus
+	return p.lAheadKind(1) == token.Plus ||
+		p.lAheadKind(1) == token.Minus
 }
 
 // if-statement := 'if' Boolean-expression 'then' statement [ else-part ] .
@@ -2172,7 +2198,7 @@ func (p *Parser) isSign() bool {
 func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 	var err error
 
-	ifStmt := &ast.IfStatement{Token: p.lookahead}
+	ifStmt := &ast.IfStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.If); err != nil {
 		return nil, err
 	}
@@ -2191,7 +2217,7 @@ func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 		return nil, err
 	}
 
-	if p.lookahead.Kind == token.Else {
+	if p.lAheadKind(1) == token.Else {
 		ifStmt.ElsePath, err = p.elsePart()
 		if err != nil {
 			return nil, err
@@ -2217,12 +2243,16 @@ func (p *Parser) elsePart() (ast.Statement, error) {
 
 // function-designator = function-identifier [ actual-parameter-list ] .
 // function-identifier = identifier .
-func (p *Parser) functionDesignator(tt token.Token) (*ast.FuncDesignator, error) {
+func (p *Parser) functionDesignator() (*ast.FuncDesignator, error) {
 	var err error
 
 	funcCall := &ast.FuncDesignator{
-		Name:  &ast.Identifier{Token: tt, Name: tt.Text},
+		Name:  &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text},
 		Scope: p.curScope}
+
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
 
 	funcCall.Parameters, err = p.actualParameterList()
 	if err != nil {
@@ -2250,7 +2280,7 @@ func (p *Parser) actualParameterList() ([]ast.Expression, error) {
 	}
 	paramList = append(paramList, param)
 
-	for p.lookahead.Kind == token.Comma {
+	for p.lAheadKind(1) == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
@@ -2276,15 +2306,15 @@ func (p *Parser) actualParameter() (ast.Expression, error) {
 		expr ast.Expression
 	)
 
-	if p.lookahead.Kind == token.Identifier {
-		sym := p.curScope.Resolve(p.lookahead.Text)
+	if p.lAheadKind(1) == token.Identifier {
+		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
 		if sym == nil {
-			return nil, fmt.Errorf("undefined symbol %v", p.lookahead.Text)
+			return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
 		}
 
 		if sym.GetKind() == symbols.FUNCTION || sym.GetKind() == symbols.PROCEDURE {
 			return &ast.Identifier{
-				Token: p.lookahead, Name: p.lookahead.Text}, nil
+				Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}, nil
 		}
 	}
 
@@ -2304,7 +2334,7 @@ func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
 		writelnParamList []ast.Expression
 	)
 
-	if p.lookahead.Kind == token.LParen {
+	if p.lAheadKind(1) == token.LParen {
 		if err = p.match(token.LParen); err != nil {
 			return nil, err
 		}
@@ -2316,7 +2346,7 @@ func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
 		}
 		writelnParamList = append(writelnParamList, writeParam)
 
-		for p.lookahead.Kind == token.Comma {
+		for p.lAheadKind(1) == token.Comma {
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
@@ -2350,7 +2380,7 @@ func (p *Parser) writeParameter() (*ast.WriteParameter, error) {
 
 	wp := &ast.WriteParameter{E: expr}
 
-	if p.lookahead.Kind == token.Colon {
+	if p.lAheadKind(1) == token.Colon {
 		if err = p.match(token.Colon); err != nil {
 			return nil, err
 		}
@@ -2360,7 +2390,7 @@ func (p *Parser) writeParameter() (*ast.WriteParameter, error) {
 			return nil, err
 		}
 
-		if p.lookahead.Kind == token.Colon {
+		if p.lAheadKind(1) == token.Colon {
 			if err = p.match(token.Colon); err != nil {
 				return nil, err
 			}
