@@ -9,7 +9,7 @@ make
 protoc v3.6.1  
 protoc-gen-go v1.28.1  
 
-# Build
+## Build
 ```bash
 $ make build
 $ ./scripts/compile.sh <program-file> <program-name> 
@@ -18,7 +18,7 @@ $ ./scripts/compile.sh <program-file> <program-name>
 $ ./bin/<program-name>
 ```
 
-# Examples
+## Examples
 ```bash
 # Run an example program that assign a value to a variable then print its to standard output
 $ ./scripts/compile.sh examples/assign.pas assign
