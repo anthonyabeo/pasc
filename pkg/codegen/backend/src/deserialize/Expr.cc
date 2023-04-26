@@ -15,6 +15,8 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<IdentifierIR>(expr);
   case Pasc::Expression::kUint:
     return std::make_unique<UIntegerLiteral>(expr.uint());
+  case Pasc::Expression::kBinExpr:
+    return std::make_unique<BinaryExpression>(expr);
   default:
     throw DeserializeProtobufException("invalid case");
   }
@@ -39,3 +41,13 @@ IdentifierIR::IdentifierIR(const Pasc::Expression &expr) { name = expr.id().name
 /// @param v
 /// @return
 llvm::Value *IdentifierIR::codegen(IRVisitor &v) { return v.codegen(*this); }
+
+BinaryExpression::BinaryExpression(const Pasc::Expression& expr) {
+  op = expr.kind();
+  left = deserializeExpr(expr.binexpr().left());
+  right = deserializeExpr(expr.binexpr().right());
+}
+
+llvm::Value *BinaryExpression::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}

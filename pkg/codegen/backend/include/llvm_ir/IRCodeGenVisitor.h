@@ -31,10 +31,12 @@ public:
   // Expressions
   llvm::Value *codegen(const IdentifierIR &) override;
   llvm::Value *codegen(const UIntegerLiteral &) override;
+  llvm::Value* codegen(const BinaryExpression&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
   llvm::Value *codegen(const ProcedureStatement &) override;
+  llvm::Value *codegen(const IfStatement&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation

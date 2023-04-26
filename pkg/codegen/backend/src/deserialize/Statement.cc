@@ -16,6 +16,8 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
     return std::make_unique<AssignStmt>(stmt.assignstmt());
   case Pasc::Statement::kProcStmt:
     return std::make_unique<ProcedureStatement>(stmt.procstmt());
+  case Pasc::Statement::kIfStmt:
+    return std::make_unique<IfStatement>(stmt.ifstmt());
   default:
     throw DeserializeProtobufException("invalid case");
   }
@@ -45,3 +47,14 @@ ProcedureStatement::ProcedureStatement(const Pasc::ProcedureStmt &stmt) {
 llvm::Value *ProcedureStatement::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+IfStatement::IfStatement(const Pasc::IfStmt &is) {
+  cond = deserializeExpr(is.cond());
+  true_path = deserializeStmt(is.truepath());
+  if (is.has_elsepath())
+    else_path = deserializeStmt(is.elsepath());
+  else
+    else_path = nullptr;
+}
+
+llvm::Value *IfStatement::codegen(IRVisitor &v) { return v.codegen(*this); }

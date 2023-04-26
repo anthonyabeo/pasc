@@ -30,4 +30,13 @@ struct ProcedureStatement : public Statement {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+struct IfStatement : public Statement {
+  std::unique_ptr<Expr> cond;
+  std::unique_ptr<Statement> true_path;
+  std::unique_ptr<Statement> else_path;
+
+  explicit IfStatement(const Pasc::IfStmt&);
+  llvm::Value *codegen(IRVisitor&) override;
+};
+
 #endif // STATEMENT_H

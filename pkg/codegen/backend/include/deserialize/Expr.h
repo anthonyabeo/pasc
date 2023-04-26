@@ -31,4 +31,14 @@ struct UIntegerLiteral : public Expr {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+
+struct BinaryExpression : public Expr {
+  Pasc::TokenKind op;
+  std::unique_ptr<Expr> left;
+  std::unique_ptr<Expr> right;
+
+  explicit BinaryExpression(const Pasc::Expression&);
+  llvm::Value* codegen(IRVisitor&) override;
+};
+
 #endif // EXPR_H

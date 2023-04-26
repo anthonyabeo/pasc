@@ -15,7 +15,7 @@ IRCodegenVisitor::IRCodegenVisitor(std::string& moduleName) {
   module = std::make_unique<llvm::Module>(moduleName, *ctx);
   builder = std::make_unique<llvm::IRBuilder<>>(*ctx);
 
-  symTable = std::make_unique<LLVMSymbolTable>("main", nullptr);
+  symTable = std::make_unique<LLVMSymbolTable>("main");
 }
 
 void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
