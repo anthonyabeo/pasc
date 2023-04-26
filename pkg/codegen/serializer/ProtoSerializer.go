@@ -3,13 +3,13 @@ package serializer
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strconv"
-
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 	"google.golang.org/protobuf/proto"
+	"os"
+	"strconv"
 )
 
 // AstToProtoAst transforms the Go AST into a form that can be
@@ -95,6 +95,23 @@ func translateStmt(stmt ast.Statement) *Statement {
 				},
 			},
 		}
+	case *ast.IfStatement:
+		ifStatement := &IfStmt{
+			Cond:     translateExpr(stmt.BoolExpr),
+			TruePath: translateStmt(stmt.TruePath),
+		}
+
+		if stmt.ElsePath != nil {
+			ifStatement.ElsePath = translateStmt(stmt.ElsePath)
+		}
+
+		s = &Statement{
+			Kind: TokenKind_IF,
+			Stmt: &Statement_IfStmt{
+				IfStmt: ifStatement,
+			},
+		}
+
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
@@ -122,6 +139,27 @@ func translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Uint{
 				Uint: &UIntLiteral{
 					Value: int32(v),
+				},
+			},
+		}
+	case *ast.BinaryExpression:
+		var kind TokenKind
+
+		switch expr.TokenKind() {
+		case token.LessThan:
+			kind = TokenKind_LESS
+		case token.GreaterThan:
+			kind = TokenKind_GREAT
+		default:
+			panic(fmt.Sprintf("Unimplemented %v", expr.TokenKind()))
+		}
+
+		e = &Expression{
+			Kind: kind,
+			Expr: &Expression_BinExpr{
+				BinExpr: &BinaryExpr{
+					Left:  translateExpr(expr.Left),
+					Right: translateExpr(expr.Right),
 				},
 			},
 		}
