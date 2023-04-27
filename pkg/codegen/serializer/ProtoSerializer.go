@@ -179,6 +179,21 @@ func translateType(typ types.Type) *Type {
 			Tk:   TypeKind_INTEGER,
 			Type: &Type_Int{Int: &Integer{Name: typ.GetName()}},
 		}
+	case *base.Real:
+		t = &Type{
+			Tk:   TypeKind_REAL,
+			Type: &Type_Real{Real: &Real{Name: typ.GetName()}},
+		}
+	case *base.Boolean:
+		t = &Type{
+			Tk:   TypeKind_BOOLEAN,
+			Type: &Type_Bool{Bool: &Boolean{Name: typ.GetName()}},
+		}
+	case *base.Char:
+		t = &Type{
+			Tk:   TypeKind_CHAR,
+			Type: &Type_Char{Char: &Char{Name: typ.GetName()}},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", typ))
 	}
