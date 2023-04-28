@@ -9,8 +9,8 @@ type Const struct {
 	Type types.Type
 }
 
-// NewConstSymbol creates and returns a new constant symbol
-func NewConstSymbol(name string, kind Kind, typ types.Type) *Const {
+// NewConst creates and returns a new constant symbol
+func NewConst(name string, kind Kind, typ types.Type) *Const {
 	return &Const{Name: name, Kind: kind, Type: typ}
 }
 
@@ -24,7 +24,7 @@ func (c *Const) GetName() string {
 	return c.Name
 }
 
-// GetType ...
+// GetType returns the type of this symbol
 func (c *Const) GetType() types.Type {
 	return c.Type
 }

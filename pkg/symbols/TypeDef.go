@@ -9,8 +9,8 @@ type TypeDef struct {
 	Type types.Type
 }
 
-// NewTypeDefSymbol ...
-func NewTypeDefSymbol(name string, kind Kind, typ types.Type) *TypeDef {
+// NewTypeDef returns a new type definition symbol
+func NewTypeDef(name string, kind Kind, typ types.Type) *TypeDef {
 	return &TypeDef{Name: name, Kind: kind, Type: typ}
 }
 

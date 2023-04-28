@@ -331,7 +331,7 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 		return nil, err
 	}
 
-	err = p.curScope.Define(symbols.NewTypeDefSymbol(typeDef.Name.Name, symbols.TYPE, typeDef.TypeDenoter))
+	err = p.curScope.Define(symbols.NewTypeDef(typeDef.Name.Name, symbols.TYPE, typeDef.TypeDenoter))
 	if err != nil {
 		return nil, err
 	}
@@ -391,7 +391,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 				}
 
 				for _, enum := range enumT.List {
-					err = p.curScope.Define(symbols.NewConstSymbol(enum.Name, symbols.CONST, enumT))
+					err = p.curScope.Define(symbols.NewConst(enum.Name, symbols.CONST, enumT))
 					if err != nil {
 						return nil, err
 					}
@@ -881,7 +881,7 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	}
 
 	err = p.curScope.Define(
-		symbols.NewConstSymbol(
+		symbols.NewConst(
 			constDef.Name.Name, symbols.CONST, p.getTypeOf(constDef.Value)),
 	)
 	if err != nil {
@@ -1088,7 +1088,7 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 
 	// define the function symbol and update the current symbol table to the new function scope
 	funcName := funcDecl.Heading.Name.Name
-	funcSymbol := symbols.NewFunctionSymbol(
+	funcSymbol := symbols.NewFunction(
 		funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
 	err = p.curScope.Define(funcSymbol)
 	if err != nil {
@@ -1110,7 +1110,7 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 			}
 
 			for _, name := range pm.Names {
-				err = p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+				err = p.curScope.Define(symbols.NewVariable(name.Name, symbols.VARIABLE, typ))
 				if err != nil {
 					return nil, err
 				}
@@ -1126,7 +1126,7 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 			}
 
 			for _, name := range pm.Names {
-				err = p.curScope.Define(symbols.NewVariableSymbol(name.Name, symbols.VARIABLE, typ))
+				err = p.curScope.Define(symbols.NewVariable(name.Name, symbols.VARIABLE, typ))
 				if err != nil {
 					return nil, err
 				}
@@ -1326,7 +1326,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	// add variables to symbol table
 	for _, n := range names {
 		err = p.curScope.Define(
-			symbols.NewVariableSymbol(n.Name, symbols.VARIABLE, varDecl.Type))
+			symbols.NewVariable(n.Name, symbols.VARIABLE, varDecl.Type))
 		if err != nil {
 			return nil, err
 		}

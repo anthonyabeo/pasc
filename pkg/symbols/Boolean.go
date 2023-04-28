@@ -9,8 +9,8 @@ type Boolean struct {
 	Type types.Type
 }
 
-// NewBooleanSymbol ...
-func NewBooleanSymbol(name string, kind Kind, typ types.Type) *Boolean {
+// NewBoolean creates and returns a new boolean-type symbol
+func NewBoolean(name string, kind Kind, typ types.Type) *Boolean {
 	return &Boolean{Name: name, Kind: kind, Type: typ}
 }
 
@@ -24,7 +24,7 @@ func (b *Boolean) GetName() string {
 	return b.Name
 }
 
-// GetType ...
+// GetType returns the type of this symbol
 func (b *Boolean) GetType() types.Type {
 	return b.Type
 }

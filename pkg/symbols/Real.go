@@ -9,8 +9,8 @@ type Real struct {
 	Type types.Type
 }
 
-// NewRealSymbol ...
-func NewRealSymbol(name string, kind Kind, typ types.Type) *Real {
+// NewReal creates and returns a new real-type symbol
+func NewReal(name string, kind Kind, typ types.Type) *Real {
 	return &Real{Name: name, Kind: kind, Type: typ}
 }
 
@@ -24,7 +24,7 @@ func (r *Real) GetName() string {
 	return r.Name
 }
 
-// GetType ...
+// GetType returns the type of this symbol
 func (r *Real) GetType() types.Type {
 	return r.Type
 }

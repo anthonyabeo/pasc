@@ -9,8 +9,8 @@ type Variable struct {
 	Type types.Type
 }
 
-// NewVariableSymbol ...
-func NewVariableSymbol(name string, kind Kind, typ types.Type) *Variable {
+// NewVariable returns a new variable symbol type
+func NewVariable(name string, kind Kind, typ types.Type) *Variable {
 	return &Variable{Name: name, Kind: kind, Type: typ}
 }
 
@@ -24,7 +24,7 @@ func (v *Variable) GetName() string {
 	return v.Name
 }
 
-// GetType ...
+// GetType returns the type of this symbol
 func (v *Variable) GetType() types.Type {
 	return v.Type
 }

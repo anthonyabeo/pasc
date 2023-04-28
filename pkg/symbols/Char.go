@@ -9,8 +9,8 @@ type Char struct {
 	Type types.Type
 }
 
-// NewCharSymbol ...
-func NewCharSymbol(name string, kind Kind, typ types.Type) *Char {
+// NewChar creates and returns a new char-type symbol
+func NewChar(name string, kind Kind, typ types.Type) *Char {
 	return &Char{Name: name, Kind: kind, Type: typ}
 }
 
@@ -24,7 +24,7 @@ func (c *Char) GetName() string {
 	return c.Name
 }
 
-// GetType ...
+// GetType returns the type of this symbol
 func (c *Char) GetType() types.Type {
 	return c.Type
 }

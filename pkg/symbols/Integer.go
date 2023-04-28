@@ -9,8 +9,8 @@ type Integer struct {
 	Type types.Type
 }
 
-// NewIntegerSymbol ...
-func NewIntegerSymbol(name string, kind Kind, typ types.Type) *Integer {
+// NewInteger creates and returns a new integer-type symbol
+func NewInteger(name string, kind Kind, typ types.Type) *Integer {
 	return &Integer{Name: name, Kind: kind, Type: typ}
 }
 
@@ -24,7 +24,7 @@ func (i *Integer) GetName() string {
 	return i.Name
 }
 
-// GetType ...
+// GetType returns the type of this symbol
 func (i *Integer) GetType() types.Type {
 	return i.Type
 }
