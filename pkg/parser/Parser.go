@@ -238,6 +238,11 @@ func (p *Parser) labelDeclarationPart() (*ast.LabelDefinition, error) {
 	}
 	labelDefinition.Labels = append(labelDefinition.Labels, label)
 
+	err := p.curScope.Define(symbols.NewLabel(label.Value, symbols.LABEL, nil))
+	if err != nil {
+		return nil, err
+	}
+
 	for p.lAheadKind(1) == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
@@ -248,6 +253,11 @@ func (p *Parser) labelDeclarationPart() (*ast.LabelDefinition, error) {
 			return nil, err
 		}
 		labelDefinition.Labels = append(labelDefinition.Labels, label)
+
+		err := p.curScope.Define(symbols.NewLabel(label.Value, symbols.LABEL, nil))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if err := p.match(token.SemiColon); err != nil {
