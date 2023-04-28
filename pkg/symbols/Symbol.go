@@ -11,6 +11,7 @@ const (
 	PROCEDURE
 	TYPE
 	CONST
+	LABEL
 )
 
 // Symbol denotes a generic symbol
