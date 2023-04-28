@@ -390,7 +390,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 		k : 0..9;
 		p, q, r : Boolean;
 		operator : (plus, minus, times);
-		a : array [0..63] of real;
+		arr : array [0..63] of real;
 		date : record
 			month : 1..12;
 			year : integer
@@ -423,7 +423,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 		{"k"},
 		{"p", "q", "r"},
 		{"operator"},
-		{"a"},
+		{"arr"},
 		{"date"},
 	}
 	if !testVarDeclaration(

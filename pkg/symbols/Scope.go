@@ -1,12 +1,15 @@
 package symbols
 
-import "github.com/anthonyabeo/pasc/pkg/types/base"
+import (
+	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/types/base"
+)
 
 // Scope denotes a generic scope. Any entity that has a scope implements this interface
 type Scope interface {
 	GetScopeName() string
 	GetEnclosingScope() Scope
-	Define(Symbol)
+	Define(Symbol) error
 	Resolve(name string) Symbol
 }
 
@@ -37,8 +40,14 @@ func (l *LocalScope) GetEnclosingScope() Scope {
 }
 
 // Define insert a new symbol into the current scope
-func (l *LocalScope) Define(sym Symbol) {
+func (l *LocalScope) Define(sym Symbol) error {
+	if _, exists := l.Symbols[sym.GetName()]; exists {
+		return fmt.Errorf("symbol %v already defined", sym.GetName())
+	}
+
 	l.Symbols[sym.GetName()] = sym
+
+	return nil
 }
 
 // Resolve retrieve the symbol associated with 'name' argument.
@@ -94,8 +103,15 @@ func (g *GlobalScope) GetEnclosingScope() Scope {
 }
 
 // Define insert a new symbol into the current scope
-func (g *GlobalScope) Define(sym Symbol) {
+func (g *GlobalScope) Define(sym Symbol) error {
+	if val, exists := g.Symbols[sym.GetName()]; exists {
+		return fmt.Errorf(
+			"symbol '%v' already defined as type '%v'", sym.GetName(), val.GetType().GetName())
+	}
+
 	g.Symbols[sym.GetName()] = sym
+
+	return nil
 }
 
 // Resolve retrieve the symbol associated with 'name' argument.
