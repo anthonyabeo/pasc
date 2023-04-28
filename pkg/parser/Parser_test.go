@@ -1296,8 +1296,6 @@ func testRepeatStatement(t *testing.T, stmt ast.Statement) bool {
 func TestParseTypeDefinitionPart(t *testing.T) {
 	input := `
 	program HelloWorld;
-	var 
-		a, b, sum : integer;
 
 	type
 		count = integer;
@@ -1328,6 +1326,9 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 				(mother, programmer : Boolean)
 		end;
 
+	var 
+		a, b, sum : integer;
+
 	begin
 		writeln('Hello, world!')
 	end.
@@ -1351,10 +1352,11 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 func TestParsingIndexedVariables(t *testing.T) {
 	input := `
 	program HelloWorld;
-	var
-		a, b, sum : integer;
 	type
 		punchedcard = array [1..80] of char;
+
+	var
+		a, b, sum : integer;
 
 	begin
 		punchedcard[0] := 1;
@@ -1383,14 +1385,15 @@ func TestParsingIndexedVariables(t *testing.T) {
 func TestParseExpressions(t *testing.T) {
 	input := `
 	program HelloWorld;
-	var
-		a, b, c, i, j, k, red, green : integer;
-		x, y, z : real;
-		p, q, r : Boolean;
 	
 	type
 		hue1 = set of integer;
 		hue2 = set of integer;
+
+	var
+		a, b, c, i, j, k, red, green : integer;
+		x, y, z : real;
+		p, q, r : Boolean;
 
 	function 
 		sin(n: integer): real;
@@ -1444,8 +1447,6 @@ func TestParseExpressions(t *testing.T) {
 func TestParseFieldDesignator(t *testing.T) {
 	input := `
 	program HelloWorld;
-	var
-		a, b, sum : integer;
 
 	type
 		sex = (male, female);
@@ -1459,6 +1460,9 @@ func TestParseFieldDesignator(t *testing.T) {
 			female :
 				(mother, programmer : Boolean)
 		end;
+
+	var
+		a, b, sum : integer;
 
 	begin
 		person.firstname := 1;

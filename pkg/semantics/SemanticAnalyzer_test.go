@@ -203,11 +203,12 @@ func TestTypeCheckWhileStatement(t *testing.T) {
 func TestTypeCheckForStatement(t *testing.T) {
 	input := `
 	program HelloWorld;
-	var
-		i, max : integer;
 
 	type
 		arr = array [integer] of integer;
+
+	var
+		i, max : integer;
 
 	begin
 		for i := 2 to 63 do

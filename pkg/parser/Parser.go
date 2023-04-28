@@ -175,39 +175,44 @@ func (p *Parser) block() (*ast.Block, error) {
 
 	block := &ast.Block{}
 
-	for p.isBlockComponent() {
-		switch p.lAheadKind(1) {
-		case token.Label:
-			labelDefinition, err = p.labelDefinitionPart()
-			if err != nil {
-				return nil, err
-			}
-		case token.Type:
-			typeDefinition, err = p.typeDefinitionPart()
-			if err != nil {
-				return nil, err
-			}
-		case token.Const:
-			constDefinition, err = p.constDefinitionPart()
-			if err != nil {
-				return nil, err
-			}
-		case token.Var:
-			varDecl, err = p.variableDeclarationPart()
-			if err != nil {
-				return nil, err
-			}
-		case token.Procedure, token.Function:
-			callables, err = p.procedureAndFunctionDeclarationPart()
-			if err != nil {
-				return nil, err
-			}
-		case token.Begin:
-			compoundStmt, err = p.compoundStatement()
-			if err != nil {
-				return nil, err
-			}
+	if p.lAheadKind(1) == token.Label {
+		labelDefinition, err = p.labelDeclarationPart()
+		if err != nil {
+			return nil, err
 		}
+	}
+
+	if p.lAheadKind(1) == token.Const {
+		constDefinition, err = p.constDefinitionPart()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if p.lAheadKind(1) == token.Type {
+		typeDefinition, err = p.typeDefinitionPart()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if p.lAheadKind(1) == token.Var {
+		varDecl, err = p.variableDeclarationPart()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	for p.lAheadKind(1) == token.Function || p.lAheadKind(1) == token.Procedure {
+		callables, err = p.procedureAndFunctionDeclarationPart()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	compoundStmt, err = p.compoundStatement()
+	if err != nil {
+		return nil, err
 	}
 
 	block.Types = typeDefinition
@@ -220,7 +225,8 @@ func (p *Parser) block() (*ast.Block, error) {
 	return block, nil
 }
 
-func (p *Parser) labelDefinitionPart() (*ast.LabelDefinition, error) {
+// label-declaration-part = [ 'label' label { ',' label } ';' ] .
+func (p *Parser) labelDeclarationPart() (*ast.LabelDefinition, error) {
 	labelDefinition := &ast.LabelDefinition{Token: p.lAheadToken(1)}
 	if err := p.match(token.Label); err != nil {
 		return nil, err
@@ -249,15 +255,6 @@ func (p *Parser) labelDefinitionPart() (*ast.LabelDefinition, error) {
 	}
 
 	return labelDefinition, nil
-}
-
-func (p *Parser) isBlockComponent() bool {
-	return p.lAheadKind(1) == token.Type ||
-		p.lAheadKind(1) == token.Var ||
-		p.lAheadKind(1) == token.Procedure ||
-		p.lAheadKind(1) == token.Function ||
-		p.lAheadKind(1) == token.Const ||
-		p.lAheadKind(1) == token.Begin
 }
 
 // type-definition-part = [ 'type' type-definition ';' { type-definition ';' } ] .
@@ -304,7 +301,13 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 		typeDef *ast.TypeDef
 	)
 
-	typeDef = &ast.TypeDef{Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}}
+	typeDef = &ast.TypeDef{
+		Name: &ast.Identifier{
+			Token: p.lAheadToken(1),
+			Name:  p.lAheadToken(1).Text,
+			Scope: p.curScope,
+		},
+	}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -318,8 +321,7 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 		return nil, err
 	}
 
-	p.curScope.Define(
-		symbols.NewTypeDefSymbol(typeDef.Name.Name, symbols.TYPE, typeDef.TypeDenoter))
+	p.curScope.Define(symbols.NewTypeDefSymbol(typeDef.Name.Name, symbols.TYPE, typeDef.TypeDenoter))
 
 	return typeDef, nil
 }
@@ -370,10 +372,16 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 					return nil, err
 				}
 			case token.LParen:
-				typ, err = p.enumType()
+				enumT, err := p.enumType()
 				if err != nil {
 					return nil, err
 				}
+
+				for _, enum := range enumT.List {
+					p.curScope.Define(symbols.NewConstSymbol(enum.Name, symbols.CONST, enumT))
+				}
+
+				typ = enumT
 			case token.Record:
 				typ, err = p.recordType()
 				if err != nil {
@@ -917,27 +925,25 @@ func (p *Parser) constant() (ast.Expression, error) {
 func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) {
 	var callables []ast.Statement
 
-	for p.lAheadKind(1) == token.Function || p.lAheadKind(1) == token.Procedure {
-		switch p.lAheadKind(1) {
-		case token.Function:
-			funcDecl, err := p.functionDeclaration()
-			if err != nil {
-				return nil, err
-			}
-
-			callables = append(callables, funcDecl)
-		case token.Procedure:
-			procedureDecl, err := p.procedureDeclaration()
-			if err != nil {
-				return nil, err
-			}
-
-			callables = append(callables, procedureDecl)
-		default:
-			return nil, fmt.Errorf(
-				"parse Error: expected 'procedure' or 'function', got %v instead",
-				p.lAheadToken(1).Text)
+	switch p.lAheadKind(1) {
+	case token.Function:
+		funcDecl, err := p.functionDeclaration()
+		if err != nil {
+			return nil, err
 		}
+
+		callables = append(callables, funcDecl)
+	case token.Procedure:
+		procedureDecl, err := p.procedureDeclaration()
+		if err != nil {
+			return nil, err
+		}
+
+		callables = append(callables, procedureDecl)
+	default:
+		return nil, fmt.Errorf(
+			"parse Error: expected 'procedure' or 'function', got %v instead",
+			p.lAheadToken(1).Text)
 	}
 
 	if err := p.match(token.SemiColon); err != nil {
