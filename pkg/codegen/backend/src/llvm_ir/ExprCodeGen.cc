@@ -9,9 +9,10 @@ llvm::Value *IRCodegenVisitor::codegen(const IdentifierIR &id) {
   return alloca;
 }
 
-llvm::Value *IRCodegenVisitor::codegen(const UIntegerLiteral &uilit) {
-  return llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*ctx),
-                                      uilit.value);
+llvm::Value *IRCodegenVisitor::codegen(const UIntegerLiteral &lit) {
+  return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*ctx),
+                                lit.value,
+                                false);
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
@@ -19,7 +20,7 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
   auto *R = binExpr.right->codegen(*this);
   
   if(!L || !R)
-    return nullptr;
+    throw IRCodegenException("at least one operand of null");
 
   switch (binExpr.op) {
   case Pasc::TokenKind::LESS:

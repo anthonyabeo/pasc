@@ -67,7 +67,7 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
   auto *TheFunction = builder->GetInsertBlock()->getParent();
 
   llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*ctx, "then", TheFunction);
-  llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*ctx, "ifcont");
+  llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*ctx, "cont");
   llvm::BasicBlock *ElseBB = nullptr;
   if(is.else_path) {
     ElseBB = llvm::BasicBlock::Create(*ctx, "else");
