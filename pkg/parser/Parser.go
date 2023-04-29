@@ -866,7 +866,10 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	var err error
 
 	constDef := &ast.ConstDef{
-		Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}}
+		Name: &ast.Identifier{Token: p.lAheadToken(1),
+			Name:  p.lAheadToken(1).Text,
+			Scope: p.curScope},
+	}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -880,10 +883,7 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 		return nil, err
 	}
 
-	err = p.curScope.Define(
-		symbols.NewConst(
-			constDef.Name.Name, symbols.CONST, p.getTypeOf(constDef.Value)),
-	)
+	err = p.curScope.Define(symbols.NewConst(constDef.Name.Name, symbols.CONST, p.getTypeOf(constDef.Value)))
 	if err != nil {
 		return nil, err
 	}
@@ -1088,10 +1088,8 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 
 	// define the function symbol and update the current symbol table to the new function scope
 	funcName := funcDecl.Heading.Name.Name
-	funcSymbol := symbols.NewFunction(
-		funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
-	err = p.curScope.Define(funcSymbol)
-	if err != nil {
+	funcSymbol := symbols.NewFunction(funcName, symbols.FUNCTION, symbols.NewLocalScope(funcName, p.curScope))
+	if err = p.curScope.Define(funcSymbol); err != nil {
 		return nil, err
 	}
 	funcDecl.Scope = p.curScope
@@ -1100,13 +1098,13 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	for _, param := range funcDecl.Heading.Parameters {
 		switch pm := param.(type) {
 		case *ast.ValueParam:
-			if paramBuiltinType := p.curScope.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
-				typ = paramBuiltinType
+			sym := p.curScope.Resolve(pm.Type.GetName())
+			if sym == nil {
+				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Type.GetName())
+			} else if sym.GetKind() != symbols.TYPE {
+				return nil, fmt.Errorf("'%v' is not a known type", pm.Type.GetName())
 			} else {
-				// typ = some user-defined type
-				// it must therefore be defined somewhere in the scope tree
-				// if not found, return error
-				// otherwise, typ = <<user-defined-type>>
+				typ = sym.GetType()
 			}
 
 			for _, name := range pm.Names {
@@ -1116,13 +1114,13 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 				}
 			}
 		case *ast.VariableParam:
-			if paramBuiltinType := p.curScope.Resolve(pm.Type.GetName()); paramBuiltinType != nil {
-				typ = paramBuiltinType
+			sym := p.curScope.Resolve(pm.Type.GetName())
+			if sym == nil {
+				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Type.GetName())
+			} else if sym.GetKind() != symbols.TYPE {
+				return nil, fmt.Errorf("'%v' is not a known type", pm.Type.GetName())
 			} else {
-				// typ = some user-defined type
-				// it must therefore be defined somewhere in the scope tree
-				// if not found, return error
-				// otherwise, typ = <<user-defined-type>>
+				typ = sym.GetType()
 			}
 
 			for _, name := range pm.Names {
