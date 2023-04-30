@@ -125,8 +125,16 @@ func translateExpr(expr ast.Expression) *Expression {
 	switch expr := expr.(type) {
 	case *ast.Identifier:
 		e = &Expression{
-			Kind: TokenKind_IDENTIFIER,
-			Expr: &Expression_Id{Id: &Identifier{Name: expr.Name}},
+			Kind: Expression_Ident,
+			Expr: &Expression_Id{
+				Id: &Identifier{
+					Kind: Identifier_EntireVar,
+					Value: &Identifier_Var{
+						Var: &Identifier_Variable{
+							Name: expr.Name},
+					},
+				},
+			},
 		}
 	case *ast.UIntegerLiteral:
 		v, err := strconv.Atoi(expr.Value)
@@ -135,7 +143,7 @@ func translateExpr(expr ast.Expression) *Expression {
 		}
 
 		e = &Expression{
-			Kind: TokenKind_UINTLIT,
+			Kind: Expression_UInt,
 			Expr: &Expression_Uint{
 				Uint: &UIntLiteral{
 					Value: int32(v),
@@ -143,21 +151,11 @@ func translateExpr(expr ast.Expression) *Expression {
 			},
 		}
 	case *ast.BinaryExpression:
-		var kind TokenKind
-
-		switch expr.TokenKind() {
-		case token.LessThan:
-			kind = TokenKind_LESS
-		case token.GreaterThan:
-			kind = TokenKind_GREAT
-		default:
-			panic(fmt.Sprintf("Unimplemented %v", expr.TokenKind()))
-		}
-
 		e = &Expression{
-			Kind: kind,
-			Expr: &Expression_BinExpr{
-				BinExpr: &BinaryExpr{
+			Kind: Expression_BinExpr,
+			Expr: &Expression_Be{
+				Be: &BinaryExpr{
+					Op:    translateOp(expr.Operator.Kind),
 					Left:  translateExpr(expr.Left),
 					Right: translateExpr(expr.Right),
 				},
@@ -199,6 +197,18 @@ func translateType(typ types.Type) *Type {
 	}
 
 	return t
+}
+
+func translateOp(op token.Kind) *Operator {
+	switch op {
+	case token.GreaterThan:
+		return &Operator{Op: Operator_Great}
+	case token.LessThan:
+		return &Operator{Op: Operator_Less}
+	default:
+		panic(fmt.Sprintf("Unimplemented %v", op))
+	}
+
 }
 
 // Serialize accepts `program`, an AST created from calling `serde.AstToProtoAst`,

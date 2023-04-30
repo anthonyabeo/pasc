@@ -65,22 +65,54 @@ message Statement {
 //////////////////////////////////
 //  EXPRESSIONS
 //////////////////////////////////
+message Identifier {
+    enum IDKind {
+        EntireVar = 0;
+        IdxVar = 1;
+        Field = 2;
+    }
+
+    message Variable {
+        string name = 1;
+    }
+
+    message IndexedVariable {
+
+    }
+
+    message FieldDesignator {
+
+    }
+    IDKind kind = 1;
+    oneof value {
+        Variable var = 2;
+        IndexedVariable iv = 3;
+        FieldDesignator fld = 4;
+    }
+}
+
 message Expression {
-    TokenKind kind = 1;
+    enum ExprKind {
+        UInt = 0;
+        Bool = 1;
+        Ident = 2;
+        BinExpr = 3;
+    }
+
+    ExprKind kind = 1;
     oneof expr {
         Identifier id = 2;
         UIntLiteral uint = 3;
-        BinaryExpr binExpr = 4;
+        BinaryExpr be = 4;
     }
 }
+
 message BinaryExpr {
    Expression left = 1;
    Expression right = 2;
+   Operator op = 3;
 }
 
-message Identifier {
-    string name = 1;
-}
 
 message UIntLiteral {
     int32 value = 1;
@@ -121,3 +153,25 @@ message Real {
 message Char {
     string name = 1;
 }
+
+//////////////////////////////////
+//  OPERATORS
+//////////////////////////////////
+message Operator {
+    enum OpKind {
+        Plus = 0;
+        Minus = 1;
+        Div = 2;
+        Sub = 3;
+        Mod = 4;
+        And = 5;
+        Or = 6;
+        In = 7;
+        Equal = 8;
+        Less = 9;
+        Great = 10;
+    }
+
+    OpKind op = 1;
+}
+
