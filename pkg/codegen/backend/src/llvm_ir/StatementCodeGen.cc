@@ -8,11 +8,8 @@
 llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
   auto variable = stmt.variable->codegen(*this);
   if (!variable) {
-    std::ostringstream buf;
-    buf << "attempt to assign to nonexistent LHS, ";
-    buf << stmt.variable->name;
-
-    throw IRCodegenException(buf.str());
+    throw IRCodegenException(
+      "attempt to assign to nonexistent LHS, " + stmt.variable->get_name());
   }
 
   auto val = stmt.value->codegen(*this);
@@ -33,7 +30,7 @@ llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
 /// @param stmt
 /// @return
 llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
-  if (stmt.name->name == "writeln") {
+  if (stmt.name->get_name() == "writeln") {
     std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
     auto printfFunc = module->getOrInsertFunction(
         "printf",
@@ -48,9 +45,7 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
     std::vector<llvm::Value *> argsV({str});
     for (auto& p : stmt.params) {
       auto val = p->codegen(*this);
-      auto load = builder->CreateLoad(val->getType(), val);
-
-      argsV.push_back(load);
+      argsV.push_back(val);
     }
 
     return builder->CreateCall(printfFunc, argsV, "call");

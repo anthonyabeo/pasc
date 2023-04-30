@@ -9,7 +9,8 @@
 
 class IRVisitor {
 public:
-  virtual llvm::Value *codegen(const IdentifierIR &) = 0;
+  virtual llvm::Value *codegen(const VariableID &) = 0;
+  virtual llvm::Value *codegen(const IdentifierExpr &) = 0;
   virtual llvm::Value *codegen(const UIntegerLiteral &) = 0;
   virtual llvm::Value *codegen(const BinaryExpression &) = 0;
 

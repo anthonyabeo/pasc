@@ -8,7 +8,7 @@ struct Block {
   std::vector<std::unique_ptr<VariableDeclaration>> VarDeclrs;
   std::vector<std::unique_ptr<Statement>> Stmts;
 
-  Block(const Pasc::Block &);
+  explicit Block(const Pasc::Block &);
 };
 
 #endif // BLOCK_H

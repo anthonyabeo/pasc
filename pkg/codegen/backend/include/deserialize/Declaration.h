@@ -9,10 +9,10 @@ struct Declaration {
 };
 
 struct VariableDeclaration : public Declaration {
-  std::unique_ptr<IdentifierIR> name;
+  std::unique_ptr<VariableID> name;
   std::unique_ptr<Type> type;
 
-  VariableDeclaration(const Pasc::VarDeclaration &);
+  explicit VariableDeclaration(const Pasc::VarDeclaration &);
 };
 
 #endif // DECLARATION_H

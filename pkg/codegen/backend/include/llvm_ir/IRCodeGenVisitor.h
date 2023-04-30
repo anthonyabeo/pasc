@@ -29,7 +29,8 @@ public:
   llvm::Type* getLLVMTypeOf(const Type &);
 
   // Expressions
-  llvm::Value *codegen(const IdentifierIR &) override;
+  llvm::Value *codegen(const VariableID&) override;
+  llvm::Value *codegen(const IdentifierExpr&) override;
   llvm::Value *codegen(const UIntegerLiteral &) override;
   llvm::Value* codegen(const BinaryExpression&) override;
 

@@ -8,6 +8,22 @@
 
 class IRVisitor;
 
+enum class Operator {
+  Plus,
+  Minus,
+  Div,
+  Sub,
+  Mod,
+  And,
+  Or,
+  In,
+  Equal,
+  Less,
+  Great
+};
+
+enum Operator deserializeOp(const Pasc::Operator&);
+
 struct Expr {
   virtual ~Expr() = default;
   virtual llvm::Value *codegen(IRVisitor &v) = 0;
@@ -16,12 +32,22 @@ struct Expr {
 std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &);
 
 /// @brief Identifier denotes a user-defined, non-keyword symbol
-struct IdentifierIR : public Expr {
+struct Identifier {
+  virtual ~Identifier()  = default;
+  virtual llvm::Value *codegen(IRVisitor &v) = 0;
+  virtual std::string get_name() = 0;
+};
+
+std::unique_ptr<Identifier> deserializeID(const Pasc::Identifier &id);
+
+struct VariableID : public Identifier {
   std::string name;
 
-  explicit IdentifierIR(const Pasc::Expression &);
-  llvm::Value *codegen(IRVisitor &) override;
+  explicit VariableID(const std::string&);
+  llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
+
 
 /// @brief UIntegerLiteral denoted an unsigned 32-bit integer literal value.
 struct UIntegerLiteral : public Expr {
@@ -33,12 +59,19 @@ struct UIntegerLiteral : public Expr {
 
 
 struct BinaryExpression : public Expr {
-  Pasc::TokenKind op;
+  enum Operator op;
   std::unique_ptr<Expr> left;
   std::unique_ptr<Expr> right;
 
-  explicit BinaryExpression(const Pasc::Expression&);
+  explicit BinaryExpression(const Pasc::BinaryExpr&);
   llvm::Value* codegen(IRVisitor&) override;
+};
+
+struct IdentifierExpr : public Expr {
+  std::unique_ptr<Identifier> identifier;
+
+  explicit IdentifierExpr(const Pasc::Identifier&);
+  llvm::Value *codegen(IRVisitor&) override;
 };
 
 #endif // EXPR_H

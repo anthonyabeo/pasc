@@ -19,14 +19,14 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
   case Pasc::Statement::kIfStmt:
     return std::make_unique<IfStatement>(stmt.ifstmt());
   default:
-    throw DeserializeProtobufException("invalid case");
+    throw DeserializeProtobufException("invalid statement kind");
   }
 }
 
 /// @brief
 /// @param stmt
 AssignStmt::AssignStmt(const Pasc::AssignStmt &stmt) {
-  variable = std::make_unique<IdentifierIR>(stmt.variable());
+  variable = deserializeID(stmt.variable().id());
   value = deserializeExpr(stmt.value());
 }
 
@@ -38,7 +38,7 @@ llvm::Value *AssignStmt::codegen(IRVisitor &v) { return v.codegen(*this); }
 /// @brief
 /// @param stmt
 ProcedureStatement::ProcedureStatement(const Pasc::ProcedureStmt &stmt) {
-  name = std::make_unique<IdentifierIR>(stmt.name());
+  name = deserializeID(stmt.name().id());
   for (size_t i = 0; i < stmt.args_size(); i++) {
     params.push_back(deserializeExpr(stmt.args(i)));
   }
