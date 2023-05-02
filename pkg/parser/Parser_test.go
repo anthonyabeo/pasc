@@ -234,8 +234,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	}
 
 	funcDecl := prog.Block.Callables[0].(*ast.FuncDeclaration)
-	if !testAssignmentStatment(
-		t, funcDecl.Block.Stats[0], "foo", &ast.Identifier{Token: token.NewToken(token.Identifier, "2"), Name: "2"}) {
+	if !testReturnStatement(t, funcDecl.Block.Stats[0], "2") {
 		return
 	}
 }
@@ -790,6 +789,31 @@ func testWhileStatement(t *testing.T, stmt ast.Statement) bool {
 	return true
 }
 
+func testReturnStatement(t *testing.T, stmt ast.Statement, expr string) bool {
+	retStmt, ok := stmt.(*ast.ReturnStatement)
+	if !ok {
+		t.Errorf("expected statement of type, ast.ReturnStatement; found %v", retStmt)
+		return false
+	}
+
+	if retStmt.TokenKind() != token.Return {
+		t.Errorf("expected token to be of kind %v, got %v", token.Return, retStmt.TokenKind())
+		return false
+	}
+
+	if retStmt.TokenLiteral() != "return" {
+		t.Errorf("expected token literal to be 'return', got %v", retStmt.TokenLiteral())
+		return false
+	}
+
+	if retStmt.Expr.String() != expr {
+		t.Errorf("expected initial value to be %s, got %v instead", expr, retStmt.Expr.String())
+		return false
+	}
+
+	return true
+}
+
 func testForStatement(
 	t *testing.T,
 	stmt ast.Statement,
@@ -1032,8 +1056,13 @@ func testBlock(t *testing.T, blk *ast.Block, numStmts, numVarDefs, numCallables,
 		return false
 	}
 
-	if len(blk.Callables) != numCallables {
+	if blk.Callables != nil && len(blk.Callables) != numCallables {
 		t.Errorf("expected %v callable(s) in block; found %v instead", numCallables, len(blk.Callables))
+		return false
+	}
+
+	if blk.Types != nil && len(blk.Types.Types) != numTypeDefs {
+		t.Errorf("expected %v type definition(s) in block; found %v instead", numTypeDefs, len(blk.Types.Types))
 		return false
 	}
 
@@ -1344,7 +1373,7 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 1) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 14) {
 		return
 	}
 }
@@ -1439,7 +1468,7 @@ func TestParseExpressions(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 20, 3, 1, 1) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 20, 3, 1, 2) {
 		return
 	}
 }

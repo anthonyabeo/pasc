@@ -124,6 +124,8 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 		}
 
 		node.EvalType = t
+	case *ast.ReturnStatement:
+		v.Visit(node.Expr)
 	default:
 		panic(fmt.Sprintf("Visit: unexpected expression type %T", node))
 	}

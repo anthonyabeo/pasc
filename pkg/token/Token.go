@@ -80,6 +80,7 @@ const (
 	LSqBrace
 	RSqBrace
 	Caret
+	Return
 )
 
 // Token defines a type of token
@@ -136,6 +137,7 @@ var tokenKindStrings = [...]string{
 	Label:     "label",
 	True:      "true",
 	False:     "false",
+	Return:    "return",
 
 	Identifier:          "identifier",
 	SemiColon:           ";",

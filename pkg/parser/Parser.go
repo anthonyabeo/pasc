@@ -1794,6 +1794,10 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 		} else {
 			stmt, err = p.assignmentStatement()
 		}
+
+		if err != nil {
+			return nil, err
+		}
 	case token.Goto:
 		gotoStmt := &ast.GotoStatement{Token: p.lAheadToken(1)}
 		if err = p.match(token.Goto); err != nil {
@@ -1844,11 +1848,30 @@ func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
 }
 
 // assignment-statement = ( variable-access | function-identifier ) ':=' expression .
-func (p *Parser) assignmentStatement() (*ast.AssignStatement, error) {
+func (p *Parser) assignmentStatement() (ast.Statement, error) {
 	var (
 		err error
 		lhs ast.Expression
 	)
+
+	sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+	if sym != nil && sym.GetKind() == symbols.FUNCTION {
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+
+		ret := &ast.ReturnStatement{Token: token.Token{Kind: token.Return, Text: "return"}}
+		if err = p.match(token.Initialize); err != nil {
+			return nil, err
+		}
+
+		ret.Expr, err = p.expression()
+		if err != nil {
+			return nil, err
+		}
+
+		return ret, nil
+	}
 
 	lhs, err = p.variableAccess()
 	if err != nil {
