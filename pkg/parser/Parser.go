@@ -1818,31 +1818,49 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 }
 
 // procedure-statement = procedure-identifier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
-func (p *Parser) procedureStatement() (*ast.ProcedureStatement, error) {
+func (p *Parser) procedureStatement() (ast.ProcedureStatement, error) {
 	// TODO: complete implementation
 
-	var err error
+	var (
+		err error
+		ps  ast.ProcedureStatement
+	)
 
-	ps := ast.NewProcedureStatement(&ast.Identifier{
-		Token: p.lAheadToken(1),
-		Name:  p.lAheadToken(1).Text,
-		Scope: p.curScope})
-	if err = p.match(token.Identifier); err != nil {
-		return nil, err
+	switch p.lAheadToken(1).Text {
+	case "writeln":
+		wln := &ast.Writeln{Name: p.lAheadToken(1).Text}
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+
+		wln.File, wln.ParamList, err = p.writelnParameterList()
+		if err != nil {
+			return nil, err
+		}
+
+		ps = wln
+	case "write":
+	case "readln":
+	case "read":
+	default:
+		stmt := &ast.ProcedureStmt{
+			Name: &ast.Identifier{
+				Token: p.lAheadToken(1),
+				Name:  p.lAheadToken(1).Text,
+				Scope: p.curScope,
+			},
+		}
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+
+		stmt.ParamList, err = p.actualParameterList()
+		if err != nil {
+			return nil, err
+		}
+
+		ps = stmt
 	}
-
-	actualParamList, err := p.actualParameterList()
-	if err != nil {
-		return nil, err
-	}
-
-	writelnParamList, err := p.writelnParameterList()
-	if err != nil {
-		return nil, err
-	}
-
-	ps.ParamList = append(ps.ParamList, actualParamList...)
-	ps.ParamList = append(ps.ParamList, writelnParamList...)
 
 	return ps, nil
 }
@@ -2103,16 +2121,6 @@ func (p *Parser) memberDesignator() (ast.Expression, error) {
 }
 
 // variable-access := entire-variable | component-variable | identified-variable | buffer-variable .
-
-// entire-variable = variable-identifier .
-// variable-identifier = identifier .
-
-// component-variable = indexed-variable | field-designator .
-// indexed-variable = array-variable '[' index-expression, { ',' index-expression } ']' .
-// array-variable = variable-access .
-
-// field-designator = record-variable '.' field-specifier | field-designator-identifier .
-// record-variable = variable-access .
 func (p *Parser) variableAccess() (ast.Expression, error) {
 	var (
 		err  error
@@ -2386,43 +2394,57 @@ func (p *Parser) actualParameter() (ast.Expression, error) {
 }
 
 // writeln-parameter-list = [ '(' ( file-variable | write-parameter ) { ',' write-parameter } ')' ] .
-func (p *Parser) writelnParameterList() ([]ast.Expression, error) {
+func (p *Parser) writelnParameterList() (*ast.Identifier, []ast.Expression, error) {
 	var (
 		err              error
+		file             *ast.Identifier
 		writeParam       *ast.WriteParameter
 		writelnParamList []ast.Expression
 	)
 
 	if p.lAheadKind(1) == token.LParen {
 		if err = p.match(token.LParen); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
-		// TODO: implement file-variable alternative
-		writeParam, err = p.writeParameter()
-		if err != nil {
-			return nil, err
+		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+		if sym != nil && sym.GetType().GetName() == "file" {
+			file = &ast.Identifier{
+				Token: token.Token{Kind: token.File, Text: "file"},
+				Name:  sym.GetName(),
+				Scope: p.curScope,
+			}
+		} else {
+			writeParam, err = p.writeParameter()
+			if err != nil {
+				return nil, nil, err
+			}
+			writelnParamList = append(writelnParamList, writeParam)
 		}
-		writelnParamList = append(writelnParamList, writeParam)
 
 		for p.lAheadKind(1) == token.Comma {
 			if err = p.consume(); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			writeParam, err = p.writeParameter()
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			writelnParamList = append(writelnParamList, writeParam)
 		}
 
 		if err = p.match(token.RParen); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
-	return writelnParamList, nil
+	file = &ast.Identifier{
+		Token: token.Token{Kind: token.Output, Text: "output"},
+		Name:  "output",
+	}
+
+	return file, writelnParamList, nil
 }
 
 // write-parameter := expression [ ':' expression [ ':' expression ] ] .

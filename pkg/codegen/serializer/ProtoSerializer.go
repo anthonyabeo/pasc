@@ -71,32 +71,58 @@ func translateStmt(stmt ast.Statement) *Statement {
 	switch stmt := stmt.(type) {
 	case *ast.AssignStatement:
 		s = &Statement{
-			Kind: TokenKind_ASSIGN,
+			Kind: Statement_assign,
 			Stmt: &Statement_AssignStmt{
-				AssignStmt: &AssignStmt{
+				AssignStmt: &AssignStatement{
 					Variable: translateExpr(stmt.Variable),
 					Value:    translateExpr(stmt.Value),
 				},
 			},
 		}
 
-	case *ast.ProcedureStatement:
+	case *ast.ProcedureStmt:
 		var args []*Expression
 		for _, e := range stmt.ParamList {
 			args = append(args, translateExpr(e))
 		}
 
 		s = &Statement{
-			Kind: TokenKind_PROCEDURE,
+			Kind: Statement_procedure,
 			Stmt: &Statement_ProcStmt{
-				ProcStmt: &ProcedureStmt{
-					Name: translateExpr(stmt.ProcedureID),
-					Args: args,
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_procStmt,
+					Stmt: &ProcedureStatement_Ps{
+						Ps: &ProcedureStatement_ProcStmt{
+							Name:   translateExpr(stmt.Name),
+							Params: args,
+						},
+					},
+				},
+			},
+		}
+	case *ast.Writeln:
+		var args []*Expression
+		for _, e := range stmt.ParamList {
+			args = append(args, translateExpr(e))
+		}
+
+		s = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_wln,
+					Stmt: &ProcedureStatement_WrtLn{
+						WrtLn: &ProcedureStatement_WriteLn{
+							Name:   stmt.Name,
+							Params: args,
+							File:   translateExpr(stmt.File),
+						},
+					},
 				},
 			},
 		}
 	case *ast.IfStatement:
-		ifStatement := &IfStmt{
+		ifStatement := &IfStatement{
 			Cond:     translateExpr(stmt.BoolExpr),
 			TruePath: translateStmt(stmt.TruePath),
 		}
@@ -106,7 +132,7 @@ func translateStmt(stmt ast.Statement) *Statement {
 		}
 
 		s = &Statement{
-			Kind: TokenKind_IF,
+			Kind: Statement_if,
 			Stmt: &Statement_IfStmt{
 				IfStmt: ifStatement,
 			},
@@ -130,8 +156,7 @@ func translateExpr(expr ast.Expression) *Expression {
 				Id: &Identifier{
 					Kind: Identifier_EntireVar,
 					Value: &Identifier_Var{
-						Var: &Identifier_Variable{
-							Name: expr.Name},
+						Var: &Identifier_Variable{Name: expr.Name},
 					},
 				},
 			},
@@ -146,7 +171,7 @@ func translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_UInt,
 			Expr: &Expression_Uint{
 				Uint: &UIntLiteral{
-					Value: int32(v),
+					Value: uint32(v),
 				},
 			},
 		}
@@ -160,6 +185,20 @@ func translateExpr(expr ast.Expression) *Expression {
 					Right: translateExpr(expr.Right),
 				},
 			},
+		}
+	case *ast.WriteParameter:
+		wp := &WriteParameter{E: translateExpr(expr.E)}
+		if expr.TotalWidth != nil {
+			wp.TotalWidth = translateExpr(expr.TotalWidth)
+		}
+
+		if expr.FracDigits != nil {
+			wp.FracDigits = translateExpr(expr.FracDigits)
+		}
+
+		e = &Expression{
+			Kind: Expression_WriteParam,
+			Expr: &Expression_Wp{Wp: wp},
 		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", expr))

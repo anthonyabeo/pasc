@@ -37,28 +37,76 @@ message VarDeclaration {
 //////////////////////////////////
 //  STATEMENTS
 //////////////////////////////////
-message AssignStmt {
+message ProcedureStatement {
+    enum PSKind {
+        wln = 0;
+        write = 1;
+        read = 2;
+        readLn = 3;
+        procStmt = 4;
+    }
+
+    message WriteLn {
+        string name = 1;
+        Expression file = 2;
+        repeated Expression params = 3;
+    }
+
+    message Write {
+
+    }
+
+    message Read {
+
+    }
+
+    message ReadLn {
+
+    }
+
+    message ProcStmt {
+        Expression name = 1;
+        repeated Expression params = 2;
+    }
+
+    PSKind kind = 1;
+    oneof stmt {
+        Write wrt = 2;
+        WriteLn wrtLn = 3;
+        Read rd = 4;
+        ReadLn rdLn = 5;
+        ProcStmt ps = 6;
+    }
+}
+
+message AssignStatement {
     Expression variable = 1;
     Expression value = 2;
 }
 
-message ProcedureStmt {
-    Expression name = 1;
-    repeated Expression args = 2;
-}
+//message ProcedureStmt {
+//    Expression name = 1;
+//    repeated Expression args = 2;
+//}
 
-message IfStmt {
+message IfStatement {
     Expression cond = 1;
     Statement truePath = 2;
     Statement elsePath = 3;
 }
 
 message Statement {
-    TokenKind kind = 1;
+    enum StmtKind {
+        if = 0;
+        assign = 1;
+        procedure = 2;
+    }
+
+    StmtKind kind = 1;
     oneof stmt {
-        AssignStmt assignStmt = 2;
-        ProcedureStmt procStmt = 3;
-        IfStmt ifStmt = 4;
+        AssignStatement assignStmt = 2;
+        ProcedureStatement procStmt = 3;
+        IfStatement ifStmt = 4;
     }
 }
 
@@ -97,6 +145,7 @@ message Expression {
         Bool = 1;
         Ident = 2;
         BinExpr = 3;
+        WriteParam = 4;
     }
 
     ExprKind kind = 1;
@@ -104,7 +153,14 @@ message Expression {
         Identifier id = 2;
         UIntLiteral uint = 3;
         BinaryExpr be = 4;
+        WriteParameter wp = 5;
     }
+}
+
+message WriteParameter {
+    Expression e = 1;
+    Expression totalWidth = 2;
+    Expression fracDigits = 3;
 }
 
 message BinaryExpr {
@@ -115,7 +171,7 @@ message BinaryExpr {
 
 
 message UIntLiteral {
-    int32 value = 1;
+    uint32 value = 1;
 }
 
 //////////////////////////////////

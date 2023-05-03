@@ -81,6 +81,8 @@ const (
 	RSqBrace
 	Caret
 	Return
+	Input
+	Output
 )
 
 // Token defines a type of token
@@ -138,6 +140,8 @@ var tokenKindStrings = [...]string{
 	True:      "true",
 	False:     "false",
 	Return:    "return",
+	Input:     "input",
+	Output:    "output",
 
 	Identifier:          "identifier",
 	SemiColon:           ";",

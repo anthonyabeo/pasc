@@ -2,7 +2,6 @@ package semantics
 
 import (
 	"fmt"
-
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -17,7 +16,8 @@ func (v *StaticTypeCheckVisitor) Visit(node ast.Node) {
 
 	switch node := node.(type) {
 	case *ast.FuncDeclaration:
-	case *ast.ProcedureStatement:
+	case *ast.ProcedureStmt:
+	case *ast.Writeln:
 	case *ast.AssignStatement:
 		if !areAssignmentCompatible(node.Variable.Attr("type").(types.Type), node.Value.Attr("type").(types.Type)) {
 			err = fmt.Errorf(

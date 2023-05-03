@@ -2,7 +2,6 @@ package ast
 
 import (
 	"fmt"
-
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 

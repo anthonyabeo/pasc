@@ -2,7 +2,6 @@ package semantics
 
 import (
 	"fmt"
-
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -23,9 +22,22 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 	switch node := node.(type) {
 	case *ast.StringLiteral:
 		node.EvalType = &base.String{Name: "string"}
-	case *ast.ProcedureStatement:
+	case *ast.ProcedureStmt:
 		for _, param := range node.ParamList {
 			v.Visit(param)
+		}
+	case *ast.Writeln:
+		for _, param := range node.ParamList {
+			v.Visit(param)
+		}
+	case *ast.WriteParameter:
+		v.Visit(node.E)
+		if node.TotalWidth != nil {
+			v.Visit(node.TotalWidth)
+		}
+
+		if node.FracDigits != nil {
+			v.Visit(node.FracDigits)
 		}
 	case *ast.AssignStatement:
 		v.Visit(node.Variable)
