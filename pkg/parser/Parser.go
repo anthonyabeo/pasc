@@ -1063,7 +1063,7 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 	if sym == nil {
 		return nil, fmt.Errorf("parse Error: symbol %v not found", p.lAheadToken(1).Text)
 	} else if sym.GetKind() != symbols.TYPE {
-
+		return nil, fmt.Errorf("expected %v to be a type", sym.GetName())
 	} else {
 		typ = sym.GetType()
 	}
