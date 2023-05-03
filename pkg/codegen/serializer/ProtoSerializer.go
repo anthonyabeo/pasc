@@ -47,13 +47,42 @@ func translateBlock(blk *ast.Block) *Block {
 					Name: translateExpr(name),
 					Type: translateType(decl.Type),
 				}
-				block.VarDeclrs = append(block.VarDeclrs, v)
+				block.VarDecl = append(block.VarDecl, v)
 			}
 		}
 	}
 
 	if blk.Callables != nil {
+		var c *Callable
 
+		for _, call := range blk.Callables {
+			switch call := call.(type) {
+			case *ast.FuncDeclaration:
+				c = &Callable{
+					Kind: Callable_Func,
+					Call: &Callable_FuncDecl{
+						FuncDecl: &FuncDeclaration{
+							FuncHeading: translateFuncHeading(call.Heading),
+							Blk:         translateBlock(call.Block),
+						},
+					},
+				}
+			case *ast.ProcedureDeclaration:
+				c = &Callable{
+					Kind: Callable_Proc,
+					Call: &Callable_ProcDecl{
+						ProcDecl: &ProcDeclaration{
+							ProcHead: translateProcHeading(call.Heading),
+							Blk:      translateBlock(call.Block),
+						},
+					},
+				}
+			default:
+				panic(fmt.Sprintf("Unimplemented %v", call))
+			}
+
+			block.Callables = append(block.Callables, c)
+		}
 	}
 
 	if blk.Stats != nil {
@@ -63,6 +92,79 @@ func translateBlock(blk *ast.Block) *Block {
 	}
 
 	return block
+}
+
+func translateFuncHeading(fh *ast.FuncHeading) *FuncHeading {
+	head := &FuncHeading{Name: fh.Name.Name, ReturnType: translateType(fh.ReturnType)}
+	for _, param := range fh.Parameters {
+		head.Params = append(head.Params, translateFormalParam(param))
+	}
+
+	return head
+}
+
+func translateProcHeading(fh *ast.ProcedureHeading) *ProcHeading {
+	head := &ProcHeading{Name: fh.Name.Name}
+	for _, param := range fh.Parameters {
+		head.Params = append(head.Params, translateFormalParam(param))
+	}
+
+	return head
+}
+
+func translateFormalParam(fp ast.FormalParameter) *FormalParameter {
+	var p *FormalParameter
+
+	switch fp := fp.(type) {
+	case *ast.ValueParam:
+		var names []string
+		for _, name := range fp.Names {
+			names = append(names, name.Name)
+		}
+
+		p = &FormalParameter{
+			Kind: FormalParameter_ValueParam,
+			Fp: &FormalParameter_ValParam{
+				ValParam: &ValueParam{
+					Names: names,
+					Type:  translateType(fp.Type),
+				},
+			},
+		}
+	case *ast.VariableParam:
+		var names []string
+		for _, name := range fp.Names {
+			names = append(names, name.Name)
+		}
+
+		p = &FormalParameter{
+			Kind: FormalParameter_VarParam,
+			Fp: &FormalParameter_VParam{
+				VParam: &VariableParam{
+					Names: names,
+					Type:  translateType(fp.Type),
+				},
+			},
+		}
+	case *ast.FuncHeading:
+		p = &FormalParameter{
+			Kind: FormalParameter_FuncHead,
+			Fp: &FormalParameter_FHead{
+				FHead: translateFuncHeading(fp),
+			},
+		}
+	case *ast.ProcedureHeading:
+		p = &FormalParameter{
+			Kind: FormalParameter_ProcHead,
+			Fp: &FormalParameter_PHead{
+				PHead: translateProcHeading(fp),
+			},
+		}
+	default:
+		panic(fmt.Sprintf("Unimplemented %v", fp))
+	}
+
+	return p
 }
 
 func translateStmt(stmt ast.Statement) *Statement {
@@ -79,7 +181,6 @@ func translateStmt(stmt ast.Statement) *Statement {
 				},
 			},
 		}
-
 	case *ast.ProcedureStmt:
 		var args []*Expression
 		for _, e := range stmt.ParamList {
@@ -137,7 +238,15 @@ func translateStmt(stmt ast.Statement) *Statement {
 				IfStmt: ifStatement,
 			},
 		}
-
+	case *ast.ReturnStatement:
+		s = &Statement{
+			Kind: Statement_return,
+			Stmt: &Statement_RetStmt{
+				RetStmt: &ReturnStatement{
+					Value: translateExpr(stmt.Expr),
+				},
+			},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
@@ -200,6 +309,21 @@ func translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_WriteParam,
 			Expr: &Expression_Wp{Wp: wp},
 		}
+	case *ast.FuncDesignator:
+		var args []*Expression
+		for _, exp := range expr.Parameters {
+			args = append(args, translateExpr(exp))
+		}
+
+		e = &Expression{
+			Kind: Expression_FCall,
+			Expr: &Expression_Fc{
+				Fc: &FuncCall{
+					Name: translateExpr(expr.Name),
+					Args: args,
+				},
+			},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", expr))
 	}
@@ -213,23 +337,25 @@ func translateType(typ types.Type) *Type {
 	switch typ := typ.(type) {
 	case *base.Integer:
 		t = &Type{
-			Tk:   TypeKind_INTEGER,
-			Type: &Type_Int{Int: &Integer{Name: typ.GetName()}},
+			Tk:   Type_INTEGER,
+			Type: &Type_Int{Int: &Type_Integer{Name: typ.GetName()}},
 		}
 	case *base.Real:
 		t = &Type{
-			Tk:   TypeKind_REAL,
-			Type: &Type_Real{Real: &Real{Name: typ.GetName()}},
+			Tk: Type_REAL,
+			Type: &Type_Real_{Real: &Type_Real{
+				Name: typ.GetName(),
+			}},
 		}
 	case *base.Boolean:
 		t = &Type{
-			Tk:   TypeKind_BOOLEAN,
-			Type: &Type_Bool{Bool: &Boolean{Name: typ.GetName()}},
+			Tk:   Type_BOOLEAN,
+			Type: &Type_Bool{Bool: &Type_Boolean{Name: typ.GetName()}},
 		}
 	case *base.Char:
 		t = &Type{
-			Tk:   TypeKind_CHAR,
-			Type: &Type_Char{Char: &Char{Name: typ.GetName()}},
+			Tk:   Type_CHAR,
+			Type: &Type_Char_{Char: &Type_Char{Name: typ.GetName()}},
 		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", typ))

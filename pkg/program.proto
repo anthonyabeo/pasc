@@ -25,8 +25,76 @@ message Program {
 }
 
 message Block {
-    repeated VarDeclaration varDeclrs = 1;
+    repeated VarDeclaration varDecl = 1;
     repeated Statement stmts = 2;
+    repeated Callable callables = 3;
+}
+
+
+message Callable {
+    enum CallKind {
+        Func = 0;
+        Proc = 1;
+    }
+
+    CallKind kind = 1;
+    oneof call {
+        FuncDeclaration funcDecl = 2;
+        ProcDeclaration procDecl = 3;
+    }
+}
+
+message FormalParameter {
+    enum FPKind {
+        FuncHead = 0;
+        ProcHead = 1;
+        VarParam = 2;
+        ValueParam = 3;
+    }
+
+    FPKind kind = 1;
+    oneof fp {
+        FuncHeading fHead = 2;
+        ProcHeading pHead = 3;
+        VariableParam vParam = 4;
+        ValueParam valParam = 5;
+    }
+}
+
+message VariableParam {
+    repeated string names = 1;
+    Type type = 2;
+}
+
+message ValueParam {
+    repeated string names = 1;
+    Type type = 2;
+}
+
+message FuncHeading {
+    string name = 1;
+    repeated FormalParameter params = 2;
+    Type returnType = 3;
+}
+
+message ProcHeading {
+    string name = 1;
+    repeated FormalParameter params = 2;
+}
+
+//////////////////////////////////
+//  DECLARATIONS
+//////////////////////////////////
+message FuncDeclaration {
+    FuncHeading funcHeading = 1;
+    Block blk = 2;
+    string dir = 3;
+}
+
+message ProcDeclaration {
+    ProcHeading procHead = 1;
+    Block blk = 2;
+    string dir = 3;
 }
 
 message VarDeclaration {
@@ -84,15 +152,14 @@ message AssignStatement {
     Expression value = 2;
 }
 
-//message ProcedureStmt {
-//    Expression name = 1;
-//    repeated Expression args = 2;
-//}
-
 message IfStatement {
     Expression cond = 1;
     Statement truePath = 2;
     Statement elsePath = 3;
+}
+
+message ReturnStatement {
+    Expression value = 1;
 }
 
 message Statement {
@@ -100,6 +167,7 @@ message Statement {
         if = 0;
         assign = 1;
         procedure = 2;
+        return = 3;
     }
 
     StmtKind kind = 1;
@@ -107,6 +175,7 @@ message Statement {
         AssignStatement assignStmt = 2;
         ProcedureStatement procStmt = 3;
         IfStatement ifStmt = 4;
+        ReturnStatement retStmt = 5;
     }
 }
 
@@ -131,6 +200,7 @@ message Identifier {
     message FieldDesignator {
 
     }
+
     IDKind kind = 1;
     oneof value {
         Variable var = 2;
@@ -146,6 +216,7 @@ message Expression {
         Ident = 2;
         BinExpr = 3;
         WriteParam = 4;
+        FCall = 5;
     }
 
     ExprKind kind = 1;
@@ -154,6 +225,7 @@ message Expression {
         UIntLiteral uint = 3;
         BinaryExpr be = 4;
         WriteParameter wp = 5;
+        FuncCall fc = 6;
     }
 }
 
@@ -174,17 +246,38 @@ message UIntLiteral {
     uint32 value = 1;
 }
 
+message FuncCall {
+    Expression name = 1;
+    repeated Expression args = 2;
+}
+
 //////////////////////////////////
 //  TYPES
 //////////////////////////////////
-enum TypeKind {
-    INTEGER = 0;
-    REAL = 1;
-    BOOLEAN = 2;
-    CHAR = 3;
-}
-
 message Type {
+    enum TypeKind {
+        INTEGER = 0;
+        REAL = 1;
+        BOOLEAN = 2;
+        CHAR = 3;
+    }
+
+    message Integer {
+        string name = 1;
+    }
+
+    message Boolean {
+        string name = 1;
+    }
+
+    message Real {
+        string name = 1;
+    }
+
+    message Char {
+        string name = 1;
+    }
+
     TypeKind tk = 1;
     oneof type {
         Integer int = 2;
@@ -194,21 +287,6 @@ message Type {
     }
 }
 
-message Integer {
-    string name = 1;
-}
-
-message Boolean {
-    string name = 1;
-}
-
-message Real {
-    string name = 1;
-}
-
-message Char {
-    string name = 1;
-}
 
 //////////////////////////////////
 //  OPERATORS

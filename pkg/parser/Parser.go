@@ -1059,9 +1059,13 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 		return nil, err
 	}
 
-	typ = p.curScope.Resolve(p.lAheadToken(1).Text)
-	if typ == nil {
+	sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+	if sym == nil {
 		return nil, fmt.Errorf("parse Error: symbol %v not found", p.lAheadToken(1).Text)
+	} else if sym.GetKind() != symbols.TYPE {
+
+	} else {
+		typ = sym.GetType()
 	}
 	fHead.ReturnType = typ
 

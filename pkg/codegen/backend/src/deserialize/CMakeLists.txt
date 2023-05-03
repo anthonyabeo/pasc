@@ -16,6 +16,7 @@ add_library(
     Type.cc
     ../llvm_ir/SymbolTable.cc
     ../../include/program.pb.cc
+    Callable.cc
 )
 
 target_include_directories(
