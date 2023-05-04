@@ -12,6 +12,8 @@ enum TokenKind {
     LESS = 5;
     GREAT = 6;
     IF = 7;
+    TO = 8;
+    DOWN_TO = 9;
 } 
 
 //////////////////////////////////
@@ -162,12 +164,38 @@ message ReturnStatement {
     Expression value = 1;
 }
 
+message WhileStatement {
+    Expression cond = 1;
+    Statement body = 2;
+}
+
+message CompoundStatement {
+    repeated Statement stmts = 1;
+}
+
+message RepeatStatement {
+    repeated Statement stmts = 1;
+    Expression cond = 2;
+}
+
+message ForStatement {
+    Expression ctlVar = 1;
+    Expression initValue = 2;
+    Expression finalValue = 3;
+    Statement body = 4;
+    TokenKind dir = 5;
+}
+
 message Statement {
     enum StmtKind {
         if = 0;
         assign = 1;
         procedure = 2;
         return = 3;
+        while = 4;
+        compound = 5;
+        repeat = 6;
+        for = 7;
     }
 
     StmtKind kind = 1;
@@ -176,6 +204,10 @@ message Statement {
         ProcedureStatement procStmt = 3;
         IfStatement ifStmt = 4;
         ReturnStatement retStmt = 5;
+        WhileStatement whileStmt = 6;
+        CompoundStatement cmpdStmt = 7;
+        RepeatStatement rptStmt = 8;
+        ForStatement forStmt = 9;
     }
 }
 
@@ -304,6 +336,7 @@ message Operator {
         Equal = 8;
         Less = 9;
         Great = 10;
+        GreatEqual = 11;
     }
 
     OpKind op = 1;
