@@ -247,6 +247,67 @@ func translateStmt(stmt ast.Statement) *Statement {
 				},
 			},
 		}
+	case *ast.WhileStatement:
+		s = &Statement{
+			Kind: Statement_while,
+			Stmt: &Statement_WhileStmt{
+				WhileStmt: &WhileStatement{
+					Cond: translateExpr(stmt.BoolExpr),
+					Body: translateStmt(stmt.Body),
+				},
+			},
+		}
+	case *ast.ForStatement:
+		var dir TokenKind
+		if stmt.Direction == token.DownTo {
+			dir = TokenKind_DOWN_TO
+		} else if stmt.Direction == token.To {
+			dir = TokenKind_DOWN_TO
+		} else {
+			panic(fmt.Sprintf("Invalid for-loop direction %v", stmt.Direction))
+		}
+
+		s = &Statement{
+			Kind: Statement_for,
+			Stmt: &Statement_ForStmt{
+				ForStmt: &ForStatement{
+					CtlVar:     translateExpr(stmt.CtrlID),
+					InitValue:  translateExpr(stmt.InitValue),
+					FinalValue: translateExpr(stmt.FinalValue),
+					Body:       translateStmt(stmt.Body),
+					Dir:        dir,
+				},
+			},
+		}
+	case *ast.RepeatStatement:
+		var stmts []*Statement
+		for _, st := range stmt.StmtSeq {
+			stmts = append(stmts, translateStmt(st))
+		}
+
+		s = &Statement{
+			Kind: Statement_repeat,
+			Stmt: &Statement_RptStmt{
+				RptStmt: &RepeatStatement{
+					Stmts: stmts,
+					Cond:  translateExpr(stmt.BoolExpr),
+				},
+			},
+		}
+	case *ast.CompoundStatement:
+		var stmts []*Statement
+		for _, st := range stmt.Statements {
+			stmts = append(stmts, translateStmt(st))
+		}
+
+		s = &Statement{
+			Kind: Statement_compound,
+			Stmt: &Statement_CmpdStmt{
+				CmpdStmt: &CompoundStatement{
+					Stmts: stmts,
+				},
+			},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
@@ -370,6 +431,12 @@ func translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_Great}
 	case token.LessThan:
 		return &Operator{Op: Operator_Less}
+	case token.GreaterThanOrEqual:
+		return &Operator{Op: Operator_GreatEqual}
+	case token.Plus:
+		return &Operator{Op: Operator_Plus}
+	case token.Minus:
+		return &Operator{Op: Operator_Minus}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}
