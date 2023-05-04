@@ -1823,8 +1823,6 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 
 // procedure-statement = procedure-identifier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
 func (p *Parser) procedureStatement() (ast.ProcedureStatement, error) {
-	// TODO: complete implementation
-
 	var (
 		err error
 		ps  ast.ProcedureStatement
@@ -1844,8 +1842,41 @@ func (p *Parser) procedureStatement() (ast.ProcedureStatement, error) {
 
 		ps = wln
 	case "write":
+		write := &ast.Write{Name: p.lAheadToken(1).Text}
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+
+		write.File, write.ParamList, err = p.writeParameterList()
+		if err != nil {
+			return nil, err
+		}
+
+		ps = write
 	case "readln":
+		readLn := &ast.ReadLn{Name: p.lAheadToken(1).Text}
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+
+		readLn.File, readLn.VarAccess, err = p.readLnParameterList()
+		if err != nil {
+			return nil, err
+		}
+
+		ps = readLn
 	case "read":
+		read := &ast.Read{Name: p.lAheadToken(1).Text}
+		if err = p.match(token.Identifier); err != nil {
+			return nil, err
+		}
+
+		read.File, read.VarAccess, err = p.readParameterList()
+		if err != nil {
+			return nil, err
+		}
+
+		ps = read
 	default:
 		stmt := &ast.ProcedureStmt{
 			Name: &ast.Identifier{
@@ -2488,4 +2519,164 @@ func (p *Parser) writeParameter() (*ast.WriteParameter, error) {
 	}
 
 	return wp, nil
+}
+
+// write-parameter-list = '(' [ file-variable ',' ] write-parameter {',' write-parameter } ')' .
+func (p *Parser) writeParameterList() (*ast.Identifier, []ast.Expression, error) {
+	var (
+		err            error
+		file           *ast.Identifier
+		writeParam     *ast.WriteParameter
+		writeParamList []ast.Expression
+	)
+
+	if err = p.match(token.LParen); err != nil {
+		return nil, nil, err
+	}
+
+	if p.lAheadKind(1) == token.Identifier {
+		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+		if sym != nil {
+			return nil, nil, fmt.Errorf("")
+		} else if sym.GetType().GetName() != "file" {
+			return nil, nil, fmt.Errorf("")
+		} else {
+			file = &ast.Identifier{
+				Token: token.Token{Kind: token.File, Text: "file"},
+				Name:  sym.GetName(),
+				Scope: p.curScope,
+			}
+		}
+	}
+
+	writeParam, err = p.writeParameter()
+	if err != nil {
+		return nil, nil, err
+	}
+	writeParamList = append(writeParamList, writeParam)
+
+	for p.lAheadKind(1) == token.Comma {
+		if err = p.consume(); err != nil {
+			return nil, nil, err
+		}
+
+		writeParam, err = p.writeParameter()
+		if err != nil {
+			return nil, nil, err
+		}
+		writeParamList = append(writeParamList, writeParam)
+	}
+
+	if err = p.match(token.RParen); err != nil {
+		return nil, nil, err
+	}
+
+	return file, writeParamList, nil
+}
+
+// read-parameter-list = '(' [ file-variable ',' ] variable-access { ',' variable-access } ')' .
+func (p *Parser) readParameterList() (*ast.Identifier, []ast.Expression, error) {
+	var (
+		err               error
+		file              *ast.Identifier
+		expr              ast.Expression
+		readParameterList []ast.Expression
+	)
+
+	if err = p.match(token.LParen); err != nil {
+		return nil, nil, err
+	}
+
+	if p.lAheadKind(1) == token.Identifier {
+		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+		if sym != nil {
+			return nil, nil, fmt.Errorf("")
+		} else if sym.GetType().GetName() != "file" {
+			return nil, nil, fmt.Errorf("")
+		} else {
+			file = &ast.Identifier{
+				Token: token.Token{Kind: token.File, Text: "file"},
+				Name:  sym.GetName(),
+				Scope: p.curScope,
+			}
+		}
+	}
+
+	expr, err = p.variableAccess()
+	if err != nil {
+		return nil, nil, err
+	}
+	readParameterList = append(readParameterList, expr)
+
+	for p.lAheadKind(1) == token.Comma {
+		if err = p.consume(); err != nil {
+			return nil, nil, err
+		}
+
+		expr, err = p.variableAccess()
+		if err != nil {
+			return nil, nil, err
+		}
+		readParameterList = append(readParameterList, expr)
+	}
+
+	if err = p.match(token.RParen); err != nil {
+		return nil, nil, err
+	}
+
+	return file, readParameterList, nil
+}
+
+// readln-parameter-list = [ '(' ( file-variable | variable-access ) { ',' variable-access } ')' ] .
+func (p *Parser) readLnParameterList() (*ast.Identifier, []ast.Expression, error) {
+	var (
+		err             error
+		file            *ast.Identifier
+		varAccess       ast.Expression
+		readlnParamList []ast.Expression
+	)
+
+	if p.lAheadKind(1) == token.LParen {
+		if err = p.match(token.LParen); err != nil {
+			return nil, nil, err
+		}
+
+		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+		if sym != nil && sym.GetType().GetName() == "file" {
+			file = &ast.Identifier{
+				Token: token.Token{Kind: token.File, Text: "file"},
+				Name:  sym.GetName(),
+				Scope: p.curScope,
+			}
+		} else {
+			varAccess, err = p.variableAccess()
+			if err != nil {
+				return nil, nil, err
+			}
+			readlnParamList = append(readlnParamList, varAccess)
+		}
+
+		for p.lAheadKind(1) == token.Comma {
+			if err = p.consume(); err != nil {
+				return nil, nil, err
+			}
+
+			varAccess, err = p.variableAccess()
+			if err != nil {
+				return nil, nil, err
+			}
+			readlnParamList = append(readlnParamList, varAccess)
+		}
+
+		if err = p.match(token.RParen); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	file = &ast.Identifier{
+		Token: token.Token{Kind: token.Output, Text: "output"},
+		Name:  "output",
+	}
+
+	return file, readlnParamList, nil
 }
