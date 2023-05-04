@@ -15,7 +15,7 @@ std::unique_ptr<Type> deserializeType(const Pasc::Type &);
 struct IntegerType : public Type {
   std::string name;
 
-  explicit IntegerType(const Pasc::Integer &);
+  explicit IntegerType(const Pasc::Type_Integer &);
   [[nodiscard]] std::string GetName() const override;
 };
 

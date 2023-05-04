@@ -28,6 +28,10 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<UIntegerLiteral>(expr.uint());
   case Pasc::Expression_ExprKind_BinExpr:
     return std::make_unique<BinaryExpression>(expr.be());
+  case Pasc::Expression_ExprKind_WriteParam:
+    return std::make_unique<WriteParameter>(expr.wp());
+  case Pasc::Expression_ExprKind_FCall:
+    return std::make_unique<FunctionCall>(expr.fc());
   default:
     throw DeserializeProtobufException("invalid expression kind");
   }
@@ -82,5 +86,35 @@ BinaryExpression::BinaryExpression(const Pasc::BinaryExpr& expr) {
 }
 
 llvm::Value *BinaryExpression::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// FUNCTION CALL
+///////////////////////////
+FunctionCall::FunctionCall(const Pasc::FuncCall& fc) {
+  name = deserializeID(fc.name().id());
+  for (int i = 0; i < fc.args_size(); ++i) {
+    args.push_back(deserializeExpr(fc.args(i)));
+  }
+}
+
+llvm::Value *FunctionCall::codegen(IRVisitor& v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// WRITE PARAMETER
+///////////////////////////
+WriteParameter::WriteParameter(const Pasc::WriteParameter& wp) {
+  e = deserializeExpr(wp.e());
+  if(wp.has_totalwidth())
+    totalWidth = deserializeExpr(wp.totalwidth());
+
+  if(wp.has_fracdigits())
+    fracDigits = deserializeExpr(wp.fracdigits());
+}
+
+llvm::Value *WriteParameter::codegen(IRVisitor& v) {
   return v.codegen(*this);
 }
