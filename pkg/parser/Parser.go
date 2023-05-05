@@ -1020,11 +1020,14 @@ func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 		return nil, err
 	}
 
-	paramList, err = p.formalParameterList()
-	if err != nil {
-		return nil, err
+	if p.lAheadKind(1) == token.LParen {
+		paramList, err = p.formalParameterList()
+		if err != nil {
+			return nil, err
+		}
+
+		pHead.Parameters = append(pHead.Parameters, paramList...)
 	}
-	pHead.Parameters = append(pHead.Parameters, paramList...)
 
 	return pHead, nil
 }
@@ -1215,8 +1218,8 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		if err != nil {
 			return nil, err
 		}
-		param = &ast.ValueParam{Names: names, Type: typ}
 
+		param = &ast.ValueParam{Names: names, Type: typ}
 	// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
 	case token.Var:
 		if err := p.match(token.Var); err != nil {
@@ -1236,8 +1239,8 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		if err != nil {
 			return nil, err
 		}
-		param = &ast.VariableParam{Token: token.Var, Names: names, Type: typ}
 
+		param = &ast.VariableParam{Token: token.Var, Names: names, Type: typ}
 	// procedural-parameter-specification = procedure-heading .
 	case token.Procedure:
 		pHead, err := p.procedureHeading()
@@ -1246,7 +1249,6 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		}
 
 		param = pHead
-
 	// functional-parameter-specification = function-heading .
 	case token.Function:
 		fHead, err := p.functionHeading()
@@ -1255,7 +1257,6 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		}
 
 		param = fHead
-
 	default:
 		return nil, fmt.Errorf("parse Error: unexpected token %v", p.lAheadToken(1).Text)
 	}
@@ -1327,8 +1328,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 
 	// add variables to symbol table
 	for _, n := range names {
-		err = p.curScope.Define(
-			symbols.NewVariable(n.Name, symbols.VARIABLE, varDecl.Type))
+		err = p.curScope.Define(symbols.NewVariable(n.Name, symbols.VARIABLE, varDecl.Type))
 		if err != nil {
 			return nil, err
 		}
@@ -1342,8 +1342,16 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 // indexed-variable = array-variable '[' index-expression, { ',' index-expression } ']' .
 // array-variable = variable-access .
 // index-expression = expression .
-func (p *Parser) indexedVariable(arrayVar *ast.Identifier) (*ast.IndexedVariable, error) {
+func (p *Parser) indexedVariable() (*ast.IndexedVariable, error) {
 	var err error
+
+	arrayVar := &ast.Identifier{
+		Token: p.lAheadToken(1),
+		Name:  p.lAheadToken(1).Text,
+		Scope: p.curScope}
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
 
 	indexedVar := &ast.IndexedVariable{ArrayVar: arrayVar}
 	if err = p.match(token.LSqBrace); err != nil {
@@ -2162,21 +2170,16 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 		expr ast.Expression
 	)
 
-	id := p.lAheadToken(1)
-	sym := p.curScope.Resolve(id.Text)
-	if err = p.consume(); err != nil {
-		return nil, err
-	}
-
+	sym := p.curScope.Resolve(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", id.Text)
+		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
 	} else if sym.GetType().GetName() == "array" {
-		expr, err = p.indexedVariable(&ast.Identifier{Token: id, Name: id.Text, Scope: p.curScope})
+		expr, err = p.indexedVariable()
 		if err != nil {
 			return nil, err
 		}
 	} else if sym.GetType().GetName() == "record" {
-		expr, err = p.fieldDesignator(&ast.Identifier{Token: id, Name: id.Text})
+		expr, err = p.fieldDesignator()
 		if err != nil {
 			return nil, err
 		}
@@ -2185,16 +2188,25 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 	} else if sym.GetType().GetName() == "pointer" {
 
 	} else {
-		expr = &ast.Identifier{Token: id, Name: id.Text, Scope: p.curScope}
+		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
 	}
 
 	return expr, nil
 }
 
 // field-designator = record-variable '.' field-specifier | field-designator-identifier .
-func (p *Parser) fieldDesignator(recordVar *ast.Identifier) (*ast.FieldDesignator, error) {
-	fieldDesig := &ast.FieldDesignator{RecordVar: recordVar}
+func (p *Parser) fieldDesignator() (*ast.FieldDesignator, error) {
+	var err error
 
+	recordVar := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
+	if err = p.consume(); err != nil {
+		return nil, err
+	}
+
+	fieldDesig := &ast.FieldDesignator{RecordVar: recordVar}
 	if err := p.match(token.Period); err != nil {
 		return nil, err
 	}
