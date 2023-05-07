@@ -90,6 +90,9 @@ func (g *GlobalScope) initTypeSystem() {
 	g.Define(NewBoolean("Boolean", TYPE, &base.Boolean{Name: "Boolean"}))
 	g.Define(NewReal("real", TYPE, &base.Real{Name: "real"}))
 	g.Define(NewChar("char", TYPE, &base.Char{Name: "char"}))
+
+	g.Define(NewConst("true", CONST, &base.Boolean{Name: "Boolean"}))
+	g.Define(NewConst("false", CONST, &base.Boolean{Name: "Boolean"}))
 }
 
 // GetScopeName returns the name of the function
