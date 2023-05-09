@@ -5,7 +5,7 @@
 
  #include "Expr.h"
 
- class IRVisitor;
+class IRVisitor;
 
 struct Statement {
   virtual ~Statement() = default;

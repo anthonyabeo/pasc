@@ -6,6 +6,8 @@
 #include "../program.pb.h"
 #include "llvm/IR/Value.h"
 
+#include "Type.h"
+
 class IRVisitor;
 
 enum class Operator {
@@ -80,6 +82,7 @@ struct IdentifierExpr : public Expr {
 struct FunctionCall : public Expr {
   std::unique_ptr<Identifier> name;
   std::vector<std::unique_ptr<Expr>> args;
+  std::unique_ptr<Type> ret_type;
 
   explicit FunctionCall(const Pasc::FuncCall&);
   llvm::Value *codegen(IRVisitor&) override;

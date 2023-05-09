@@ -3,20 +3,18 @@
 
 #include <memory>
 
+#include "llvm/IR/Value.h"
+
 #include "Type.h"
 #include "Block.h"
 #include "Deserializer.h"
 
-//struct Callable {
-//  virtual ~Callable() = default;
-//  virtual void call() = 0;
-//};
-//
-//std::unique_ptr<Callable> deserializeCallable(const Pasc::Callable&);
+class IRVisitor;
 
 struct FormalParameter {
   virtual ~FormalParameter() = default;
   virtual void formalParam() = 0;
+  virtual std::vector<llvm::Type*> codegen(IRVisitor &v) = 0;
 };
 
 struct ValueParam : public FormalParameter {
@@ -25,6 +23,7 @@ struct ValueParam : public FormalParameter {
 
   void formalParam() override;
   explicit ValueParam(const Pasc::ValueParam&);
+  std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
 
 struct VariableParam : public FormalParameter {
@@ -33,6 +32,7 @@ struct VariableParam : public FormalParameter {
 
   void formalParam() override;
   explicit VariableParam(const Pasc::VariableParam&);
+  std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
 
 struct FuncHeading : public FormalParameter {
@@ -42,14 +42,17 @@ struct FuncHeading : public FormalParameter {
 
   void formalParam() override;
   explicit FuncHeading(const Pasc::FuncHeading&);
+  std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
 
 struct ProcHeading : public FormalParameter {
   std::string name;
   std::vector<std::unique_ptr<FormalParameter>> params;
+  std::unique_ptr<Type> retType;
 
   void formalParam() override;
   explicit ProcHeading(const Pasc::ProcHeading&);
+  std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
 
 struct FunctionDeclaration : public Callable {
@@ -59,6 +62,7 @@ struct FunctionDeclaration : public Callable {
 
   void call() override;
   explicit FunctionDeclaration(const Pasc::FuncDeclaration&);
+  llvm::Value *codegen(IRVisitor &) override;
 };
 
 struct ProcedureDeclaration : public Callable {
@@ -68,5 +72,6 @@ struct ProcedureDeclaration : public Callable {
 
   void call() override;
   explicit ProcedureDeclaration(const Pasc::ProcDeclaration&);
+  llvm::Value *codegen(IRVisitor &) override;
 };
 #endif // PASC_CALLABLE_H

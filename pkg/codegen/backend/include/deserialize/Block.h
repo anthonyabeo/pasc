@@ -7,6 +7,7 @@
 struct Callable {
   virtual ~Callable() = default;
   virtual void call() = 0;
+  virtual llvm::Value *codegen(IRVisitor &) = 0;
 };
 
 std::unique_ptr<Callable> deserializeCallable(const Pasc::Callable&);
