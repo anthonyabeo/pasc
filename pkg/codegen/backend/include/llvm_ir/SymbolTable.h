@@ -29,8 +29,10 @@ private:
 
 public:
   LLVMSymbolTable()= default;
-  LLVMSymbolTable(std::string);
+  explicit LLVMSymbolTable(std::string);
   ~LLVMSymbolTable() override= default;
+
+  void setParent(const std::shared_ptr<LLVMScope>&);
 
   std::string GetScopeName() override;
   std::shared_ptr<LLVMScope> GetEnclosingScope() override;
