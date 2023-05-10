@@ -1520,3 +1520,39 @@ func TestParseFieldDesignator(t *testing.T) {
 		return
 	}
 }
+
+func TestParserArrayType(t *testing.T) {
+	input := `
+		program HelloWorld;
+		
+		type
+			size = integer;
+			colour = (red, yellow, green, blue);
+
+			arr = array [1..100] of real;
+			kar = array [Boolean] of colour;
+			foo = array [Boolean] of array [1..10] of array [size] of real;
+			bar = array [Boolean] of array [1..10, size] of real;
+			baz = array [Boolean, 1..10, size] of real;
+			bam = array [Boolean, 1..10] of array [size] of real;
+
+		begin
+			writeln('Hello, world!')
+		end.
+	`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	prog, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 8) {
+		return
+	}
+}
