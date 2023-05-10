@@ -12,6 +12,7 @@ const (
 	TYPE
 	CONST
 	LABEL
+	FIELD
 )
 
 // Symbol denotes a generic symbol
