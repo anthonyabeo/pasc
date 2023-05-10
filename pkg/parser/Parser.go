@@ -757,6 +757,10 @@ func (p *Parser) arrayType() (*structured.Array, error) {
 	arrayType.Indices = append(arrayType.Indices, idxType)
 
 	for p.lAheadKind(1) == token.Comma {
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
 		idxType, err = p.indexType()
 		if err != nil {
 			return nil, err
