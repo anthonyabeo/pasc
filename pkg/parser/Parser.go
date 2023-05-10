@@ -404,7 +404,10 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 					return nil, err
 				}
 			case token.File:
-
+				typ, err = p.fileType()
+				if err != nil {
+					return nil, err
+				}
 			case token.Set:
 				typ, err = p.setType()
 				if err != nil {
@@ -416,11 +419,52 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 					return nil, err
 				}
 			case token.Packed:
+			case token.Caret:
+				typ, err = p.pointerType()
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
 
 	return typ, nil
+}
+
+func (p *Parser) pointerType() (*structured.Pointer, error) {
+	var err error
+
+	ptr := &structured.Pointer{Token: p.lAheadToken(1)}
+	if err = p.match(token.Caret); err != nil {
+		return nil, err
+	}
+
+	ptr.DomainType, err = p.typeIdentifier()
+	if err != nil {
+		return nil, err
+	}
+
+	return ptr, nil
+}
+
+func (p *Parser) fileType() (*structured.File, error) {
+	var err error
+
+	file := &structured.File{Token: p.lAheadToken(1)}
+	if err = p.match(token.File); err != nil {
+		return nil, err
+	}
+
+	if err = p.match(token.Of); err != nil {
+		return nil, err
+	}
+
+	file.ComponentType, err = p.typeDenoter()
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
 }
 
 // record-type = 'record' field-list 'end' .
@@ -821,7 +865,8 @@ func (p *Parser) isNewType() bool {
 		p.lAheadKind(1) == token.UIntLiteral ||
 		p.lAheadKind(1) == token.CharString ||
 		p.lAheadKind(1) == token.URealLiteral ||
-		p.lAheadKind(1) == token.Identifier
+		p.lAheadKind(1) == token.Identifier ||
+		p.lAheadKind(1) == token.Caret
 }
 
 // constant-definition-part = [ 'const' constant-definition ';' { constant-definition ';' } ] .

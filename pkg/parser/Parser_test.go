@@ -1359,6 +1359,7 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 			female :
 				(mother, programmer : Boolean)
 		end;
+		person = ^ persondetails;
 
 	var 
 		a, b, sum : integer;
@@ -1378,7 +1379,7 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 14) {
+	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 15) {
 		return
 	}
 }
