@@ -1528,6 +1528,14 @@ func TestParseFieldDesignator(t *testing.T) {
 	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 2) {
 		return
 	}
+
+	val := &ast.Identifier{
+		Token: token.Token{Kind: token.Identifier, Text: "1"},
+		Name:  "1",
+	}
+	if !testAssignmentStatement(t, program.Block.Stats[0], "person.firstname", val) {
+		return
+	}
 }
 
 func TestParserArrayType(t *testing.T) {

@@ -2268,36 +2268,25 @@ func (p *Parser) fieldDesignator() (*ast.FieldDesignator, error) {
 		return nil, err
 	}
 
-	fieldDesig := &ast.FieldDesignator{RecordVar: recordVar}
+	fieldDes := &ast.FieldDesignator{RecordVar: recordVar}
 	if err := p.match(token.Period); err != nil {
 		return nil, err
 	}
 
 	record := p.curScope.Resolve(recordVar.Name).GetType().(*structured.Record)
-	for _, field := range record.FieldList {
-		switch field := field.(type) {
-		case *structured.FixedPart:
-			for _, entry := range field.Entry {
-				for _, fieldName := range entry.List {
-					if fieldName.Name != p.lAheadToken(1).Text {
-						continue
-					}
-
-					fieldDesig.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
-					if err := p.match(token.Identifier); err != nil {
-						return nil, err
-					}
-
-					return fieldDesig, nil
-				}
-			}
-
-			return nil, fmt.Errorf("%v has no field, '%v'", record, p.lAheadToken(1).Text)
-		case *structured.VariantPart:
+	field := record.Scope.Resolve(p.lAheadToken(1).Text)
+	if field == nil {
+		return nil, fmt.Errorf("record type %v has no field named %v", recordVar.Name, p.lAheadToken(1).Text)
+	} else if field.GetKind() != symbols.FIELD {
+		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recordVar.Name)
+	} else {
+		fieldDes.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
+		if err := p.match(token.Identifier); err != nil {
+			return nil, err
 		}
 	}
 
-	return fieldDesig, nil
+	return fieldDes, nil
 }
 
 // unsigned-constant := unsigned-number | character-string | constant-identifier | 'nil' .
