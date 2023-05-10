@@ -42,5 +42,5 @@ func (id *IndexedVariable) String() string {
 	for _, expr := range id.IndexExpr {
 		idxExprList = append(idxExprList, expr.String())
 	}
-	return fmt.Sprintf(`array: %v[%v]`, id.ArrayVar.String(), strings.Join(idxExprList, ", "))
+	return fmt.Sprintf(`%v[%v]`, id.ArrayVar.String(), strings.Join(idxExprList, ", "))
 }
