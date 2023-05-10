@@ -23,19 +23,19 @@ func TestParseBasicProgram(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 0, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 0, 0, 0) {
 		return
 	}
 
 	args := []ast.Expression{
 		&ast.CharString{Token: token.NewToken(token.CharString, "Hello, World!"), Value: "Hello, World!"},
 	}
-	if !testWriteln(t, prog.Block.Stats[0], "writeln", args) {
+	if !testWriteln(t, program.Block.Stats[0], "writeln", args) {
 		return
 	}
 }
@@ -56,17 +56,17 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 0) {
 		return
 	}
 
 	if !testVarDeclaration(
-		t, prog.Block.VarDeclaration, token.NewToken(token.Var, "var"), 1,
+		t, program.Block.VarDeclaration, token.NewToken(token.Var, "var"), 1,
 		[][]string{{"a", "b", "sum"}}, []string{"integer"}) {
 		return
 	}
@@ -91,24 +91,24 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 3, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 1, 0, 0) {
 		return
 	}
 
 	// first statement
 	value := &ast.UIntegerLiteral{Token: token.Token{Text: "1", Kind: token.UIntLiteral}, Value: "1"}
-	if !testAssignmentStatement(t, prog.Block.Stats[0], "a", value) {
+	if !testAssignmentStatement(t, program.Block.Stats[0], "a", value) {
 		return
 	}
 
 	// second statement
 	value = &ast.UIntegerLiteral{Token: token.Token{Text: "2", Kind: token.UIntLiteral}, Value: "2"}
-	if !testAssignmentStatement(t, prog.Block.Stats[1], "b", value) {
+	if !testAssignmentStatement(t, program.Block.Stats[1], "b", value) {
 		return
 	}
 
@@ -117,7 +117,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		&ast.CharString{Token: token.NewToken(token.CharString, "Hello, world!"), Value: "Hello, world!"},
 	}
 
-	if !testWriteln(t, prog.Block.Stats[2], "writeln", args) {
+	if !testWriteln(t, program.Block.Stats[2], "writeln", args) {
 		return
 	}
 }
@@ -148,12 +148,12 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 5, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 5, 1, 0, 0) {
 		return
 	}
 
@@ -163,11 +163,11 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
 	}
 
-	if !testAssignmentStatement(t, prog.Block.Stats[2], "sum", expr) {
+	if !testAssignmentStatement(t, program.Block.Stats[2], "sum", expr) {
 		return
 	}
 
-	stmt := prog.Block.Stats[2].(*ast.AssignStatement)
+	stmt := program.Block.Stats[2].(*ast.AssignStatement)
 	if !testBinaryExpression(t, stmt.Value, expr.Operator, "a", "b") {
 		return
 	}
@@ -176,11 +176,11 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		Operator: token.NewToken(token.Minus, "-"),
 		Operand:  &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5"), Value: "5"},
 	}
-	if !testAssignmentStatement(t, prog.Block.Stats[3], "a", uexpr) {
+	if !testAssignmentStatement(t, program.Block.Stats[3], "a", uexpr) {
 		return
 	}
 
-	stmt = prog.Block.Stats[3].(*ast.AssignStatement)
+	stmt = program.Block.Stats[3].(*ast.AssignStatement)
 	if !testUnaryExpression(t, stmt.Value, token.NewToken(token.Minus, "-"), "-5") {
 		return
 	}
@@ -216,12 +216,12 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 3, 1, 1, 0) {
 		return
 	}
 
@@ -234,11 +234,11 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 			Type: &base.Integer{Name: "integer"},
 		},
 	}
-	if !testFuncDeclaration(t, prog.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0) {
+	if !testFuncDeclaration(t, program.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0) {
 		return
 	}
 
-	funcDecl := prog.Block.Callables[0].(*ast.FuncDeclaration)
+	funcDecl := program.Block.Callables[0].(*ast.FuncDeclaration)
 	if !testReturnStatement(t, funcDecl.Block.Stats[0], "2") {
 		return
 	}
@@ -278,12 +278,12 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 3, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 3, 1, 1, 0) {
 		return
 	}
 
@@ -296,11 +296,11 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 			Type: &base.Integer{Name: "integer"},
 		},
 	}
-	if !testFuncDeclaration(t, prog.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0) {
+	if !testFuncDeclaration(t, program.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0) {
 		return
 	}
 
-	funcDecl := prog.Block.Callables[0].(*ast.FuncDeclaration)
+	funcDecl := program.Block.Callables[0].(*ast.FuncDeclaration)
 	if !testIfStatement(t, funcDecl.Block.Stats[0], token.NewToken(token.GreaterThan, ">"), "n", "m", "result := n", "result := m") {
 		return
 	}
@@ -357,12 +357,12 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 4, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0) {
 		return
 	}
 
@@ -374,11 +374,11 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		},
 	}
 
-	if !testAssignmentStatement(t, prog.Block.Stats[2], "result", value) {
+	if !testAssignmentStatement(t, program.Block.Stats[2], "result", value) {
 		return
 	}
 
-	if !testFuncDesignator(t, prog.Block.Stats[2].(*ast.AssignStatement).Value, "max", value.Parameters) {
+	if !testFuncDesignator(t, program.Block.Stats[2].(*ast.AssignStatement).Value, "max", value.Parameters) {
 		return
 	}
 }
@@ -410,12 +410,12 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 9, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 9, 0, 0) {
 		return
 	}
 
@@ -432,7 +432,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	}
 	if !testVarDeclaration(
 		t,
-		prog.Block.VarDeclaration,
+		program.Block.VarDeclaration,
 		token.NewToken(token.Var, "var"),
 		9,
 		names,
@@ -462,12 +462,12 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 3, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 1, 0, 0) {
 		return
 	}
 
@@ -481,7 +481,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 		},
 	}
 
-	if !testAssignmentStatement(t, prog.Block.Stats[0], "sum", value) {
+	if !testAssignmentStatement(t, program.Block.Stats[0], "sum", value) {
 		return
 	}
 
@@ -495,7 +495,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 		},
 	}
 
-	if !testAssignmentStatement(t, prog.Block.Stats[1], "foo", value) {
+	if !testAssignmentStatement(t, program.Block.Stats[1], "foo", value) {
 		return
 	}
 }
@@ -533,12 +533,12 @@ func TestSymbolTableGenerated(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "MaxProgram", []string{}, 4, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0) {
 		return
 	}
 
@@ -583,12 +583,12 @@ func TestParsingConstantDefinition(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 0, 0) {
 		return
 	}
 
@@ -616,12 +616,12 @@ func TestParseForStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0) {
 		return
 	}
 
@@ -676,12 +676,12 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 2, 1, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 1, 0) {
 		return
 	}
 
@@ -737,7 +737,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 		},
 	}
 
-	if !testProcedureDeclaration(t, procDecl, "bisect", prog.Block.Callables[0].(*ast.ProcedureDeclaration)) {
+	if !testProcedureDeclaration(t, procDecl, "bisect", program.Block.Callables[0].(*ast.ProcedureDeclaration)) {
 		return
 	}
 }
@@ -762,16 +762,16 @@ func TestParseWhileStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0) {
 		return
 	}
 
-	if !testWhileStatement(t, prog.Block.Stats[0]) {
+	if !testWhileStatement(t, program.Block.Stats[0]) {
 		return
 	}
 }
@@ -877,7 +877,7 @@ func testProcedureDeclaration(
 	t *testing.T,
 	pd ast.Statement,
 	procedureName string,
-	progPD *ast.ProcedureDeclaration,
+	programPD *ast.ProcedureDeclaration,
 ) bool {
 	procDecl, ok := pd.(*ast.ProcedureDeclaration)
 	if !ok {
@@ -895,7 +895,7 @@ func testProcedureDeclaration(
 		return false
 	}
 
-	paramList := progPD.Heading.Parameters
+	paramList := programPD.Heading.Parameters
 	for i, j := 0, 0; i < len(paramList) && j < len(procDecl.Heading.Parameters); i, j = i+1, j+1 {
 		if paramList[i].String() != procDecl.Heading.Parameters[j].String() {
 			t.Errorf("expected parameter type to be %v, got %v instead",
@@ -1001,12 +1001,6 @@ func testAssignmentStatement(t *testing.T, stmt ast.Statement, variable string, 
 		return false
 	}
 
-	if assignStmt.Variable.TokenKind() != token.Identifier {
-		t.Errorf("expected variable to be of kind %v, got %v",
-			token.Identifier, assignStmt.Variable.TokenKind())
-		return false
-	}
-
 	if assignStmt.Variable.String() != variable {
 		t.Errorf("expected variable to be %v, got %v instead,", variable, assignStmt.Variable.String())
 		return false
@@ -1023,15 +1017,15 @@ func testAssignmentStatement(t *testing.T, stmt ast.Statement, variable string, 
 }
 
 func testProgramAST(
-	t *testing.T, p *ast.Program, progName string, paramList []string, numStmts, numVarDefs, numCallables, numTypeDefs int,
+	t *testing.T, p *ast.Program, programName string, paramList []string, numStmts, numVarDefs, numCallables, numTypeDefs int,
 ) bool {
 	if p == nil {
 		t.Error("AST not created")
 		return false
 	}
 
-	if p.Name.String() != progName {
-		t.Errorf("expected program name to be %v, got %v instead", progName, p.Name.String())
+	if p.Name.String() != programName {
+		t.Errorf("expected program name to be %v, got %v instead", programName, p.Name.String())
 		return false
 	}
 
@@ -1219,27 +1213,27 @@ func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token
 	return true
 }
 
-func testProcedureStatement(t *testing.T, stmt ast.Statement, procName string, args []ast.Expression) bool {
-	procStat, ok := stmt.(*ast.ProcedureStmt)
-	if !ok {
-		t.Errorf("expected statement of type, ast.procedure_stmt; found %v", procStat)
-	}
-
-	if procStat.Name.String() != procName {
-		t.Errorf("expected procedure name %v, got %v instead", procName, procStat.Name.String())
-		return false
-	}
-
-	for i, j := 0, 0; i < len(args) && j < len(procStat.ParamList); i, j = i+1, j+1 {
-		if args[i].TokenLiteral() != procStat.ParamList[j].TokenLiteral() {
-			t.Errorf("expected parameter %v, got %v instead",
-				args[i].TokenLiteral(), procStat.ParamList[j].TokenLiteral())
-			return false
-		}
-	}
-
-	return true
-}
+//func testProcedureStatement(t *testing.T, stmt ast.Statement, procName string, args []ast.Expression) bool {
+//	procStat, ok := stmt.(*ast.ProcedureStmt)
+//	if !ok {
+//		t.Errorf("expected statement of type, ast.procedure_stmt; found %v", procStat)
+//	}
+//
+//	if procStat.Name.String() != procName {
+//		t.Errorf("expected procedure name %v, got %v instead", procName, procStat.Name.String())
+//		return false
+//	}
+//
+//	for i, j := 0, 0; i < len(args) && j < len(procStat.ParamList); i, j = i+1, j+1 {
+//		if args[i].TokenLiteral() != procStat.ParamList[j].TokenLiteral() {
+//			t.Errorf("expected parameter %v, got %v instead",
+//				args[i].TokenLiteral(), procStat.ParamList[j].TokenLiteral())
+//			return false
+//		}
+//	}
+//
+//	return true
+//}
 
 func testVarDeclaration(
 	t *testing.T, stmt ast.Statement, tt token.Token, varDeclCount int, varList [][]string, varType []string,
@@ -1300,16 +1294,16 @@ func TestParseRepeatStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0) {
 		return
 	}
 
-	if !testRepeatStatement(t, prog.Block.Stats[0]) {
+	if !testRepeatStatement(t, program.Block.Stats[0]) {
 		return
 	}
 }
@@ -1374,12 +1368,12 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 15) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 15) {
 		return
 	}
 }
@@ -1388,15 +1382,16 @@ func TestParsingIndexedVariables(t *testing.T) {
 	input := `
 	program HelloWorld;
 	type
-		punchedcard = array [1..80] of char;
+		pc = array [1..80] of char;
 
 	var
 		a, b, sum : integer;
 
 	begin
-		punchedcard[0] := 1;
+		pc[0] := 1;
 		a := 17;
-		punchedcard[5] := 2;
+		pc[5] := 2;
+		pc[a+b] := 2;
 
 		writeln('Hello, world!')
 	end.
@@ -1407,12 +1402,26 @@ func TestParsingIndexedVariables(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 4, 1, 0, 1) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 5, 1, 0, 1) {
+		return
+	}
+
+	val := &ast.Identifier{Token: token.NewToken(token.UIntLiteral, "1"), Name: "1"}
+	if !testAssignmentStatement(t, program.Block.Stats[0], "pc[0]", val) {
+		return
+	}
+
+	val = &ast.Identifier{Token: token.NewToken(token.UIntLiteral, "2"), Name: "2"}
+	if !testAssignmentStatement(t, program.Block.Stats[2], "pc[5]", val) {
+		return
+	}
+
+	if !testAssignmentStatement(t, program.Block.Stats[3], "pc[a + b]", val) {
 		return
 	}
 }
@@ -1469,12 +1478,12 @@ func TestParseExpressions(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 20, 3, 1, 2) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 20, 3, 1, 2) {
 		return
 	}
 }
@@ -1511,12 +1520,12 @@ func TestParseFieldDesignator(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 2, 1, 0, 2) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 2) {
 		return
 	}
 }
@@ -1547,12 +1556,12 @@ func TestParserArrayType(t *testing.T) {
 		t.Error(err)
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, prog, "HelloWorld", []string{}, 1, 1, 0, 8) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 8) {
 		return
 	}
 }
