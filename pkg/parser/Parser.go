@@ -471,7 +471,11 @@ func (p *Parser) fileType() (*structured.File, error) {
 func (p *Parser) recordType() (*structured.Record, error) {
 	var err error
 
-	record := &structured.Record{Token: p.lAheadToken(1)}
+	record := &structured.Record{
+		Token: p.lAheadToken(1),
+		Scope: symbols.NewLocalScope("", p.curScope)}
+	p.curScope = record.Scope
+
 	if err = p.match(token.Record); err != nil {
 		return nil, err
 	}
@@ -484,6 +488,8 @@ func (p *Parser) recordType() (*structured.Record, error) {
 	if err = p.match(token.End); err != nil {
 		return nil, err
 	}
+
+	p.curScope = p.curScope.GetEnclosingScope()
 
 	return record, nil
 }
@@ -560,6 +566,13 @@ func (p *Parser) recordSection() (*structured.RecordSection, error) {
 	recordSec.Type, err = p.typeDenoter()
 	if err != nil {
 		return nil, err
+	}
+
+	for _, rec := range recordSec.List {
+		err = p.curScope.Define(symbols.NewField(rec.Name, symbols.FIELD, recordSec.Type))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return recordSec, nil
