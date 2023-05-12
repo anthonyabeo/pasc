@@ -19,7 +19,7 @@ std::vector<llvm::Type*> IRCodegenVisitor::codegen(const ValueParam &v) {
   std::vector<llvm::Type*> paramTypes;
 
   auto typ = v.type->codegen(*this);
-  for (auto& name : v.names) {
+  for (int i = 0; i < v.names.size(); ++i) {
     paramTypes.push_back(typ);
   }
 
