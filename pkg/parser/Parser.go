@@ -2241,14 +2241,29 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 			return nil, err
 		}
 	} else if sym.GetType().GetName() == "record" {
-		expr, err = p.fieldDesignator()
+		recVar := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
+
+		expr, err = p.fieldDesignator(recVar)
 		if err != nil {
 			return nil, err
 		}
 	} else if sym.GetType().GetName() == "file" {
 
 	} else if sym.GetType().GetName() == "pointer" {
+		expr, err = p.identifiedVariable()
+		if err != nil {
+			return nil, err
+		}
 
+		if p.lAheadKind(1) == token.Period {
+			expr, err = p.fieldDesignator(expr)
+			if err != nil {
+				return nil, err
+			}
+		}
 	} else {
 		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 		if err = p.consume(); err != nil {
@@ -2259,29 +2274,59 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 	return expr, nil
 }
 
-// field-designator = record-variable '.' field-specifier | field-designator-identifier .
-func (p *Parser) fieldDesignator() (*ast.FieldDesignator, error) {
-	var err error
+func (p *Parser) identifiedVariable() (*ast.IdentifiedVariable, error) {
+	var (
+		err   error
+		idVar *ast.IdentifiedVariable
+	)
 
-	recordVar := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
+	sym := p.curScope.Resolve(p.lAheadToken(1).Text)
+	ptr := sym.GetType().(*structured.Pointer)
+
+	idVar = &ast.IdentifiedVariable{
+		PointerName: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text},
+		UnderType:   ptr.DomainType,
+	}
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
 
-	fieldDes := &ast.FieldDesignator{RecordVar: recordVar}
-	if err := p.match(token.Period); err != nil {
+	if err = p.match(token.Caret); err != nil {
 		return nil, err
 	}
 
-	record := p.curScope.Resolve(recordVar.Name).GetType().(*structured.Record)
+	return idVar, nil
+}
+
+// field-designator = record-variable '.' field-specifier | field-designator-identifier .
+func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, error) {
+	var (
+		ok     bool
+		err    error
+		record *structured.Record
+	)
+
+	fieldDes := &ast.FieldDesignator{RecordVar: recVar}
+	if err = p.match(token.Period); err != nil {
+		return nil, err
+	}
+
+	record, ok = p.curScope.Resolve(recVar.String()).GetType().(*structured.Record)
+	if !ok {
+		record, ok = recVar.(*ast.IdentifiedVariable).UnderType.(*structured.Record)
+		if !ok {
+			return nil, fmt.Errorf("expected variable to be record type or pointer to record type")
+		}
+	}
+
 	field := record.Scope.Resolve(p.lAheadToken(1).Text)
 	if field == nil {
-		return nil, fmt.Errorf("record type %v has no field named %v", recordVar.Name, p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("record type %v has no field named %v", recVar.String(), p.lAheadToken(1).Text)
 	} else if field.GetKind() != symbols.FIELD {
-		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recordVar.Name)
+		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recVar.String())
 	} else {
 		fieldDes.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
-		if err := p.match(token.Identifier); err != nil {
+		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}
 	}
