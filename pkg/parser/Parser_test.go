@@ -592,7 +592,7 @@ func TestParsingConstantDefinition(t *testing.T) {
 		return
 	}
 
-	if !testGlobalSymbolTable(t, pars.symTable, nil, "global", 9) {
+	if !testGlobalSymbolTable(t, pars.symTable, nil, "global", 11) {
 		return
 	}
 }
