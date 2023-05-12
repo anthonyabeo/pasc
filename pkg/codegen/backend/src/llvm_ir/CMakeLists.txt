@@ -10,7 +10,7 @@ add_library(
     IRCodeGenVisitor.cc
     ExprCodeGen.cc
     StatementCodeGen.cc
-)
+    TypeCodeGen.cc)
 
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 

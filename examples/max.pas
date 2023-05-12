@@ -1,6 +1,6 @@
 program MaxProgram;
 var
-    a, b : integer;
+    a, b, result : integer;
 
 function
     max(n, m : integer): integer;

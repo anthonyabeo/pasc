@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     return 1;
   }  catch (DeserializeProtobufException& ex) {
     std::cerr << ex.what() << std::endl;
-    return 1;
+    return 2;
   }
 
   return 0;

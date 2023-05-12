@@ -15,7 +15,8 @@ IRCodegenVisitor::IRCodegenVisitor(std::string& moduleName) {
   module = std::make_unique<llvm::Module>(moduleName, *ctx);
   builder = std::make_unique<llvm::IRBuilder<>>(*ctx);
 
-  symTable = std::make_unique<LLVMSymbolTable>("main");
+  symTable = std::make_shared<LLVMSymbolTable>("main");
+  curScope = symTable;
 }
 
 void IRCodegenVisitor::codegenProgram(const ProgramIR &program) {
@@ -54,30 +55,22 @@ std::string IRCodegenVisitor::dumpLLVMIRToString() {
   return oss.str();
 }
 
-llvm::Type* IRCodegenVisitor::getLLVMTypeOf(const Type &t) {
-   if (t.GetName() == "integer") {
-      return llvm::Type::getInt32Ty(*ctx);
-   } else if (t.GetName() == "Boolean") {
-     return llvm::Type::getInt1Ty(*ctx);
-   } else if (t.GetName() == "real") {
-     return llvm::Type::getFloatTy(*ctx);
-   } else {
-     return nullptr;
-   }
- }
-
 void IRCodegenVisitor::codegenBlock(const Block &blk) {
   for (auto &varDecl : blk.VarDeclrs) {
-     auto typ = getLLVMTypeOf(*varDecl->type);
+    auto typ = varDecl->type->codegen(*this);
 
      llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
      llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
                            TheFunction->getEntryBlock().begin());
 
-    auto alloca = TmpB.CreateAlloca(typ,
-                                    nullptr, varDecl->name->name);
+    auto alloca = TmpB.CreateAlloca(
+         typ,nullptr, varDecl->name->name);
 
-    symTable->Define(varDecl->name->name, alloca);
+    curScope->Define(varDecl->name->name, alloca);
+  }
+
+  for (auto& call :blk.callables) {
+    call->codegen(*this);
   }
 
   for (auto &stmt : blk.Stmts) {

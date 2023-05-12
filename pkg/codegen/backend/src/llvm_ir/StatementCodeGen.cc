@@ -1,5 +1,7 @@
 #include <sstream>
 
+#include "llvm/IR/Verifier.h"
+
 #include "llvm_ir/IRCodeGenVisitor.h"
 
 /// @brief
@@ -21,16 +23,15 @@ llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
     throw IRCodegenException(buf.str());
   }
 
-  builder->CreateStore(val, variable);
+  return builder->CreateStore(val, variable);
 
-  return val;
+//  return val;
 }
 
 /// @brief
 /// @param stmt
 /// @return
-llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
-  if (stmt.name->get_name() == "writeln") {
+llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
     std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
     auto printfFunc = module->getOrInsertFunction(
         "printf",
@@ -49,9 +50,6 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStatement &stmt) {
     }
 
     return builder->CreateCall(printfFunc, argsV, "call");
-  }
-
-  return nullptr;
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
@@ -113,4 +111,87 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
     PN->addIncoming(ElseV, ElseBB);
 
   return PN;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const FunctionDeclaration &fd) {
+  auto parentInsertBB = builder->GetInsertBlock();
+
+  auto s = std::make_shared<LLVMSymbolTable>(fd.funcHead->name);
+  s->setParent(curScope);
+  curScope = s;
+
+  ////////////////////
+  // FUNCTION TYPE
+  ///////////////////
+  std::vector<llvm::Type*> paramsTypes;
+  for (auto& param :fd.funcHead->params) {
+    auto p = param->codegen(*this);
+
+    paramsTypes.reserve(paramsTypes.size() + distance(std::begin(p) , std::end(p)));
+    paramsTypes.insert(paramsTypes.end(), std::begin(p), std::end(p));
+  }
+
+  auto *funcType = llvm::FunctionType::get(
+      fd.funcHead->retType->codegen(*this),
+      paramsTypes,
+      false);
+
+  ///////////////////////
+  // FUNCTION PROTOTYPE
+  ///////////////////////
+  auto *F = llvm::Function::Create(
+      funcType,
+      llvm::Function::ExternalLinkage,
+      fd.funcHead->name,
+      module.get());
+
+  ///////////////////////
+  // FUNCTION DEFINITION
+  ///////////////////////
+  llvm::BasicBlock *entryBB =
+      llvm::BasicBlock::Create(*ctx, "entry", F);
+  builder->SetInsertPoint(entryBB);
+
+  for (int i = 0; i < F->arg_size(); ++i) {
+
+    // TODO extend to support other parameter types
+    auto valParam = dynamic_cast<ValueParam*>(fd.funcHead->params[i].get());
+    for (int j = 0; j < valParam->names.size(); ++j) {
+      auto Arg = F->getArg(j);
+      auto name = valParam->names[j];
+
+      llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
+      llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+                             TheFunction->getEntryBlock().begin());
+
+      auto alloca = TmpB.CreateAlloca(
+          F->getFunctionType()->getParamType(j), nullptr, name);
+
+      curScope->Define(name, alloca);
+      builder->CreateStore(Arg, curScope->Resolve(name));
+    }
+    i += valParam->names.size();
+  }
+
+  codegenBlock(*fd.blk);
+
+  llvm::verifyFunction(F->getFunction());
+
+  curScope = curScope->GetEnclosingScope();
+  // restore it here
+  builder->SetInsertPoint(parentInsertBB);
+  return F;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const ProcedureDeclaration &) {
+  return nullptr;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const ProcedureStmt& ps) {
+  return nullptr;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const ReturnStatement& ps) {
+  auto ret = ps.value->codegen(*this);
+  return builder->CreateRet(ret);
 }

@@ -2,7 +2,7 @@
 filename=$1
 program=$2
 
-mkdir bin
+#mkdir bin
 pasc $filename 
 PascBackend pkg/codegen/out/$program.bin
 llc -filetype=obj bin/$program.ll -o bin/$program.o
