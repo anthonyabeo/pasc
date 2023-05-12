@@ -1507,9 +1507,11 @@ func TestParseFieldDesignator(t *testing.T) {
 
 	var
 		a, b, sum : integer;
+		p2        : ^person;
 
 	begin
 		person.firstname := 1;
+        p2^.mother := 4;
 
 		writeln( person.firstname )
 	end.
@@ -1525,7 +1527,7 @@ func TestParseFieldDesignator(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 2) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 2, 0, 2) {
 		return
 	}
 
