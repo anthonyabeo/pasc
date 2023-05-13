@@ -11,5 +11,5 @@ test:
 	go test ./... -v
 
 pre-build:
-	protoc -I pkg/ --go_out="." program.proto
-	protoc -I pkg/ --cpp_out="pkg/codegen/backend/include" program.proto	
+	protoc --proto_path=${PWD}/pkg --go_out="." ${PWD}/pkg/proto/token.proto ${PWD}/pkg/proto/program.proto ${PWD}/pkg/proto/expression.proto ${PWD}/pkg/proto/statement.proto ${PWD}/pkg/proto/type.proto
+	protoc --proto_path=${PWD}/pkg --cpp_out="pkg/codegen/backend/include" ${PWD}/pkg/proto/token.proto ${PWD}/pkg/proto/program.proto ${PWD}/pkg/proto/expression.proto ${PWD}/pkg/proto/statement.proto ${PWD}/pkg/proto/type.proto
