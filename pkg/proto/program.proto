@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package Pasc;
+option go_package = "pkg/codegen/serializer";
+
+import "proto/type.proto";
+import "proto/token.proto";
+import "proto/expression.proto";
+import "proto/statement.proto";
+
+
+//////////////////////////////////
+//  PROGRAM
+//////////////////////////////////
+message Program {
+    TokenKind kind = 1;
+    string name = 2;
+    repeated string params = 3; 
+    Block block = 4;
+}
+
+message Block {
+    repeated VarDeclaration varDecl = 1;
+    repeated Statement stmts = 2;
+    repeated Callable callables = 3;
+}
+
+
+message Callable {
+    enum CallKind {
+        Func = 0;
+        Proc = 1;
+    }
+
+    CallKind kind = 1;
+    oneof call {
+        FuncDeclaration funcDecl = 2;
+        ProcDeclaration procDecl = 3;
+    }
+}
+
+message FormalParameter {
+    enum FPKind {
+        FuncHead = 0;
+        ProcHead = 1;
+        VarParam = 2;
+        ValueParam = 3;
+    }
+
+    FPKind kind = 1;
+    oneof fp {
+        FuncHeading fHead = 2;
+        ProcHeading pHead = 3;
+        VariableParam vParam = 4;
+        ValueParam valParam = 5;
+    }
+}
+
+message VariableParam {
+    repeated string names = 1;
+    Type type = 2;
+}
+
+message ValueParam {
+    repeated string names = 1;
+    Type type = 2;
+}
+
+message FuncHeading {
+    string name = 1;
+    repeated FormalParameter params = 2;
+    Type returnType = 3;
+}
+
+message ProcHeading {
+    string name = 1;
+    repeated FormalParameter params = 2;
+}
+
+//////////////////////////////////
+//  DECLARATIONS
+//////////////////////////////////
+message FuncDeclaration {
+    FuncHeading funcHeading = 1;
+    Block blk = 2;
+    string dir = 3;
+}
+
+message ProcDeclaration {
+    ProcHeading procHead = 1;
+    Block blk = 2;
+    string dir = 3;
+}
+
+message VarDeclaration {
+    Expression name = 1;
+    Type type = 2;
+}
+
+

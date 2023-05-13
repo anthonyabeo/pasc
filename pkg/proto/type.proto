@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package Pasc;
+option go_package = "pkg/codegen/serializer";
+
+message Type {
+  enum TypeKind {
+    INTEGER = 0;
+    REAL = 1;
+    BOOLEAN = 2;
+    CHAR = 3;
+  }
+
+  message Integer {
+    string name = 1;
+  }
+
+  message Boolean {
+    string name = 1;
+  }
+
+  message Real {
+    string name = 1;
+  }
+
+  message Char {
+    string name = 1;
+  }
+
+  TypeKind tk = 1;
+  oneof type {
+    Integer int = 2;
+    Real real = 3;
+    Boolean bool = 4;
+    Char char = 5;
+  }
+}

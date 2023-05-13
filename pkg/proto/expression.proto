@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package Pasc;
+option go_package = "pkg/codegen/serializer";
+
+message Identifier {
+  enum IDKind {
+    EntireVar = 0;
+    IdxVar = 1;
+    Field = 2;
+  }
+
+  message Variable {
+    string name = 1;
+  }
+
+  message IndexedVariable {
+
+  }
+
+  message FieldDesignator {
+
+  }
+
+  IDKind kind = 1;
+  oneof value {
+    Variable var = 2;
+    IndexedVariable iv = 3;
+    FieldDesignator fld = 4;
+  }
+}
+
+message Expression {
+  enum ExprKind {
+    UInt = 0;
+    Bool = 1;
+    Ident = 2;
+    BinExpr = 3;
+    WriteParam = 4;
+    FCall = 5;
+  }
+
+  ExprKind kind = 1;
+  oneof expr {
+    Identifier id = 2;
+    UIntLiteral uint = 3;
+    BinaryExpr be = 4;
+    WriteParameter wp = 5;
+    FuncCall fc = 6;
+  }
+}
+
+message WriteParameter {
+  Expression e = 1;
+  Expression totalWidth = 2;
+  Expression fracDigits = 3;
+}
+
+message BinaryExpr {
+  Expression left = 1;
+  Expression right = 2;
+  Operator op = 3;
+}
+
+
+message UIntLiteral {
+  uint32 value = 1;
+}
+
+message FuncCall {
+  Expression name = 1;
+  repeated Expression args = 2;
+}
+
+//////////////////////////////////
+//  OPERATORS
+//////////////////////////////////
+message Operator {
+  enum OpKind {
+    Plus = 0;
+    Minus = 1;
+    Div = 2;
+    Sub = 3;
+    Mod = 4;
+    And = 5;
+    Or = 6;
+    In = 7;
+    Equal = 8;
+    Less = 9;
+    Great = 10;
+    GreatEqual = 11;
+  }
+
+  OpKind op = 1;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package Pasc;
+option go_package = "pkg/codegen/serializer";
+
+enum TokenKind {
+  PROGRAM = 0;
+  ASSIGN = 1;
+  IDENTIFIER = 2;
+  UINTLIT = 3;
+  PROCEDURE = 4;
+  LESS = 5;
+  GREAT = 6;
+  IF = 7;
+  TO = 8;
+  DOWN_TO = 9;
+}
