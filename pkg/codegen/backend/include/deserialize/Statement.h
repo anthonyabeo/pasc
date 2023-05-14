@@ -39,7 +39,7 @@ struct IfStatement : public Statement {
 // PROCEDURE STATEMENT
 ///////////////////////////
 struct ProcedureStatement : public Statement {
-  virtual ~ProcedureStatement() = default;
+  ~ProcedureStatement() override = default;
 };
 
 std::unique_ptr<ProcedureStatement> deserializeProcedureStatement(const Pasc::ProcedureStatement&);

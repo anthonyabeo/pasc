@@ -152,27 +152,35 @@ llvm::Value *IRCodegenVisitor::codegen(const FunctionDeclaration &fd) {
       llvm::BasicBlock::Create(*ctx, "entry", F);
   builder->SetInsertPoint(entryBB);
 
-  for (int i = 0; i < F->arg_size(); ++i) {
+  for (std::size_t i = 0; i < F->arg_size(); ++i) {
+    auto FPName = fd.funcHead->params[i]->getName();
 
-    // TODO extend to support other parameter types
-    auto valParam = dynamic_cast<ValueParam*>(fd.funcHead->params[i].get());
-    for (int j = 0; j < valParam->names.size(); ++j) {
-      auto Arg = F->getArg(j);
-      auto name = valParam->names[j];
+    if (FPName == "VALUE_PARAM") {
+      auto valParam = dynamic_cast<ValueParam*>(fd.funcHead->params[i].get());
+      for (int j = 0; j < valParam->names.size(); ++j) {
+        auto Arg = F->getArg(j);
+        auto name = valParam->names[j];
 
-      llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
-      llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
-                             TheFunction->getEntryBlock().begin());
+        llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
+        auto alloca = CreateEntryBlockAlloca(
+                          TheFunction, name, F->getFunctionType()->getParamType(j));
 
-      auto alloca = TmpB.CreateAlloca(
-          F->getFunctionType()->getParamType(j), nullptr, name);
-
-      curScope->Define(name, alloca);
-      builder->CreateStore(Arg, curScope->Resolve(name));
+        curScope->Define(name, alloca);
+        builder->CreateStore(Arg, curScope->Resolve(name));
+      }
+      i += valParam->names.size();
     }
-    i += valParam->names.size();
-  }
+    else if (FPName == "VAR_PARAM") {
 
+    }
+    else if (FPName == "FUNC_HEAD") {
+
+    }
+    else {
+
+    }
+
+  }
   codegenBlock(*fd.blk);
 
   llvm::verifyFunction(F->getFunction());

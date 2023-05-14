@@ -55,21 +55,25 @@ std::string IRCodegenVisitor::dumpLLVMIRToString() {
   return oss.str();
 }
 
+llvm::AllocaInst *IRCodegenVisitor::CreateEntryBlockAlloca(
+    llvm::Function *TheFunction, llvm::StringRef Name, llvm::Type* type)
+{
+  llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+                   TheFunction->getEntryBlock().begin());
+  return TmpB.CreateAlloca(type, nullptr, Name);
+}
+
 void IRCodegenVisitor::codegenBlock(const Block &blk) {
   for (auto &varDecl : blk.VarDeclrs) {
     auto typ = varDecl->type->codegen(*this);
 
-     llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
-     llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
-                           TheFunction->getEntryBlock().begin());
-
-    auto alloca = TmpB.CreateAlloca(
-         typ,nullptr, varDecl->name->name);
+    llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
+    auto alloca = CreateEntryBlockAlloca(TheFunction, varDecl->name->name, typ);
 
     curScope->Define(varDecl->name->name, alloca);
   }
 
-  for (auto& call :blk.callables) {
+  for (auto& call : blk.callables) {
     call->codegen(*this);
   }
 

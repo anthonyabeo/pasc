@@ -64,7 +64,8 @@ llvm::Value *ProcedureDeclaration::codegen(IRVisitor &v) {
 //////////////////////////
 // FUNCTION HEADING
 //////////////////////////
-void FuncHeading::formalParam() {}
+std::string FuncHeading::getName() { return "FUNC_HEAD"; }
+
 FuncHeading::FuncHeading(const Pasc::FuncHeading& fh) {
   name = fh.name();
   for (int i = 0; i < fh.params_size(); ++i) {
@@ -80,7 +81,7 @@ std::vector<llvm::Type*> FuncHeading::codegen(IRVisitor &v) {
 //////////////////////////
 // PROCEDURE HEADING
 //////////////////////////
-void ProcHeading::formalParam() {}
+std::string ProcHeading::getName() { return "PROC_HEAD"; }
 
 ProcHeading::ProcHeading(const Pasc::ProcHeading& ph) {
   name = ph.name();
@@ -98,7 +99,7 @@ std::vector<llvm::Type*> ProcHeading::codegen(IRVisitor &v) {
 //////////////////////////
 // VARIABLE PARAM
 //////////////////////////
-void VariableParam::formalParam() {}
+std::string VariableParam::getName() { return "VAR_PARAM"; }
 
 VariableParam::VariableParam(const Pasc::VariableParam& varParam) {
   for (int i = 0; i < varParam.names_size(); ++i) {
@@ -114,7 +115,7 @@ std::vector<llvm::Type*> VariableParam::codegen(IRVisitor &v) {
 //////////////////////////
 // VALUE PARAMETER
 //////////////////////////
-void ValueParam::formalParam() {}
+std::string ValueParam::getName() { return "VALUE_PARAM"; }
 
 ValueParam::ValueParam(const Pasc::ValueParam& valParam) {
   for (int i = 0; i < valParam.names_size(); ++i) {

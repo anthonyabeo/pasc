@@ -13,7 +13,7 @@ class IRVisitor;
 
 struct FormalParameter {
   virtual ~FormalParameter() = default;
-  virtual void formalParam() = 0;
+  virtual std::string getName() = 0;
   virtual std::vector<llvm::Type*> codegen(IRVisitor &v) = 0;
 };
 
@@ -21,7 +21,7 @@ struct ValueParam : public FormalParameter {
   std::vector<std::string> names;
   std::unique_ptr<Type> type;
 
-  void formalParam() override;
+  std::string getName() override;
   explicit ValueParam(const Pasc::ValueParam&);
   std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
@@ -30,7 +30,7 @@ struct VariableParam : public FormalParameter {
   std::vector<std::string> names;
   std::unique_ptr<Type> type;
 
-  void formalParam() override;
+  std::string getName() override;
   explicit VariableParam(const Pasc::VariableParam&);
   std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
@@ -40,7 +40,7 @@ struct FuncHeading : public FormalParameter {
   std::vector<std::unique_ptr<FormalParameter>> params;
   std::unique_ptr<Type> retType;
 
-  void formalParam() override;
+  std::string getName() override;
   explicit FuncHeading(const Pasc::FuncHeading&);
   std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };
@@ -50,7 +50,7 @@ struct ProcHeading : public FormalParameter {
   std::vector<std::unique_ptr<FormalParameter>> params;
   std::unique_ptr<Type> retType;
 
-  void formalParam() override;
+  std::string getName() override;
   explicit ProcHeading(const Pasc::ProcHeading&);
   std::vector<llvm::Type*> codegen(IRVisitor &) override;
 };

@@ -27,6 +27,8 @@ public:
   void dumpLLVMIR();
   std::string dumpLLVMIRToString();
 
+  static llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function*, llvm::StringRef, llvm::Type*);
+
   // Expressions
   llvm::Value *codegen(const VariableID&) override;
   llvm::Value *codegen(const IdentifierExpr&) override;
