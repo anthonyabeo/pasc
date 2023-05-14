@@ -3,6 +3,8 @@ syntax = "proto3";
 package Pasc;
 option go_package = "pkg/codegen/serializer";
 
+import "proto/type.proto";
+
 message Identifier {
   enum IDKind {
     EntireVar = 0;
@@ -70,6 +72,7 @@ message UIntLiteral {
 message FuncCall {
   Expression name = 1;
   repeated Expression args = 2;
+  Type returnType = 3;
 }
 
 //////////////////////////////////

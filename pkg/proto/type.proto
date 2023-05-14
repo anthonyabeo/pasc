@@ -9,6 +9,7 @@ message Type {
     REAL = 1;
     BOOLEAN = 2;
     CHAR = 3;
+    VOID = 4;
   }
 
   message Integer {
@@ -27,11 +28,16 @@ message Type {
     string name = 1;
   }
 
+  message Void {
+    string name = 1;
+  }
+
   TypeKind tk = 1;
   oneof type {
     Integer int = 2;
     Real real = 3;
     Boolean bool = 4;
     Char char = 5;
+    Void void = 6;
   }
 }

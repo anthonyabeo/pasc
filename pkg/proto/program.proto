@@ -75,6 +75,7 @@ message FuncHeading {
 message ProcHeading {
     string name = 1;
     repeated FormalParameter params = 2;
+    Type returnType = 3;
 }
 
 //////////////////////////////////
