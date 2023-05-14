@@ -16,7 +16,8 @@ private:
   std::unique_ptr<llvm::IRBuilder<>> builder;
   std::unique_ptr<llvm::Module> module;
 
-  std::unique_ptr<LLVMSymbolTable> symTable;
+  std::shared_ptr<LLVMSymbolTable> symTable;
+  std::shared_ptr<LLVMScope> curScope;
 
 public:
   explicit IRCodegenVisitor(std::string&);
@@ -26,18 +27,32 @@ public:
   void dumpLLVMIR();
   std::string dumpLLVMIRToString();
 
-  llvm::Type* getLLVMTypeOf(const Type &);
-
   // Expressions
   llvm::Value *codegen(const VariableID&) override;
   llvm::Value *codegen(const IdentifierExpr&) override;
   llvm::Value *codegen(const UIntegerLiteral &) override;
   llvm::Value* codegen(const BinaryExpression&) override;
+  llvm::Value* codegen(const FunctionCall&) override;
+  llvm::Value* codegen(const WriteParameter&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
-  llvm::Value *codegen(const ProcedureStatement &) override;
   llvm::Value *codegen(const IfStatement&) override;
+  llvm::Value *codegen(const Writeln&) override;
+  llvm::Value *codegen(const ProcedureStmt&) override;
+  llvm::Value *codegen(const ReturnStatement&) override;
+  llvm::Value *codegen(const FunctionDeclaration&) override;
+  llvm::Value *codegen(const ProcedureDeclaration&) override;
+
+  std::vector<llvm::Type*> codegen(const FuncHeading&) override;
+  std::vector<llvm::Type*> codegen(const ProcHeading&) override;
+  std::vector<llvm::Type*> codegen(const ValueParam&) override;
+  std::vector<llvm::Type*> codegen(const VariableParam&) override;
+
+  // Types
+  llvm::Type *codegen(const IntegerType&) override;
+  llvm::Type *codegen(const BoolType&) override;
+  llvm::Type *codegen(const VoidType&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation

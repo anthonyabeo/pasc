@@ -1,7 +1,7 @@
 #include "llvm_ir/IRCodeGenVisitor.h"
 
 llvm::Value *IRCodegenVisitor::codegen(const VariableID &id) {
-  auto alloca = symTable->Resolve(id.name);
+  auto alloca = curScope->Resolve(id.name);
   if (!alloca) {
     throw IRCodegenException("undefined name, " + id.name);
   }
@@ -10,7 +10,7 @@ llvm::Value *IRCodegenVisitor::codegen(const VariableID &id) {
 }
 
 llvm::Value* IRCodegenVisitor::codegen(const IdentifierExpr &expr) {
-  auto id = symTable->Resolve(expr.identifier->get_name());
+  auto id = curScope->Resolve(expr.identifier->get_name());
   if (!id) {
     throw IRCodegenException(
         std::string("Identifier not found: " + expr.identifier->get_name()));
@@ -48,4 +48,21 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
   default:
     throw IRCodegenException("invalid binary operator");
   }
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const FunctionCall& fc) {
+  std::vector<llvm::Value*> funcArgs;
+  funcArgs.reserve(fc.args.size());
+
+  for (auto& arg :fc.args) {
+    funcArgs.push_back(arg->codegen(*this));
+  }
+
+  auto f = module->getFunction(fc.name->get_name());
+
+  return builder->CreateCall(f, funcArgs);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const WriteParameter& wp) {
+  return wp.e->codegen(*this);
 }

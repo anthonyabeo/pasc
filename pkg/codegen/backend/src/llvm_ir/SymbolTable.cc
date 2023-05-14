@@ -7,6 +7,10 @@ LLVMSymbolTable::LLVMSymbolTable(std::string n) {
   parent = nullptr;
 }
 
+void LLVMSymbolTable::setParent(const std::shared_ptr<LLVMScope> &p) {
+  parent = p;
+}
+
 std::string LLVMSymbolTable::GetScopeName() { return name; }
 
 std::shared_ptr<LLVMScope> LLVMSymbolTable::GetEnclosingScope() {
