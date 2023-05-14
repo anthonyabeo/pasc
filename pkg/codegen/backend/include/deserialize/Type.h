@@ -3,7 +3,8 @@
 
 #include <string>
 
-#include "../program.pb.h"
+#include "../proto/program.pb.h"
+#include "../proto/type.pb.h"
 #include "llvm/IR/Type.h"
 
 class IRVisitor;

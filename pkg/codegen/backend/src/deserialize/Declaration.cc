@@ -1,4 +1,4 @@
-#include "program.pb.h"
+#include "proto/program.pb.h"
 
 #include "deserialize/Declaration.h"
 

@@ -15,7 +15,11 @@ add_library(
     Statement.cc
     Type.cc
     ../llvm_ir/SymbolTable.cc
-    ../../include/program.pb.cc
+    ../../include/proto/program.pb.cc
+    ../../include/proto/statement.pb.cc
+    ../../include/proto/expression.pb.cc
+    ../../include/proto/token.pb.cc
+    ../../include/proto/type.pb.cc
     Callable.cc
 )
 

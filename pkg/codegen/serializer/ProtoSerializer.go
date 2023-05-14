@@ -376,14 +376,14 @@ func translateExpr(expr ast.Expression) *Expression {
 			args = append(args, translateExpr(exp))
 		}
 
-		//typ := expr.Scope.Resolve(expr.Name.Name).GetType()
+		typ := expr.Scope.Resolve(expr.Name.Name).GetType()
 		e = &Expression{
 			Kind: Expression_FCall,
 			Expr: &Expression_Fc{
 				Fc: &FuncCall{
-					Name: translateExpr(expr.Name),
-					Args: args,
-					//ReturnType: translateType(typ),
+					Name:       translateExpr(expr.Name),
+					Args:       args,
+					ReturnType: translateType(typ),
 				},
 			},
 		}

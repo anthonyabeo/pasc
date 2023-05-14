@@ -1,6 +1,6 @@
 #include "llvm/IR/Value.h"
 
-#include "program.pb.h"
+#include "proto/program.pb.h"
 
 #include "deserialize/Deserializer.h"
 #include "deserialize/Expr.h"

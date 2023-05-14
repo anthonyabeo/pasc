@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "deserialize/Declaration.h"
-#include "program.pb.h"
+#include "proto/program.pb.h"
 
 Block::Block(const Pasc::Block &blk) {
   for (size_t i = 0; i < blk.vardecl_size(); i++) {

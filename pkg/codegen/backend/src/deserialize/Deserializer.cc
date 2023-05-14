@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 
-#include "program.pb.h"
+#include "proto/program.pb.h"
 
 #include "deserialize/Deserializer.h"
 #include "deserialize/Program.h"
