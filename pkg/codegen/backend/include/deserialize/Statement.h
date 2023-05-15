@@ -71,4 +71,25 @@ struct ReturnStatement : public Statement {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+///////////////////////////
+// WHILE STATEMENT
+///////////////////////////
+struct WhileStatement : public Statement {
+  std::unique_ptr<Expr> cond;
+  std::unique_ptr<Statement> body;
+
+  explicit WhileStatement(const Pasc::WhileStatement&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
+///////////////////////////
+// COMPOUND STATEMENT
+///////////////////////////
+struct CompoundStatement : public Statement {
+  std::vector<std::unique_ptr<Statement>> stmts;
+
+  explicit CompoundStatement(const Pasc::CompoundStatement&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
 #endif // STATEMENT_H

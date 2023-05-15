@@ -1,6 +1,7 @@
 #include <memory>
 
 #include "proto/program.pb.h"
+#include "proto/expression.pb.h"
 
 #include "deserialize/Deserializer.h"
 #include "deserialize/Expr.h"
@@ -12,6 +13,26 @@ enum Operator deserializeOp(const Pasc::Operator& opt) {
     return Operator::Less;
   case Pasc::Operator_OpKind_Great:
     return Operator::Great;
+  case Pasc::Operator_OpKind_GreatEqual:
+    return Operator::GreatEqual;
+  case Pasc::Operator_OpKind_LessEqual:
+    return Operator::LessEqual;
+  case Pasc::Operator_OpKind_LessGreat:
+    return Operator::LessGreat;
+  case Pasc::Operator_OpKind_Plus:
+    return Operator::Plus;
+  case Pasc::Operator_OpKind_Minus:
+    return Operator::Minus;
+  case Pasc::Operator_OpKind_Div:
+    return Operator::Div;
+  case Pasc::Operator_OpKind_Mod:
+    return Operator::Mod;
+  case Pasc::Operator_OpKind_And:
+    return Operator::And;
+  case Pasc::Operator_OpKind_Or:
+    return Operator::Or;
+  case Pasc::Operator_OpKind_In:
+    return Operator::In;
   default:
     throw DeserializeProtobufException("invalid operator kind");
   }

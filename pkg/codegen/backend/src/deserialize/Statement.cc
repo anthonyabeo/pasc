@@ -1,6 +1,7 @@
 #include "llvm/IR/Value.h"
 
 #include "proto/program.pb.h"
+#include "proto/statement.pb.h"
 
 #include "deserialize/Deserializer.h"
 #include "deserialize/Expr.h"
@@ -17,6 +18,10 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
     return std::make_unique<IfStatement>(stmt.ifstmt());
   case Pasc::Statement_StmtKind_return_:
     return std::make_unique<ReturnStatement>(stmt.retstmt());
+  case Pasc::Statement_StmtKind_while_:
+    return std::make_unique<WhileStatement>(stmt.whilestmt());
+  case Pasc::Statement_StmtKind_compound:
+    return std::make_unique<CompoundStatement>(stmt.cmpdstmt());
   default:
     throw DeserializeProtobufException("invalid statement kind");
   }
@@ -102,5 +107,30 @@ ReturnStatement::ReturnStatement(const Pasc::ReturnStatement& ret) {
 }
 
 llvm::Value *ReturnStatement::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// WHILE STATEMENT
+///////////////////////////
+WhileStatement::WhileStatement(const Pasc::WhileStatement & ws) {
+  cond = deserializeExpr(ws.cond());
+  body = deserializeStmt(ws.body());
+}
+
+llvm::Value *WhileStatement::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// COMPOUND STATEMENT
+///////////////////////////
+CompoundStatement::CompoundStatement(const Pasc::CompoundStatement &cs) {
+  for (std::size_t i = 0; i < cs.stmts_size(); ++i) {
+    stmts.push_back(deserializeStmt(cs.stmts(i)));
+  }
+}
+
+llvm::Value *CompoundStatement::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

@@ -14,14 +14,17 @@ enum class Operator {
   Plus,
   Minus,
   Div,
-  Sub,
+//  Sub,
   Mod,
   And,
   Or,
   In,
   Equal,
   Less,
-  Great
+  Great,
+  GreatEqual,
+  LessEqual,
+  LessGreat
 };
 
 enum Operator deserializeOp(const Pasc::Operator&);

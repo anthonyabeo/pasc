@@ -26,6 +26,8 @@ public:
   virtual llvm::Value *codegen(const Writeln &) = 0;
   virtual llvm::Value *codegen(const FunctionDeclaration &) = 0;
   virtual llvm::Value *codegen(const ProcedureDeclaration &) = 0;
+  virtual llvm::Value *codegen(const WhileStatement &) = 0;
+  virtual llvm::Value *codegen(const CompoundStatement &) = 0;
 
   virtual std::vector<llvm::Type*> codegen(const VariableParam &) = 0;
   virtual std::vector<llvm::Type*> codegen(const ValueParam &) = 0;
