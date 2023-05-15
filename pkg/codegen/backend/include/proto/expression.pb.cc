@@ -377,15 +377,15 @@ void AddDescriptorsImpl() {
       "\r\n\005value\030\001 \001(\r\"j\n\010FuncCall\022\036\n\004name\030\001 \001(\013"
       "2\020.Pasc.Expression\022\036\n\004args\030\002 \003(\0132\020.Pasc."
       "Expression\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Ty"
-      "pe\"\261\001\n\010Operator\022!\n\002op\030\001 \001(\0162\025.Pasc.Opera"
-      "tor.OpKind\"\201\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus"
-      "\020\001\022\007\n\003Div\020\002\022\007\n\003Sub\020\003\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006"
-      "\n\002Or\020\006\022\006\n\002In\020\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005G"
-      "reat\020\n\022\016\n\nGreatEqual\020\013B\030Z\026pkg/codegen/se"
-      "rializerb\006proto3"
+      "pe\"\306\001\n\010Operator\022!\n\002op\030\001 \001(\0162\025.Pasc.Opera"
+      "tor.OpKind\"\226\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus"
+      "\020\001\022\007\n\003Div\020\002\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006\n\002Or\020\006\022\006\n"
+      "\002In\020\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005Great\020\n\022\016\n"
+      "\nGreatEqual\020\013\022\r\n\tLessEqual\020\014\022\r\n\tLessGrea"
+      "t\020\rB\030Z\026pkg/codegen/serializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1256);
+      descriptor, 1277);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/expression.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftype_2eproto::AddDescriptors();
@@ -464,7 +464,6 @@ bool Operator_OpKind_IsValid(int value) {
     case 0:
     case 1:
     case 2:
-    case 3:
     case 4:
     case 5:
     case 6:
@@ -473,6 +472,8 @@ bool Operator_OpKind_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+    case 12:
+    case 13:
       return true;
     default:
       return false;
@@ -483,7 +484,6 @@ bool Operator_OpKind_IsValid(int value) {
 const Operator_OpKind Operator::Plus;
 const Operator_OpKind Operator::Minus;
 const Operator_OpKind Operator::Div;
-const Operator_OpKind Operator::Sub;
 const Operator_OpKind Operator::Mod;
 const Operator_OpKind Operator::And;
 const Operator_OpKind Operator::Or;
@@ -492,6 +492,8 @@ const Operator_OpKind Operator::Equal;
 const Operator_OpKind Operator::Less;
 const Operator_OpKind Operator::Great;
 const Operator_OpKind Operator::GreatEqual;
+const Operator_OpKind Operator::LessEqual;
+const Operator_OpKind Operator::LessGreat;
 const Operator_OpKind Operator::OpKind_MIN;
 const Operator_OpKind Operator::OpKind_MAX;
 const int Operator::OpKind_ARRAYSIZE;

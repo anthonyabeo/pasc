@@ -146,7 +146,6 @@ enum Operator_OpKind {
   Operator_OpKind_Plus = 0,
   Operator_OpKind_Minus = 1,
   Operator_OpKind_Div = 2,
-  Operator_OpKind_Sub = 3,
   Operator_OpKind_Mod = 4,
   Operator_OpKind_And = 5,
   Operator_OpKind_Or = 6,
@@ -155,12 +154,14 @@ enum Operator_OpKind {
   Operator_OpKind_Less = 9,
   Operator_OpKind_Great = 10,
   Operator_OpKind_GreatEqual = 11,
+  Operator_OpKind_LessEqual = 12,
+  Operator_OpKind_LessGreat = 13,
   Operator_OpKind_Operator_OpKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Operator_OpKind_Operator_OpKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Operator_OpKind_IsValid(int value);
 const Operator_OpKind Operator_OpKind_OpKind_MIN = Operator_OpKind_Plus;
-const Operator_OpKind Operator_OpKind_OpKind_MAX = Operator_OpKind_GreatEqual;
+const Operator_OpKind Operator_OpKind_OpKind_MAX = Operator_OpKind_LessGreat;
 const int Operator_OpKind_OpKind_ARRAYSIZE = Operator_OpKind_OpKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Operator_OpKind_descriptor();
@@ -1498,8 +1499,6 @@ class Operator : public ::google::protobuf::Message /* @@protoc_insertion_point(
     Operator_OpKind_Minus;
   static const OpKind Div =
     Operator_OpKind_Div;
-  static const OpKind Sub =
-    Operator_OpKind_Sub;
   static const OpKind Mod =
     Operator_OpKind_Mod;
   static const OpKind And =
@@ -1516,6 +1515,10 @@ class Operator : public ::google::protobuf::Message /* @@protoc_insertion_point(
     Operator_OpKind_Great;
   static const OpKind GreatEqual =
     Operator_OpKind_GreatEqual;
+  static const OpKind LessEqual =
+    Operator_OpKind_LessEqual;
+  static const OpKind LessGreat =
+    Operator_OpKind_LessGreat;
   static inline bool OpKind_IsValid(int value) {
     return Operator_OpKind_IsValid(value);
   }
