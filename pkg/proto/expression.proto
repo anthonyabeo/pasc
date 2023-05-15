@@ -83,7 +83,7 @@ message Operator {
     Plus = 0;
     Minus = 1;
     Div = 2;
-    Sub = 3;
+//    Sub = 3;
     Mod = 4;
     And = 5;
     Or = 6;
@@ -92,6 +92,8 @@ message Operator {
     Less = 9;
     Great = 10;
     GreatEqual = 11;
+    LessEqual = 12;
+    LessGreat = 13;
   }
 
   OpKind op = 1;

@@ -439,6 +439,20 @@ func translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_Plus}
 	case token.Minus:
 		return &Operator{Op: Operator_Minus}
+	case token.LessThanOrEqual:
+		return &Operator{Op: Operator_LessEqual}
+	case token.LessThanGreaterThan:
+		return &Operator{Op: Operator_LessGreat}
+	case token.Mod:
+		return &Operator{Op: Operator_Mod}
+	case token.And:
+		return &Operator{Op: Operator_And}
+	case token.Or:
+		return &Operator{Op: Operator_Or}
+	case token.Div:
+		return &Operator{Op: Operator_Div}
+	case token.In:
+		return &Operator{Op: Operator_In}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}
