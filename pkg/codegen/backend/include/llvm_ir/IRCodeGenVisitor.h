@@ -45,6 +45,8 @@ public:
   llvm::Value *codegen(const ReturnStatement&) override;
   llvm::Value *codegen(const FunctionDeclaration&) override;
   llvm::Value *codegen(const ProcedureDeclaration&) override;
+  llvm::Value *codegen(const WhileStatement&) override;
+  llvm::Value *codegen(const CompoundStatement&) override;
 
   std::vector<llvm::Type*> codegen(const FuncHeading&) override;
   std::vector<llvm::Type*> codegen(const ProcHeading&) override;

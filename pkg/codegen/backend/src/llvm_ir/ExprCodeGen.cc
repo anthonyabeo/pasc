@@ -45,6 +45,16 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
   case Operator::Great:
   return builder->CreateCmp(
       llvm::CmpInst::Predicate::ICMP_SGT, L, R, "cond");
+  case Operator::GreatEqual:
+  return builder->CreateCmp(
+      llvm::CmpInst::Predicate::ICMP_SGE, L, R, "cond");
+  case Operator::LessEqual:
+    return builder->CreateCmp(
+      llvm::CmpInst::Predicate::ICMP_SLE, L, R, "cond");
+  case Operator::Plus:
+    return builder->CreateAdd(L, R, "add");
+  case Operator::Minus:
+    return builder->CreateSub(L, R, "sub");
   default:
     throw IRCodegenException("invalid binary operator");
   }

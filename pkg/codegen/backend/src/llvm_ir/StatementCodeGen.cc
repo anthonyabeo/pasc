@@ -55,7 +55,7 @@ llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
 llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
   auto condV = is.cond->codegen(*this);
   if (!condV)
-    throw IRCodegenException("Null condition expr for if-else statement");;
+    throw IRCodegenException("Null condition expr for if-else statement");
 
   auto *TheFunction = builder->GetInsertBlock()->getParent();
 
@@ -186,7 +186,7 @@ llvm::Value *IRCodegenVisitor::codegen(const FunctionDeclaration &fd) {
   llvm::verifyFunction(F->getFunction());
 
   curScope = curScope->GetEnclosingScope();
-  // restore it here
+  
   builder->SetInsertPoint(parentInsertBB);
   return F;
 }
@@ -202,4 +202,40 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStmt& ps) {
 llvm::Value *IRCodegenVisitor::codegen(const ReturnStatement& ps) {
   auto ret = ps.value->codegen(*this);
   return builder->CreateRet(ret);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const WhileStatement &ws) {
+    auto CondV = ws.cond->codegen(*this);
+    if(!CondV)
+      throw IRCodegenException("Null condition expr for while statement");
+
+    auto TheFunction = builder->GetInsertBlock()->getParent();
+    auto BodyBB = llvm::BasicBlock::Create(*ctx, "while_body", TheFunction);
+    auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
+
+    builder->CreateCondBr(CondV, BodyBB, ContBB);
+
+    builder->SetInsertPoint(BodyBB);
+    auto BodyV = ws.body->codegen(*this);
+    if (!BodyV)
+      throw IRCodegenException("Null body for while statement");
+
+    CondV = ws.cond->codegen(*this);
+    if(!CondV)
+      throw IRCodegenException("Null condition expr for while statement");
+
+    BodyBB = builder->GetInsertBlock();
+    builder->CreateCondBr(CondV, BodyBB, ContBB);
+
+    builder->SetInsertPoint(ContBB);
+
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const CompoundStatement &cs) {
+    for (auto& stmt : cs.stmts) {
+      stmt->codegen(*this);
+    }
+
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
 }
