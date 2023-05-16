@@ -103,9 +103,9 @@ func translateFuncHeading(fh *ast.FuncHeading) *FuncHeading {
 	return head
 }
 
-func translateProcHeading(fh *ast.ProcedureHeading) *ProcHeading {
-	head := &ProcHeading{Name: fh.Name.Name}
-	for _, param := range fh.Parameters {
+func translateProcHeading(ph *ast.ProcedureHeading) *ProcHeading {
+	head := &ProcHeading{Name: ph.Name.Name}
+	for _, param := range ph.Parameters {
 		head.Params = append(head.Params, translateFormalParam(param))
 	}
 
@@ -453,6 +453,8 @@ func translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_Div}
 	case token.In:
 		return &Operator{Op: Operator_In}
+	case token.Equal:
+		return &Operator{Op: Operator_Equal}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}

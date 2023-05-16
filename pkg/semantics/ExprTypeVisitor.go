@@ -138,6 +138,11 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 		node.EvalType = t
 	case *ast.ReturnStatement:
 		v.Visit(node.Expr)
+	case *ast.RepeatStatement:
+		for _, stmt := range node.StmtSeq {
+			v.Visit(stmt)
+		}
+		v.Visit(node.BoolExpr)
 	default:
 		panic(fmt.Sprintf("Visit: unexpected expression type %T", node))
 	}
