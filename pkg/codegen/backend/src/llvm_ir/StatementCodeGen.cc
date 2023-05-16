@@ -239,3 +239,31 @@ llvm::Value *IRCodegenVisitor::codegen(const CompoundStatement &cs) {
 
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
 }
+
+llvm::Value *IRCodegenVisitor::codegen(const RepeatStatement &rs) {
+    auto TheFunction = builder->GetInsertBlock()->getParent();
+    auto BodyBB = llvm::BasicBlock::Create(*ctx, "body", TheFunction);
+    auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
+
+    // jump into and start executing the body
+    builder->CreateBr(BodyBB);
+
+    // generate code for the body under the 'body' label
+    builder->SetInsertPoint(BodyBB);
+    for (auto& stmt : rs.stmts) {
+      stmt->codegen(*this);
+    }
+
+    // generate conditional branch to regulate loop
+    auto CondV = rs.cond->codegen(*this);
+    if(!CondV)
+      throw IRCodegenException("Null condition expr for repeat statement");
+
+    BodyBB = builder->GetInsertBlock();
+    builder->CreateCondBr(CondV, ContBB, BodyBB);
+
+    // point the builder which block to go to next
+    builder->SetInsertPoint(ContBB);
+
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+}
