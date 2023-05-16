@@ -14,7 +14,6 @@ enum class Operator {
   Plus,
   Minus,
   Div,
-//  Sub,
   Mod,
   And,
   Or,

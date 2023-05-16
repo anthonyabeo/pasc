@@ -33,6 +33,8 @@ enum Operator deserializeOp(const Pasc::Operator& opt) {
     return Operator::Or;
   case Pasc::Operator_OpKind_In:
     return Operator::In;
+  case Pasc::Operator_OpKind_Equal:
+    return Operator::Equal;
   default:
     throw DeserializeProtobufException("invalid operator kind");
   }

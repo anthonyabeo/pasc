@@ -92,4 +92,15 @@ struct CompoundStatement : public Statement {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+///////////////////////////
+// REPEAT STATEMENT
+///////////////////////////
+struct RepeatStatement : public Statement {
+  std::vector<std::unique_ptr<Statement>> stmts;
+  std::unique_ptr<Expr> cond;
+
+  explicit RepeatStatement(const Pasc::RepeatStatement&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
 #endif // STATEMENT_H
