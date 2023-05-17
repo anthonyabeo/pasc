@@ -262,7 +262,7 @@ func translateStmt(stmt ast.Statement) *Statement {
 		if stmt.Direction == token.DownTo {
 			dir = TokenKind_DOWN_TO
 		} else if stmt.Direction == token.To {
-			dir = TokenKind_DOWN_TO
+			dir = TokenKind_TO
 		} else {
 			panic(fmt.Sprintf("Invalid for-loop direction %v", stmt.Direction))
 		}
