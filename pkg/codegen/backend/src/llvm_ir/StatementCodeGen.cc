@@ -4,9 +4,7 @@
 
 #include "llvm_ir/IRCodeGenVisitor.h"
 
-/// @brief
-/// @param stmt
-/// @return
+
 llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
   auto variable = stmt.variable->codegen(*this);
   if (!variable) {
@@ -28,9 +26,6 @@ llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
 //  return val;
 }
 
-/// @brief
-/// @param stmt
-/// @return
 llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
     std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
     auto printfFunc = module->getOrInsertFunction(
@@ -261,6 +256,79 @@ llvm::Value *IRCodegenVisitor::codegen(const RepeatStatement &rs) {
 
     BodyBB = builder->GetInsertBlock();
     builder->CreateCondBr(CondV, ContBB, BodyBB);
+
+    // point the builder which block to go to next
+    builder->SetInsertPoint(ContBB);
+
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const ForStatement &fs) {
+    auto TheFunction = builder->GetInsertBlock()->getParent();
+    auto BodyBB = llvm::BasicBlock::Create(*ctx, "body", TheFunction);
+    auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
+
+    // initialize the ctlVar with the initValue
+    auto CtlVar = curScope->Resolve(fs.ctlVar->get_name());
+    if (!CtlVar)
+      throw IRCodegenException("Null loop control variable in for-statement");
+
+    auto InitVal = fs.initValue->codegen(*this);
+    if(!InitVal)
+      throw IRCodegenException("Null initial value in for-statement");
+
+    builder->CreateStore(InitVal, CtlVar);
+
+    // read the value of CtlValue for use in the rest of the loop
+    llvm::Value *CtlVal = builder->CreateLoad(CtlVar->getAllocatedType(), CtlVar);
+
+    // create condition where ctlVar is compared to finalValue
+    // if dir is TO, then the ctlVar will be increment. If it is DOWN_TO, it will be decremented.
+    auto FinalVal = fs.finalValue->codegen(*this);
+    if(!FinalVal)
+      throw IRCodegenException("Null final value in for-statement");
+
+    llvm::Value* CondV;
+    if (fs.dir == Pasc::TokenKind::TO) {
+      CondV = builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SLE, CtlVal,
+                                 FinalVal);
+    } else if(fs.dir == Pasc::TokenKind::DOWN_TO) {
+      CondV = builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SGE, CtlVal,
+                                 FinalVal);
+    } else{
+      throw IRCodegenException("Invalid dir value in for-statement");
+    }
+    if(!CondV)
+      throw IRCodegenException("Null condition expr for repeat statement");
+
+    builder->CreateCondBr(CondV, BodyBB, ContBB);
+
+    // codegen for body
+    builder->SetInsertPoint(BodyBB);
+    auto BodyV = fs.body->codegen(*this);
+    if (!BodyV)
+      throw IRCodegenException("Null body for while statement");
+
+    BodyBB = builder->GetInsertBlock();
+
+    // update control variable
+    CtlVal = builder->CreateLoad(CtlVar->getAllocatedType(), CtlVar);
+
+    llvm::APInt One(32,1, true);
+    if (fs.dir == Pasc::TokenKind::TO) {
+      auto Val = builder->CreateAdd(CtlVal, llvm::Constant::getIntegerValue(llvm::Type::getInt32Ty(*ctx), One));
+      builder->CreateStore(Val, CtlVar);
+
+      CondV = builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SLE, Val,
+                                 FinalVal);
+    } else {
+      auto Val = builder->CreateSub(CtlVal, llvm::Constant::getIntegerValue(llvm::Type::getInt32Ty(*ctx), One));
+      builder->CreateStore(Val, CtlVar);
+      CondV = builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SGE, Val,
+                                 FinalVal);
+    }
+
+    builder->CreateCondBr(CondV, BodyBB, ContBB);
 
     // point the builder which block to go to next
     builder->SetInsertPoint(ContBB);

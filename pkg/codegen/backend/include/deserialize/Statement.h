@@ -1,9 +1,10 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
- #include "llvm/IR/Value.h"
+#include "llvm/IR/Value.h"
 
- #include "Expr.h"
+#include "Expr.h"
+#include "proto/token.pb.h"
 
 class IRVisitor;
 
@@ -100,6 +101,20 @@ struct RepeatStatement : public Statement {
   std::unique_ptr<Expr> cond;
 
   explicit RepeatStatement(const Pasc::RepeatStatement&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
+///////////////////////////
+// FOR STATEMENT
+///////////////////////////
+struct ForStatement : public Statement {
+  std::unique_ptr<Identifier> ctlVar;
+  std::unique_ptr<Expr> initValue;
+  std::unique_ptr<Expr> finalValue;
+  std::unique_ptr<Statement> body;
+  Pasc::TokenKind dir;
+
+  explicit ForStatement(const Pasc::ForStatement&);
   llvm::Value *codegen(IRVisitor &) override;
 };
 

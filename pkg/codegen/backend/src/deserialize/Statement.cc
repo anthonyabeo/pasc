@@ -24,6 +24,8 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
     return std::make_unique<CompoundStatement>(stmt.cmpdstmt());
   case Pasc::Statement_StmtKind_repeat:
     return std::make_unique<RepeatStatement>(stmt.rptstmt());
+  case Pasc::Statement_StmtKind_for_:
+    return std::make_unique<ForStatement>(stmt.forstmt());
   default:
     throw DeserializeProtobufException("invalid statement kind");
   }
@@ -148,5 +150,20 @@ RepeatStatement::RepeatStatement(const Pasc::RepeatStatement &rs) {
 }
 
 llvm::Value *RepeatStatement::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// FOR STATEMENT
+///////////////////////////
+ForStatement::ForStatement(const Pasc::ForStatement &fs) {
+  ctlVar = deserializeID(fs.ctlvar().id());
+  initValue = deserializeExpr(fs.initvalue());
+  finalValue = deserializeExpr(fs.finalvalue());
+  body = deserializeStmt(fs.body());
+  dir = fs.dir();
+}
+
+llvm::Value *ForStatement::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
