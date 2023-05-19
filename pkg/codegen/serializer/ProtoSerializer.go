@@ -308,6 +308,30 @@ func translateStmt(stmt ast.Statement) *Statement {
 				},
 			},
 		}
+	case *ast.CaseStatement:
+		var caseElems []*CaseStatement_CaseListElement
+		for _, caseElem := range stmt.List {
+			var constants []*Expression
+			for _, constant := range caseElem.ConstList {
+				constants = append(constants, translateExpr(constant))
+			}
+
+			caseElems = append(caseElems,
+				&CaseStatement_CaseListElement{
+					Constants: constants,
+					Stmt:      translateStmt(caseElem.Body),
+				})
+		}
+
+		s = &Statement{
+			Kind: Statement_case,
+			Stmt: &Statement_CaseStmt{
+				CaseStmt: &CaseStatement{
+					CaseIndex: translateExpr(stmt.Index),
+					Cle:       caseElems,
+				},
+			},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
@@ -466,7 +490,7 @@ func translateOp(op token.Kind) *Operator {
 func Serialize(program *Program) error {
 	out, err := proto.Marshal(program)
 	if err != nil {
-		return fmt.Errorf("Serialization error: %s", err.Error())
+		return fmt.Errorf("serialization error: %s", err.Error())
 	}
 
 	outPath := "pkg/codegen/out"
