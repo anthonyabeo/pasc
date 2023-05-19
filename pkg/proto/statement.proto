@@ -95,6 +95,10 @@ message CaseStatement {
   repeated CaseListElement cle = 2;
 }
 
+message GoToStatement {
+  uint32 label = 1;
+}
+
 message Statement {
   enum StmtKind {
     if = 0;
@@ -106,6 +110,7 @@ message Statement {
     repeat = 6;
     for = 7;
     case = 8;
+    goto = 9;
   }
 
   StmtKind kind = 1;
@@ -119,5 +124,6 @@ message Statement {
     RepeatStatement rptStmt = 8;
     ForStatement forStmt = 9;
     CaseStatement caseStmt = 10;
+    GoToStatement gotoStmt = 11;
   }
 }

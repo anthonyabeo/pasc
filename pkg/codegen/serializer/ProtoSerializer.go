@@ -332,6 +332,17 @@ func translateStmt(stmt ast.Statement) *Statement {
 				},
 			},
 		}
+	case *ast.GotoStatement:
+		v, err := strconv.Atoi(stmt.Label.Value)
+		if err != nil {
+			panic(err)
+		}
+
+		s = &Statement{
+			Kind: Statement_goto,
+			Stmt: &Statement_GotoStmt{
+				GotoStmt: &GoToStatement{Label: uint32(v)}},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
