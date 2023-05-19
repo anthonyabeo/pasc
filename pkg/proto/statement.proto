@@ -85,6 +85,16 @@ message ForStatement {
   TokenKind dir = 5;
 }
 
+message CaseStatement {
+  message CaseListElement {
+    repeated Expression constants = 1;
+    Statement stmt = 2;
+  }
+
+  Expression caseIndex = 1;
+  repeated CaseListElement cle = 2;
+}
+
 message Statement {
   enum StmtKind {
     if = 0;
@@ -95,6 +105,7 @@ message Statement {
     compound = 5;
     repeat = 6;
     for = 7;
+    case = 8;
   }
 
   StmtKind kind = 1;
@@ -107,5 +118,6 @@ message Statement {
     CompoundStatement cmpdStmt = 7;
     RepeatStatement rptStmt = 8;
     ForStatement forStmt = 9;
+    CaseStatement caseStmt = 10;
   }
 }
