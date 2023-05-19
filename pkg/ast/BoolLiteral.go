@@ -40,3 +40,15 @@ func (b *BoolLiteral) Value() string {
 func (b *BoolLiteral) Type() types.Type {
 	return &base.Boolean{Name: "Boolean"}
 }
+
+func (b *BoolLiteral) exprNode() {}
+
+// Attr ...
+func (b *BoolLiteral) Attr(attr string) any {
+	switch attr {
+	case "type":
+		return b.Type()
+	default:
+		return ""
+	}
+}

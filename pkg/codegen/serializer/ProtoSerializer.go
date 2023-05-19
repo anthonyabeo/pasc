@@ -380,6 +380,26 @@ func translateExpr(expr ast.Expression) *Expression {
 				},
 			},
 		}
+	case *ast.URealLiteral:
+	case *ast.BoolLiteral:
+		v := false
+		if expr.Value() == "true" {
+			v = true
+		}
+
+		e = &Expression{
+			Kind: Expression_Bool,
+			Expr: &Expression_Bl{Bl: &BoolLiteral{Value: v}},
+		}
+	case *ast.StringLiteral:
+	case *ast.CharString:
+	case *ast.IdentifiedVariable:
+	case *ast.NilValue:
+		e = &Expression{
+			Kind: Expression_Nil,
+			Expr: &Expression_Nl{
+				Nl: &NilValue{Name: "nil"}}}
+	case *ast.UnaryExpression:
 	case *ast.BinaryExpression:
 		e = &Expression{
 			Kind: Expression_BinExpr,

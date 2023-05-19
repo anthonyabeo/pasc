@@ -40,6 +40,8 @@ message Expression {
     BinExpr = 3;
     WriteParam = 4;
     FCall = 5;
+    Nil = 6;
+    UReal = 7;
   }
 
   ExprKind kind = 1;
@@ -49,6 +51,9 @@ message Expression {
     BinaryExpr be = 4;
     WriteParameter wp = 5;
     FuncCall fc = 6;
+    BoolLiteral bl = 7;
+    NilValue nl = 8;
+    URealLiteral ureal = 9;
   }
 }
 
@@ -67,6 +72,18 @@ message BinaryExpr {
 
 message UIntLiteral {
   uint32 value = 1;
+}
+
+message BoolLiteral {
+  bool value = 1;
+}
+
+message NilValue {
+  string name = 1;
+}
+
+message URealLiteral {
+  double value = 1;
 }
 
 message FuncCall {
