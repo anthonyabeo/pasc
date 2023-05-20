@@ -380,7 +380,18 @@ func translateExpr(expr ast.Expression) *Expression {
 				},
 			},
 		}
+
 	case *ast.URealLiteral:
+		v, err := strconv.ParseFloat(expr.Value, 64)
+		if err != nil {
+			panic(err)
+		}
+
+		e = &Expression{
+			Kind: Expression_UReal,
+			Expr: &Expression_Ureal{
+				Ureal: &URealLiteral{Value: v}},
+		}
 	case *ast.BoolLiteral:
 		v := false
 		if expr.Value() == "true" {
