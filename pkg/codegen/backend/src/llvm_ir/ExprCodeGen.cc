@@ -80,3 +80,7 @@ llvm::Value *IRCodegenVisitor::codegen(const FunctionCall& fc) {
 llvm::Value *IRCodegenVisitor::codegen(const WriteParameter& wp) {
   return wp.e->codegen(*this);
 }
+
+llvm::Value *IRCodegenVisitor::codegen(const URealLiteral &ur) {
+  return llvm::ConstantFP::get(llvm::Type::getDoubleTy(*ctx), ur.value);
+}

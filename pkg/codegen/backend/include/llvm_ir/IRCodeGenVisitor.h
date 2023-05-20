@@ -36,6 +36,7 @@ public:
   llvm::Value* codegen(const BinaryExpression&) override;
   llvm::Value* codegen(const FunctionCall&) override;
   llvm::Value* codegen(const WriteParameter&) override;
+  llvm::Value* codegen(const URealLiteral&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
@@ -59,6 +60,7 @@ public:
   llvm::Type *codegen(const IntegerType&) override;
   llvm::Type *codegen(const BoolType&) override;
   llvm::Type *codegen(const VoidType&) override;
+  llvm::Type *codegen(const RealType&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation

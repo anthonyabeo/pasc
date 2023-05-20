@@ -12,6 +12,10 @@ llvm::Type *IRCodegenVisitor::codegen(const VoidType &typeIR) {
     return llvm::Type::getVoidTy(*ctx);
 };
 
+llvm::Type *IRCodegenVisitor::codegen(const RealType &typeIR) {
+    return llvm::Type::getDoubleTy(*ctx);
+}
+
 ////////////////////
 // PARAMETER TYPES
 ////////////////////
