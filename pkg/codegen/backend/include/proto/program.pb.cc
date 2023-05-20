@@ -20,7 +20,7 @@
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_proto_2fexpression_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_BinaryExpr;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<7> scc_info_BinaryExpr;
 }  // namespace protobuf_proto_2fexpression_2eproto
 namespace protobuf_proto_2fprogram_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fprogram_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ValueParam;
@@ -30,7 +30,7 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fprogram_2eproto ::google::proto
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fprogram_2eproto ::google::protobuf::internal::SCCInfo<3> scc_info_FormalParameter;
 }  // namespace protobuf_proto_2fprogram_2eproto
 namespace protobuf_proto_2fstatement_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_CompoundStatement;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_CaseStatement;
 }  // namespace protobuf_proto_2fstatement_2eproto
 namespace protobuf_proto_2ftype_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_Type;
@@ -146,7 +146,7 @@ static void InitDefaultsBlock() {
 ::google::protobuf::internal::SCCInfo<3> scc_info_Block =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 3, InitDefaultsBlock}, {
       &protobuf_proto_2fprogram_2eproto::scc_info_VarDeclaration.base,
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base,
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base,
       &protobuf_proto_2fprogram_2eproto::scc_info_FormalParameter.base,}};
 
 static void InitDefaultsFormalParameter() {

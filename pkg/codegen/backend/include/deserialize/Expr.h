@@ -102,4 +102,13 @@ struct WriteParameter : public Expr {
   llvm::Value *codegen(IRVisitor&) override;
 };
 
+///////////////////////////
+// UREAL LITERAL
+///////////////////////////
+struct URealLiteral : public Expr {
+  double value;
+
+  explicit URealLiteral(const Pasc::URealLiteral &);
+  llvm::Value *codegen(IRVisitor &) override;
+};
 #endif // EXPR_H

@@ -40,7 +40,7 @@ namespace protobuf_proto_2fexpression_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[10];
+  static const ::google::protobuf::internal::ParseTable schema[13];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -51,6 +51,9 @@ namespace Pasc {
 class BinaryExpr;
 class BinaryExprDefaultTypeInternal;
 extern BinaryExprDefaultTypeInternal _BinaryExpr_default_instance_;
+class BoolLiteral;
+class BoolLiteralDefaultTypeInternal;
+extern BoolLiteralDefaultTypeInternal _BoolLiteral_default_instance_;
 class Expression;
 class ExpressionDefaultTypeInternal;
 extern ExpressionDefaultTypeInternal _Expression_default_instance_;
@@ -69,12 +72,18 @@ extern Identifier_IndexedVariableDefaultTypeInternal _Identifier_IndexedVariable
 class Identifier_Variable;
 class Identifier_VariableDefaultTypeInternal;
 extern Identifier_VariableDefaultTypeInternal _Identifier_Variable_default_instance_;
+class NilValue;
+class NilValueDefaultTypeInternal;
+extern NilValueDefaultTypeInternal _NilValue_default_instance_;
 class Operator;
 class OperatorDefaultTypeInternal;
 extern OperatorDefaultTypeInternal _Operator_default_instance_;
 class UIntLiteral;
 class UIntLiteralDefaultTypeInternal;
 extern UIntLiteralDefaultTypeInternal _UIntLiteral_default_instance_;
+class URealLiteral;
+class URealLiteralDefaultTypeInternal;
+extern URealLiteralDefaultTypeInternal _URealLiteral_default_instance_;
 class WriteParameter;
 class WriteParameterDefaultTypeInternal;
 extern WriteParameterDefaultTypeInternal _WriteParameter_default_instance_;
@@ -82,14 +91,17 @@ extern WriteParameterDefaultTypeInternal _WriteParameter_default_instance_;
 namespace google {
 namespace protobuf {
 template<> ::Pasc::BinaryExpr* Arena::CreateMaybeMessage<::Pasc::BinaryExpr>(Arena*);
+template<> ::Pasc::BoolLiteral* Arena::CreateMaybeMessage<::Pasc::BoolLiteral>(Arena*);
 template<> ::Pasc::Expression* Arena::CreateMaybeMessage<::Pasc::Expression>(Arena*);
 template<> ::Pasc::FuncCall* Arena::CreateMaybeMessage<::Pasc::FuncCall>(Arena*);
 template<> ::Pasc::Identifier* Arena::CreateMaybeMessage<::Pasc::Identifier>(Arena*);
 template<> ::Pasc::Identifier_FieldDesignator* Arena::CreateMaybeMessage<::Pasc::Identifier_FieldDesignator>(Arena*);
 template<> ::Pasc::Identifier_IndexedVariable* Arena::CreateMaybeMessage<::Pasc::Identifier_IndexedVariable>(Arena*);
 template<> ::Pasc::Identifier_Variable* Arena::CreateMaybeMessage<::Pasc::Identifier_Variable>(Arena*);
+template<> ::Pasc::NilValue* Arena::CreateMaybeMessage<::Pasc::NilValue>(Arena*);
 template<> ::Pasc::Operator* Arena::CreateMaybeMessage<::Pasc::Operator>(Arena*);
 template<> ::Pasc::UIntLiteral* Arena::CreateMaybeMessage<::Pasc::UIntLiteral>(Arena*);
+template<> ::Pasc::URealLiteral* Arena::CreateMaybeMessage<::Pasc::URealLiteral>(Arena*);
 template<> ::Pasc::WriteParameter* Arena::CreateMaybeMessage<::Pasc::WriteParameter>(Arena*);
 }  // namespace protobuf
 }  // namespace google
@@ -124,12 +136,14 @@ enum Expression_ExprKind {
   Expression_ExprKind_BinExpr = 3,
   Expression_ExprKind_WriteParam = 4,
   Expression_ExprKind_FCall = 5,
+  Expression_ExprKind_Nil = 6,
+  Expression_ExprKind_UReal = 7,
   Expression_ExprKind_Expression_ExprKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Expression_ExprKind_Expression_ExprKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Expression_ExprKind_IsValid(int value);
 const Expression_ExprKind Expression_ExprKind_ExprKind_MIN = Expression_ExprKind_UInt;
-const Expression_ExprKind Expression_ExprKind_ExprKind_MAX = Expression_ExprKind_FCall;
+const Expression_ExprKind Expression_ExprKind_ExprKind_MAX = Expression_ExprKind_UReal;
 const int Expression_ExprKind_ExprKind_ARRAYSIZE = Expression_ExprKind_ExprKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Expression_ExprKind_descriptor();
@@ -708,6 +722,9 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
     kBe = 4,
     kWp = 5,
     kFc = 6,
+    kBl = 7,
+    kNl = 8,
+    kUreal = 9,
     EXPR_NOT_SET = 0,
   };
 
@@ -780,6 +797,10 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
     Expression_ExprKind_WriteParam;
   static const ExprKind FCall =
     Expression_ExprKind_FCall;
+  static const ExprKind Nil =
+    Expression_ExprKind_Nil;
+  static const ExprKind UReal =
+    Expression_ExprKind_UReal;
   static inline bool ExprKind_IsValid(int value) {
     return Expression_ExprKind_IsValid(value);
   }
@@ -869,6 +890,42 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::Pasc::FuncCall* mutable_fc();
   void set_allocated_fc(::Pasc::FuncCall* fc);
 
+  // .Pasc.BoolLiteral bl = 7;
+  bool has_bl() const;
+  void clear_bl();
+  static const int kBlFieldNumber = 7;
+  private:
+  const ::Pasc::BoolLiteral& _internal_bl() const;
+  public:
+  const ::Pasc::BoolLiteral& bl() const;
+  ::Pasc::BoolLiteral* release_bl();
+  ::Pasc::BoolLiteral* mutable_bl();
+  void set_allocated_bl(::Pasc::BoolLiteral* bl);
+
+  // .Pasc.NilValue nl = 8;
+  bool has_nl() const;
+  void clear_nl();
+  static const int kNlFieldNumber = 8;
+  private:
+  const ::Pasc::NilValue& _internal_nl() const;
+  public:
+  const ::Pasc::NilValue& nl() const;
+  ::Pasc::NilValue* release_nl();
+  ::Pasc::NilValue* mutable_nl();
+  void set_allocated_nl(::Pasc::NilValue* nl);
+
+  // .Pasc.URealLiteral ureal = 9;
+  bool has_ureal() const;
+  void clear_ureal();
+  static const int kUrealFieldNumber = 9;
+  private:
+  const ::Pasc::URealLiteral& _internal_ureal() const;
+  public:
+  const ::Pasc::URealLiteral& ureal() const;
+  ::Pasc::URealLiteral* release_ureal();
+  ::Pasc::URealLiteral* mutable_ureal();
+  void set_allocated_ureal(::Pasc::URealLiteral* ureal);
+
   void clear_expr();
   ExprCase expr_case() const;
   // @@protoc_insertion_point(class_scope:Pasc.Expression)
@@ -878,6 +935,9 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
   void set_has_be();
   void set_has_wp();
   void set_has_fc();
+  void set_has_bl();
+  void set_has_nl();
+  void set_has_ureal();
 
   inline bool has_expr() const;
   inline void clear_has_expr();
@@ -891,6 +951,9 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
     ::Pasc::BinaryExpr* be_;
     ::Pasc::WriteParameter* wp_;
     ::Pasc::FuncCall* fc_;
+    ::Pasc::BoolLiteral* bl_;
+    ::Pasc::NilValue* nl_;
+    ::Pasc::URealLiteral* ureal_;
   } expr_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -1272,6 +1335,323 @@ class UIntLiteral : public ::google::protobuf::Message /* @@protoc_insertion_poi
 };
 // -------------------------------------------------------------------
 
+class BoolLiteral : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.BoolLiteral) */ {
+ public:
+  BoolLiteral();
+  virtual ~BoolLiteral();
+
+  BoolLiteral(const BoolLiteral& from);
+
+  inline BoolLiteral& operator=(const BoolLiteral& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  BoolLiteral(BoolLiteral&& from) noexcept
+    : BoolLiteral() {
+    *this = ::std::move(from);
+  }
+
+  inline BoolLiteral& operator=(BoolLiteral&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BoolLiteral& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BoolLiteral* internal_default_instance() {
+    return reinterpret_cast<const BoolLiteral*>(
+               &_BoolLiteral_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  void Swap(BoolLiteral* other);
+  friend void swap(BoolLiteral& a, BoolLiteral& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BoolLiteral* New() const final {
+    return CreateMaybeMessage<BoolLiteral>(NULL);
+  }
+
+  BoolLiteral* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<BoolLiteral>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const BoolLiteral& from);
+  void MergeFrom(const BoolLiteral& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BoolLiteral* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // bool value = 1;
+  void clear_value();
+  static const int kValueFieldNumber = 1;
+  bool value() const;
+  void set_value(bool value);
+
+  // @@protoc_insertion_point(class_scope:Pasc.BoolLiteral)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool value_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_proto_2fexpression_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class NilValue : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.NilValue) */ {
+ public:
+  NilValue();
+  virtual ~NilValue();
+
+  NilValue(const NilValue& from);
+
+  inline NilValue& operator=(const NilValue& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  NilValue(NilValue&& from) noexcept
+    : NilValue() {
+    *this = ::std::move(from);
+  }
+
+  inline NilValue& operator=(NilValue&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const NilValue& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const NilValue* internal_default_instance() {
+    return reinterpret_cast<const NilValue*>(
+               &_NilValue_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  void Swap(NilValue* other);
+  friend void swap(NilValue& a, NilValue& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline NilValue* New() const final {
+    return CreateMaybeMessage<NilValue>(NULL);
+  }
+
+  NilValue* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<NilValue>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const NilValue& from);
+  void MergeFrom(const NilValue& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(NilValue* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // @@protoc_insertion_point(class_scope:Pasc.NilValue)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_proto_2fexpression_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class URealLiteral : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.URealLiteral) */ {
+ public:
+  URealLiteral();
+  virtual ~URealLiteral();
+
+  URealLiteral(const URealLiteral& from);
+
+  inline URealLiteral& operator=(const URealLiteral& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  URealLiteral(URealLiteral&& from) noexcept
+    : URealLiteral() {
+    *this = ::std::move(from);
+  }
+
+  inline URealLiteral& operator=(URealLiteral&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const URealLiteral& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const URealLiteral* internal_default_instance() {
+    return reinterpret_cast<const URealLiteral*>(
+               &_URealLiteral_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  void Swap(URealLiteral* other);
+  friend void swap(URealLiteral& a, URealLiteral& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline URealLiteral* New() const final {
+    return CreateMaybeMessage<URealLiteral>(NULL);
+  }
+
+  URealLiteral* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<URealLiteral>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const URealLiteral& from);
+  void MergeFrom(const URealLiteral& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(URealLiteral* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // double value = 1;
+  void clear_value();
+  static const int kValueFieldNumber = 1;
+  double value() const;
+  void set_value(double value);
+
+  // @@protoc_insertion_point(class_scope:Pasc.URealLiteral)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  double value_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_proto_2fexpression_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class FuncCall : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.FuncCall) */ {
  public:
   FuncCall();
@@ -1307,7 +1687,7 @@ class FuncCall : public ::google::protobuf::Message /* @@protoc_insertion_point(
                &_FuncCall_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    11;
 
   void Swap(FuncCall* other);
   friend void swap(FuncCall& a, FuncCall& b) {
@@ -1442,7 +1822,7 @@ class Operator : public ::google::protobuf::Message /* @@protoc_insertion_point(
                &_Operator_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    12;
 
   void Swap(Operator* other);
   friend void swap(Operator& a, Operator& b) {
@@ -2025,6 +2405,138 @@ inline ::Pasc::FuncCall* Expression::mutable_fc() {
   return expr_.fc_;
 }
 
+// .Pasc.BoolLiteral bl = 7;
+inline bool Expression::has_bl() const {
+  return expr_case() == kBl;
+}
+inline void Expression::set_has_bl() {
+  _oneof_case_[0] = kBl;
+}
+inline void Expression::clear_bl() {
+  if (has_bl()) {
+    delete expr_.bl_;
+    clear_has_expr();
+  }
+}
+inline const ::Pasc::BoolLiteral& Expression::_internal_bl() const {
+  return *expr_.bl_;
+}
+inline ::Pasc::BoolLiteral* Expression::release_bl() {
+  // @@protoc_insertion_point(field_release:Pasc.Expression.bl)
+  if (has_bl()) {
+    clear_has_expr();
+      ::Pasc::BoolLiteral* temp = expr_.bl_;
+    expr_.bl_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::Pasc::BoolLiteral& Expression::bl() const {
+  // @@protoc_insertion_point(field_get:Pasc.Expression.bl)
+  return has_bl()
+      ? *expr_.bl_
+      : *reinterpret_cast< ::Pasc::BoolLiteral*>(&::Pasc::_BoolLiteral_default_instance_);
+}
+inline ::Pasc::BoolLiteral* Expression::mutable_bl() {
+  if (!has_bl()) {
+    clear_expr();
+    set_has_bl();
+    expr_.bl_ = CreateMaybeMessage< ::Pasc::BoolLiteral >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.Expression.bl)
+  return expr_.bl_;
+}
+
+// .Pasc.NilValue nl = 8;
+inline bool Expression::has_nl() const {
+  return expr_case() == kNl;
+}
+inline void Expression::set_has_nl() {
+  _oneof_case_[0] = kNl;
+}
+inline void Expression::clear_nl() {
+  if (has_nl()) {
+    delete expr_.nl_;
+    clear_has_expr();
+  }
+}
+inline const ::Pasc::NilValue& Expression::_internal_nl() const {
+  return *expr_.nl_;
+}
+inline ::Pasc::NilValue* Expression::release_nl() {
+  // @@protoc_insertion_point(field_release:Pasc.Expression.nl)
+  if (has_nl()) {
+    clear_has_expr();
+      ::Pasc::NilValue* temp = expr_.nl_;
+    expr_.nl_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::Pasc::NilValue& Expression::nl() const {
+  // @@protoc_insertion_point(field_get:Pasc.Expression.nl)
+  return has_nl()
+      ? *expr_.nl_
+      : *reinterpret_cast< ::Pasc::NilValue*>(&::Pasc::_NilValue_default_instance_);
+}
+inline ::Pasc::NilValue* Expression::mutable_nl() {
+  if (!has_nl()) {
+    clear_expr();
+    set_has_nl();
+    expr_.nl_ = CreateMaybeMessage< ::Pasc::NilValue >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.Expression.nl)
+  return expr_.nl_;
+}
+
+// .Pasc.URealLiteral ureal = 9;
+inline bool Expression::has_ureal() const {
+  return expr_case() == kUreal;
+}
+inline void Expression::set_has_ureal() {
+  _oneof_case_[0] = kUreal;
+}
+inline void Expression::clear_ureal() {
+  if (has_ureal()) {
+    delete expr_.ureal_;
+    clear_has_expr();
+  }
+}
+inline const ::Pasc::URealLiteral& Expression::_internal_ureal() const {
+  return *expr_.ureal_;
+}
+inline ::Pasc::URealLiteral* Expression::release_ureal() {
+  // @@protoc_insertion_point(field_release:Pasc.Expression.ureal)
+  if (has_ureal()) {
+    clear_has_expr();
+      ::Pasc::URealLiteral* temp = expr_.ureal_;
+    expr_.ureal_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::Pasc::URealLiteral& Expression::ureal() const {
+  // @@protoc_insertion_point(field_get:Pasc.Expression.ureal)
+  return has_ureal()
+      ? *expr_.ureal_
+      : *reinterpret_cast< ::Pasc::URealLiteral*>(&::Pasc::_URealLiteral_default_instance_);
+}
+inline ::Pasc::URealLiteral* Expression::mutable_ureal() {
+  if (!has_ureal()) {
+    clear_expr();
+    set_has_ureal();
+    expr_.ureal_ = CreateMaybeMessage< ::Pasc::URealLiteral >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.Expression.ureal)
+  return expr_.ureal_;
+}
+
 inline bool Expression::has_expr() const {
   return expr_case() != EXPR_NOT_SET;
 }
@@ -2386,6 +2898,99 @@ inline void UIntLiteral::set_value(::google::protobuf::uint32 value) {
 
 // -------------------------------------------------------------------
 
+// BoolLiteral
+
+// bool value = 1;
+inline void BoolLiteral::clear_value() {
+  value_ = false;
+}
+inline bool BoolLiteral::value() const {
+  // @@protoc_insertion_point(field_get:Pasc.BoolLiteral.value)
+  return value_;
+}
+inline void BoolLiteral::set_value(bool value) {
+  
+  value_ = value;
+  // @@protoc_insertion_point(field_set:Pasc.BoolLiteral.value)
+}
+
+// -------------------------------------------------------------------
+
+// NilValue
+
+// string name = 1;
+inline void NilValue::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& NilValue::name() const {
+  // @@protoc_insertion_point(field_get:Pasc.NilValue.name)
+  return name_.GetNoArena();
+}
+inline void NilValue::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.NilValue.name)
+}
+#if LANG_CXX11
+inline void NilValue::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.NilValue.name)
+}
+#endif
+inline void NilValue::set_name(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.NilValue.name)
+}
+inline void NilValue::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.NilValue.name)
+}
+inline ::std::string* NilValue::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.NilValue.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NilValue::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.NilValue.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NilValue::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.NilValue.name)
+}
+
+// -------------------------------------------------------------------
+
+// URealLiteral
+
+// double value = 1;
+inline void URealLiteral::clear_value() {
+  value_ = 0;
+}
+inline double URealLiteral::value() const {
+  // @@protoc_insertion_point(field_get:Pasc.URealLiteral.value)
+  return value_;
+}
+inline void URealLiteral::set_value(double value) {
+  
+  value_ = value;
+  // @@protoc_insertion_point(field_set:Pasc.URealLiteral.value)
+}
+
+// -------------------------------------------------------------------
+
 // FuncCall
 
 // .Pasc.Expression name = 1;
@@ -2541,6 +3146,12 @@ inline void Operator::set_op(::Pasc::Operator_OpKind value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

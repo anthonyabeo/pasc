@@ -14,6 +14,8 @@ std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
     return std::make_unique<BoolType>(t.bool_());
   case Pasc::Type_TypeKind_VOID:
     return std::make_unique<VoidType>(t.void_());
+  case Pasc::Type_TypeKind_REAL:
+    return std::make_unique<RealType>(t.real());
   default:
     throw DeserializeProtobufException("invalid case");
   }
@@ -53,5 +55,18 @@ VoidType::VoidType(const Pasc::Type_Void &v) {
 std::string VoidType::GetName() const { return name; }
 
 llvm::Type *VoidType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////
+// REAL
+///////////////////////
+RealType::RealType(const Pasc::Type_Real &rt){
+  name = rt.name();
+}
+
+std::string RealType::GetName() const { return name; }
+
+llvm::Type *RealType::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

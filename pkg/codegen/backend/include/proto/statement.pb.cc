@@ -20,9 +20,10 @@
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_proto_2fexpression_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_BinaryExpr;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<7> scc_info_BinaryExpr;
 }  // namespace protobuf_proto_2fexpression_2eproto
 namespace protobuf_proto_2fstatement_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_GoToStatement;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_Read;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_ReadLn;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_Write;
@@ -30,7 +31,7 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::pro
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_ProcStmt;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_WriteLn;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ReturnStatement;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_CompoundStatement;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_CaseStatement;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_ProcedureStatement;
 }  // namespace protobuf_proto_2fstatement_2eproto
 namespace Pasc {
@@ -104,6 +105,21 @@ class ForStatementDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<ForStatement>
       _instance;
 } _ForStatement_default_instance_;
+class CaseStatement_CaseListElementDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<CaseStatement_CaseListElement>
+      _instance;
+} _CaseStatement_CaseListElement_default_instance_;
+class CaseStatementDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<CaseStatement>
+      _instance;
+} _CaseStatement_default_instance_;
+class GoToStatementDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<GoToStatement>
+      _instance;
+} _GoToStatement_default_instance_;
 class StatementDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Statement>
@@ -116,6 +132,8 @@ class StatementDefaultTypeInternal {
   const ::Pasc::CompoundStatement* cmpdstmt_;
   const ::Pasc::RepeatStatement* rptstmt_;
   const ::Pasc::ForStatement* forstmt_;
+  const ::Pasc::CaseStatement* casestmt_;
+  const ::Pasc::GoToStatement* gotostmt_;
 } _Statement_default_instance_;
 }  // namespace Pasc
 namespace protobuf_proto_2fstatement_2eproto {
@@ -240,7 +258,7 @@ static void InitDefaultsReturnStatement() {
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsReturnStatement}, {
       &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,}};
 
-static void InitDefaultsCompoundStatement() {
+static void InitDefaultsCaseStatement() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -269,6 +287,16 @@ static void InitDefaultsCompoundStatement() {
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
   {
+    void* ptr = &::Pasc::_CaseStatement_CaseListElement_default_instance_;
+    new (ptr) ::Pasc::CaseStatement_CaseListElement();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  {
+    void* ptr = &::Pasc::_CaseStatement_default_instance_;
+    new (ptr) ::Pasc::CaseStatement();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  {
     void* ptr = &::Pasc::_Statement_default_instance_;
     new (ptr) ::Pasc::Statement();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
@@ -278,15 +306,32 @@ static void InitDefaultsCompoundStatement() {
   ::Pasc::CompoundStatement::InitAsDefaultInstance();
   ::Pasc::RepeatStatement::InitAsDefaultInstance();
   ::Pasc::ForStatement::InitAsDefaultInstance();
+  ::Pasc::CaseStatement_CaseListElement::InitAsDefaultInstance();
+  ::Pasc::CaseStatement::InitAsDefaultInstance();
   ::Pasc::Statement::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<4> scc_info_CompoundStatement =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 4, InitDefaultsCompoundStatement}, {
+::google::protobuf::internal::SCCInfo<5> scc_info_CaseStatement =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 5, InitDefaultsCaseStatement}, {
       &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,
       &protobuf_proto_2fstatement_2eproto::scc_info_AssignStatement.base,
       &protobuf_proto_2fstatement_2eproto::scc_info_ProcedureStatement.base,
-      &protobuf_proto_2fstatement_2eproto::scc_info_ReturnStatement.base,}};
+      &protobuf_proto_2fstatement_2eproto::scc_info_ReturnStatement.base,
+      &protobuf_proto_2fstatement_2eproto::scc_info_GoToStatement.base,}};
+
+static void InitDefaultsGoToStatement() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::Pasc::_GoToStatement_default_instance_;
+    new (ptr) ::Pasc::GoToStatement();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::Pasc::GoToStatement::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_GoToStatement =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsGoToStatement}, {}};
 
 void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_ProcedureStatement_WriteLn.base);
@@ -297,10 +342,11 @@ void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_ProcedureStatement.base);
   ::google::protobuf::internal::InitSCC(&scc_info_AssignStatement.base);
   ::google::protobuf::internal::InitSCC(&scc_info_ReturnStatement.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CaseStatement.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_GoToStatement.base);
 }
 
-::google::protobuf::Metadata file_level_metadata[14];
+::google::protobuf::Metadata file_level_metadata[17];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[2];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
@@ -398,6 +444,26 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, body_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, dir_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement_CaseListElement, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement_CaseListElement, constants_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement_CaseListElement, stmt_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, caseindex_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, cle_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::GoToStatement, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::GoToStatement, label_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Statement, _internal_metadata_),
   ~0u,  // no _extensions_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Statement, _oneof_case_[0]),
@@ -411,6 +477,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   offsetof(::Pasc::StatementDefaultTypeInternal, cmpdstmt_),
   offsetof(::Pasc::StatementDefaultTypeInternal, rptstmt_),
   offsetof(::Pasc::StatementDefaultTypeInternal, forstmt_),
+  offsetof(::Pasc::StatementDefaultTypeInternal, casestmt_),
+  offsetof(::Pasc::StatementDefaultTypeInternal, gotostmt_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Statement, stmt_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
@@ -427,7 +495,10 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 70, -1, sizeof(::Pasc::CompoundStatement)},
   { 76, -1, sizeof(::Pasc::RepeatStatement)},
   { 83, -1, sizeof(::Pasc::ForStatement)},
-  { 93, -1, sizeof(::Pasc::Statement)},
+  { 93, -1, sizeof(::Pasc::CaseStatement_CaseListElement)},
+  { 100, -1, sizeof(::Pasc::CaseStatement)},
+  { 107, -1, sizeof(::Pasc::GoToStatement)},
+  { 113, -1, sizeof(::Pasc::Statement)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -444,6 +515,9 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_CompoundStatement_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_RepeatStatement_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_ForStatement_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_CaseStatement_CaseListElement_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_CaseStatement_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_GoToStatement_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Statement_default_instance_),
 };
 
@@ -462,7 +536,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 14);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 17);
 }
 
 void AddDescriptorsImpl() {
@@ -500,24 +574,32 @@ void AddDescriptorsImpl() {
       "2\020.Pasc.Expression\022#\n\tinitValue\030\002 \001(\0132\020."
       "Pasc.Expression\022$\n\nfinalValue\030\003 \001(\0132\020.Pa"
       "sc.Expression\022\035\n\004body\030\004 \001(\0132\017.Pasc.State"
-      "ment\022\034\n\003dir\030\005 \001(\0162\017.Pasc.TokenKind\"\367\003\n\tS"
-      "tatement\022&\n\004kind\030\001 \001(\0162\030.Pasc.Statement."
-      "StmtKind\022+\n\nassignStmt\030\002 \001(\0132\025.Pasc.Assi"
-      "gnStatementH\000\022,\n\010procStmt\030\003 \001(\0132\030.Pasc.P"
-      "rocedureStatementH\000\022#\n\006ifStmt\030\004 \001(\0132\021.Pa"
-      "sc.IfStatementH\000\022(\n\007retStmt\030\005 \001(\0132\025.Pasc"
-      ".ReturnStatementH\000\022)\n\twhileStmt\030\006 \001(\0132\024."
-      "Pasc.WhileStatementH\000\022+\n\010cmpdStmt\030\007 \001(\0132"
-      "\027.Pasc.CompoundStatementH\000\022(\n\007rptStmt\030\010 "
-      "\001(\0132\025.Pasc.RepeatStatementH\000\022%\n\007forStmt\030"
-      "\t \001(\0132\022.Pasc.ForStatementH\000\"g\n\010StmtKind\022"
-      "\006\n\002if\020\000\022\n\n\006assign\020\001\022\r\n\tprocedure\020\002\022\n\n\006re"
-      "turn\020\003\022\t\n\005while\020\004\022\014\n\010compound\020\005\022\n\n\006repea"
-      "t\020\006\022\007\n\003for\020\007B\006\n\004stmtB\030Z\026pkg/codegen/seri"
-      "alizerb\006proto3"
+      "ment\022\034\n\003dir\030\005 \001(\0162\017.Pasc.TokenKind\"\275\001\n\rC"
+      "aseStatement\022#\n\tcaseIndex\030\001 \001(\0132\020.Pasc.E"
+      "xpression\0220\n\003cle\030\002 \003(\0132#.Pasc.CaseStatem"
+      "ent.CaseListElement\032U\n\017CaseListElement\022#"
+      "\n\tconstants\030\001 \003(\0132\020.Pasc.Expression\022\035\n\004s"
+      "tmt\030\002 \001(\0132\017.Pasc.Statement\"\036\n\rGoToStatem"
+      "ent\022\r\n\005label\030\001 \001(\r\"\335\004\n\tStatement\022&\n\004kind"
+      "\030\001 \001(\0162\030.Pasc.Statement.StmtKind\022+\n\nassi"
+      "gnStmt\030\002 \001(\0132\025.Pasc.AssignStatementH\000\022,\n"
+      "\010procStmt\030\003 \001(\0132\030.Pasc.ProcedureStatemen"
+      "tH\000\022#\n\006ifStmt\030\004 \001(\0132\021.Pasc.IfStatementH\000"
+      "\022(\n\007retStmt\030\005 \001(\0132\025.Pasc.ReturnStatement"
+      "H\000\022)\n\twhileStmt\030\006 \001(\0132\024.Pasc.WhileStatem"
+      "entH\000\022+\n\010cmpdStmt\030\007 \001(\0132\027.Pasc.CompoundS"
+      "tatementH\000\022(\n\007rptStmt\030\010 \001(\0132\025.Pasc.Repea"
+      "tStatementH\000\022%\n\007forStmt\030\t \001(\0132\022.Pasc.For"
+      "StatementH\000\022\'\n\010caseStmt\030\n \001(\0132\023.Pasc.Cas"
+      "eStatementH\000\022\'\n\010gotoStmt\030\013 \001(\0132\023.Pasc.Go"
+      "ToStatementH\000\"{\n\010StmtKind\022\006\n\002if\020\000\022\n\n\006ass"
+      "ign\020\001\022\r\n\tprocedure\020\002\022\n\n\006return\020\003\022\t\n\005whil"
+      "e\020\004\022\014\n\010compound\020\005\022\n\n\006repeat\020\006\022\007\n\003for\020\007\022\010"
+      "\n\004case\020\010\022\010\n\004goto\020\tB\006\n\004stmtB\030Z\026pkg/codege"
+      "n/serializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1854);
+      descriptor, 2180);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/statement.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftoken_2eproto::AddDescriptors();
@@ -577,6 +659,8 @@ bool Statement_StmtKind_IsValid(int value) {
     case 5:
     case 6:
     case 7:
+    case 8:
+    case 9:
       return true;
     default:
       return false;
@@ -592,6 +676,8 @@ const Statement_StmtKind Statement::while_;
 const Statement_StmtKind Statement::compound;
 const Statement_StmtKind Statement::repeat;
 const Statement_StmtKind Statement::for_;
+const Statement_StmtKind Statement::case_;
+const Statement_StmtKind Statement::goto_;
 const Statement_StmtKind Statement::StmtKind_MIN;
 const Statement_StmtKind Statement::StmtKind_MAX;
 const int Statement::StmtKind_ARRAYSIZE;
@@ -2654,7 +2740,7 @@ const int IfStatement::kElsePathFieldNumber;
 IfStatement::IfStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.IfStatement)
 }
@@ -2706,7 +2792,7 @@ const ::google::protobuf::Descriptor* IfStatement::descriptor() {
 }
 
 const IfStatement& IfStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -3231,7 +3317,7 @@ const int WhileStatement::kBodyFieldNumber;
 WhileStatement::WhileStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.WhileStatement)
 }
@@ -3277,7 +3363,7 @@ const ::google::protobuf::Descriptor* WhileStatement::descriptor() {
 }
 
 const WhileStatement& WhileStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -3511,7 +3597,7 @@ const int CompoundStatement::kStmtsFieldNumber;
 CompoundStatement::CompoundStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.CompoundStatement)
 }
@@ -3543,7 +3629,7 @@ const ::google::protobuf::Descriptor* CompoundStatement::descriptor() {
 }
 
 const CompoundStatement& CompoundStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -3749,7 +3835,7 @@ const int RepeatStatement::kCondFieldNumber;
 RepeatStatement::RepeatStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.RepeatStatement)
 }
@@ -3788,7 +3874,7 @@ const ::google::protobuf::Descriptor* RepeatStatement::descriptor() {
 }
 
 const RepeatStatement& RepeatStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -4055,7 +4141,7 @@ const int ForStatement::kDirFieldNumber;
 ForStatement::ForStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.ForStatement)
 }
@@ -4114,7 +4200,7 @@ const ::google::protobuf::Descriptor* ForStatement::descriptor() {
 }
 
 const ForStatement& ForStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -4457,6 +4543,796 @@ void ForStatement::InternalSwap(ForStatement* other) {
 
 // ===================================================================
 
+void CaseStatement_CaseListElement::InitAsDefaultInstance() {
+  ::Pasc::_CaseStatement_CaseListElement_default_instance_._instance.get_mutable()->stmt_ = const_cast< ::Pasc::Statement*>(
+      ::Pasc::Statement::internal_default_instance());
+}
+void CaseStatement_CaseListElement::clear_constants() {
+  constants_.Clear();
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CaseStatement_CaseListElement::kConstantsFieldNumber;
+const int CaseStatement_CaseListElement::kStmtFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CaseStatement_CaseListElement::CaseStatement_CaseListElement()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.CaseStatement.CaseListElement)
+}
+CaseStatement_CaseListElement::CaseStatement_CaseListElement(const CaseStatement_CaseListElement& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      constants_(from.constants_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_stmt()) {
+    stmt_ = new ::Pasc::Statement(*from.stmt_);
+  } else {
+    stmt_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:Pasc.CaseStatement.CaseListElement)
+}
+
+void CaseStatement_CaseListElement::SharedCtor() {
+  stmt_ = NULL;
+}
+
+CaseStatement_CaseListElement::~CaseStatement_CaseListElement() {
+  // @@protoc_insertion_point(destructor:Pasc.CaseStatement.CaseListElement)
+  SharedDtor();
+}
+
+void CaseStatement_CaseListElement::SharedDtor() {
+  if (this != internal_default_instance()) delete stmt_;
+}
+
+void CaseStatement_CaseListElement::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* CaseStatement_CaseListElement::descriptor() {
+  ::protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const CaseStatement_CaseListElement& CaseStatement_CaseListElement::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  return *internal_default_instance();
+}
+
+
+void CaseStatement_CaseListElement::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.CaseStatement.CaseListElement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  constants_.Clear();
+  if (GetArenaNoVirtual() == NULL && stmt_ != NULL) {
+    delete stmt_;
+  }
+  stmt_ = NULL;
+  _internal_metadata_.Clear();
+}
+
+bool CaseStatement_CaseListElement::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.CaseStatement.CaseListElement)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .Pasc.Expression constants = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_constants()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.Statement stmt = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_stmt()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.CaseStatement.CaseListElement)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.CaseStatement.CaseListElement)
+  return false;
+#undef DO_
+}
+
+void CaseStatement_CaseListElement::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.CaseStatement.CaseListElement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .Pasc.Expression constants = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->constants_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1,
+      this->constants(static_cast<int>(i)),
+      output);
+  }
+
+  // .Pasc.Statement stmt = 2;
+  if (this->has_stmt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->_internal_stmt(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.CaseStatement.CaseListElement)
+}
+
+::google::protobuf::uint8* CaseStatement_CaseListElement::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.CaseStatement.CaseListElement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .Pasc.Expression constants = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->constants_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->constants(static_cast<int>(i)), deterministic, target);
+  }
+
+  // .Pasc.Statement stmt = 2;
+  if (this->has_stmt()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->_internal_stmt(), deterministic, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.CaseStatement.CaseListElement)
+  return target;
+}
+
+size_t CaseStatement_CaseListElement::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.CaseStatement.CaseListElement)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .Pasc.Expression constants = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->constants_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->constants(static_cast<int>(i)));
+    }
+  }
+
+  // .Pasc.Statement stmt = 2;
+  if (this->has_stmt()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *stmt_);
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CaseStatement_CaseListElement::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.CaseStatement.CaseListElement)
+  GOOGLE_DCHECK_NE(&from, this);
+  const CaseStatement_CaseListElement* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const CaseStatement_CaseListElement>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.CaseStatement.CaseListElement)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.CaseStatement.CaseListElement)
+    MergeFrom(*source);
+  }
+}
+
+void CaseStatement_CaseListElement::MergeFrom(const CaseStatement_CaseListElement& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.CaseStatement.CaseListElement)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  constants_.MergeFrom(from.constants_);
+  if (from.has_stmt()) {
+    mutable_stmt()->::Pasc::Statement::MergeFrom(from.stmt());
+  }
+}
+
+void CaseStatement_CaseListElement::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.CaseStatement.CaseListElement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CaseStatement_CaseListElement::CopyFrom(const CaseStatement_CaseListElement& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.CaseStatement.CaseListElement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CaseStatement_CaseListElement::IsInitialized() const {
+  return true;
+}
+
+void CaseStatement_CaseListElement::Swap(CaseStatement_CaseListElement* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CaseStatement_CaseListElement::InternalSwap(CaseStatement_CaseListElement* other) {
+  using std::swap;
+  CastToBase(&constants_)->InternalSwap(CastToBase(&other->constants_));
+  swap(stmt_, other->stmt_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata CaseStatement_CaseListElement::GetMetadata() const {
+  protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void CaseStatement::InitAsDefaultInstance() {
+  ::Pasc::_CaseStatement_default_instance_._instance.get_mutable()->caseindex_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
+}
+void CaseStatement::clear_caseindex() {
+  if (GetArenaNoVirtual() == NULL && caseindex_ != NULL) {
+    delete caseindex_;
+  }
+  caseindex_ = NULL;
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CaseStatement::kCaseIndexFieldNumber;
+const int CaseStatement::kCleFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CaseStatement::CaseStatement()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.CaseStatement)
+}
+CaseStatement::CaseStatement(const CaseStatement& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      cle_(from.cle_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_caseindex()) {
+    caseindex_ = new ::Pasc::Expression(*from.caseindex_);
+  } else {
+    caseindex_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:Pasc.CaseStatement)
+}
+
+void CaseStatement::SharedCtor() {
+  caseindex_ = NULL;
+}
+
+CaseStatement::~CaseStatement() {
+  // @@protoc_insertion_point(destructor:Pasc.CaseStatement)
+  SharedDtor();
+}
+
+void CaseStatement::SharedDtor() {
+  if (this != internal_default_instance()) delete caseindex_;
+}
+
+void CaseStatement::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* CaseStatement::descriptor() {
+  ::protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const CaseStatement& CaseStatement::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  return *internal_default_instance();
+}
+
+
+void CaseStatement::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.CaseStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cle_.Clear();
+  if (GetArenaNoVirtual() == NULL && caseindex_ != NULL) {
+    delete caseindex_;
+  }
+  caseindex_ = NULL;
+  _internal_metadata_.Clear();
+}
+
+bool CaseStatement::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.CaseStatement)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .Pasc.Expression caseIndex = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_caseindex()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_cle()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.CaseStatement)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.CaseStatement)
+  return false;
+#undef DO_
+}
+
+void CaseStatement::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.CaseStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Pasc.Expression caseIndex = 1;
+  if (this->has_caseindex()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->_internal_caseindex(), output);
+  }
+
+  // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cle_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2,
+      this->cle(static_cast<int>(i)),
+      output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.CaseStatement)
+}
+
+::google::protobuf::uint8* CaseStatement::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.CaseStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Pasc.Expression caseIndex = 1;
+  if (this->has_caseindex()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->_internal_caseindex(), deterministic, target);
+  }
+
+  // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cle_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->cle(static_cast<int>(i)), deterministic, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.CaseStatement)
+  return target;
+}
+
+size_t CaseStatement::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.CaseStatement)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->cle_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->cle(static_cast<int>(i)));
+    }
+  }
+
+  // .Pasc.Expression caseIndex = 1;
+  if (this->has_caseindex()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *caseindex_);
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CaseStatement::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.CaseStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  const CaseStatement* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const CaseStatement>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.CaseStatement)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.CaseStatement)
+    MergeFrom(*source);
+  }
+}
+
+void CaseStatement::MergeFrom(const CaseStatement& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.CaseStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cle_.MergeFrom(from.cle_);
+  if (from.has_caseindex()) {
+    mutable_caseindex()->::Pasc::Expression::MergeFrom(from.caseindex());
+  }
+}
+
+void CaseStatement::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.CaseStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CaseStatement::CopyFrom(const CaseStatement& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.CaseStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CaseStatement::IsInitialized() const {
+  return true;
+}
+
+void CaseStatement::Swap(CaseStatement* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CaseStatement::InternalSwap(CaseStatement* other) {
+  using std::swap;
+  CastToBase(&cle_)->InternalSwap(CastToBase(&other->cle_));
+  swap(caseindex_, other->caseindex_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata CaseStatement::GetMetadata() const {
+  protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void GoToStatement::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int GoToStatement::kLabelFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+GoToStatement::GoToStatement()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2fstatement_2eproto::scc_info_GoToStatement.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.GoToStatement)
+}
+GoToStatement::GoToStatement(const GoToStatement& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_ = from.label_;
+  // @@protoc_insertion_point(copy_constructor:Pasc.GoToStatement)
+}
+
+void GoToStatement::SharedCtor() {
+  label_ = 0u;
+}
+
+GoToStatement::~GoToStatement() {
+  // @@protoc_insertion_point(destructor:Pasc.GoToStatement)
+  SharedDtor();
+}
+
+void GoToStatement::SharedDtor() {
+}
+
+void GoToStatement::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* GoToStatement::descriptor() {
+  ::protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const GoToStatement& GoToStatement::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_GoToStatement.base);
+  return *internal_default_instance();
+}
+
+
+void GoToStatement::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.GoToStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  label_ = 0u;
+  _internal_metadata_.Clear();
+}
+
+bool GoToStatement::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.GoToStatement)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // uint32 label = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &label_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.GoToStatement)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.GoToStatement)
+  return false;
+#undef DO_
+}
+
+void GoToStatement::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.GoToStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 label = 1;
+  if (this->label() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->label(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.GoToStatement)
+}
+
+::google::protobuf::uint8* GoToStatement::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.GoToStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 label = 1;
+  if (this->label() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->label(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.GoToStatement)
+  return target;
+}
+
+size_t GoToStatement::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.GoToStatement)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // uint32 label = 1;
+  if (this->label() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->label());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void GoToStatement::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.GoToStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  const GoToStatement* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const GoToStatement>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.GoToStatement)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.GoToStatement)
+    MergeFrom(*source);
+  }
+}
+
+void GoToStatement::MergeFrom(const GoToStatement& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.GoToStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.label() != 0) {
+    set_label(from.label());
+  }
+}
+
+void GoToStatement::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.GoToStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GoToStatement::CopyFrom(const GoToStatement& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.GoToStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GoToStatement::IsInitialized() const {
+  return true;
+}
+
+void GoToStatement::Swap(GoToStatement* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void GoToStatement::InternalSwap(GoToStatement* other) {
+  using std::swap;
+  swap(label_, other->label_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata GoToStatement::GetMetadata() const {
+  protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void Statement::InitAsDefaultInstance() {
   ::Pasc::_Statement_default_instance_.assignstmt_ = const_cast< ::Pasc::AssignStatement*>(
       ::Pasc::AssignStatement::internal_default_instance());
@@ -4474,6 +5350,10 @@ void Statement::InitAsDefaultInstance() {
       ::Pasc::RepeatStatement::internal_default_instance());
   ::Pasc::_Statement_default_instance_.forstmt_ = const_cast< ::Pasc::ForStatement*>(
       ::Pasc::ForStatement::internal_default_instance());
+  ::Pasc::_Statement_default_instance_.casestmt_ = const_cast< ::Pasc::CaseStatement*>(
+      ::Pasc::CaseStatement::internal_default_instance());
+  ::Pasc::_Statement_default_instance_.gotostmt_ = const_cast< ::Pasc::GoToStatement*>(
+      ::Pasc::GoToStatement::internal_default_instance());
 }
 void Statement::set_allocated_assignstmt(::Pasc::AssignStatement* assignstmt) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
@@ -4587,6 +5467,34 @@ void Statement::set_allocated_forstmt(::Pasc::ForStatement* forstmt) {
   }
   // @@protoc_insertion_point(field_set_allocated:Pasc.Statement.forStmt)
 }
+void Statement::set_allocated_casestmt(::Pasc::CaseStatement* casestmt) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  clear_stmt();
+  if (casestmt) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      casestmt = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, casestmt, submessage_arena);
+    }
+    set_has_casestmt();
+    stmt_.casestmt_ = casestmt;
+  }
+  // @@protoc_insertion_point(field_set_allocated:Pasc.Statement.caseStmt)
+}
+void Statement::set_allocated_gotostmt(::Pasc::GoToStatement* gotostmt) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  clear_stmt();
+  if (gotostmt) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      gotostmt = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, gotostmt, submessage_arena);
+    }
+    set_has_gotostmt();
+    stmt_.gotostmt_ = gotostmt;
+  }
+  // @@protoc_insertion_point(field_set_allocated:Pasc.Statement.gotoStmt)
+}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Statement::kKindFieldNumber;
 const int Statement::kAssignStmtFieldNumber;
@@ -4597,12 +5505,14 @@ const int Statement::kWhileStmtFieldNumber;
 const int Statement::kCmpdStmtFieldNumber;
 const int Statement::kRptStmtFieldNumber;
 const int Statement::kForStmtFieldNumber;
+const int Statement::kCaseStmtFieldNumber;
+const int Statement::kGotoStmtFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Statement::Statement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.Statement)
 }
@@ -4645,6 +5555,14 @@ Statement::Statement(const Statement& from)
       mutable_forstmt()->::Pasc::ForStatement::MergeFrom(from.forstmt());
       break;
     }
+    case kCaseStmt: {
+      mutable_casestmt()->::Pasc::CaseStatement::MergeFrom(from.casestmt());
+      break;
+    }
+    case kGotoStmt: {
+      mutable_gotostmt()->::Pasc::GoToStatement::MergeFrom(from.gotostmt());
+      break;
+    }
     case STMT_NOT_SET: {
       break;
     }
@@ -4677,7 +5595,7 @@ const ::google::protobuf::Descriptor* Statement::descriptor() {
 }
 
 const Statement& Statement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -4715,6 +5633,14 @@ void Statement::clear_stmt() {
     }
     case kForStmt: {
       delete stmt_.forstmt_;
+      break;
+    }
+    case kCaseStmt: {
+      delete stmt_.casestmt_;
+      break;
+    }
+    case kGotoStmt: {
+      delete stmt_.gotostmt_;
       break;
     }
     case STMT_NOT_SET: {
@@ -4857,6 +5783,30 @@ bool Statement::MergePartialFromCodedStream(
         break;
       }
 
+      // .Pasc.CaseStatement caseStmt = 10;
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_casestmt()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.GoToStatement gotoStmt = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(90u /* 90 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_gotostmt()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -4937,6 +5887,18 @@ void Statement::SerializeWithCachedSizes(
       9, this->_internal_forstmt(), output);
   }
 
+  // .Pasc.CaseStatement caseStmt = 10;
+  if (has_casestmt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      10, this->_internal_casestmt(), output);
+  }
+
+  // .Pasc.GoToStatement gotoStmt = 11;
+  if (has_gotostmt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      11, this->_internal_gotostmt(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -5011,6 +5973,20 @@ void Statement::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         9, this->_internal_forstmt(), deterministic, target);
+  }
+
+  // .Pasc.CaseStatement caseStmt = 10;
+  if (has_casestmt()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        10, this->_internal_casestmt(), deterministic, target);
+  }
+
+  // .Pasc.GoToStatement gotoStmt = 11;
+  if (has_gotostmt()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        11, this->_internal_gotostmt(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -5093,6 +6069,20 @@ size_t Statement::ByteSizeLong() const {
           *stmt_.forstmt_);
       break;
     }
+    // .Pasc.CaseStatement caseStmt = 10;
+    case kCaseStmt: {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          *stmt_.casestmt_);
+      break;
+    }
+    // .Pasc.GoToStatement gotoStmt = 11;
+    case kGotoStmt: {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          *stmt_.gotostmt_);
+      break;
+    }
     case STMT_NOT_SET: {
       break;
     }
@@ -5158,6 +6148,14 @@ void Statement::MergeFrom(const Statement& from) {
     }
     case kForStmt: {
       mutable_forstmt()->::Pasc::ForStatement::MergeFrom(from.forstmt());
+      break;
+    }
+    case kCaseStmt: {
+      mutable_casestmt()->::Pasc::CaseStatement::MergeFrom(from.casestmt());
+      break;
+    }
+    case kGotoStmt: {
+      mutable_gotostmt()->::Pasc::GoToStatement::MergeFrom(from.gotostmt());
       break;
     }
     case STMT_NOT_SET: {
@@ -5244,6 +6242,15 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::RepeatStatement* Arena::Cr
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::ForStatement* Arena::CreateMaybeMessage< ::Pasc::ForStatement >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::ForStatement >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::CaseStatement_CaseListElement* Arena::CreateMaybeMessage< ::Pasc::CaseStatement_CaseListElement >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::CaseStatement_CaseListElement >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::CaseStatement* Arena::CreateMaybeMessage< ::Pasc::CaseStatement >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::CaseStatement >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::GoToStatement* Arena::CreateMaybeMessage< ::Pasc::GoToStatement >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::GoToStatement >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::Statement* Arena::CreateMaybeMessage< ::Pasc::Statement >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::Statement >(arena);

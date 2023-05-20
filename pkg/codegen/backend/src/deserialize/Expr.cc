@@ -49,6 +49,8 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<IdentifierExpr>(expr.id());
   case Pasc::Expression_ExprKind_UInt:
     return std::make_unique<UIntegerLiteral>(expr.uint());
+  case Pasc::Expression_ExprKind_UReal:
+    return std::make_unique<URealLiteral>(expr.ureal());
   case Pasc::Expression_ExprKind_BinExpr:
     return std::make_unique<BinaryExpression>(expr.be());
   case Pasc::Expression_ExprKind_WriteParam:
@@ -139,5 +141,16 @@ WriteParameter::WriteParameter(const Pasc::WriteParameter& wp) {
 }
 
 llvm::Value *WriteParameter::codegen(IRVisitor& v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// UREAL LITERAL
+///////////////////////////
+URealLiteral::URealLiteral(const Pasc::URealLiteral &ur) {
+  value = ur.value();
+}
+
+llvm::Value *URealLiteral::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

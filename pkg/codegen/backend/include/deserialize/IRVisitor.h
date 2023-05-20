@@ -18,6 +18,7 @@ public:
   virtual llvm::Value *codegen(const BinaryExpression &) = 0;
   virtual llvm::Value *codegen(const FunctionCall &) = 0;
   virtual llvm::Value *codegen(const WriteParameter &) = 0;
+  virtual llvm::Value *codegen(const URealLiteral &) = 0;
 
   virtual llvm::Value *codegen(const AssignStmt &) = 0;
   virtual llvm::Value *codegen(const ReturnStatement &) = 0;
@@ -39,6 +40,7 @@ public:
   virtual llvm::Type *codegen(const IntegerType &) = 0;
   virtual llvm::Type *codegen(const BoolType &) = 0;
   virtual llvm::Type *codegen(const VoidType &) = 0;
+  virtual llvm::Type *codegen(const RealType &) = 0;
 };
 
 #endif // IR_VISITOR_H

@@ -41,4 +41,12 @@ struct VoidType : public Type {
   llvm::Type *codegen(IRVisitor &visitor) override;
 };
 
+struct RealType : public Type {
+  std::string name;
+
+  explicit RealType(const Pasc::Type_Real&);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &visitor) override;
+};
+
 #endif // TYPE_H
