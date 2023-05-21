@@ -384,7 +384,6 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 				},
 			},
 		}
-
 	case *ast.URealLiteral:
 		v, err := strconv.ParseFloat(expr.Value, 64)
 		if err != nil {
@@ -407,6 +406,11 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Bl{Bl: &BoolLiteral{Value: v}},
 		}
 	case *ast.StringLiteral:
+		e = &Expression{
+			Kind: Expression_Str,
+			Expr: &Expression_Sl{
+				Sl: &StringLiteral{Value: expr.String()}},
+		}
 	case *ast.CharString:
 	case *ast.IdentifiedVariable:
 	case *ast.NilValue:
@@ -415,6 +419,15 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Nl{
 				Nl: &NilValue{Name: "nil"}}}
 	case *ast.UnaryExpression:
+		e = &Expression{
+			Kind: Expression_UnExpr,
+			Expr: &Expression_Ue{
+				Ue: &UnaryExpr{
+					Op:      s.translateOp(expr.Operator.Kind),
+					Operand: s.translateExpr(expr),
+				},
+			},
+		}
 	case *ast.BinaryExpression:
 		e = &Expression{
 			Kind: Expression_BinExpr,
