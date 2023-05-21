@@ -42,6 +42,8 @@ message Expression {
     FCall = 5;
     Nil = 6;
     UReal = 7;
+    UnExpr = 8;
+    Str = 9;
   }
 
   ExprKind kind = 1;
@@ -54,6 +56,8 @@ message Expression {
     BoolLiteral bl = 7;
     NilValue nl = 8;
     URealLiteral ureal = 9;
+    UnaryExpr ue = 10;
+    StringLiteral sl = 11;
   }
 }
 
@@ -84,6 +88,15 @@ message NilValue {
 
 message URealLiteral {
   double value = 1;
+}
+
+message UnaryExpr {
+  Operator op = 1;
+  Expression operand = 2;
+}
+
+message StringLiteral {
+  string value = 1;
 }
 
 message FuncCall {
