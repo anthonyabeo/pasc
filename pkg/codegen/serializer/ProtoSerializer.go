@@ -12,12 +12,13 @@ import (
 	"strconv"
 )
 
+// ProtoSerializer transforms the Go AST into a form that can be
+// serialized into protocol buffers. It then calls the `Serialize`
+// method to perform the actual serialization.
 type ProtoSerializer struct {
 	Ast *ast.Program
 }
 
-// AstToProtoAst transforms the Go AST into a form that can be
-// serialized into protocol buffers
 func (s *ProtoSerializer) translate() *Program {
 	program := &Program{Kind: TokenKind_PROGRAM, Name: s.Ast.Name.Name}
 	for _, param := range s.Ast.ParamList {
@@ -544,8 +545,7 @@ func (s *ProtoSerializer) translateOp(op token.Kind) *Operator {
 
 }
 
-// Serialize accepts `program`, an AST created from calling `serde.AstToProtoAst`,
-// and converts it into a protocol buffers binary file, to be deserialized later.
+// Serialize converts the translated AST into a protocol buffers binary file, to be deserialized later.
 func (s *ProtoSerializer) Serialize() error {
 	program := s.translate()
 
