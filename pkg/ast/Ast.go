@@ -14,6 +14,7 @@ type Node interface {
 type Statement interface {
 	Node
 	StatNode() string
+	SetLabel(string)
 }
 
 // Expression models a generic node for expression types

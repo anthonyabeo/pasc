@@ -12,6 +12,7 @@ type CaseStatement struct {
 	Token token.Token
 	Index Expression
 	List  []*CaseElement
+	Label string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -45,6 +46,10 @@ func (c *CaseStatement) String() string {
 		%v
 	end
 	`, c.Index.String(), strings.Join(caseList, ", "))
+}
+
+func (c *CaseStatement) SetLabel(l string) {
+	c.Label = l
 }
 
 // CaseElement ...

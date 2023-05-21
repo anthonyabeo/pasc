@@ -9,6 +9,7 @@ type Write struct {
 	Name      string
 	File      *Identifier
 	ParamList []Expression
+	Label     string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -36,4 +37,8 @@ func (w *Write) GetName() string {
 
 func (w *Write) GetParamList() []Expression {
 	return w.ParamList
+}
+
+func (w *Write) SetLabel(l string) {
+	w.Label = l
 }

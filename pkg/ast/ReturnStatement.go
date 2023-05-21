@@ -8,6 +8,7 @@ import (
 type ReturnStatement struct {
 	Token token.Token
 	Expr  Expression
+	Label string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -27,4 +28,8 @@ func (r *ReturnStatement) StatNode() string {
 
 func (r *ReturnStatement) String() string {
 	return r.StatNode()
+}
+
+func (r *ReturnStatement) SetLabel(l string) {
+	r.Label = l
 }

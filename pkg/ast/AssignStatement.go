@@ -11,6 +11,7 @@ type AssignStatement struct {
 	Token    token.Token
 	Variable Expression
 	Value    Expression
+	Label    string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -30,4 +31,8 @@ func (as *AssignStatement) StatNode() string {
 
 func (as *AssignStatement) String() string {
 	return fmt.Sprintf("%v := %v", as.Variable, as.Value)
+}
+
+func (as *AssignStatement) SetLabel(l string) {
+	as.Label = l
 }

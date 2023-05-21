@@ -12,6 +12,7 @@ type IfStatement struct {
 	BoolExpr Expression
 	TruePath Statement
 	ElsePath Statement
+	Lbl      string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -27,4 +28,8 @@ func (f *IfStatement) StatNode() string {
 
 func (f *IfStatement) String() string {
 	return fmt.Sprintf("if(%v) then %v else %v", f.BoolExpr, f.TruePath, f.ElsePath)
+}
+
+func (f *IfStatement) SetLabel(l string) {
+	f.Lbl = l
 }

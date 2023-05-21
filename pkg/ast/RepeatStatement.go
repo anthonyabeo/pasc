@@ -12,6 +12,7 @@ type RepeatStatement struct {
 	Token    token.Token
 	StmtSeq  []Statement
 	BoolExpr Expression
+	Label    string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -37,4 +38,8 @@ func (r *RepeatStatement) String() string {
 	}
 
 	return fmt.Sprintf("repeat\n\t%vuntil%v", strings.Join(stmtSeq, "\n\t"), r.BoolExpr)
+}
+
+func (r *RepeatStatement) SetLabel(l string) {
+	r.Label = l
 }

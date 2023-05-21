@@ -15,6 +15,7 @@ type FuncDeclaration struct {
 	Block     *Block
 	Directive *Identifier
 	Scope     symbols.Scope
+	Label     string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -32,12 +33,17 @@ func (f *FuncDeclaration) String() string {
 	return fmt.Sprintf("function(%v):%v", f.Heading.Parameters, f.Heading.ReturnType)
 }
 
+func (f *FuncDeclaration) SetLabel(l string) {
+	f.Label = l
+}
+
 // FuncHeading denotes a function's signature.
 type FuncHeading struct {
 	Token      token.Token
 	Name       *Identifier
 	Parameters []FormalParameter
 	ReturnType types.Type
+	Lbl        string
 }
 
 func (f *FuncHeading) formalParam() {}

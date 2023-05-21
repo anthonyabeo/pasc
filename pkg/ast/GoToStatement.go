@@ -10,6 +10,7 @@ import (
 type GotoStatement struct {
 	Token token.Token
 	Label *UIntegerLiteral
+	Lbl   string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -25,4 +26,8 @@ func (g *GotoStatement) StatNode() string {
 
 func (g *GotoStatement) String() string {
 	return fmt.Sprintf(`goto %v`, g.Label.String())
+}
+
+func (g *GotoStatement) SetLabel(l string) {
+	g.Lbl = l
 }

@@ -9,6 +9,7 @@ import (
 // CompoundStatement is the node in the AST that represents a compound statement.
 type CompoundStatement struct {
 	Statements []Statement
+	Label      string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -24,4 +25,8 @@ func (cs *CompoundStatement) StatNode() string {
 
 func (cs *CompoundStatement) String() string {
 	return fmt.Sprintf("%v", cs.Statements)
+}
+
+func (cs *CompoundStatement) SetLabel(l string) {
+	cs.Label = l
 }

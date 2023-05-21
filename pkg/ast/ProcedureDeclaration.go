@@ -12,6 +12,7 @@ type ProcedureDeclaration struct {
 	Heading   *ProcedureHeading
 	Block     *Block
 	Directive *Identifier
+	Label     string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -27,6 +28,10 @@ func (p *ProcedureDeclaration) StatNode() string {
 
 func (p *ProcedureDeclaration) String() string {
 	return fmt.Sprintf("%s()", p.Heading.Name)
+}
+
+func (p *ProcedureDeclaration) SetLabel(l string) {
+	p.Label = l
 }
 
 // ProcedureHeading denotes a procedure's signature.
