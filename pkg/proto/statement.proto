@@ -22,15 +22,21 @@ message ProcedureStatement {
   }
 
   message Write {
-
+    string name = 1;
+    Expression file = 2;
+    repeated Expression params = 3;
   }
 
   message Read {
-
+    string name = 1;
+    Expression file = 2;
+    repeated Expression varAccess = 3;
   }
 
   message ReadLn {
-
+    string name = 1;
+    Expression file = 2;
+    repeated Expression varAccess = 3;
   }
 
   message ProcStmt {

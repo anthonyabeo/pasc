@@ -227,6 +227,69 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 				},
 			},
 		}
+	case *ast.Write:
+		var args []*Expression
+		for _, e := range stmt.ParamList {
+			args = append(args, s.translateExpr(e))
+		}
+
+		st = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_write,
+					Stmt: &ProcedureStatement_Wrt{
+						Wrt: &ProcedureStatement_Write{
+							Name:   stmt.Name,
+							Params: args,
+							File:   s.translateExpr(stmt.File),
+						},
+					},
+				},
+			},
+		}
+	case *ast.Read:
+		var vAccess []*Expression
+		for _, e := range stmt.VarAccess {
+			vAccess = append(vAccess, s.translateExpr(e))
+		}
+
+		st = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_read,
+					Stmt: &ProcedureStatement_Rd{
+						Rd: &ProcedureStatement_Read{
+							Name:      stmt.Name,
+							File:      s.translateExpr(stmt.File),
+							VarAccess: vAccess,
+						},
+					},
+				},
+			},
+		}
+	case *ast.ReadLn:
+		var vAccess []*Expression
+		for _, e := range stmt.VarAccess {
+			vAccess = append(vAccess, s.translateExpr(e))
+		}
+
+		st = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_readLn,
+					Stmt: &ProcedureStatement_RdLn{
+						RdLn: &ProcedureStatement_ReadLn{
+							Name:      stmt.Name,
+							File:      s.translateExpr(stmt.File),
+							VarAccess: vAccess,
+						},
+					},
+				},
+			},
+		}
 	case *ast.IfStatement:
 		ifStatement := &IfStatement{
 			Cond:     s.translateExpr(stmt.BoolExpr),
