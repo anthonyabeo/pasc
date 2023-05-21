@@ -38,7 +38,8 @@ func Run(args []string) error {
 	}
 	sema.Run()
 
-	err = serde.Serialize(serde.AstToProtoAst(*sema.Ast))
+	serializer := &serde.ProtoSerializer{Ast: prog}
+	err = serializer.Serialize()
 	if err != nil {
 		return err
 	}
