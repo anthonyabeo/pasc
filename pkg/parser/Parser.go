@@ -1533,14 +1533,21 @@ func (p *Parser) statementSequence() ([]ast.Statement, error) {
 // statement = [ label ':' ] ( simple-statement | structured-statement ) .
 func (p *Parser) statement() (ast.Statement, error) {
 	var (
-		err  error
-		stmt ast.Statement
+		err   error
+		label string
+		stmt  ast.Statement
 	)
 
-	// TODO: optional label
-	// if p.lAheadKind(1) == token.UIntLiteral {
+	if p.lAheadKind(1) == token.UIntLiteral {
+		label = p.lAheadToken(1).Text
+		if err = p.consume(); err != nil {
+			return nil, err
+		}
 
-	// }
+		if err = p.match(token.Colon); err != nil {
+			return nil, err
+		}
+	}
 
 	if p.isStructuredStatement() {
 		switch p.lAheadKind(1) {
@@ -1565,6 +1572,10 @@ func (p *Parser) statement() (ast.Statement, error) {
 		stmt, err = p.simpleStatement()
 	} else {
 		stmt, err = nil, fmt.Errorf("parser Error: unexpected token %v", p.lAheadToken(1).Text)
+	}
+
+	if label != "" {
+		stmt.SetLabel(label)
 	}
 
 	return stmt, err
