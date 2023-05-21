@@ -28,7 +28,7 @@ func TestParseBasicProgram(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 0, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 0, 0, 0, 0) {
 		return
 	}
 
@@ -61,7 +61,7 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 0, 0) {
 		return
 	}
 
@@ -96,7 +96,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 1, 0, 0, 0) {
 		return
 	}
 
@@ -153,7 +153,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 5, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 5, 1, 0, 0, 0) {
 		return
 	}
 
@@ -221,7 +221,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "MaxProgram", []string{}, 3, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 3, 1, 1, 0, 0) {
 		return
 	}
 
@@ -234,7 +234,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 			Type: &base.Integer{Name: "integer"},
 		},
 	}
-	if !testFuncDeclaration(t, program.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0) {
+	if !testFuncDeclaration(t, program.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0, 0) {
 		return
 	}
 
@@ -283,7 +283,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "MaxProgram", []string{}, 3, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 3, 1, 1, 0, 0) {
 		return
 	}
 
@@ -296,10 +296,9 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 			Type: &base.Integer{Name: "integer"},
 		},
 	}
-	if !testFuncDeclaration(t, program.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0) {
+	if !testFuncDeclaration(t, program.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0, 0) {
 		return
 	}
-
 	funcDecl := program.Block.Callables[0].(*ast.FuncDeclaration)
 	if !testIfStatement(t, funcDecl.Block.Stats[0], token.NewToken(token.GreaterThan, ">"), "n", "m", "result := n", "result := m") {
 		return
@@ -362,7 +361,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0, 0) {
 		return
 	}
 
@@ -415,7 +414,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 9, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 9, 0, 0, 0) {
 		return
 	}
 
@@ -467,7 +466,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 1, 0, 0, 0) {
 		return
 	}
 
@@ -538,7 +537,7 @@ func TestSymbolTableGenerated(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0) {
+	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0, 0) {
 		return
 	}
 
@@ -588,7 +587,7 @@ func TestParsingConstantDefinition(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 0, 0, 0) {
 		return
 	}
 
@@ -621,7 +620,7 @@ func TestParseForStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0, 0) {
 		return
 	}
 
@@ -681,7 +680,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 1, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 1, 0, 0) {
 		return
 	}
 
@@ -767,7 +766,7 @@ func TestParseWhileStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0, 0) {
 		return
 	}
 
@@ -915,13 +914,18 @@ func testProcedureDeclaration(
 		numTypeDef = len(procDecl.Block.Types.Types)
 	}
 
+	numLabels := 0
+	if procDecl.Block.Labels != nil {
+		numLabels = len(procDecl.Block.Labels.Labels)
+	}
+
 	if !testBlock(
 		t,
 		procDecl.Block,
 		len(procDecl.Block.Stats),
 		numVarDecl,
 		len(procDecl.Block.Callables),
-		numTypeDef) {
+		numTypeDef, numLabels) {
 		return false
 	}
 
@@ -1017,7 +1021,7 @@ func testAssignmentStatement(t *testing.T, stmt ast.Statement, variable string, 
 }
 
 func testProgramAST(
-	t *testing.T, p *ast.Program, programName string, paramList []string, numStmts, numVarDefs, numCallables, numTypeDefs int,
+	t *testing.T, p *ast.Program, programName string, paramList []string, numStmts, numVarDefs, numCallables, numTypeDefs, numLabels int,
 ) bool {
 	if p == nil {
 		t.Error("AST not created")
@@ -1041,10 +1045,10 @@ func testProgramAST(
 		}
 	}
 
-	return testBlock(t, p.Block, numStmts, numVarDefs, numCallables, numTypeDefs)
+	return testBlock(t, p.Block, numStmts, numVarDefs, numCallables, numTypeDefs, numLabels)
 }
 
-func testBlock(t *testing.T, blk *ast.Block, numStmts, numVarDefs, numCallables, numTypeDefs int) bool {
+func testBlock(t *testing.T, blk *ast.Block, numStmts, numVarDefs, numCallables, numTypeDefs, numLabels int) bool {
 	if len(blk.Stats) != numStmts {
 		t.Errorf("expected %v statement(s) in block; found %v instead", numStmts, len(blk.Stats))
 		return false
@@ -1062,6 +1066,11 @@ func testBlock(t *testing.T, blk *ast.Block, numStmts, numVarDefs, numCallables,
 
 	if blk.Types != nil && len(blk.Types.Types) != numTypeDefs {
 		t.Errorf("expected %v type definition(s) in block; found %v instead", numTypeDefs, len(blk.Types.Types))
+		return false
+	}
+
+	if blk.Labels != nil && len(blk.Labels.Labels) != numLabels {
+		t.Errorf("expected %v label declarations(s) in block; found %v instead", numLabels, len(blk.Labels.Labels))
 		return false
 	}
 
@@ -1121,7 +1130,7 @@ func testFuncDeclaration(
 	fd ast.Statement,
 	funcName, retType string,
 	paramList []ast.FormalParameter,
-	numStmts, numVarDefs, numCallables, numTypeDefs int,
+	numStmts, numVarDefs, numCallables, numTypeDefs, numLabels int,
 ) bool {
 	funcDecl, ok := fd.(*ast.FuncDeclaration)
 	if !ok {
@@ -1152,7 +1161,7 @@ func testFuncDeclaration(
 		}
 	}
 
-	if !testBlock(t, funcDecl.Block, numStmts, numVarDefs, numCallables, numTypeDefs) {
+	if !testBlock(t, funcDecl.Block, numStmts, numVarDefs, numCallables, numTypeDefs, numLabels) {
 		return false
 	}
 
@@ -1299,7 +1308,7 @@ func TestParseRepeatStatement(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 2, 1, 0, 0, 0) {
 		return
 	}
 
@@ -1373,7 +1382,7 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 15) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 15, 0) {
 		return
 	}
 }
@@ -1407,7 +1416,7 @@ func TestParsingIndexedVariables(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 5, 1, 0, 1) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 5, 1, 0, 1, 0) {
 		return
 	}
 
@@ -1483,7 +1492,7 @@ func TestParseExpressions(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 20, 3, 1, 2) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 20, 3, 1, 2, 0) {
 		return
 	}
 }
@@ -1527,7 +1536,7 @@ func TestParseFieldDesignator(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 2, 0, 2) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 3, 2, 0, 2, 0) {
 		return
 	}
 
@@ -1571,7 +1580,78 @@ func TestParserArrayType(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 8) {
+	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 1, 0, 8, 0) {
+		return
+	}
+}
+
+func TestParseLabelDeclaration(t *testing.T) {
+	input := `
+		program LabelProgram;
+
+		label
+			4833, 9999, 0, 2, 921;
+
+		begin
+			writeln('Hello, world!')
+		end.
+	
+	`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, program, "LabelProgram", []string{}, 1, 0, 0, 8, 5) {
+		return
+	}
+}
+
+func TestParseStatementsWithLabels(t *testing.T) {
+	input := `
+		program LabelProgram;
+
+		label
+			4833, 9999, 0, 2, 921;
+
+		var
+			a, b, sum : integer;
+
+		begin
+			9999:
+				begin
+					a := 1;
+					b := 2;
+					writeln('Hello, world!')
+				end;
+
+			921:	
+				a := 1;
+
+			writeln('Hello, world!')
+		end.
+	
+	`
+
+	lex := NewLexer(input)
+	pars, err := NewParser(lex)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !testProgramAST(t, program, "LabelProgram", []string{}, 3, 1, 0, 0, 5) {
 		return
 	}
 }
