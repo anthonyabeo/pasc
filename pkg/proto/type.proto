@@ -10,6 +10,7 @@ message Type {
     BOOLEAN = 2;
     CHAR = 3;
     VOID = 4;
+    STR = 5;
   }
 
   message Integer {
@@ -32,6 +33,10 @@ message Type {
     string name = 1;
   }
 
+  message String {
+    string name = 1;
+  }
+
   TypeKind tk = 1;
   oneof type {
     Integer int = 2;
@@ -39,5 +44,6 @@ message Type {
     Boolean bool = 4;
     Char char = 5;
     Void void = 6;
+    String str = 7;
   }
 }
