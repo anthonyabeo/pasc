@@ -70,3 +70,16 @@ std::string RealType::GetName() const { return name; }
 llvm::Type *RealType::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+///////////////////////
+// STRING
+///////////////////////
+StringType::StringType(const Pasc::Type_String &st) {
+  name = st.name();
+}
+
+std::string StringType::GetName() const { return name; }
+
+llvm::Type *StringType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}

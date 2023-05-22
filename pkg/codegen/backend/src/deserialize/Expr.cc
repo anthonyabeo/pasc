@@ -57,6 +57,8 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<WriteParameter>(expr.wp());
   case Pasc::Expression_ExprKind_FCall:
     return std::make_unique<FunctionCall>(expr.fc());
+  case Pasc::Expression_ExprKind_Str:
+    return std::make_unique<CharString>(expr.cs());
   default:
     throw DeserializeProtobufException("invalid expression kind");
   }
@@ -152,5 +154,16 @@ URealLiteral::URealLiteral(const Pasc::URealLiteral &ur) {
 }
 
 llvm::Value *URealLiteral::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// CHARACTER STRING
+///////////////////////////
+CharString::CharString(const Pasc::CharString &cs) {
+  str = cs.value();
+}
+
+llvm::Value *CharString::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

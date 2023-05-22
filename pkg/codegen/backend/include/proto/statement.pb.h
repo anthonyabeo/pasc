@@ -403,10 +403,51 @@ class ProcedureStatement_Write : public ::google::protobuf::Message /* @@protoc_
 
   // accessors -------------------------------------------------------
 
+  // repeated .Pasc.Expression params = 3;
+  int params_size() const;
+  void clear_params();
+  static const int kParamsFieldNumber = 3;
+  ::Pasc::Expression* mutable_params(int index);
+  ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >*
+      mutable_params();
+  const ::Pasc::Expression& params(int index) const;
+  ::Pasc::Expression* add_params();
+  const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
+      params() const;
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // .Pasc.Expression file = 2;
+  bool has_file() const;
+  void clear_file();
+  static const int kFileFieldNumber = 2;
+  private:
+  const ::Pasc::Expression& _internal_file() const;
+  public:
+  const ::Pasc::Expression& file() const;
+  ::Pasc::Expression* release_file();
+  ::Pasc::Expression* mutable_file();
+  void set_allocated_file(::Pasc::Expression* file);
+
   // @@protoc_insertion_point(class_scope:Pasc.ProcedureStatement.Write)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > params_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
 };
@@ -499,10 +540,51 @@ class ProcedureStatement_Read : public ::google::protobuf::Message /* @@protoc_i
 
   // accessors -------------------------------------------------------
 
+  // repeated .Pasc.Expression varAccess = 3;
+  int varaccess_size() const;
+  void clear_varaccess();
+  static const int kVarAccessFieldNumber = 3;
+  ::Pasc::Expression* mutable_varaccess(int index);
+  ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >*
+      mutable_varaccess();
+  const ::Pasc::Expression& varaccess(int index) const;
+  ::Pasc::Expression* add_varaccess();
+  const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
+      varaccess() const;
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // .Pasc.Expression file = 2;
+  bool has_file() const;
+  void clear_file();
+  static const int kFileFieldNumber = 2;
+  private:
+  const ::Pasc::Expression& _internal_file() const;
+  public:
+  const ::Pasc::Expression& file() const;
+  ::Pasc::Expression* release_file();
+  ::Pasc::Expression* mutable_file();
+  void set_allocated_file(::Pasc::Expression* file);
+
   // @@protoc_insertion_point(class_scope:Pasc.ProcedureStatement.Read)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > varaccess_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
 };
@@ -595,10 +677,51 @@ class ProcedureStatement_ReadLn : public ::google::protobuf::Message /* @@protoc
 
   // accessors -------------------------------------------------------
 
+  // repeated .Pasc.Expression varAccess = 3;
+  int varaccess_size() const;
+  void clear_varaccess();
+  static const int kVarAccessFieldNumber = 3;
+  ::Pasc::Expression* mutable_varaccess(int index);
+  ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >*
+      mutable_varaccess();
+  const ::Pasc::Expression& varaccess(int index) const;
+  ::Pasc::Expression* add_varaccess();
+  const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
+      varaccess() const;
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // .Pasc.Expression file = 2;
+  bool has_file() const;
+  void clear_file();
+  static const int kFileFieldNumber = 2;
+  private:
+  const ::Pasc::Expression& _internal_file() const;
+  public:
+  const ::Pasc::Expression& file() const;
+  ::Pasc::Expression* release_file();
+  ::Pasc::Expression* mutable_file();
+  void set_allocated_file(::Pasc::Expression* file);
+
   // @@protoc_insertion_point(class_scope:Pasc.ProcedureStatement.ReadLn)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > varaccess_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
 };
@@ -2629,13 +2752,397 @@ ProcedureStatement_WriteLn::params() const {
 
 // ProcedureStatement_Write
 
+// string name = 1;
+inline void ProcedureStatement_Write::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_Write::name() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Write.name)
+  return name_.GetNoArena();
+}
+inline void ProcedureStatement_Write::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.Write.name)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_Write::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.Write.name)
+}
+#endif
+inline void ProcedureStatement_Write::set_name(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.Write.name)
+}
+inline void ProcedureStatement_Write::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.Write.name)
+}
+inline ::std::string* ProcedureStatement_Write::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Write.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_Write::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.Write.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_Write::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.Write.name)
+}
+
+// .Pasc.Expression file = 2;
+inline bool ProcedureStatement_Write::has_file() const {
+  return this != internal_default_instance() && file_ != NULL;
+}
+inline const ::Pasc::Expression& ProcedureStatement_Write::_internal_file() const {
+  return *file_;
+}
+inline const ::Pasc::Expression& ProcedureStatement_Write::file() const {
+  const ::Pasc::Expression* p = file_;
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Write.file)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* ProcedureStatement_Write::release_file() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.Write.file)
+  
+  ::Pasc::Expression* temp = file_;
+  file_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* ProcedureStatement_Write::mutable_file() {
+  
+  if (file_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    file_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Write.file)
+  return file_;
+}
+inline void ProcedureStatement_Write::set_allocated_file(::Pasc::Expression* file) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(file_);
+  }
+  if (file) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      file = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, file, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  file_ = file;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.Write.file)
+}
+
+// repeated .Pasc.Expression params = 3;
+inline int ProcedureStatement_Write::params_size() const {
+  return params_.size();
+}
+inline ::Pasc::Expression* ProcedureStatement_Write::mutable_params(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Write.params)
+  return params_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >*
+ProcedureStatement_Write::mutable_params() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.ProcedureStatement.Write.params)
+  return &params_;
+}
+inline const ::Pasc::Expression& ProcedureStatement_Write::params(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Write.params)
+  return params_.Get(index);
+}
+inline ::Pasc::Expression* ProcedureStatement_Write::add_params() {
+  // @@protoc_insertion_point(field_add:Pasc.ProcedureStatement.Write.params)
+  return params_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
+ProcedureStatement_Write::params() const {
+  // @@protoc_insertion_point(field_list:Pasc.ProcedureStatement.Write.params)
+  return params_;
+}
+
 // -------------------------------------------------------------------
 
 // ProcedureStatement_Read
 
+// string name = 1;
+inline void ProcedureStatement_Read::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_Read::name() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Read.name)
+  return name_.GetNoArena();
+}
+inline void ProcedureStatement_Read::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.Read.name)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_Read::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.Read.name)
+}
+#endif
+inline void ProcedureStatement_Read::set_name(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.Read.name)
+}
+inline void ProcedureStatement_Read::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.Read.name)
+}
+inline ::std::string* ProcedureStatement_Read::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Read.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_Read::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.Read.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_Read::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.Read.name)
+}
+
+// .Pasc.Expression file = 2;
+inline bool ProcedureStatement_Read::has_file() const {
+  return this != internal_default_instance() && file_ != NULL;
+}
+inline const ::Pasc::Expression& ProcedureStatement_Read::_internal_file() const {
+  return *file_;
+}
+inline const ::Pasc::Expression& ProcedureStatement_Read::file() const {
+  const ::Pasc::Expression* p = file_;
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Read.file)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* ProcedureStatement_Read::release_file() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.Read.file)
+  
+  ::Pasc::Expression* temp = file_;
+  file_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* ProcedureStatement_Read::mutable_file() {
+  
+  if (file_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    file_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Read.file)
+  return file_;
+}
+inline void ProcedureStatement_Read::set_allocated_file(::Pasc::Expression* file) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(file_);
+  }
+  if (file) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      file = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, file, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  file_ = file;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.Read.file)
+}
+
+// repeated .Pasc.Expression varAccess = 3;
+inline int ProcedureStatement_Read::varaccess_size() const {
+  return varaccess_.size();
+}
+inline ::Pasc::Expression* ProcedureStatement_Read::mutable_varaccess(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Read.varAccess)
+  return varaccess_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >*
+ProcedureStatement_Read::mutable_varaccess() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.ProcedureStatement.Read.varAccess)
+  return &varaccess_;
+}
+inline const ::Pasc::Expression& ProcedureStatement_Read::varaccess(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Read.varAccess)
+  return varaccess_.Get(index);
+}
+inline ::Pasc::Expression* ProcedureStatement_Read::add_varaccess() {
+  // @@protoc_insertion_point(field_add:Pasc.ProcedureStatement.Read.varAccess)
+  return varaccess_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
+ProcedureStatement_Read::varaccess() const {
+  // @@protoc_insertion_point(field_list:Pasc.ProcedureStatement.Read.varAccess)
+  return varaccess_;
+}
+
 // -------------------------------------------------------------------
 
 // ProcedureStatement_ReadLn
+
+// string name = 1;
+inline void ProcedureStatement_ReadLn::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_ReadLn::name() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.ReadLn.name)
+  return name_.GetNoArena();
+}
+inline void ProcedureStatement_ReadLn::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.ReadLn.name)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_ReadLn::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.ReadLn.name)
+}
+#endif
+inline void ProcedureStatement_ReadLn::set_name(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.ReadLn.name)
+}
+inline void ProcedureStatement_ReadLn::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.ReadLn.name)
+}
+inline ::std::string* ProcedureStatement_ReadLn::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.ReadLn.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_ReadLn::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.ReadLn.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_ReadLn::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.ReadLn.name)
+}
+
+// .Pasc.Expression file = 2;
+inline bool ProcedureStatement_ReadLn::has_file() const {
+  return this != internal_default_instance() && file_ != NULL;
+}
+inline const ::Pasc::Expression& ProcedureStatement_ReadLn::_internal_file() const {
+  return *file_;
+}
+inline const ::Pasc::Expression& ProcedureStatement_ReadLn::file() const {
+  const ::Pasc::Expression* p = file_;
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.ReadLn.file)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* ProcedureStatement_ReadLn::release_file() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.ReadLn.file)
+  
+  ::Pasc::Expression* temp = file_;
+  file_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* ProcedureStatement_ReadLn::mutable_file() {
+  
+  if (file_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    file_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.ReadLn.file)
+  return file_;
+}
+inline void ProcedureStatement_ReadLn::set_allocated_file(::Pasc::Expression* file) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(file_);
+  }
+  if (file) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      file = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, file, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  file_ = file;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.ReadLn.file)
+}
+
+// repeated .Pasc.Expression varAccess = 3;
+inline int ProcedureStatement_ReadLn::varaccess_size() const {
+  return varaccess_.size();
+}
+inline ::Pasc::Expression* ProcedureStatement_ReadLn::mutable_varaccess(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.ReadLn.varAccess)
+  return varaccess_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >*
+ProcedureStatement_ReadLn::mutable_varaccess() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.ProcedureStatement.ReadLn.varAccess)
+  return &varaccess_;
+}
+inline const ::Pasc::Expression& ProcedureStatement_ReadLn::varaccess(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.ReadLn.varAccess)
+  return varaccess_.Get(index);
+}
+inline ::Pasc::Expression* ProcedureStatement_ReadLn::add_varaccess() {
+  // @@protoc_insertion_point(field_add:Pasc.ProcedureStatement.ReadLn.varAccess)
+  return varaccess_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
+ProcedureStatement_ReadLn::varaccess() const {
+  // @@protoc_insertion_point(field_list:Pasc.ProcedureStatement.ReadLn.varAccess)
+  return varaccess_;
+}
 
 // -------------------------------------------------------------------
 

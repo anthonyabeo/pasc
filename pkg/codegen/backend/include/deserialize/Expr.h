@@ -111,4 +111,15 @@ struct URealLiteral : public Expr {
   explicit URealLiteral(const Pasc::URealLiteral &);
   llvm::Value *codegen(IRVisitor &) override;
 };
+
+///////////////////////////
+// CHARACTER STRING
+///////////////////////////
+struct CharString : public Expr {
+  std::string str;
+
+  explicit CharString(const Pasc::CharString&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
 #endif // EXPR_H

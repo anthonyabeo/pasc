@@ -12,7 +12,7 @@ class IRVisitor;
 struct Type {
   virtual ~Type() = default;
   [[nodiscard]] virtual std::string GetName() const = 0;
-  virtual llvm::Type *codegen(IRVisitor &visitor) = 0;
+  virtual llvm::Type *codegen(IRVisitor &) = 0;
 };
 
 std::unique_ptr<Type> deserializeType(const Pasc::Type &);
@@ -22,7 +22,7 @@ struct IntegerType : public Type {
 
   explicit IntegerType(const Pasc::Type_Integer &);
   [[nodiscard]] std::string GetName() const override;
-  llvm::Type *codegen(IRVisitor &visitor) override;
+  llvm::Type *codegen(IRVisitor &) override;
 };
 
 struct BoolType : public Type {
@@ -30,7 +30,7 @@ struct BoolType : public Type {
 
   explicit BoolType(const Pasc::Type_Boolean&);
   [[nodiscard]] std::string GetName() const override;
-  llvm::Type *codegen(IRVisitor &visitor) override;
+  llvm::Type *codegen(IRVisitor &) override;
 };
 
 struct VoidType : public Type {
@@ -38,7 +38,7 @@ struct VoidType : public Type {
 
   explicit VoidType(const Pasc::Type_Void&);
   [[nodiscard]] std::string GetName() const override;
-  llvm::Type *codegen(IRVisitor &visitor) override;
+  llvm::Type *codegen(IRVisitor &) override;
 };
 
 struct RealType : public Type {
@@ -46,7 +46,15 @@ struct RealType : public Type {
 
   explicit RealType(const Pasc::Type_Real&);
   [[nodiscard]] std::string GetName() const override;
-  llvm::Type *codegen(IRVisitor &visitor) override;
+  llvm::Type *codegen(IRVisitor &) override;
+};
+
+struct StringType : public Type {
+  std::string name;
+
+  explicit StringType(const Pasc::Type_String&);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &) override;
 };
 
 #endif // TYPE_H
