@@ -964,7 +964,7 @@ func (p *Parser) constant() (ast.Expression, error) {
 
 	switch p.lAheadKind(1) {
 	case token.CharString:
-		expr = ast.NewStringLiteral(p.lAheadToken(1), p.lAheadToken(1).Text)
+		expr = &ast.CharString{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	default:
 		if p.isSign() {
 			sign = p.lAheadToken(1)
@@ -2357,7 +2357,7 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	case token.UIntLiteral, token.URealLiteral:
 		expr, err = p.unsignedNumber()
 	case token.CharString:
-		expr = ast.NewStringLiteral(p.lAheadToken(1), p.lAheadToken(1).Text)
+		expr = &ast.CharString{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	case token.Identifier:
 		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 	case token.Nil:

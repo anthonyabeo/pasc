@@ -20,8 +20,6 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 	var err error
 
 	switch node := node.(type) {
-	case *ast.StringLiteral:
-		node.EvalType = &base.String{Name: "string"}
 	case *ast.ProcedureStmt:
 		for _, param := range node.ParamList {
 			v.Visit(param)

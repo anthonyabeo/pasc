@@ -469,13 +469,12 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_Bool,
 			Expr: &Expression_Bl{Bl: &BoolLiteral{Value: v}},
 		}
-	case *ast.StringLiteral:
+	case *ast.CharString:
 		e = &Expression{
 			Kind: Expression_Str,
-			Expr: &Expression_Sl{
-				Sl: &StringLiteral{Value: expr.String()}},
+			Expr: &Expression_Cs{
+				Cs: &CharString{Value: expr.String()}},
 		}
-	case *ast.CharString:
 	case *ast.IdentifiedVariable:
 	case *ast.NilValue:
 		e = &Expression{

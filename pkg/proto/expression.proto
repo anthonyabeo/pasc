@@ -57,7 +57,7 @@ message Expression {
     NilValue nl = 8;
     URealLiteral ureal = 9;
     UnaryExpr ue = 10;
-    StringLiteral sl = 11;
+    CharString cs = 11;
   }
 }
 
@@ -95,7 +95,7 @@ message UnaryExpr {
   Expression operand = 2;
 }
 
-message StringLiteral {
+message CharString {
   string value = 1;
 }
 
