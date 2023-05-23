@@ -84,3 +84,27 @@ llvm::Value *IRCodegenVisitor::codegen(const WriteParameter& wp) {
 llvm::Value *IRCodegenVisitor::codegen(const URealLiteral &ur) {
   return llvm::ConstantFP::get(llvm::Type::getDoubleTy(*ctx), ur.value);
 }
+
+llvm::Value *IRCodegenVisitor::codegen(const CharString &cs) {
+  auto charType = llvm::IntegerType::getInt8Ty(*ctx);
+
+  //1. Initialize chars vector
+  std::vector<llvm::Constant *> chars(cs.str.size());
+  for(unsigned int i = 0; i < cs.str.size(); i++)
+    chars[i] = llvm::ConstantInt::get(charType, cs.str[i]);
+
+  //1b. add a zero terminator too
+  chars.push_back(llvm::ConstantInt::get(charType, 0));
+
+  //2. Initialize the string from the characters
+  auto stringType = llvm::ArrayType::get(charType, chars.size());
+
+  //3. Create the declaration statement
+  auto gv = (llvm::GlobalVariable*) module->getOrInsertGlobal(".str", stringType);
+  gv->setInitializer(llvm::ConstantArray::get(stringType, chars));
+  gv->setConstant(true);
+  gv->setLinkage(llvm::GlobalValue::LinkageTypes::InternalLinkage);
+  gv->setUnnamedAddr (llvm::GlobalValue::UnnamedAddr::Global);
+
+  return llvm::ConstantExpr::getBitCast(gv, charType->getPointerTo());
+}

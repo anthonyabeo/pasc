@@ -35,10 +35,8 @@ llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
                                   true));
 
     // The format string for the printf function, declared as a global literal
-//    llvm::Value *str = builder->CreateGlobalStringPtr("%f\n", "str");
     llvm::Value *str;
 
-//    std::vector<llvm::Value *> argsV({str});
     std::vector<llvm::Value *> argsV;
     for (auto& p : stmt.params) {
       auto val = p->codegen(*this);
@@ -47,10 +45,11 @@ llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
         str = builder->CreateGlobalStringPtr("%f\n", "str");
       } else if(val->getType() == llvm::Type::getInt32Ty(*ctx)) {
         str = builder->CreateGlobalStringPtr("%d\n", "str");
+      } /*else if(val->getType() == llvm::Type::ArrayType) {*/ else {
+        str = val;
       }
 
       argsV.push_back(str);
-      argsV.push_back(val);
     }
 
     return builder->CreateCall(printfFunc, argsV, "call");
