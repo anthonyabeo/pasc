@@ -63,6 +63,18 @@ struct Writeln : public ProcedureStatement {
 };
 
 ///////////////////////////
+// WRITE
+///////////////////////////
+struct Write : public ProcedureStatement {
+  std::string name;
+  std::unique_ptr<Expr> file;
+  std::vector<std::unique_ptr<Expr>> params;
+
+  explicit Write(const Pasc::ProcedureStatement_Write&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
+///////////////////////////
 // RETURN STATEMENT
 ///////////////////////////
 struct ReturnStatement : public Statement {

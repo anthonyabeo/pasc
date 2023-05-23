@@ -26,6 +26,7 @@ public:
   virtual llvm::Value *codegen(const IfStatement &) = 0;
   virtual llvm::Value *codegen(const ProcedureStmt &) = 0;
   virtual llvm::Value *codegen(const Writeln &) = 0;
+  virtual llvm::Value *codegen(const Write &) = 0;
   virtual llvm::Value *codegen(const FunctionDeclaration &) = 0;
   virtual llvm::Value *codegen(const ProcedureDeclaration &) = 0;
   virtual llvm::Value *codegen(const WhileStatement &) = 0;

@@ -43,6 +43,7 @@ public:
   llvm::Value *codegen(const AssignStmt &) override;
   llvm::Value *codegen(const IfStatement&) override;
   llvm::Value *codegen(const Writeln&) override;
+  llvm::Value *codegen(const Write&) override;
   llvm::Value *codegen(const ProcedureStmt&) override;
   llvm::Value *codegen(const ReturnStatement&) override;
   llvm::Value *codegen(const FunctionDeclaration&) override;

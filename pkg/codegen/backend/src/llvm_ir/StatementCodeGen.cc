@@ -55,6 +55,35 @@ llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
     return builder->CreateCall(printfFunc, argsV, "call");
 }
 
+llvm::Value *IRCodegenVisitor::codegen(const Write &stmt) {
+    std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
+    auto printfFunc = module->getOrInsertFunction(
+        "printf",
+        llvm::FunctionType::get(llvm::Type::getInt32Ty(*ctx),
+                                printfArgsTypes,
+                                true));
+
+    // The format string for the printf function, declared as a global literal
+    llvm::Value *str;
+
+    std::vector<llvm::Value *> argsV;
+    for (auto& p : stmt.params) {
+      auto val = p->codegen(*this);
+
+      if(val->getType() == llvm::Type::getDoubleTy(*ctx)) {
+        str = builder->CreateGlobalStringPtr("%f", "str");
+      } else if(val->getType() == llvm::Type::getInt32Ty(*ctx)) {
+        str = builder->CreateGlobalStringPtr("%d", "str");
+      } /*else if(val->getType() == llvm::Type::ArrayType) {*/ else {
+        str = val;
+      }
+
+      argsV.push_back(str);
+    }
+
+    return builder->CreateCall(printfFunc, argsV, "call");
+}
+
 llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
   auto condV = is.cond->codegen(*this);
   if (!condV)

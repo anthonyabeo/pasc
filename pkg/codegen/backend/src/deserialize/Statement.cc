@@ -64,7 +64,7 @@ std::unique_ptr<ProcedureStatement> deserializeProcedureStatement(const Pasc::Pr
   case Pasc::ProcedureStatement_PSKind_wln:
     return std::make_unique<Writeln>(stmt.wrtln());
   case Pasc::ProcedureStatement_PSKind_write:
-    break ;
+    return std::make_unique<Write>(stmt.wrt());
   case Pasc::ProcedureStatement_PSKind_read:
     break ;
   case Pasc::ProcedureStatement_PSKind_readLn:
@@ -89,6 +89,9 @@ llvm::Value *ProcedureStmt::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
 
+///////////////////////////
+// WRITELN
+///////////////////////////
 Writeln::Writeln(const Pasc::ProcedureStatement_WriteLn& stmt) {
   name = stmt.name();
   for (int i = 0; i < stmt.params_size(); ++i) {
@@ -100,6 +103,23 @@ Writeln::Writeln(const Pasc::ProcedureStatement_WriteLn& stmt) {
 }
 
 llvm::Value *Writeln::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// WRITE
+///////////////////////////
+Write::Write(const Pasc::ProcedureStatement_Write& stmt) {
+  name = stmt.name();
+  for (int i = 0; i < stmt.params_size(); ++i) {
+    params.push_back(deserializeExpr(stmt.params(i)));
+  }
+
+  if(stmt.has_file())
+    file = deserializeExpr(stmt.file());
+}
+
+llvm::Value *Write::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
 
