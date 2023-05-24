@@ -34,7 +34,9 @@ func (s *ProtoSerializer) translateBlock(blk *ast.Block) *Block {
 	block := &Block{}
 
 	if blk.Labels != nil {
-
+		for _, label := range blk.Labels.Labels {
+			block.Labels = append(block.Labels, label.Value)
+		}
 	}
 
 	if blk.Consts != nil {
@@ -183,6 +185,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 				AssignStmt: &AssignStatement{
 					Variable: s.translateExpr(stmt.Variable),
 					Value:    s.translateExpr(stmt.Value),
+					Label:    stmt.Label,
 				},
 			},
 		}
@@ -201,6 +204,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 						Ps: &ProcedureStatement_ProcStmt{
 							Name:   s.translateExpr(stmt.Name),
 							Params: args,
+							Label:  stmt.Label,
 						},
 					},
 				},
@@ -222,6 +226,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 							Name:   stmt.Name,
 							Params: args,
 							File:   s.translateExpr(stmt.File),
+							Label:  stmt.Label,
 						},
 					},
 				},
@@ -243,6 +248,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 							Name:   stmt.Name,
 							Params: args,
 							File:   s.translateExpr(stmt.File),
+							Label:  stmt.Label,
 						},
 					},
 				},
@@ -294,6 +300,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 		ifStatement := &IfStatement{
 			Cond:     s.translateExpr(stmt.BoolExpr),
 			TruePath: s.translateStmt(stmt.TruePath),
+			Label:    stmt.Label,
 		}
 
 		if stmt.ElsePath != nil {
@@ -312,6 +319,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 			Stmt: &Statement_RetStmt{
 				RetStmt: &ReturnStatement{
 					Value: s.translateExpr(stmt.Expr),
+					Label: stmt.Label,
 				},
 			},
 		}
@@ -320,8 +328,9 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 			Kind: Statement_while,
 			Stmt: &Statement_WhileStmt{
 				WhileStmt: &WhileStatement{
-					Cond: s.translateExpr(stmt.BoolExpr),
-					Body: s.translateStmt(stmt.Body),
+					Cond:  s.translateExpr(stmt.BoolExpr),
+					Body:  s.translateStmt(stmt.Body),
+					Label: stmt.Label,
 				},
 			},
 		}
@@ -344,6 +353,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 					FinalValue: s.translateExpr(stmt.FinalValue),
 					Body:       s.translateStmt(stmt.Body),
 					Dir:        dir,
+					Label:      stmt.Label,
 				},
 			},
 		}
@@ -359,6 +369,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 				RptStmt: &RepeatStatement{
 					Stmts: stmts,
 					Cond:  s.translateExpr(stmt.BoolExpr),
+					Label: stmt.Label,
 				},
 			},
 		}
@@ -373,6 +384,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 			Stmt: &Statement_CmpdStmt{
 				CmpdStmt: &CompoundStatement{
 					Stmts: stmts,
+					Label: stmt.Label,
 				},
 			},
 		}
@@ -397,19 +409,15 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 				CaseStmt: &CaseStatement{
 					CaseIndex: s.translateExpr(stmt.Index),
 					Cle:       caseElems,
+					Label:     stmt.Label,
 				},
 			},
 		}
 	case *ast.GotoStatement:
-		v, err := strconv.Atoi(stmt.Label.Value)
-		if err != nil {
-			panic(err)
-		}
-
 		st = &Statement{
 			Kind: Statement_goto,
 			Stmt: &Statement_GotoStmt{
-				GotoStmt: &GoToStatement{Label: uint32(v)}},
+				GotoStmt: &GoToStatement{Label: stmt.Label.Value}},
 		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
@@ -601,6 +609,8 @@ func (s *ProtoSerializer) translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_In}
 	case token.Equal:
 		return &Operator{Op: Operator_Equal}
+	case token.Star:
+		return &Operator{Op: Operator_Mult}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}
