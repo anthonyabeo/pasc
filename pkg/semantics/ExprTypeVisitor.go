@@ -141,6 +141,7 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 			v.Visit(stmt)
 		}
 		v.Visit(node.BoolExpr)
+	case *ast.GotoStatement:
 	default:
 		panic(fmt.Sprintf("Visit: unexpected expression type %T", node))
 	}

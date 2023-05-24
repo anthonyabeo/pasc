@@ -12,7 +12,7 @@ type IfStatement struct {
 	BoolExpr Expression
 	TruePath Statement
 	ElsePath Statement
-	Lbl      string
+	Label    string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -31,5 +31,5 @@ func (f *IfStatement) String() string {
 }
 
 func (f *IfStatement) SetLabel(l string) {
-	f.Lbl = l
+	f.Label = l
 }
