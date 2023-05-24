@@ -26,6 +26,8 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
     return std::make_unique<RepeatStatement>(stmt.rptstmt());
   case Pasc::Statement_StmtKind_for_:
     return std::make_unique<ForStatement>(stmt.forstmt());
+  case Pasc::Statement_StmtKind_goto_:
+    return std::make_unique<GotoStatement>(stmt.gotostmt());
   default:
     throw DeserializeProtobufException("invalid statement kind");
   }
@@ -37,6 +39,7 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
 AssignStmt::AssignStmt(const Pasc::AssignStatement &stmt) {
   variable = deserializeID(stmt.variable().id());
   value = deserializeExpr(stmt.value());
+  label = stmt.label();
 }
 
 llvm::Value *AssignStmt::codegen(IRVisitor &v) { return v.codegen(*this); }
@@ -46,6 +49,7 @@ llvm::Value *AssignStmt::codegen(IRVisitor &v) { return v.codegen(*this); }
 // IF STATEMENT
 ///////////////////////////
 IfStatement::IfStatement(const Pasc::IfStatement &is) {
+  label = is.label();
   cond = deserializeExpr(is.cond());
   true_path = deserializeStmt(is.truepath());
   if (is.has_elsepath())
@@ -83,6 +87,7 @@ ProcedureStmt::ProcedureStmt(const Pasc::ProcedureStatement_ProcStmt& stmt) {
   for (size_t i = 0; i < stmt.params_size(); i++) {
     params.push_back(deserializeExpr(stmt.params(i)));
   }
+  label = stmt.label();
 }
 
 llvm::Value *ProcedureStmt::codegen(IRVisitor &v) {
@@ -100,6 +105,8 @@ Writeln::Writeln(const Pasc::ProcedureStatement_WriteLn& stmt) {
 
   if(stmt.has_file())
     file = deserializeExpr(stmt.file());
+
+  label = stmt.label();
 }
 
 llvm::Value *Writeln::codegen(IRVisitor &v) {
@@ -117,6 +124,8 @@ Write::Write(const Pasc::ProcedureStatement_Write& stmt) {
 
   if(stmt.has_file())
     file = deserializeExpr(stmt.file());
+
+  label = stmt.label();
 }
 
 llvm::Value *Write::codegen(IRVisitor &v) {
@@ -128,6 +137,7 @@ llvm::Value *Write::codegen(IRVisitor &v) {
 ///////////////////////////
 ReturnStatement::ReturnStatement(const Pasc::ReturnStatement& ret) {
   value = deserializeExpr(ret.value());
+  label = ret.label();
 }
 
 llvm::Value *ReturnStatement::codegen(IRVisitor &v) {
@@ -140,6 +150,7 @@ llvm::Value *ReturnStatement::codegen(IRVisitor &v) {
 WhileStatement::WhileStatement(const Pasc::WhileStatement & ws) {
   cond = deserializeExpr(ws.cond());
   body = deserializeStmt(ws.body());
+  label = ws.label();
 }
 
 llvm::Value *WhileStatement::codegen(IRVisitor &v) {
@@ -153,6 +164,7 @@ CompoundStatement::CompoundStatement(const Pasc::CompoundStatement &cs) {
   for (std::size_t i = 0; i < cs.stmts_size(); ++i) {
     stmts.push_back(deserializeStmt(cs.stmts(i)));
   }
+  label = cs.label();
 }
 
 llvm::Value *CompoundStatement::codegen(IRVisitor &v) {
@@ -167,6 +179,7 @@ RepeatStatement::RepeatStatement(const Pasc::RepeatStatement &rs) {
   for (int i = 0; i < rs.stmts_size(); ++i) {
     stmts.push_back(deserializeStmt(rs.stmts(i)));
   }
+  label = rs.label();
 }
 
 llvm::Value *RepeatStatement::codegen(IRVisitor &v) {
@@ -182,8 +195,20 @@ ForStatement::ForStatement(const Pasc::ForStatement &fs) {
   finalValue = deserializeExpr(fs.finalvalue());
   body = deserializeStmt(fs.body());
   dir = fs.dir();
+  label = fs.label();
 }
 
 llvm::Value *ForStatement::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// GOTO STATEMENT
+///////////////////////////
+GotoStatement::GotoStatement(const Pasc::GoToStatement &gs) {
+  label = gs.label();
+}
+
+llvm::Value *GotoStatement::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

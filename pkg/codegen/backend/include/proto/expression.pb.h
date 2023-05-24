@@ -170,6 +170,7 @@ enum Operator_OpKind {
   Operator_OpKind_Plus = 0,
   Operator_OpKind_Minus = 1,
   Operator_OpKind_Div = 2,
+  Operator_OpKind_Mult = 3,
   Operator_OpKind_Mod = 4,
   Operator_OpKind_And = 5,
   Operator_OpKind_Or = 6,
@@ -2156,6 +2157,8 @@ class Operator : public ::google::protobuf::Message /* @@protoc_insertion_point(
     Operator_OpKind_Minus;
   static const OpKind Div =
     Operator_OpKind_Div;
+  static const OpKind Mult =
+    Operator_OpKind_Mult;
   static const OpKind Mod =
     Operator_OpKind_Mod;
   static const OpKind And =

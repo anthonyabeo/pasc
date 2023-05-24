@@ -23,7 +23,8 @@ enum class Operator {
   Great,
   GreatEqual,
   LessEqual,
-  LessGreat
+  LessGreat,
+  Mult,
 };
 
 enum Operator deserializeOp(const Pasc::Operator&);

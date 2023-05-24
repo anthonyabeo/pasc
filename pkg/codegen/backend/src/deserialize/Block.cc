@@ -6,6 +6,10 @@
 #include "proto/program.pb.h"
 
 Block::Block(const Pasc::Block &blk) {
+  for (int i = 0; i < blk.labels_size(); ++i) {
+    Labels.push_back(blk.labels(i));
+  }
+
   for (int i = 0; i < blk.vardecl_size(); i++) {
     auto &varDecl = blk.vardecl(i);
     VarDeclrs.push_back(

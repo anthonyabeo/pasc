@@ -292,6 +292,20 @@ class ProcedureStatement_WriteLn : public ::google::protobuf::Message /* @@proto
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
+  // string label = 4;
+  void clear_label();
+  static const int kLabelFieldNumber = 4;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression file = 2;
   bool has_file() const;
   void clear_file();
@@ -310,6 +324,7 @@ class ProcedureStatement_WriteLn : public ::google::protobuf::Message /* @@proto
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > params_;
   ::google::protobuf::internal::ArenaStringPtr name_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -429,6 +444,20 @@ class ProcedureStatement_Write : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
+  // string label = 4;
+  void clear_label();
+  static const int kLabelFieldNumber = 4;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression file = 2;
   bool has_file() const;
   void clear_file();
@@ -447,6 +476,7 @@ class ProcedureStatement_Write : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > params_;
   ::google::protobuf::internal::ArenaStringPtr name_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -566,6 +596,20 @@ class ProcedureStatement_Read : public ::google::protobuf::Message /* @@protoc_i
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
+  // string label = 4;
+  void clear_label();
+  static const int kLabelFieldNumber = 4;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression file = 2;
   bool has_file() const;
   void clear_file();
@@ -584,6 +628,7 @@ class ProcedureStatement_Read : public ::google::protobuf::Message /* @@protoc_i
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > varaccess_;
   ::google::protobuf::internal::ArenaStringPtr name_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -703,6 +748,20 @@ class ProcedureStatement_ReadLn : public ::google::protobuf::Message /* @@protoc
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
+  // string label = 4;
+  void clear_label();
+  static const int kLabelFieldNumber = 4;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression file = 2;
   bool has_file() const;
   void clear_file();
@@ -721,6 +780,7 @@ class ProcedureStatement_ReadLn : public ::google::protobuf::Message /* @@protoc
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > varaccess_;
   ::google::protobuf::internal::ArenaStringPtr name_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* file_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -826,6 +886,20 @@ class ProcedureStatement_ProcStmt : public ::google::protobuf::Message /* @@prot
   const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
       params() const;
 
+  // string label = 3;
+  void clear_label();
+  static const int kLabelFieldNumber = 3;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression name = 1;
   bool has_name() const;
   void clear_name();
@@ -843,6 +917,7 @@ class ProcedureStatement_ProcStmt : public ::google::protobuf::Message /* @@prot
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Expression > params_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* name_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -1166,6 +1241,20 @@ class AssignStatement : public ::google::protobuf::Message /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
+  // string label = 3;
+  void clear_label();
+  static const int kLabelFieldNumber = 3;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression variable = 1;
   bool has_variable() const;
   void clear_variable();
@@ -1194,6 +1283,7 @@ class AssignStatement : public ::google::protobuf::Message /* @@protoc_insertion
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* variable_;
   ::Pasc::Expression* value_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
@@ -1288,6 +1378,20 @@ class IfStatement : public ::google::protobuf::Message /* @@protoc_insertion_poi
 
   // accessors -------------------------------------------------------
 
+  // string label = 4;
+  void clear_label();
+  static const int kLabelFieldNumber = 4;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression cond = 1;
   bool has_cond() const;
   void clear_cond();
@@ -1328,6 +1432,7 @@ class IfStatement : public ::google::protobuf::Message /* @@protoc_insertion_poi
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* cond_;
   ::Pasc::Statement* truepath_;
   ::Pasc::Statement* elsepath_;
@@ -1423,6 +1528,20 @@ class ReturnStatement : public ::google::protobuf::Message /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
+  // string label = 2;
+  void clear_label();
+  static const int kLabelFieldNumber = 2;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression value = 1;
   bool has_value() const;
   void clear_value();
@@ -1439,6 +1558,7 @@ class ReturnStatement : public ::google::protobuf::Message /* @@protoc_insertion
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* value_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -1532,6 +1652,20 @@ class WhileStatement : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
+  // string label = 3;
+  void clear_label();
+  static const int kLabelFieldNumber = 3;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression cond = 1;
   bool has_cond() const;
   void clear_cond();
@@ -1560,6 +1694,7 @@ class WhileStatement : public ::google::protobuf::Message /* @@protoc_insertion_
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* cond_;
   ::Pasc::Statement* body_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
@@ -1666,11 +1801,26 @@ class CompoundStatement : public ::google::protobuf::Message /* @@protoc_inserti
   const ::google::protobuf::RepeatedPtrField< ::Pasc::Statement >&
       stmts() const;
 
+  // string label = 2;
+  void clear_label();
+  static const int kLabelFieldNumber = 2;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // @@protoc_insertion_point(class_scope:Pasc.CompoundStatement)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Statement > stmts_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
 };
@@ -1775,6 +1925,20 @@ class RepeatStatement : public ::google::protobuf::Message /* @@protoc_insertion
   const ::google::protobuf::RepeatedPtrField< ::Pasc::Statement >&
       stmts() const;
 
+  // string label = 3;
+  void clear_label();
+  static const int kLabelFieldNumber = 3;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression cond = 2;
   bool has_cond() const;
   void clear_cond();
@@ -1792,6 +1956,7 @@ class RepeatStatement : public ::google::protobuf::Message /* @@protoc_insertion
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Statement > stmts_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* cond_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -1885,6 +2050,20 @@ class ForStatement : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
+  // string label = 6;
+  void clear_label();
+  static const int kLabelFieldNumber = 6;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression ctlVar = 1;
   bool has_ctlvar() const;
   void clear_ctlvar();
@@ -1943,6 +2122,7 @@ class ForStatement : public ::google::protobuf::Message /* @@protoc_insertion_po
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* ctlvar_;
   ::Pasc::Expression* initvalue_;
   ::Pasc::Expression* finalvalue_;
@@ -2176,6 +2356,20 @@ class CaseStatement : public ::google::protobuf::Message /* @@protoc_insertion_p
   const ::google::protobuf::RepeatedPtrField< ::Pasc::CaseStatement_CaseListElement >&
       cle() const;
 
+  // string label = 3;
+  void clear_label();
+  static const int kLabelFieldNumber = 3;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
   // .Pasc.Expression caseIndex = 1;
   bool has_caseindex() const;
   void clear_caseindex();
@@ -2193,6 +2387,7 @@ class CaseStatement : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::CaseStatement_CaseListElement > cle_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   ::Pasc::Expression* caseindex_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
@@ -2286,17 +2481,25 @@ class GoToStatement : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   // accessors -------------------------------------------------------
 
-  // uint32 label = 1;
+  // string label = 1;
   void clear_label();
   static const int kLabelFieldNumber = 1;
-  ::google::protobuf::uint32 label() const;
-  void set_label(::google::protobuf::uint32 value);
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
 
   // @@protoc_insertion_point(class_scope:Pasc.GoToStatement)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::uint32 label_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fstatement_2eproto::TableStruct;
 };
@@ -2748,6 +2951,59 @@ ProcedureStatement_WriteLn::params() const {
   return params_;
 }
 
+// string label = 4;
+inline void ProcedureStatement_WriteLn::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_WriteLn::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.WriteLn.label)
+  return label_.GetNoArena();
+}
+inline void ProcedureStatement_WriteLn::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.WriteLn.label)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_WriteLn::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.WriteLn.label)
+}
+#endif
+inline void ProcedureStatement_WriteLn::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.WriteLn.label)
+}
+inline void ProcedureStatement_WriteLn::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.WriteLn.label)
+}
+inline ::std::string* ProcedureStatement_WriteLn::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.WriteLn.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_WriteLn::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.WriteLn.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_WriteLn::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.WriteLn.label)
+}
+
 // -------------------------------------------------------------------
 
 // ProcedureStatement_Write
@@ -2878,6 +3134,59 @@ inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
 ProcedureStatement_Write::params() const {
   // @@protoc_insertion_point(field_list:Pasc.ProcedureStatement.Write.params)
   return params_;
+}
+
+// string label = 4;
+inline void ProcedureStatement_Write::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_Write::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Write.label)
+  return label_.GetNoArena();
+}
+inline void ProcedureStatement_Write::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.Write.label)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_Write::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.Write.label)
+}
+#endif
+inline void ProcedureStatement_Write::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.Write.label)
+}
+inline void ProcedureStatement_Write::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.Write.label)
+}
+inline ::std::string* ProcedureStatement_Write::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Write.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_Write::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.Write.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_Write::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.Write.label)
 }
 
 // -------------------------------------------------------------------
@@ -3012,6 +3321,59 @@ ProcedureStatement_Read::varaccess() const {
   return varaccess_;
 }
 
+// string label = 4;
+inline void ProcedureStatement_Read::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_Read::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.Read.label)
+  return label_.GetNoArena();
+}
+inline void ProcedureStatement_Read::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.Read.label)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_Read::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.Read.label)
+}
+#endif
+inline void ProcedureStatement_Read::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.Read.label)
+}
+inline void ProcedureStatement_Read::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.Read.label)
+}
+inline ::std::string* ProcedureStatement_Read::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.Read.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_Read::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.Read.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_Read::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.Read.label)
+}
+
 // -------------------------------------------------------------------
 
 // ProcedureStatement_ReadLn
@@ -3144,6 +3506,59 @@ ProcedureStatement_ReadLn::varaccess() const {
   return varaccess_;
 }
 
+// string label = 4;
+inline void ProcedureStatement_ReadLn::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_ReadLn::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.ReadLn.label)
+  return label_.GetNoArena();
+}
+inline void ProcedureStatement_ReadLn::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.ReadLn.label)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_ReadLn::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.ReadLn.label)
+}
+#endif
+inline void ProcedureStatement_ReadLn::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.ReadLn.label)
+}
+inline void ProcedureStatement_ReadLn::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.ReadLn.label)
+}
+inline ::std::string* ProcedureStatement_ReadLn::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.ReadLn.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_ReadLn::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.ReadLn.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_ReadLn::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.ReadLn.label)
+}
+
 // -------------------------------------------------------------------
 
 // ProcedureStatement_ProcStmt
@@ -3221,6 +3636,59 @@ inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Expression >&
 ProcedureStatement_ProcStmt::params() const {
   // @@protoc_insertion_point(field_list:Pasc.ProcedureStatement.ProcStmt.params)
   return params_;
+}
+
+// string label = 3;
+inline void ProcedureStatement_ProcStmt::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ProcedureStatement_ProcStmt::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ProcedureStatement.ProcStmt.label)
+  return label_.GetNoArena();
+}
+inline void ProcedureStatement_ProcStmt::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ProcedureStatement.ProcStmt.label)
+}
+#if LANG_CXX11
+inline void ProcedureStatement_ProcStmt::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ProcedureStatement.ProcStmt.label)
+}
+#endif
+inline void ProcedureStatement_ProcStmt::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ProcedureStatement.ProcStmt.label)
+}
+inline void ProcedureStatement_ProcStmt::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ProcedureStatement.ProcStmt.label)
+}
+inline ::std::string* ProcedureStatement_ProcStmt::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ProcedureStatement.ProcStmt.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ProcedureStatement_ProcStmt::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ProcedureStatement.ProcStmt.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ProcedureStatement_ProcStmt::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ProcedureStatement.ProcStmt.label)
 }
 
 // -------------------------------------------------------------------
@@ -3570,6 +4038,59 @@ inline void AssignStatement::set_allocated_value(::Pasc::Expression* value) {
   // @@protoc_insertion_point(field_set_allocated:Pasc.AssignStatement.value)
 }
 
+// string label = 3;
+inline void AssignStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& AssignStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.AssignStatement.label)
+  return label_.GetNoArena();
+}
+inline void AssignStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.AssignStatement.label)
+}
+#if LANG_CXX11
+inline void AssignStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.AssignStatement.label)
+}
+#endif
+inline void AssignStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.AssignStatement.label)
+}
+inline void AssignStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.AssignStatement.label)
+}
+inline ::std::string* AssignStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.AssignStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* AssignStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.AssignStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void AssignStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.AssignStatement.label)
+}
+
 // -------------------------------------------------------------------
 
 // IfStatement
@@ -3730,6 +4251,59 @@ inline void IfStatement::set_allocated_elsepath(::Pasc::Statement* elsepath) {
   // @@protoc_insertion_point(field_set_allocated:Pasc.IfStatement.elsePath)
 }
 
+// string label = 4;
+inline void IfStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& IfStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.IfStatement.label)
+  return label_.GetNoArena();
+}
+inline void IfStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.IfStatement.label)
+}
+#if LANG_CXX11
+inline void IfStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.IfStatement.label)
+}
+#endif
+inline void IfStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.IfStatement.label)
+}
+inline void IfStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.IfStatement.label)
+}
+inline ::std::string* IfStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.IfStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* IfStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.IfStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void IfStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.IfStatement.label)
+}
+
 // -------------------------------------------------------------------
 
 // ReturnStatement
@@ -3780,6 +4354,59 @@ inline void ReturnStatement::set_allocated_value(::Pasc::Expression* value) {
   }
   value_ = value;
   // @@protoc_insertion_point(field_set_allocated:Pasc.ReturnStatement.value)
+}
+
+// string label = 2;
+inline void ReturnStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ReturnStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ReturnStatement.label)
+  return label_.GetNoArena();
+}
+inline void ReturnStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ReturnStatement.label)
+}
+#if LANG_CXX11
+inline void ReturnStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ReturnStatement.label)
+}
+#endif
+inline void ReturnStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ReturnStatement.label)
+}
+inline void ReturnStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ReturnStatement.label)
+}
+inline ::std::string* ReturnStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ReturnStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ReturnStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ReturnStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ReturnStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ReturnStatement.label)
 }
 
 // -------------------------------------------------------------------
@@ -3888,6 +4515,59 @@ inline void WhileStatement::set_allocated_body(::Pasc::Statement* body) {
   // @@protoc_insertion_point(field_set_allocated:Pasc.WhileStatement.body)
 }
 
+// string label = 3;
+inline void WhileStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& WhileStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.WhileStatement.label)
+  return label_.GetNoArena();
+}
+inline void WhileStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.WhileStatement.label)
+}
+#if LANG_CXX11
+inline void WhileStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.WhileStatement.label)
+}
+#endif
+inline void WhileStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.WhileStatement.label)
+}
+inline void WhileStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.WhileStatement.label)
+}
+inline ::std::string* WhileStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.WhileStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* WhileStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.WhileStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void WhileStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.WhileStatement.label)
+}
+
 // -------------------------------------------------------------------
 
 // CompoundStatement
@@ -3920,6 +4600,59 @@ inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Statement >&
 CompoundStatement::stmts() const {
   // @@protoc_insertion_point(field_list:Pasc.CompoundStatement.stmts)
   return stmts_;
+}
+
+// string label = 2;
+inline void CompoundStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& CompoundStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.CompoundStatement.label)
+  return label_.GetNoArena();
+}
+inline void CompoundStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.CompoundStatement.label)
+}
+#if LANG_CXX11
+inline void CompoundStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.CompoundStatement.label)
+}
+#endif
+inline void CompoundStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.CompoundStatement.label)
+}
+inline void CompoundStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.CompoundStatement.label)
+}
+inline ::std::string* CompoundStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.CompoundStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* CompoundStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.CompoundStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void CompoundStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.CompoundStatement.label)
 }
 
 // -------------------------------------------------------------------
@@ -4002,6 +4735,59 @@ inline void RepeatStatement::set_allocated_cond(::Pasc::Expression* cond) {
   }
   cond_ = cond;
   // @@protoc_insertion_point(field_set_allocated:Pasc.RepeatStatement.cond)
+}
+
+// string label = 3;
+inline void RepeatStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RepeatStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.RepeatStatement.label)
+  return label_.GetNoArena();
+}
+inline void RepeatStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.RepeatStatement.label)
+}
+#if LANG_CXX11
+inline void RepeatStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.RepeatStatement.label)
+}
+#endif
+inline void RepeatStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.RepeatStatement.label)
+}
+inline void RepeatStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.RepeatStatement.label)
+}
+inline ::std::string* RepeatStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.RepeatStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RepeatStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.RepeatStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RepeatStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.RepeatStatement.label)
 }
 
 // -------------------------------------------------------------------
@@ -4220,6 +5006,59 @@ inline void ForStatement::set_dir(::Pasc::TokenKind value) {
   // @@protoc_insertion_point(field_set:Pasc.ForStatement.dir)
 }
 
+// string label = 6;
+inline void ForStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ForStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.ForStatement.label)
+  return label_.GetNoArena();
+}
+inline void ForStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.ForStatement.label)
+}
+#if LANG_CXX11
+inline void ForStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.ForStatement.label)
+}
+#endif
+inline void ForStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.ForStatement.label)
+}
+inline void ForStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.ForStatement.label)
+}
+inline ::std::string* ForStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.ForStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ForStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.ForStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ForStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ForStatement.label)
+}
+
 // -------------------------------------------------------------------
 
 // CaseStatement_CaseListElement
@@ -4387,22 +5226,114 @@ CaseStatement::cle() const {
   return cle_;
 }
 
+// string label = 3;
+inline void CaseStatement::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& CaseStatement::label() const {
+  // @@protoc_insertion_point(field_get:Pasc.CaseStatement.label)
+  return label_.GetNoArena();
+}
+inline void CaseStatement::set_label(const ::std::string& value) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.CaseStatement.label)
+}
+#if LANG_CXX11
+inline void CaseStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.CaseStatement.label)
+}
+#endif
+inline void CaseStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.CaseStatement.label)
+}
+inline void CaseStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.CaseStatement.label)
+}
+inline ::std::string* CaseStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.CaseStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* CaseStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.CaseStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void CaseStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.CaseStatement.label)
+}
+
 // -------------------------------------------------------------------
 
 // GoToStatement
 
-// uint32 label = 1;
+// string label = 1;
 inline void GoToStatement::clear_label() {
-  label_ = 0u;
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::uint32 GoToStatement::label() const {
+inline const ::std::string& GoToStatement::label() const {
   // @@protoc_insertion_point(field_get:Pasc.GoToStatement.label)
-  return label_;
+  return label_.GetNoArena();
 }
-inline void GoToStatement::set_label(::google::protobuf::uint32 value) {
+inline void GoToStatement::set_label(const ::std::string& value) {
   
-  label_ = value;
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:Pasc.GoToStatement.label)
+}
+#if LANG_CXX11
+inline void GoToStatement::set_label(::std::string&& value) {
+  
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.GoToStatement.label)
+}
+#endif
+inline void GoToStatement::set_label(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.GoToStatement.label)
+}
+inline void GoToStatement::set_label(const char* value, size_t size) {
+  
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.GoToStatement.label)
+}
+inline ::std::string* GoToStatement::mutable_label() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.GoToStatement.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* GoToStatement::release_label() {
+  // @@protoc_insertion_point(field_release:Pasc.GoToStatement.label)
+  
+  return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void GoToStatement::set_allocated_label(::std::string* label) {
+  if (label != NULL) {
+    
+  } else {
+    
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.GoToStatement.label)
 }
 
 // -------------------------------------------------------------------

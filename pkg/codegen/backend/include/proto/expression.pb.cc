@@ -536,16 +536,17 @@ void AddDescriptorsImpl() {
       "\001(\0132\020.Pasc.Expression\"\033\n\nCharString\022\r\n\005v"
       "alue\030\001 \001(\t\"j\n\010FuncCall\022\036\n\004name\030\001 \001(\0132\020.P"
       "asc.Expression\022\036\n\004args\030\002 \003(\0132\020.Pasc.Expr"
-      "ession\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Type\"\306"
+      "ession\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Type\"\320"
       "\001\n\010Operator\022!\n\002op\030\001 \001(\0162\025.Pasc.Operator."
-      "OpKind\"\226\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus\020\001\022\007"
-      "\n\003Div\020\002\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006\n\002Or\020\006\022\006\n\002In\020"
-      "\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005Great\020\n\022\016\n\nGre"
-      "atEqual\020\013\022\r\n\tLessEqual\020\014\022\r\n\tLessGreat\020\rB"
-      "\030Z\026pkg/codegen/serializerb\006proto3"
+      "OpKind\"\240\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus\020\001\022\007"
+      "\n\003Div\020\002\022\010\n\004Mult\020\003\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006\n\002O"
+      "r\020\006\022\006\n\002In\020\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005Grea"
+      "t\020\n\022\016\n\nGreatEqual\020\013\022\r\n\tLessEqual\020\014\022\r\n\tLe"
+      "ssGreat\020\rB\030Z\026pkg/codegen/serializerb\006pro"
+      "to3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1673);
+      descriptor, 1683);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/expression.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftype_2eproto::AddDescriptors();
@@ -632,6 +633,7 @@ bool Operator_OpKind_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
     case 4:
     case 5:
     case 6:
@@ -652,6 +654,7 @@ bool Operator_OpKind_IsValid(int value) {
 const Operator_OpKind Operator::Plus;
 const Operator_OpKind Operator::Minus;
 const Operator_OpKind Operator::Div;
+const Operator_OpKind Operator::Mult;
 const Operator_OpKind Operator::Mod;
 const Operator_OpKind Operator::And;
 const Operator_OpKind Operator::Or;
