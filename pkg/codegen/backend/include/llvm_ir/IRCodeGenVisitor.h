@@ -28,6 +28,7 @@ public:
   std::string dumpLLVMIRToString();
 
   static llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function*, llvm::StringRef, llvm::Type*);
+  llvm::BasicBlock* GetBBFromLabel(const std::string);
 
   // Expressions
   llvm::Value *codegen(const VariableID&) override;
@@ -52,6 +53,7 @@ public:
   llvm::Value *codegen(const CompoundStatement&) override;
   llvm::Value *codegen(const RepeatStatement&) override;
   llvm::Value *codegen(const ForStatement&) override;
+  llvm::Value *codegen(const GotoStatement&) override;
 
   std::vector<llvm::Type*> codegen(const FuncHeading&) override;
   std::vector<llvm::Type*> codegen(const ProcHeading&) override;

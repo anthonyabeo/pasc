@@ -63,7 +63,29 @@ llvm::AllocaInst *IRCodegenVisitor::CreateEntryBlockAlloca(
   return TmpB.CreateAlloca(type, nullptr, Name);
 }
 
+llvm::BasicBlock *IRCodegenVisitor::GetBBFromLabel(const std::string label) {
+  llvm::BasicBlock* basicBlock = nullptr;
+
+  auto TheFunction = builder->GetInsertBlock()->getParent();
+  for (auto& BB : *TheFunction) {
+    if(BB.getName() == label) {
+      basicBlock = &BB;
+      break;
+    }
+  }
+
+  if(!basicBlock)
+    throw IRCodegenException("invalid label "+ label);
+
+  return basicBlock;
+}
+
 void IRCodegenVisitor::codegenBlock(const Block &blk) {
+  for (auto& label : blk.Labels) {
+    auto TheFunction = builder->GetInsertBlock()->getParent();
+    llvm::BasicBlock::Create(*ctx, label, TheFunction);
+  }
+
   for (auto &varDecl : blk.VarDeclrs) {
     auto typ = varDecl->type->codegen(*this);
 
