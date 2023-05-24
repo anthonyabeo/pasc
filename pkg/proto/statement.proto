@@ -19,29 +19,34 @@ message ProcedureStatement {
     string name = 1;
     Expression file = 2;
     repeated Expression params = 3;
+    string label = 4;
   }
 
   message Write {
     string name = 1;
     Expression file = 2;
     repeated Expression params = 3;
+    string label = 4;
   }
 
   message Read {
     string name = 1;
     Expression file = 2;
     repeated Expression varAccess = 3;
+    string label = 4;
   }
 
   message ReadLn {
     string name = 1;
     Expression file = 2;
     repeated Expression varAccess = 3;
+    string label = 4;
   }
 
   message ProcStmt {
     Expression name = 1;
     repeated Expression params = 2;
+    string label = 3;
   }
 
   PSKind kind = 1;
@@ -57,30 +62,36 @@ message ProcedureStatement {
 message AssignStatement {
   Expression variable = 1;
   Expression value = 2;
+  string label = 3;
 }
 
 message IfStatement {
   Expression cond = 1;
   Statement truePath = 2;
   Statement elsePath = 3;
+  string label = 4;
 }
 
 message ReturnStatement {
   Expression value = 1;
+  string label = 2;
 }
 
 message WhileStatement {
   Expression cond = 1;
   Statement body = 2;
+  string label = 3;
 }
 
 message CompoundStatement {
   repeated Statement stmts = 1;
+  string label = 2;
 }
 
 message RepeatStatement {
   repeated Statement stmts = 1;
   Expression cond = 2;
+  string label = 3;
 }
 
 message ForStatement {
@@ -89,6 +100,7 @@ message ForStatement {
   Expression finalValue = 3;
   Statement body = 4;
   TokenKind dir = 5;
+  string label = 6;
 }
 
 message CaseStatement {
@@ -99,10 +111,11 @@ message CaseStatement {
 
   Expression caseIndex = 1;
   repeated CaseListElement cle = 2;
+  string label = 3;
 }
 
 message GoToStatement {
-  uint32 label = 1;
+  string label = 1;
 }
 
 message Statement {

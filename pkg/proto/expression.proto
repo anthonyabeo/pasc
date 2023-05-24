@@ -113,7 +113,7 @@ message Operator {
     Plus = 0;
     Minus = 1;
     Div = 2;
-//    Sub = 3;
+    Mult = 3;
     Mod = 4;
     And = 5;
     Or = 6;
