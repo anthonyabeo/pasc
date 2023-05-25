@@ -25,6 +25,7 @@ enum class Operator {
   LessEqual,
   LessGreat,
   Mult,
+  FwdSlash
 };
 
 enum Operator deserializeOp(const Pasc::Operator&);

@@ -181,12 +181,13 @@ enum Operator_OpKind {
   Operator_OpKind_GreatEqual = 11,
   Operator_OpKind_LessEqual = 12,
   Operator_OpKind_LessGreat = 13,
+  Operator_OpKind_FwdSlash = 14,
   Operator_OpKind_Operator_OpKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Operator_OpKind_Operator_OpKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Operator_OpKind_IsValid(int value);
 const Operator_OpKind Operator_OpKind_OpKind_MIN = Operator_OpKind_Plus;
-const Operator_OpKind Operator_OpKind_OpKind_MAX = Operator_OpKind_LessGreat;
+const Operator_OpKind Operator_OpKind_OpKind_MAX = Operator_OpKind_FwdSlash;
 const int Operator_OpKind_OpKind_ARRAYSIZE = Operator_OpKind_OpKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Operator_OpKind_descriptor();
@@ -2179,6 +2180,8 @@ class Operator : public ::google::protobuf::Message /* @@protoc_insertion_point(
     Operator_OpKind_LessEqual;
   static const OpKind LessGreat =
     Operator_OpKind_LessGreat;
+  static const OpKind FwdSlash =
+    Operator_OpKind_FwdSlash;
   static inline bool OpKind_IsValid(int value) {
     return Operator_OpKind_IsValid(value);
   }

@@ -536,17 +536,17 @@ void AddDescriptorsImpl() {
       "\001(\0132\020.Pasc.Expression\"\033\n\nCharString\022\r\n\005v"
       "alue\030\001 \001(\t\"j\n\010FuncCall\022\036\n\004name\030\001 \001(\0132\020.P"
       "asc.Expression\022\036\n\004args\030\002 \003(\0132\020.Pasc.Expr"
-      "ession\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Type\"\320"
+      "ession\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Type\"\336"
       "\001\n\010Operator\022!\n\002op\030\001 \001(\0162\025.Pasc.Operator."
-      "OpKind\"\240\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus\020\001\022\007"
+      "OpKind\"\256\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus\020\001\022\007"
       "\n\003Div\020\002\022\010\n\004Mult\020\003\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006\n\002O"
       "r\020\006\022\006\n\002In\020\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005Grea"
       "t\020\n\022\016\n\nGreatEqual\020\013\022\r\n\tLessEqual\020\014\022\r\n\tLe"
-      "ssGreat\020\rB\030Z\026pkg/codegen/serializerb\006pro"
-      "to3"
+      "ssGreat\020\r\022\014\n\010FwdSlash\020\016B\030Z\026pkg/codegen/s"
+      "erializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1683);
+      descriptor, 1697);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/expression.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftype_2eproto::AddDescriptors();
@@ -644,6 +644,7 @@ bool Operator_OpKind_IsValid(int value) {
     case 11:
     case 12:
     case 13:
+    case 14:
       return true;
     default:
       return false;
@@ -665,6 +666,7 @@ const Operator_OpKind Operator::Great;
 const Operator_OpKind Operator::GreatEqual;
 const Operator_OpKind Operator::LessEqual;
 const Operator_OpKind Operator::LessGreat;
+const Operator_OpKind Operator::FwdSlash;
 const Operator_OpKind Operator::OpKind_MIN;
 const Operator_OpKind Operator::OpKind_MAX;
 const int Operator::OpKind_ARRAYSIZE;

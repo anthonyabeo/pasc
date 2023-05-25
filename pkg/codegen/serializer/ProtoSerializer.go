@@ -611,6 +611,8 @@ func (s *ProtoSerializer) translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_Equal}
 	case token.Star:
 		return &Operator{Op: Operator_Mult}
+	case token.FwdSlash:
+		return &Operator{Op: Operator_FwdSlash}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}

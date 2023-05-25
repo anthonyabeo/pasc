@@ -124,6 +124,7 @@ message Operator {
     GreatEqual = 11;
     LessEqual = 12;
     LessGreat = 13;
+    FwdSlash = 14;
   }
 
   OpKind op = 1;
