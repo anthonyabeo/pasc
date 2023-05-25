@@ -11,5 +11,8 @@ begin
 	x := 1e10;
 	y := 5e-3;
 	writeln( x );
-	writeln( y )
+	writeln( y );
+
+	b := -a;
+	writeln( b )
 end.
