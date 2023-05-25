@@ -39,6 +39,8 @@ enum Operator deserializeOp(const Pasc::Operator& opt) {
     return Operator::Mult;
   case Pasc::Operator_OpKind_FwdSlash:
     return Operator::FwdSlash;
+  case Pasc::Operator_OpKind_Not:
+    return Operator::Not;
   default:
     throw DeserializeProtobufException("invalid operator kind");
   }
@@ -63,6 +65,10 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<FunctionCall>(expr.fc());
   case Pasc::Expression_ExprKind_Str:
     return std::make_unique<CharString>(expr.cs());
+  case Pasc::Expression_ExprKind_UnExpr:
+    return std::make_unique<UnaryExpression>(expr.ue());
+  case Pasc::Expression_ExprKind_Bool:
+    return std::make_unique<BoolExpr>(expr.bl());
   default:
     throw DeserializeProtobufException("invalid expression kind");
   }
@@ -169,5 +175,28 @@ CharString::CharString(const Pasc::CharString &cs) {
 }
 
 llvm::Value *CharString::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// UNARY EXPRESSION
+///////////////////////////
+UnaryExpression::UnaryExpression(const Pasc::UnaryExpr &ue) {
+  op = deserializeOp(ue.op());
+  operand = deserializeExpr(ue.operand());
+}
+
+llvm::Value *UnaryExpression::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// BOOLEAN EXPRESSION
+///////////////////////////
+BoolExpr::BoolExpr(const Pasc::BoolExpr &bl) {
+  value = bl.value();
+}
+
+llvm::Value *BoolExpr::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

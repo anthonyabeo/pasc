@@ -20,7 +20,7 @@
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_proto_2fexpression_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_BoolLiteral;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_BoolExpr;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_CharString;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Identifier_FieldDesignator;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Identifier_IndexedVariable;
@@ -68,7 +68,7 @@ class ExpressionDefaultTypeInternal {
   const ::Pasc::BinaryExpr* be_;
   const ::Pasc::WriteParameter* wp_;
   const ::Pasc::FuncCall* fc_;
-  const ::Pasc::BoolLiteral* bl_;
+  const ::Pasc::BoolExpr* bl_;
   const ::Pasc::NilValue* nl_;
   const ::Pasc::URealLiteral* ureal_;
   const ::Pasc::UnaryExpr* ue_;
@@ -89,11 +89,11 @@ class UIntLiteralDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<UIntLiteral>
       _instance;
 } _UIntLiteral_default_instance_;
-class BoolLiteralDefaultTypeInternal {
+class BoolExprDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<BoolLiteral>
+  ::google::protobuf::internal::ExplicitlyConstructed<BoolExpr>
       _instance;
-} _BoolLiteral_default_instance_;
+} _BoolExpr_default_instance_;
 class NilValueDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<NilValue>
@@ -225,7 +225,7 @@ static void InitDefaultsBinaryExpr() {
       &protobuf_proto_2fexpression_2eproto::scc_info_Operator.base,
       &protobuf_proto_2fexpression_2eproto::scc_info_Identifier.base,
       &protobuf_proto_2fexpression_2eproto::scc_info_UIntLiteral.base,
-      &protobuf_proto_2fexpression_2eproto::scc_info_BoolLiteral.base,
+      &protobuf_proto_2fexpression_2eproto::scc_info_BoolExpr.base,
       &protobuf_proto_2fexpression_2eproto::scc_info_NilValue.base,
       &protobuf_proto_2fexpression_2eproto::scc_info_URealLiteral.base,
       &protobuf_proto_2fexpression_2eproto::scc_info_CharString.base,
@@ -245,19 +245,19 @@ static void InitDefaultsUIntLiteral() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_UIntLiteral =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsUIntLiteral}, {}};
 
-static void InitDefaultsBoolLiteral() {
+static void InitDefaultsBoolExpr() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::Pasc::_BoolLiteral_default_instance_;
-    new (ptr) ::Pasc::BoolLiteral();
+    void* ptr = &::Pasc::_BoolExpr_default_instance_;
+    new (ptr) ::Pasc::BoolExpr();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::Pasc::BoolLiteral::InitAsDefaultInstance();
+  ::Pasc::BoolExpr::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_BoolLiteral =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsBoolLiteral}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_BoolExpr =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsBoolExpr}, {}};
 
 static void InitDefaultsNilValue() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -322,7 +322,7 @@ void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_Identifier.base);
   ::google::protobuf::internal::InitSCC(&scc_info_BinaryExpr.base);
   ::google::protobuf::internal::InitSCC(&scc_info_UIntLiteral.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_BoolLiteral.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_BoolExpr.base);
   ::google::protobuf::internal::InitSCC(&scc_info_NilValue.base);
   ::google::protobuf::internal::InitSCC(&scc_info_URealLiteral.base);
   ::google::protobuf::internal::InitSCC(&scc_info_CharString.base);
@@ -399,11 +399,11 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::UIntLiteral, value_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::BoolLiteral, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::BoolExpr, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::BoolLiteral, value_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::BoolExpr, value_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::NilValue, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -453,7 +453,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 43, -1, sizeof(::Pasc::WriteParameter)},
   { 51, -1, sizeof(::Pasc::BinaryExpr)},
   { 59, -1, sizeof(::Pasc::UIntLiteral)},
-  { 65, -1, sizeof(::Pasc::BoolLiteral)},
+  { 65, -1, sizeof(::Pasc::BoolExpr)},
   { 71, -1, sizeof(::Pasc::NilValue)},
   { 77, -1, sizeof(::Pasc::URealLiteral)},
   { 83, -1, sizeof(::Pasc::UnaryExpr)},
@@ -471,7 +471,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_WriteParameter_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_BinaryExpr_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_UIntLiteral_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_BoolLiteral_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_BoolExpr_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_NilValue_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_URealLiteral_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_UnaryExpr_default_instance_),
@@ -510,43 +510,43 @@ void AddDescriptorsImpl() {
       "\000\032\030\n\010Variable\022\014\n\004name\030\001 \001(\t\032\021\n\017IndexedVa"
       "riable\032\021\n\017FieldDesignator\".\n\006IDKind\022\r\n\tE"
       "ntireVar\020\000\022\n\n\006IdxVar\020\001\022\t\n\005Field\020\002B\007\n\005val"
-      "ue\"\201\004\n\nExpression\022\'\n\004kind\030\001 \001(\0162\031.Pasc.E"
+      "ue\"\376\003\n\nExpression\022\'\n\004kind\030\001 \001(\0162\031.Pasc.E"
       "xpression.ExprKind\022\036\n\002id\030\002 \001(\0132\020.Pasc.Id"
       "entifierH\000\022!\n\004uint\030\003 \001(\0132\021.Pasc.UIntLite"
       "ralH\000\022\036\n\002be\030\004 \001(\0132\020.Pasc.BinaryExprH\000\022\"\n"
       "\002wp\030\005 \001(\0132\024.Pasc.WriteParameterH\000\022\034\n\002fc\030"
-      "\006 \001(\0132\016.Pasc.FuncCallH\000\022\037\n\002bl\030\007 \001(\0132\021.Pa"
-      "sc.BoolLiteralH\000\022\034\n\002nl\030\010 \001(\0132\016.Pasc.NilV"
-      "alueH\000\022#\n\005ureal\030\t \001(\0132\022.Pasc.URealLitera"
-      "lH\000\022\035\n\002ue\030\n \001(\0132\017.Pasc.UnaryExprH\000\022\036\n\002cs"
-      "\030\013 \001(\0132\020.Pasc.CharStringH\000\"z\n\010ExprKind\022\010"
-      "\n\004UInt\020\000\022\010\n\004Bool\020\001\022\t\n\005Ident\020\002\022\013\n\007BinExpr"
-      "\020\003\022\016\n\nWriteParam\020\004\022\t\n\005FCall\020\005\022\007\n\003Nil\020\006\022\t"
-      "\n\005UReal\020\007\022\n\n\006UnExpr\020\010\022\007\n\003Str\020\tB\006\n\004expr\"y"
-      "\n\016WriteParameter\022\033\n\001e\030\001 \001(\0132\020.Pasc.Expre"
-      "ssion\022$\n\ntotalWidth\030\002 \001(\0132\020.Pasc.Express"
-      "ion\022$\n\nfracDigits\030\003 \001(\0132\020.Pasc.Expressio"
-      "n\"i\n\nBinaryExpr\022\036\n\004left\030\001 \001(\0132\020.Pasc.Exp"
-      "ression\022\037\n\005right\030\002 \001(\0132\020.Pasc.Expression"
-      "\022\032\n\002op\030\003 \001(\0132\016.Pasc.Operator\"\034\n\013UIntLite"
-      "ral\022\r\n\005value\030\001 \001(\r\"\034\n\013BoolLiteral\022\r\n\005val"
-      "ue\030\001 \001(\010\"\030\n\010NilValue\022\014\n\004name\030\001 \001(\t\"\035\n\014UR"
-      "ealLiteral\022\r\n\005value\030\001 \001(\001\"J\n\tUnaryExpr\022\032"
-      "\n\002op\030\001 \001(\0132\016.Pasc.Operator\022!\n\007operand\030\002 "
-      "\001(\0132\020.Pasc.Expression\"\033\n\nCharString\022\r\n\005v"
-      "alue\030\001 \001(\t\"j\n\010FuncCall\022\036\n\004name\030\001 \001(\0132\020.P"
-      "asc.Expression\022\036\n\004args\030\002 \003(\0132\020.Pasc.Expr"
-      "ession\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Type\"\336"
-      "\001\n\010Operator\022!\n\002op\030\001 \001(\0162\025.Pasc.Operator."
-      "OpKind\"\256\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus\020\001\022\007"
-      "\n\003Div\020\002\022\010\n\004Mult\020\003\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006\n\002O"
-      "r\020\006\022\006\n\002In\020\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005Grea"
-      "t\020\n\022\016\n\nGreatEqual\020\013\022\r\n\tLessEqual\020\014\022\r\n\tLe"
-      "ssGreat\020\r\022\014\n\010FwdSlash\020\016B\030Z\026pkg/codegen/s"
-      "erializerb\006proto3"
+      "\006 \001(\0132\016.Pasc.FuncCallH\000\022\034\n\002bl\030\007 \001(\0132\016.Pa"
+      "sc.BoolExprH\000\022\034\n\002nl\030\010 \001(\0132\016.Pasc.NilValu"
+      "eH\000\022#\n\005ureal\030\t \001(\0132\022.Pasc.URealLiteralH\000"
+      "\022\035\n\002ue\030\n \001(\0132\017.Pasc.UnaryExprH\000\022\036\n\002cs\030\013 "
+      "\001(\0132\020.Pasc.CharStringH\000\"z\n\010ExprKind\022\010\n\004U"
+      "Int\020\000\022\010\n\004Bool\020\001\022\t\n\005Ident\020\002\022\013\n\007BinExpr\020\003\022"
+      "\016\n\nWriteParam\020\004\022\t\n\005FCall\020\005\022\007\n\003Nil\020\006\022\t\n\005U"
+      "Real\020\007\022\n\n\006UnExpr\020\010\022\007\n\003Str\020\tB\006\n\004expr\"y\n\016W"
+      "riteParameter\022\033\n\001e\030\001 \001(\0132\020.Pasc.Expressi"
+      "on\022$\n\ntotalWidth\030\002 \001(\0132\020.Pasc.Expression"
+      "\022$\n\nfracDigits\030\003 \001(\0132\020.Pasc.Expression\"i"
+      "\n\nBinaryExpr\022\036\n\004left\030\001 \001(\0132\020.Pasc.Expres"
+      "sion\022\037\n\005right\030\002 \001(\0132\020.Pasc.Expression\022\032\n"
+      "\002op\030\003 \001(\0132\016.Pasc.Operator\"\034\n\013UIntLiteral"
+      "\022\r\n\005value\030\001 \001(\r\"\031\n\010BoolExpr\022\r\n\005value\030\001 \001"
+      "(\010\"\030\n\010NilValue\022\014\n\004name\030\001 \001(\t\"\035\n\014URealLit"
+      "eral\022\r\n\005value\030\001 \001(\001\"J\n\tUnaryExpr\022\032\n\002op\030\001"
+      " \001(\0132\016.Pasc.Operator\022!\n\007operand\030\002 \001(\0132\020."
+      "Pasc.Expression\"\033\n\nCharString\022\r\n\005value\030\001"
+      " \001(\t\"j\n\010FuncCall\022\036\n\004name\030\001 \001(\0132\020.Pasc.Ex"
+      "pression\022\036\n\004args\030\002 \003(\0132\020.Pasc.Expression"
+      "\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Type\"\347\001\n\010Ope"
+      "rator\022!\n\002op\030\001 \001(\0162\025.Pasc.Operator.OpKind"
+      "\"\267\001\n\006OpKind\022\010\n\004Plus\020\000\022\t\n\005Minus\020\001\022\007\n\003Div\020"
+      "\002\022\010\n\004Mult\020\003\022\007\n\003Mod\020\004\022\007\n\003And\020\005\022\006\n\002Or\020\006\022\006\n"
+      "\002In\020\007\022\t\n\005Equal\020\010\022\010\n\004Less\020\t\022\t\n\005Great\020\n\022\016\n"
+      "\nGreatEqual\020\013\022\r\n\tLessEqual\020\014\022\r\n\tLessGrea"
+      "t\020\r\022\014\n\010FwdSlash\020\016\022\007\n\003Not\020\017B\030Z\026pkg/codege"
+      "n/serializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1697);
+      descriptor, 1700);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/expression.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftype_2eproto::AddDescriptors();
@@ -645,6 +645,7 @@ bool Operator_OpKind_IsValid(int value) {
     case 12:
     case 13:
     case 14:
+    case 15:
       return true;
     default:
       return false;
@@ -667,6 +668,7 @@ const Operator_OpKind Operator::GreatEqual;
 const Operator_OpKind Operator::LessEqual;
 const Operator_OpKind Operator::LessGreat;
 const Operator_OpKind Operator::FwdSlash;
+const Operator_OpKind Operator::Not;
 const Operator_OpKind Operator::OpKind_MIN;
 const Operator_OpKind Operator::OpKind_MAX;
 const int Operator::OpKind_ARRAYSIZE;
@@ -1727,8 +1729,8 @@ void Expression::InitAsDefaultInstance() {
       ::Pasc::WriteParameter::internal_default_instance());
   ::Pasc::_Expression_default_instance_.fc_ = const_cast< ::Pasc::FuncCall*>(
       ::Pasc::FuncCall::internal_default_instance());
-  ::Pasc::_Expression_default_instance_.bl_ = const_cast< ::Pasc::BoolLiteral*>(
-      ::Pasc::BoolLiteral::internal_default_instance());
+  ::Pasc::_Expression_default_instance_.bl_ = const_cast< ::Pasc::BoolExpr*>(
+      ::Pasc::BoolExpr::internal_default_instance());
   ::Pasc::_Expression_default_instance_.nl_ = const_cast< ::Pasc::NilValue*>(
       ::Pasc::NilValue::internal_default_instance());
   ::Pasc::_Expression_default_instance_.ureal_ = const_cast< ::Pasc::URealLiteral*>(
@@ -1808,7 +1810,7 @@ void Expression::set_allocated_fc(::Pasc::FuncCall* fc) {
   }
   // @@protoc_insertion_point(field_set_allocated:Pasc.Expression.fc)
 }
-void Expression::set_allocated_bl(::Pasc::BoolLiteral* bl) {
+void Expression::set_allocated_bl(::Pasc::BoolExpr* bl) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_expr();
   if (bl) {
@@ -1927,7 +1929,7 @@ Expression::Expression(const Expression& from)
       break;
     }
     case kBl: {
-      mutable_bl()->::Pasc::BoolLiteral::MergeFrom(from.bl());
+      mutable_bl()->::Pasc::BoolExpr::MergeFrom(from.bl());
       break;
     }
     case kNl: {
@@ -2130,7 +2132,7 @@ bool Expression::MergePartialFromCodedStream(
         break;
       }
 
-      // .Pasc.BoolLiteral bl = 7;
+      // .Pasc.BoolExpr bl = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
@@ -2252,7 +2254,7 @@ void Expression::SerializeWithCachedSizes(
       6, this->_internal_fc(), output);
   }
 
-  // .Pasc.BoolLiteral bl = 7;
+  // .Pasc.BoolExpr bl = 7;
   if (has_bl()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       7, this->_internal_bl(), output);
@@ -2337,7 +2339,7 @@ void Expression::SerializeWithCachedSizes(
         6, this->_internal_fc(), deterministic, target);
   }
 
-  // .Pasc.BoolLiteral bl = 7;
+  // .Pasc.BoolExpr bl = 7;
   if (has_bl()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
@@ -2431,7 +2433,7 @@ size_t Expression::ByteSizeLong() const {
           *expr_.fc_);
       break;
     }
-    // .Pasc.BoolLiteral bl = 7;
+    // .Pasc.BoolExpr bl = 7;
     case kBl: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -2522,7 +2524,7 @@ void Expression::MergeFrom(const Expression& from) {
       break;
     }
     case kBl: {
-      mutable_bl()->::Pasc::BoolLiteral::MergeFrom(from.bl());
+      mutable_bl()->::Pasc::BoolExpr::MergeFrom(from.bl());
       break;
     }
     case kNl: {
@@ -3476,55 +3478,55 @@ void UIntLiteral::InternalSwap(UIntLiteral* other) {
 
 // ===================================================================
 
-void BoolLiteral::InitAsDefaultInstance() {
+void BoolExpr::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int BoolLiteral::kValueFieldNumber;
+const int BoolExpr::kValueFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-BoolLiteral::BoolLiteral()
+BoolExpr::BoolExpr()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fexpression_2eproto::scc_info_BoolLiteral.base);
+      &protobuf_proto_2fexpression_2eproto::scc_info_BoolExpr.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(constructor:Pasc.BoolExpr)
 }
-BoolLiteral::BoolLiteral(const BoolLiteral& from)
+BoolExpr::BoolExpr(const BoolExpr& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   value_ = from.value_;
-  // @@protoc_insertion_point(copy_constructor:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(copy_constructor:Pasc.BoolExpr)
 }
 
-void BoolLiteral::SharedCtor() {
+void BoolExpr::SharedCtor() {
   value_ = false;
 }
 
-BoolLiteral::~BoolLiteral() {
-  // @@protoc_insertion_point(destructor:Pasc.BoolLiteral)
+BoolExpr::~BoolExpr() {
+  // @@protoc_insertion_point(destructor:Pasc.BoolExpr)
   SharedDtor();
 }
 
-void BoolLiteral::SharedDtor() {
+void BoolExpr::SharedDtor() {
 }
 
-void BoolLiteral::SetCachedSize(int size) const {
+void BoolExpr::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* BoolLiteral::descriptor() {
+const ::google::protobuf::Descriptor* BoolExpr::descriptor() {
   ::protobuf_proto_2fexpression_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_proto_2fexpression_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
 }
 
-const BoolLiteral& BoolLiteral::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fexpression_2eproto::scc_info_BoolLiteral.base);
+const BoolExpr& BoolExpr::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fexpression_2eproto::scc_info_BoolExpr.base);
   return *internal_default_instance();
 }
 
 
-void BoolLiteral::Clear() {
-// @@protoc_insertion_point(message_clear_start:Pasc.BoolLiteral)
+void BoolExpr::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.BoolExpr)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3533,11 +3535,11 @@ void BoolLiteral::Clear() {
   _internal_metadata_.Clear();
 }
 
-bool BoolLiteral::MergePartialFromCodedStream(
+bool BoolExpr::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(parse_start:Pasc.BoolExpr)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -3569,17 +3571,17 @@ bool BoolLiteral::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(parse_success:Pasc.BoolExpr)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(parse_failure:Pasc.BoolExpr)
   return false;
 #undef DO_
 }
 
-void BoolLiteral::SerializeWithCachedSizes(
+void BoolExpr::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(serialize_start:Pasc.BoolExpr)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -3592,13 +3594,13 @@ void BoolLiteral::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
   }
-  // @@protoc_insertion_point(serialize_end:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(serialize_end:Pasc.BoolExpr)
 }
 
-::google::protobuf::uint8* BoolLiteral::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* BoolExpr::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.BoolExpr)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -3611,12 +3613,12 @@ void BoolLiteral::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.BoolExpr)
   return target;
 }
 
-size_t BoolLiteral::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:Pasc.BoolLiteral)
+size_t BoolExpr::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.BoolExpr)
   size_t total_size = 0;
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3634,23 +3636,23 @@ size_t BoolLiteral::ByteSizeLong() const {
   return total_size;
 }
 
-void BoolLiteral::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:Pasc.BoolLiteral)
+void BoolExpr::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.BoolExpr)
   GOOGLE_DCHECK_NE(&from, this);
-  const BoolLiteral* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const BoolLiteral>(
+  const BoolExpr* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const BoolExpr>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.BoolExpr)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.BoolExpr)
     MergeFrom(*source);
   }
 }
 
-void BoolLiteral::MergeFrom(const BoolLiteral& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.BoolLiteral)
+void BoolExpr::MergeFrom(const BoolExpr& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.BoolExpr)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3661,35 +3663,35 @@ void BoolLiteral::MergeFrom(const BoolLiteral& from) {
   }
 }
 
-void BoolLiteral::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:Pasc.BoolLiteral)
+void BoolExpr::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.BoolExpr)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void BoolLiteral::CopyFrom(const BoolLiteral& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.BoolLiteral)
+void BoolExpr::CopyFrom(const BoolExpr& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.BoolExpr)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool BoolLiteral::IsInitialized() const {
+bool BoolExpr::IsInitialized() const {
   return true;
 }
 
-void BoolLiteral::Swap(BoolLiteral* other) {
+void BoolExpr::Swap(BoolExpr* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void BoolLiteral::InternalSwap(BoolLiteral* other) {
+void BoolExpr::InternalSwap(BoolExpr* other) {
   using std::swap;
   swap(value_, other->value_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
-::google::protobuf::Metadata BoolLiteral::GetMetadata() const {
+::google::protobuf::Metadata BoolExpr::GetMetadata() const {
   protobuf_proto_2fexpression_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_proto_2fexpression_2eproto::file_level_metadata[kIndexInFileMessages];
 }
@@ -5274,8 +5276,8 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::BinaryExpr* Arena::CreateM
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::UIntLiteral* Arena::CreateMaybeMessage< ::Pasc::UIntLiteral >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::UIntLiteral >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::BoolLiteral* Arena::CreateMaybeMessage< ::Pasc::BoolLiteral >(Arena* arena) {
-  return Arena::CreateInternal< ::Pasc::BoolLiteral >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::BoolExpr* Arena::CreateMaybeMessage< ::Pasc::BoolExpr >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::BoolExpr >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::NilValue* Arena::CreateMaybeMessage< ::Pasc::NilValue >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::NilValue >(arena);

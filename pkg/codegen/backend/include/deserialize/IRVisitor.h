@@ -20,6 +20,8 @@ public:
   virtual llvm::Value *codegen(const WriteParameter &) = 0;
   virtual llvm::Value *codegen(const URealLiteral &) = 0;
   virtual llvm::Value *codegen(const CharString &) = 0;
+  virtual llvm::Value *codegen(const UnaryExpression &) = 0;
+  virtual llvm::Value *codegen(const BoolExpr &) = 0;
 
   virtual llvm::Value *codegen(const AssignStmt &) = 0;
   virtual llvm::Value *codegen(const ReturnStatement &) = 0;

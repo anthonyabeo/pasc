@@ -51,9 +51,9 @@ namespace Pasc {
 class BinaryExpr;
 class BinaryExprDefaultTypeInternal;
 extern BinaryExprDefaultTypeInternal _BinaryExpr_default_instance_;
-class BoolLiteral;
-class BoolLiteralDefaultTypeInternal;
-extern BoolLiteralDefaultTypeInternal _BoolLiteral_default_instance_;
+class BoolExpr;
+class BoolExprDefaultTypeInternal;
+extern BoolExprDefaultTypeInternal _BoolExpr_default_instance_;
 class CharString;
 class CharStringDefaultTypeInternal;
 extern CharStringDefaultTypeInternal _CharString_default_instance_;
@@ -97,7 +97,7 @@ extern WriteParameterDefaultTypeInternal _WriteParameter_default_instance_;
 namespace google {
 namespace protobuf {
 template<> ::Pasc::BinaryExpr* Arena::CreateMaybeMessage<::Pasc::BinaryExpr>(Arena*);
-template<> ::Pasc::BoolLiteral* Arena::CreateMaybeMessage<::Pasc::BoolLiteral>(Arena*);
+template<> ::Pasc::BoolExpr* Arena::CreateMaybeMessage<::Pasc::BoolExpr>(Arena*);
 template<> ::Pasc::CharString* Arena::CreateMaybeMessage<::Pasc::CharString>(Arena*);
 template<> ::Pasc::Expression* Arena::CreateMaybeMessage<::Pasc::Expression>(Arena*);
 template<> ::Pasc::FuncCall* Arena::CreateMaybeMessage<::Pasc::FuncCall>(Arena*);
@@ -182,12 +182,13 @@ enum Operator_OpKind {
   Operator_OpKind_LessEqual = 12,
   Operator_OpKind_LessGreat = 13,
   Operator_OpKind_FwdSlash = 14,
+  Operator_OpKind_Not = 15,
   Operator_OpKind_Operator_OpKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Operator_OpKind_Operator_OpKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Operator_OpKind_IsValid(int value);
 const Operator_OpKind Operator_OpKind_OpKind_MIN = Operator_OpKind_Plus;
-const Operator_OpKind Operator_OpKind_OpKind_MAX = Operator_OpKind_FwdSlash;
+const Operator_OpKind Operator_OpKind_OpKind_MAX = Operator_OpKind_Not;
 const int Operator_OpKind_OpKind_ARRAYSIZE = Operator_OpKind_OpKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Operator_OpKind_descriptor();
@@ -908,17 +909,17 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::Pasc::FuncCall* mutable_fc();
   void set_allocated_fc(::Pasc::FuncCall* fc);
 
-  // .Pasc.BoolLiteral bl = 7;
+  // .Pasc.BoolExpr bl = 7;
   bool has_bl() const;
   void clear_bl();
   static const int kBlFieldNumber = 7;
   private:
-  const ::Pasc::BoolLiteral& _internal_bl() const;
+  const ::Pasc::BoolExpr& _internal_bl() const;
   public:
-  const ::Pasc::BoolLiteral& bl() const;
-  ::Pasc::BoolLiteral* release_bl();
-  ::Pasc::BoolLiteral* mutable_bl();
-  void set_allocated_bl(::Pasc::BoolLiteral* bl);
+  const ::Pasc::BoolExpr& bl() const;
+  ::Pasc::BoolExpr* release_bl();
+  ::Pasc::BoolExpr* mutable_bl();
+  void set_allocated_bl(::Pasc::BoolExpr* bl);
 
   // .Pasc.NilValue nl = 8;
   bool has_nl() const;
@@ -995,7 +996,7 @@ class Expression : public ::google::protobuf::Message /* @@protoc_insertion_poin
     ::Pasc::BinaryExpr* be_;
     ::Pasc::WriteParameter* wp_;
     ::Pasc::FuncCall* fc_;
-    ::Pasc::BoolLiteral* bl_;
+    ::Pasc::BoolExpr* bl_;
     ::Pasc::NilValue* nl_;
     ::Pasc::URealLiteral* ureal_;
     ::Pasc::UnaryExpr* ue_;
@@ -1381,24 +1382,24 @@ class UIntLiteral : public ::google::protobuf::Message /* @@protoc_insertion_poi
 };
 // -------------------------------------------------------------------
 
-class BoolLiteral : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.BoolLiteral) */ {
+class BoolExpr : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.BoolExpr) */ {
  public:
-  BoolLiteral();
-  virtual ~BoolLiteral();
+  BoolExpr();
+  virtual ~BoolExpr();
 
-  BoolLiteral(const BoolLiteral& from);
+  BoolExpr(const BoolExpr& from);
 
-  inline BoolLiteral& operator=(const BoolLiteral& from) {
+  inline BoolExpr& operator=(const BoolExpr& from) {
     CopyFrom(from);
     return *this;
   }
   #if LANG_CXX11
-  BoolLiteral(BoolLiteral&& from) noexcept
-    : BoolLiteral() {
+  BoolExpr(BoolExpr&& from) noexcept
+    : BoolExpr() {
     *this = ::std::move(from);
   }
 
-  inline BoolLiteral& operator=(BoolLiteral&& from) noexcept {
+  inline BoolExpr& operator=(BoolExpr&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -1408,34 +1409,34 @@ class BoolLiteral : public ::google::protobuf::Message /* @@protoc_insertion_poi
   }
   #endif
   static const ::google::protobuf::Descriptor* descriptor();
-  static const BoolLiteral& default_instance();
+  static const BoolExpr& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const BoolLiteral* internal_default_instance() {
-    return reinterpret_cast<const BoolLiteral*>(
-               &_BoolLiteral_default_instance_);
+  static inline const BoolExpr* internal_default_instance() {
+    return reinterpret_cast<const BoolExpr*>(
+               &_BoolExpr_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     8;
 
-  void Swap(BoolLiteral* other);
-  friend void swap(BoolLiteral& a, BoolLiteral& b) {
+  void Swap(BoolExpr* other);
+  friend void swap(BoolExpr& a, BoolExpr& b) {
     a.Swap(&b);
   }
 
   // implements Message ----------------------------------------------
 
-  inline BoolLiteral* New() const final {
-    return CreateMaybeMessage<BoolLiteral>(NULL);
+  inline BoolExpr* New() const final {
+    return CreateMaybeMessage<BoolExpr>(NULL);
   }
 
-  BoolLiteral* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<BoolLiteral>(arena);
+  BoolExpr* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<BoolExpr>(arena);
   }
   void CopyFrom(const ::google::protobuf::Message& from) final;
   void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const BoolLiteral& from);
-  void MergeFrom(const BoolLiteral& from);
+  void CopyFrom(const BoolExpr& from);
+  void MergeFrom(const BoolExpr& from);
   void Clear() final;
   bool IsInitialized() const final;
 
@@ -1452,7 +1453,7 @@ class BoolLiteral : public ::google::protobuf::Message /* @@protoc_insertion_poi
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(BoolLiteral* other);
+  void InternalSwap(BoolExpr* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -1474,7 +1475,7 @@ class BoolLiteral : public ::google::protobuf::Message /* @@protoc_insertion_poi
   bool value() const;
   void set_value(bool value);
 
-  // @@protoc_insertion_point(class_scope:Pasc.BoolLiteral)
+  // @@protoc_insertion_point(class_scope:Pasc.BoolExpr)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -2182,6 +2183,8 @@ class Operator : public ::google::protobuf::Message /* @@protoc_insertion_point(
     Operator_OpKind_LessGreat;
   static const OpKind FwdSlash =
     Operator_OpKind_FwdSlash;
+  static const OpKind Not =
+    Operator_OpKind_Not;
   static inline bool OpKind_IsValid(int value) {
     return Operator_OpKind_IsValid(value);
   }
@@ -2688,7 +2691,7 @@ inline ::Pasc::FuncCall* Expression::mutable_fc() {
   return expr_.fc_;
 }
 
-// .Pasc.BoolLiteral bl = 7;
+// .Pasc.BoolExpr bl = 7;
 inline bool Expression::has_bl() const {
   return expr_case() == kBl;
 }
@@ -2701,31 +2704,31 @@ inline void Expression::clear_bl() {
     clear_has_expr();
   }
 }
-inline const ::Pasc::BoolLiteral& Expression::_internal_bl() const {
+inline const ::Pasc::BoolExpr& Expression::_internal_bl() const {
   return *expr_.bl_;
 }
-inline ::Pasc::BoolLiteral* Expression::release_bl() {
+inline ::Pasc::BoolExpr* Expression::release_bl() {
   // @@protoc_insertion_point(field_release:Pasc.Expression.bl)
   if (has_bl()) {
     clear_has_expr();
-      ::Pasc::BoolLiteral* temp = expr_.bl_;
+      ::Pasc::BoolExpr* temp = expr_.bl_;
     expr_.bl_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline const ::Pasc::BoolLiteral& Expression::bl() const {
+inline const ::Pasc::BoolExpr& Expression::bl() const {
   // @@protoc_insertion_point(field_get:Pasc.Expression.bl)
   return has_bl()
       ? *expr_.bl_
-      : *reinterpret_cast< ::Pasc::BoolLiteral*>(&::Pasc::_BoolLiteral_default_instance_);
+      : *reinterpret_cast< ::Pasc::BoolExpr*>(&::Pasc::_BoolExpr_default_instance_);
 }
-inline ::Pasc::BoolLiteral* Expression::mutable_bl() {
+inline ::Pasc::BoolExpr* Expression::mutable_bl() {
   if (!has_bl()) {
     clear_expr();
     set_has_bl();
-    expr_.bl_ = CreateMaybeMessage< ::Pasc::BoolLiteral >(
+    expr_.bl_ = CreateMaybeMessage< ::Pasc::BoolExpr >(
         GetArenaNoVirtual());
   }
   // @@protoc_insertion_point(field_mutable:Pasc.Expression.bl)
@@ -3269,20 +3272,20 @@ inline void UIntLiteral::set_value(::google::protobuf::uint32 value) {
 
 // -------------------------------------------------------------------
 
-// BoolLiteral
+// BoolExpr
 
 // bool value = 1;
-inline void BoolLiteral::clear_value() {
+inline void BoolExpr::clear_value() {
   value_ = false;
 }
-inline bool BoolLiteral::value() const {
-  // @@protoc_insertion_point(field_get:Pasc.BoolLiteral.value)
+inline bool BoolExpr::value() const {
+  // @@protoc_insertion_point(field_get:Pasc.BoolExpr.value)
   return value_;
 }
-inline void BoolLiteral::set_value(bool value) {
+inline void BoolExpr::set_value(bool value) {
   
   value_ = value;
-  // @@protoc_insertion_point(field_set:Pasc.BoolLiteral.value)
+  // @@protoc_insertion_point(field_set:Pasc.BoolExpr.value)
 }
 
 // -------------------------------------------------------------------

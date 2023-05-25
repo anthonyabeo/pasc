@@ -25,7 +25,8 @@ enum class Operator {
   LessEqual,
   LessGreat,
   Mult,
-  FwdSlash
+  FwdSlash,
+  Not
 };
 
 enum Operator deserializeOp(const Pasc::Operator&);
@@ -121,6 +122,24 @@ struct CharString : public Expr {
   std::string str;
 
   explicit CharString(const Pasc::CharString&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
+///////////////////////////
+// UNARY EXPRESSION
+///////////////////////////
+struct UnaryExpression : public Expr {
+  enum Operator op;
+  std::unique_ptr<Expr> operand;
+
+  explicit UnaryExpression(const Pasc::UnaryExpr&);
+  llvm::Value* codegen(IRVisitor&) override;
+};
+
+struct BoolExpr : public Expr {
+  bool value;
+
+  explicit BoolExpr(const Pasc::BoolExpr&);
   llvm::Value *codegen(IRVisitor &) override;
 };
 
