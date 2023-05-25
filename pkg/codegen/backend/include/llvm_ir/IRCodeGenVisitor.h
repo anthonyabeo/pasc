@@ -39,6 +39,8 @@ public:
   llvm::Value* codegen(const WriteParameter&) override;
   llvm::Value* codegen(const URealLiteral&) override;
   llvm::Value* codegen(const CharString&) override;
+  llvm::Value* codegen(const UnaryExpression&) override;
+  llvm::Value* codegen(const BoolExpr&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;

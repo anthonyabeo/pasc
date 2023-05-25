@@ -61,6 +61,10 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
     return builder->CreateSRem(L, R);
   case Operator::Mult:
     return builder->CreateMul(L, R, "mult");
+  case Operator::And:
+    return builder->CreateAnd(L, R, "and");
+  case Operator::Or:
+    return builder->CreateOr(L, R, "or");
   default:
     throw IRCodegenException("invalid binary operator");
   }
@@ -109,4 +113,28 @@ llvm::Value *IRCodegenVisitor::codegen(const CharString &cs) {
   gv->setUnnamedAddr (llvm::GlobalValue::UnnamedAddr::Global);
 
   return llvm::ConstantExpr::getBitCast(gv, charType->getPointerTo());
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const UnaryExpression &ue) {
+  auto operand = ue.operand->codegen(*this);
+  if(!operand)
+    throw IRCodegenException("operand is null");
+
+  switch (ue.op) {
+  case Operator::Minus:
+    return builder->CreateNeg(operand);
+  case Operator::Not:
+    return builder->CreateNot(operand, "not");
+  default:
+    throw IRCodegenException("invalid unary operator");
+  }
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const BoolExpr &be) {
+  uint v = 0;
+  if(be.value){
+    v = 1;
+  }
+
+  return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*ctx), v,false);
 }
