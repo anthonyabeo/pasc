@@ -475,7 +475,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 
 		e = &Expression{
 			Kind: Expression_Bool,
-			Expr: &Expression_Bl{Bl: &BoolLiteral{Value: v}},
+			Expr: &Expression_Bl{Bl: &BoolExpr{Value: v}},
 		}
 	case *ast.CharString:
 		e = &Expression{
@@ -495,7 +495,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Ue{
 				Ue: &UnaryExpr{
 					Op:      s.translateOp(expr.Operator.Kind),
-					Operand: s.translateExpr(expr),
+					Operand: s.translateExpr(expr.Operand),
 				},
 			},
 		}
@@ -613,6 +613,8 @@ func (s *ProtoSerializer) translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_Mult}
 	case token.FwdSlash:
 		return &Operator{Op: Operator_FwdSlash}
+	case token.Not:
+		return &Operator{Op: Operator_Not}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}

@@ -53,7 +53,7 @@ message Expression {
     BinaryExpr be = 4;
     WriteParameter wp = 5;
     FuncCall fc = 6;
-    BoolLiteral bl = 7;
+    BoolExpr bl = 7;
     NilValue nl = 8;
     URealLiteral ureal = 9;
     UnaryExpr ue = 10;
@@ -78,7 +78,7 @@ message UIntLiteral {
   uint32 value = 1;
 }
 
-message BoolLiteral {
+message BoolExpr {
   bool value = 1;
 }
 
@@ -125,6 +125,7 @@ message Operator {
     LessEqual = 12;
     LessGreat = 13;
     FwdSlash = 14;
+    Not = 15;
   }
 
   OpKind op = 1;
