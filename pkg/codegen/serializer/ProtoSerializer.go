@@ -467,7 +467,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Ureal{
 				Ureal: &URealLiteral{Value: v}},
 		}
-	case *ast.BoolLiteral:
+	case *ast.BooleanExpression:
 		v := false
 		if expr.Value() == "true" {
 			v = true
