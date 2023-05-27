@@ -1,47 +1,116 @@
 package cli
 
 import (
+	"context"
+	"errors"
+	"flag"
 	"fmt"
-	"os"
-
-	serde "github.com/anthonyabeo/pasc/pkg/codegen/serializer"
-	"github.com/anthonyabeo/pasc/pkg/parser"
-	"github.com/anthonyabeo/pasc/pkg/semantics"
+	"github.com/peterbourgon/ff/v3/ffcli"
+	"strings"
+	"text/tabwriter"
 )
 
 // Run ...
 func Run(args []string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("program file missing")
+	rootCmd := &ffcli.Command{
+		Name:       "pasc",
+		ShortUsage: "pasc [flags] <subcommand> [command flags]",
+		ShortHelp:  "The Pascal Compiler.",
+		LongHelp: strings.TrimSpace(`
+			
+		`),
+		Subcommands: []*ffcli.Command{
+			buildCmd,
+		},
+		FlagSet:   nil,
+		Exec:      func(context.Context, []string) error { return flag.ErrHelp },
+		UsageFunc: usageFunc,
 	}
 
-	input, err := os.ReadFile(args[0])
-	if err != nil {
+	for _, c := range rootCmd.Subcommands {
+		c.UsageFunc = usageFunc
+	}
+
+	if err := rootCmd.Parse(args); err != nil {
+		if errors.Is(err, flag.ErrHelp) {
+			return nil
+		}
 		return err
 	}
 
-	lex := parser.NewLexer(string(input))
-	pars, err := parser.NewParser(lex)
-	if err != nil {
-		return err
+	err := rootCmd.Run(context.Background())
+	if errors.Is(err, flag.ErrHelp) {
+		return nil
 	}
 
-	prog, err := pars.Program()
-	if err != nil {
-		return err
+	return err
+}
+
+func usageFunc(c *ffcli.Command) string {
+	var b strings.Builder
+
+	fmt.Fprintf(&b, "USAGE\n")
+	if c.ShortUsage != "" {
+		fmt.Fprintf(&b, "  %s\n", c.ShortUsage)
+	} else {
+		fmt.Fprintf(&b, "  %s\n", c.Name)
+	}
+	fmt.Fprintf(&b, "\n")
+
+	if c.LongHelp != "" {
+		fmt.Fprintf(&b, "%s\n\n", c.LongHelp)
 	}
 
-	sema := &semantics.SemanticAnalyzer{
-		Ast:               prog,
-		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
-		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
-	}
-	sema.Run()
-
-	err = serde.Serialize(serde.AstToProtoAst(*sema.Ast))
-	if err != nil {
-		return err
+	if len(c.Subcommands) > 0 {
+		fmt.Fprintf(&b, "SUBCOMMANDS\n")
+		tw := tabwriter.NewWriter(&b, 0, 2, 2, ' ', 0)
+		for _, subcommand := range c.Subcommands {
+			fmt.Fprintf(tw, "  %s\t%s\n", subcommand.Name, subcommand.ShortHelp)
+		}
+		tw.Flush()
+		fmt.Fprintf(&b, "\n")
 	}
 
-	return nil
+	if countFlags(c.FlagSet) > 0 {
+		fmt.Fprintf(&b, "FLAGS\n")
+		tw := tabwriter.NewWriter(&b, 0, 2, 2, ' ', 0)
+		c.FlagSet.VisitAll(func(f *flag.Flag) {
+			var s string
+			name, usage := flag.UnquoteUsage(f)
+			if isBoolFlag(f) {
+				s = fmt.Sprintf("  --%s, --%s=false", f.Name, f.Name)
+			} else {
+				s = fmt.Sprintf("  --%s", f.Name) // Two spaces before --; see next two comments.
+				if len(name) > 0 {
+					s += " " + name
+				}
+			}
+			// Four spaces before the tab triggers good alignment
+			// for both 4- and 8-space tab stops.
+			s += "\n    \t"
+			s += strings.ReplaceAll(usage, "\n", "\n    \t")
+
+			if f.DefValue != "" {
+				s += fmt.Sprintf(" (default %s)", f.DefValue)
+			}
+
+			fmt.Fprintln(&b, s)
+		})
+		tw.Flush()
+		fmt.Fprintf(&b, "\n")
+	}
+
+	return strings.TrimSpace(b.String())
+}
+
+func isBoolFlag(f *flag.Flag) bool {
+	bf, ok := f.Value.(interface {
+		IsBoolFlag() bool
+	})
+	return ok && bf.IsBoolFlag()
+}
+
+func countFlags(fs *flag.FlagSet) (n int) {
+	fs.VisitAll(func(*flag.Flag) { n++ })
+	return n
 }
