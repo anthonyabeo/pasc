@@ -12,15 +12,15 @@ protoc-gen-go v1.28.1
 ## Build
 ```bash
 $ make build
-$ ./scripts/compile.sh <program-file> <program-name> 
+$ pasc build [-o exec-name] <program-file> 
 
 # run program
-$ ./bin/<program-name>
+$ ./bin/<exec-name>
 ```
 
 ## Examples
 ```bash
 # Run an example program that assign a value to a variable then print its to standard output
-$ ./scripts/compile.sh examples/assign.pas assign
-$ ./bin/assign
+$ .pasc build -o ifstmt examples/ifstmt.pas
+$ ./bin/ifstmt
 ```
