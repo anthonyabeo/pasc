@@ -20,7 +20,7 @@
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_proto_2fexpression_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_BinaryExpr;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<8> scc_info_BinaryExpr;
 }  // namespace protobuf_proto_2fexpression_2eproto
 namespace protobuf_proto_2fprogram_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fprogram_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ValueParam;
@@ -30,10 +30,10 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fprogram_2eproto ::google::proto
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fprogram_2eproto ::google::protobuf::internal::SCCInfo<3> scc_info_FormalParameter;
 }  // namespace protobuf_proto_2fprogram_2eproto
 namespace protobuf_proto_2fstatement_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_CompoundStatement;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_CaseStatement;
 }  // namespace protobuf_proto_2fstatement_2eproto
 namespace protobuf_proto_2ftype_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_Type;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<6> scc_info_Type;
 }  // namespace protobuf_proto_2ftype_2eproto
 namespace Pasc {
 class ProgramDefaultTypeInternal {
@@ -146,7 +146,7 @@ static void InitDefaultsBlock() {
 ::google::protobuf::internal::SCCInfo<3> scc_info_Block =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 3, InitDefaultsBlock}, {
       &protobuf_proto_2fprogram_2eproto::scc_info_VarDeclaration.base,
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base,
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base,
       &protobuf_proto_2fprogram_2eproto::scc_info_FormalParameter.base,}};
 
 static void InitDefaultsFormalParameter() {
@@ -254,6 +254,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Block, vardecl_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Block, stmts_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Block, callables_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Block, labels_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Callable, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -331,15 +332,15 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::Pasc::Program)},
   { 9, -1, sizeof(::Pasc::Block)},
-  { 17, -1, sizeof(::Pasc::Callable)},
-  { 26, -1, sizeof(::Pasc::FormalParameter)},
-  { 37, -1, sizeof(::Pasc::VariableParam)},
-  { 44, -1, sizeof(::Pasc::ValueParam)},
-  { 51, -1, sizeof(::Pasc::FuncHeading)},
-  { 59, -1, sizeof(::Pasc::ProcHeading)},
-  { 67, -1, sizeof(::Pasc::FuncDeclaration)},
-  { 75, -1, sizeof(::Pasc::ProcDeclaration)},
-  { 83, -1, sizeof(::Pasc::VarDeclaration)},
+  { 18, -1, sizeof(::Pasc::Callable)},
+  { 27, -1, sizeof(::Pasc::FormalParameter)},
+  { 38, -1, sizeof(::Pasc::VariableParam)},
+  { 45, -1, sizeof(::Pasc::ValueParam)},
+  { 52, -1, sizeof(::Pasc::FuncHeading)},
+  { 60, -1, sizeof(::Pasc::ProcHeading)},
+  { 68, -1, sizeof(::Pasc::FuncDeclaration)},
+  { 76, -1, sizeof(::Pasc::ProcDeclaration)},
+  { 84, -1, sizeof(::Pasc::VarDeclaration)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -382,40 +383,40 @@ void AddDescriptorsImpl() {
       "on.proto\032\025proto/statement.proto\"b\n\007Progr"
       "am\022\035\n\004kind\030\001 \001(\0162\017.Pasc.TokenKind\022\014\n\004nam"
       "e\030\002 \001(\t\022\016\n\006params\030\003 \003(\t\022\032\n\005block\030\004 \001(\0132\013"
-      ".Pasc.Block\"q\n\005Block\022%\n\007varDecl\030\001 \003(\0132\024."
-      "Pasc.VarDeclaration\022\036\n\005stmts\030\002 \003(\0132\017.Pas"
-      "c.Statement\022!\n\tcallables\030\003 \003(\0132\016.Pasc.Ca"
-      "llable\"\257\001\n\010Callable\022%\n\004kind\030\001 \001(\0162\027.Pasc"
-      ".Callable.CallKind\022)\n\010funcDecl\030\002 \001(\0132\025.P"
-      "asc.FuncDeclarationH\000\022)\n\010procDecl\030\003 \001(\0132"
-      "\025.Pasc.ProcDeclarationH\000\"\036\n\010CallKind\022\010\n\004"
-      "Func\020\000\022\010\n\004Proc\020\001B\006\n\004call\"\234\002\n\017FormalParam"
-      "eter\022*\n\004kind\030\001 \001(\0162\034.Pasc.FormalParamete"
-      "r.FPKind\022\"\n\005fHead\030\002 \001(\0132\021.Pasc.FuncHeadi"
-      "ngH\000\022\"\n\005pHead\030\003 \001(\0132\021.Pasc.ProcHeadingH\000"
-      "\022%\n\006vParam\030\004 \001(\0132\023.Pasc.VariableParamH\000\022"
-      "$\n\010valParam\030\005 \001(\0132\020.Pasc.ValueParamH\000\"B\n"
-      "\006FPKind\022\014\n\010FuncHead\020\000\022\014\n\010ProcHead\020\001\022\014\n\010V"
-      "arParam\020\002\022\016\n\nValueParam\020\003B\004\n\002fp\"8\n\rVaria"
-      "bleParam\022\r\n\005names\030\001 \003(\t\022\030\n\004type\030\002 \001(\0132\n."
-      "Pasc.Type\"5\n\nValueParam\022\r\n\005names\030\001 \003(\t\022\030"
-      "\n\004type\030\002 \001(\0132\n.Pasc.Type\"b\n\013FuncHeading\022"
-      "\014\n\004name\030\001 \001(\t\022%\n\006params\030\002 \003(\0132\025.Pasc.For"
-      "malParameter\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc."
-      "Type\"b\n\013ProcHeading\022\014\n\004name\030\001 \001(\t\022%\n\006par"
-      "ams\030\002 \003(\0132\025.Pasc.FormalParameter\022\036\n\nretu"
-      "rnType\030\003 \001(\0132\n.Pasc.Type\"`\n\017FuncDeclarat"
-      "ion\022&\n\013funcHeading\030\001 \001(\0132\021.Pasc.FuncHead"
-      "ing\022\030\n\003blk\030\002 \001(\0132\013.Pasc.Block\022\013\n\003dir\030\003 \001"
-      "(\t\"]\n\017ProcDeclaration\022#\n\010procHead\030\001 \001(\0132"
-      "\021.Pasc.ProcHeading\022\030\n\003blk\030\002 \001(\0132\013.Pasc.B"
-      "lock\022\013\n\003dir\030\003 \001(\t\"J\n\016VarDeclaration\022\036\n\004n"
-      "ame\030\001 \001(\0132\020.Pasc.Expression\022\030\n\004type\030\002 \001("
-      "\0132\n.Pasc.TypeB\030Z\026pkg/codegen/serializerb"
-      "\006proto3"
+      ".Pasc.Block\"\201\001\n\005Block\022%\n\007varDecl\030\001 \003(\0132\024"
+      ".Pasc.VarDeclaration\022\036\n\005stmts\030\002 \003(\0132\017.Pa"
+      "sc.Statement\022!\n\tcallables\030\003 \003(\0132\016.Pasc.C"
+      "allable\022\016\n\006labels\030\004 \003(\t\"\257\001\n\010Callable\022%\n\004"
+      "kind\030\001 \001(\0162\027.Pasc.Callable.CallKind\022)\n\010f"
+      "uncDecl\030\002 \001(\0132\025.Pasc.FuncDeclarationH\000\022)"
+      "\n\010procDecl\030\003 \001(\0132\025.Pasc.ProcDeclarationH"
+      "\000\"\036\n\010CallKind\022\010\n\004Func\020\000\022\010\n\004Proc\020\001B\006\n\004cal"
+      "l\"\234\002\n\017FormalParameter\022*\n\004kind\030\001 \001(\0162\034.Pa"
+      "sc.FormalParameter.FPKind\022\"\n\005fHead\030\002 \001(\013"
+      "2\021.Pasc.FuncHeadingH\000\022\"\n\005pHead\030\003 \001(\0132\021.P"
+      "asc.ProcHeadingH\000\022%\n\006vParam\030\004 \001(\0132\023.Pasc"
+      ".VariableParamH\000\022$\n\010valParam\030\005 \001(\0132\020.Pas"
+      "c.ValueParamH\000\"B\n\006FPKind\022\014\n\010FuncHead\020\000\022\014"
+      "\n\010ProcHead\020\001\022\014\n\010VarParam\020\002\022\016\n\nValueParam"
+      "\020\003B\004\n\002fp\"8\n\rVariableParam\022\r\n\005names\030\001 \003(\t"
+      "\022\030\n\004type\030\002 \001(\0132\n.Pasc.Type\"5\n\nValueParam"
+      "\022\r\n\005names\030\001 \003(\t\022\030\n\004type\030\002 \001(\0132\n.Pasc.Typ"
+      "e\"b\n\013FuncHeading\022\014\n\004name\030\001 \001(\t\022%\n\006params"
+      "\030\002 \003(\0132\025.Pasc.FormalParameter\022\036\n\nreturnT"
+      "ype\030\003 \001(\0132\n.Pasc.Type\"b\n\013ProcHeading\022\014\n\004"
+      "name\030\001 \001(\t\022%\n\006params\030\002 \003(\0132\025.Pasc.Formal"
+      "Parameter\022\036\n\nreturnType\030\003 \001(\0132\n.Pasc.Typ"
+      "e\"`\n\017FuncDeclaration\022&\n\013funcHeading\030\001 \001("
+      "\0132\021.Pasc.FuncHeading\022\030\n\003blk\030\002 \001(\0132\013.Pasc"
+      ".Block\022\013\n\003dir\030\003 \001(\t\"]\n\017ProcDeclaration\022#"
+      "\n\010procHead\030\001 \001(\0132\021.Pasc.ProcHeading\022\030\n\003b"
+      "lk\030\002 \001(\0132\013.Pasc.Block\022\013\n\003dir\030\003 \001(\t\"J\n\016Va"
+      "rDeclaration\022\036\n\004name\030\001 \001(\0132\020.Pasc.Expres"
+      "sion\022\030\n\004type\030\002 \001(\0132\n.Pasc.TypeB\030Z\026pkg/co"
+      "degen/serializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1407);
+      descriptor, 1424);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/program.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftype_2eproto::AddDescriptors();
@@ -878,6 +879,7 @@ void Block::clear_stmts() {
 const int Block::kVarDeclFieldNumber;
 const int Block::kStmtsFieldNumber;
 const int Block::kCallablesFieldNumber;
+const int Block::kLabelsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Block::Block()
@@ -892,7 +894,8 @@ Block::Block(const Block& from)
       _internal_metadata_(NULL),
       vardecl_(from.vardecl_),
       stmts_(from.stmts_),
-      callables_(from.callables_) {
+      callables_(from.callables_),
+      labels_(from.labels_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:Pasc.Block)
 }
@@ -931,6 +934,7 @@ void Block::Clear() {
   vardecl_.Clear();
   stmts_.Clear();
   callables_.Clear();
+  labels_.Clear();
   _internal_metadata_.Clear();
 }
 
@@ -974,6 +978,23 @@ bool Block::MergePartialFromCodedStream(
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_callables()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated string labels = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_labels()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->labels(this->labels_size() - 1).data(),
+            static_cast<int>(this->labels(this->labels_size() - 1).length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.Block.labels"));
         } else {
           goto handle_unusual;
         }
@@ -1033,6 +1054,16 @@ void Block::SerializeWithCachedSizes(
       output);
   }
 
+  // repeated string labels = 4;
+  for (int i = 0, n = this->labels_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->labels(i).data(), static_cast<int>(this->labels(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.Block.labels");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      4, this->labels(i), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -1069,6 +1100,16 @@ void Block::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         3, this->callables(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated string labels = 4;
+  for (int i = 0, n = this->labels_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->labels(i).data(), static_cast<int>(this->labels(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.Block.labels");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(4, this->labels(i), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1121,6 +1162,14 @@ size_t Block::ByteSizeLong() const {
     }
   }
 
+  // repeated string labels = 4;
+  total_size += 1 *
+      ::google::protobuf::internal::FromIntSize(this->labels_size());
+  for (int i = 0, n = this->labels_size(); i < n; i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->labels(i));
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -1151,6 +1200,7 @@ void Block::MergeFrom(const Block& from) {
   vardecl_.MergeFrom(from.vardecl_);
   stmts_.MergeFrom(from.stmts_);
   callables_.MergeFrom(from.callables_);
+  labels_.MergeFrom(from.labels_);
 }
 
 void Block::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1180,6 +1230,7 @@ void Block::InternalSwap(Block* other) {
   CastToBase(&vardecl_)->InternalSwap(CastToBase(&other->vardecl_));
   CastToBase(&stmts_)->InternalSwap(CastToBase(&other->stmts_));
   CastToBase(&callables_)->InternalSwap(CastToBase(&other->callables_));
+  labels_.InternalSwap(CastToBase(&other->labels_));
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 

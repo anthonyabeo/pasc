@@ -28,6 +28,7 @@ public:
   std::string dumpLLVMIRToString();
 
   static llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function*, llvm::StringRef, llvm::Type*);
+  llvm::BasicBlock* GetBBFromLabel(const std::string);
 
   // Expressions
   llvm::Value *codegen(const VariableID&) override;
@@ -36,11 +37,16 @@ public:
   llvm::Value* codegen(const BinaryExpression&) override;
   llvm::Value* codegen(const FunctionCall&) override;
   llvm::Value* codegen(const WriteParameter&) override;
+  llvm::Value* codegen(const URealLiteral&) override;
+  llvm::Value* codegen(const CharString&) override;
+  llvm::Value* codegen(const UnaryExpression&) override;
+  llvm::Value* codegen(const BoolExpr&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
   llvm::Value *codegen(const IfStatement&) override;
   llvm::Value *codegen(const Writeln&) override;
+  llvm::Value *codegen(const Write&) override;
   llvm::Value *codegen(const ProcedureStmt&) override;
   llvm::Value *codegen(const ReturnStatement&) override;
   llvm::Value *codegen(const FunctionDeclaration&) override;
@@ -49,6 +55,7 @@ public:
   llvm::Value *codegen(const CompoundStatement&) override;
   llvm::Value *codegen(const RepeatStatement&) override;
   llvm::Value *codegen(const ForStatement&) override;
+  llvm::Value *codegen(const GotoStatement&) override;
 
   std::vector<llvm::Type*> codegen(const FuncHeading&) override;
   std::vector<llvm::Type*> codegen(const ProcHeading&) override;
@@ -59,6 +66,8 @@ public:
   llvm::Type *codegen(const IntegerType&) override;
   llvm::Type *codegen(const BoolType&) override;
   llvm::Type *codegen(const VoidType&) override;
+  llvm::Type *codegen(const RealType&) override;
+  llvm::Type *codegen(const StringType&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation

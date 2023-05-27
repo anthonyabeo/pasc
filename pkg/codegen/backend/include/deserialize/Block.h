@@ -16,6 +16,7 @@ struct Block {
   std::vector<std::unique_ptr<Callable>> callables;
   std::vector<std::unique_ptr<VariableDeclaration>> VarDeclrs;
   std::vector<std::unique_ptr<Statement>> Stmts;
+  std::vector<std::string> Labels;
 
   explicit Block(const Pasc::Block &);
 };

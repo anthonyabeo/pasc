@@ -6,6 +6,14 @@
 
 
 llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
+  if(!stmt.label.empty()) {
+    llvm::BasicBlock* Label;
+    Label = GetBBFromLabel(stmt.label);
+
+    // set it as the current insertion point
+    builder->SetInsertPoint(Label);
+  }
+
   auto variable = stmt.variable->codegen(*this);
   if (!variable) {
     throw IRCodegenException(
@@ -27,27 +35,89 @@ llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
-    std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
-    auto printfFunc = module->getOrInsertFunction(
-        "printf",
-        llvm::FunctionType::get(llvm::Type::getInt32Ty(*ctx),
-                                  printfArgsTypes,
-                                  true));
+  if(!stmt.label.empty()) {
+    llvm::BasicBlock* Label;
+    Label = GetBBFromLabel(stmt.label);
 
-    // The format string for the printf function, declared as a global literal
-    llvm::Value *str = builder->CreateGlobalStringPtr("%d\n", "str");
+    // set it as the current insertion point
+    builder->SetInsertPoint(Label);
+  }
 
+  std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
+  auto printfFunc = module->getOrInsertFunction(
+      "printf",
+      llvm::FunctionType::get(llvm::Type::getInt32Ty(*ctx),
+                                printfArgsTypes,
+                                true));
 
-    std::vector<llvm::Value *> argsV({str});
-    for (auto& p : stmt.params) {
-      auto val = p->codegen(*this);
-      argsV.push_back(val);
+  // The format string for the printf function, declared as a global literal
+  llvm::Value *str;
+
+  std::vector<llvm::Value *> argsV;
+  for (auto& p : stmt.params) {
+    auto val = p->codegen(*this);
+
+    if(val->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      str = builder->CreateGlobalStringPtr("%f\n", "str");
+    } else if(val->getType() == llvm::Type::getInt32Ty(*ctx)) {
+      str = builder->CreateGlobalStringPtr("%d\n", "str");
+    } /*else if(val->getType() == llvm::Type::ArrayType) {*/ else {
+      str = val;
     }
 
-    return builder->CreateCall(printfFunc, argsV, "call");
+    argsV.push_back(str);
+    argsV.push_back(val);
+  }
+
+  return builder->CreateCall(printfFunc, argsV, "call");
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const Write &stmt) {
+  if(!stmt.label.empty()) {
+    llvm::BasicBlock* Label;
+    Label = GetBBFromLabel(stmt.label);
+
+    // set it as the current insertion point
+    builder->SetInsertPoint(Label);
+  }
+
+  std::vector<llvm::Type *> printfArgsTypes = {llvm::Type::getInt8PtrTy(*ctx)};
+  auto printfFunc = module->getOrInsertFunction(
+      "printf",
+      llvm::FunctionType::get(llvm::Type::getInt32Ty(*ctx),
+                              printfArgsTypes,
+                              true));
+
+  // The format string for the printf function, declared as a global literal
+  llvm::Value *str;
+
+  std::vector<llvm::Value *> argsV;
+  for (auto& p : stmt.params) {
+    auto val = p->codegen(*this);
+
+    if(val->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      str = builder->CreateGlobalStringPtr("%f", "str");
+    } else if(val->getType() == llvm::Type::getInt32Ty(*ctx)) {
+      str = builder->CreateGlobalStringPtr("%d", "str");
+    } /*else if(val->getType() == llvm::Type::ArrayType) {*/ else {
+      str = val;
+    }
+
+    argsV.push_back(str);
+  }
+
+  return builder->CreateCall(printfFunc, argsV, "call");
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
+  if(!is.label.empty()) {
+    llvm::BasicBlock* Label;
+    Label = GetBBFromLabel(is.label);
+
+    // set it as the current insertion point
+    builder->SetInsertPoint(Label);
+  }
+
   auto condV = is.cond->codegen(*this);
   if (!condV)
     throw IRCodegenException("Null condition expr for if-else statement");
@@ -194,40 +264,64 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureStmt& ps) {
   return nullptr;
 }
 
-llvm::Value *IRCodegenVisitor::codegen(const ReturnStatement& ps) {
-  auto ret = ps.value->codegen(*this);
+llvm::Value *IRCodegenVisitor::codegen(const ReturnStatement& rs) {
+  if(!rs.label.empty()) {
+    llvm::BasicBlock* Label;
+    Label = GetBBFromLabel(rs.label);
+
+    // set it as the current insertion point
+    builder->SetInsertPoint(Label);
+  }
+
+  auto ret = rs.value->codegen(*this);
   return builder->CreateRet(ret);
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const WhileStatement &ws) {
-    auto CondV = ws.cond->codegen(*this);
-    if(!CondV)
-      throw IRCodegenException("Null condition expr for while statement");
+  if(!ws.label.empty()) {
+    llvm::BasicBlock* Label;
+    Label = GetBBFromLabel(ws.label);
 
-    auto TheFunction = builder->GetInsertBlock()->getParent();
-    auto BodyBB = llvm::BasicBlock::Create(*ctx, "while_body", TheFunction);
-    auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
+    // set it as the current insertion point
+    builder->SetInsertPoint(Label);
+  }
 
-    builder->CreateCondBr(CondV, BodyBB, ContBB);
+  auto CondV = ws.cond->codegen(*this);
+  if(!CondV)
+    throw IRCodegenException("Null condition expr for while statement");
 
-    builder->SetInsertPoint(BodyBB);
-    auto BodyV = ws.body->codegen(*this);
-    if (!BodyV)
-      throw IRCodegenException("Null body for while statement");
+  auto TheFunction = builder->GetInsertBlock()->getParent();
+  auto BodyBB = llvm::BasicBlock::Create(*ctx, "while_body", TheFunction);
+  auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
 
-    CondV = ws.cond->codegen(*this);
-    if(!CondV)
-      throw IRCodegenException("Null condition expr for while statement");
+  builder->CreateCondBr(CondV, BodyBB, ContBB);
 
-    BodyBB = builder->GetInsertBlock();
-    builder->CreateCondBr(CondV, BodyBB, ContBB);
+  builder->SetInsertPoint(BodyBB);
+  auto BodyV = ws.body->codegen(*this);
+  if (!BodyV)
+    throw IRCodegenException("Null body for while statement");
 
-    builder->SetInsertPoint(ContBB);
+  CondV = ws.cond->codegen(*this);
+  if(!CondV)
+    throw IRCodegenException("Null condition expr for while statement");
 
-    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+  BodyBB = builder->GetInsertBlock();
+  builder->CreateCondBr(CondV, BodyBB, ContBB);
+
+  builder->SetInsertPoint(ContBB);
+
+  return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const CompoundStatement &cs) {
+    if(!cs.label.empty()) {
+      llvm::BasicBlock* Label;
+      Label = GetBBFromLabel(cs.label);
+
+      // set it as the current insertion point
+      builder->SetInsertPoint(Label);
+    }
+
     for (auto& stmt : cs.stmts) {
       stmt->codegen(*this);
     }
@@ -236,6 +330,14 @@ llvm::Value *IRCodegenVisitor::codegen(const CompoundStatement &cs) {
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const RepeatStatement &rs) {
+    if(!rs.label.empty()) {
+      llvm::BasicBlock* Label;
+      Label = GetBBFromLabel(rs.label);
+
+      // set it as the current insertion point
+      builder->SetInsertPoint(Label);
+    }
+
     auto TheFunction = builder->GetInsertBlock()->getParent();
     auto BodyBB = llvm::BasicBlock::Create(*ctx, "body", TheFunction);
     auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
@@ -264,6 +366,14 @@ llvm::Value *IRCodegenVisitor::codegen(const RepeatStatement &rs) {
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const ForStatement &fs) {
+    if(!fs.label.empty()) {
+      llvm::BasicBlock* Label;
+      Label = GetBBFromLabel(fs.label);
+
+      // set it as the current insertion point
+      builder->SetInsertPoint(Label);
+    }
+
     auto TheFunction = builder->GetInsertBlock()->getParent();
     auto BodyBB = llvm::BasicBlock::Create(*ctx, "body", TheFunction);
     auto ContBB = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
@@ -334,4 +444,9 @@ llvm::Value *IRCodegenVisitor::codegen(const ForStatement &fs) {
     builder->SetInsertPoint(ContBB);
 
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const GotoStatement &gs) {
+    llvm::BasicBlock* Label = GetBBFromLabel(gs.label);
+    return builder->CreateBr(Label);
 }

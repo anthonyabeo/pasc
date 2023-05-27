@@ -12,6 +12,7 @@ import (
 type VarDeclaration struct {
 	Token token.Token
 	Decls []*VarDecl
+	Label string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -27,6 +28,10 @@ func (v *VarDeclaration) StatNode() string {
 
 func (v *VarDeclaration) String() string {
 	return fmt.Sprintf("%v", v.Decls)
+}
+
+func (v *VarDeclaration) SetLabel(l string) {
+	v.Label = l
 }
 
 // VarDecl ...

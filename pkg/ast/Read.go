@@ -9,6 +9,7 @@ type Read struct {
 	Name      string
 	File      *Identifier
 	VarAccess []Expression
+	Label     string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -36,4 +37,8 @@ func (r *Read) GetName() string {
 
 func (r *Read) GetParamList() []Expression {
 	return r.VarAccess
+}
+
+func (r *Read) SetLabel(l string) {
+	r.Label = l
 }

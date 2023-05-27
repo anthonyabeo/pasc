@@ -9,6 +9,7 @@ import (
 type ProcedureStmt struct {
 	Name      *Identifier
 	ParamList []Expression
+	Label     string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -36,4 +37,8 @@ func (ps *ProcedureStmt) GetName() string {
 
 func (ps *ProcedureStmt) GetParamList() []Expression {
 	return ps.ParamList
+}
+
+func (ps *ProcedureStmt) SetLabel(l string) {
+	ps.Label = l
 }

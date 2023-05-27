@@ -35,6 +35,12 @@ enum Operator deserializeOp(const Pasc::Operator& opt) {
     return Operator::In;
   case Pasc::Operator_OpKind_Equal:
     return Operator::Equal;
+  case Pasc::Operator_OpKind_Mult:
+    return Operator::Mult;
+  case Pasc::Operator_OpKind_FwdSlash:
+    return Operator::FwdSlash;
+  case Pasc::Operator_OpKind_Not:
+    return Operator::Not;
   default:
     throw DeserializeProtobufException("invalid operator kind");
   }
@@ -49,12 +55,20 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<IdentifierExpr>(expr.id());
   case Pasc::Expression_ExprKind_UInt:
     return std::make_unique<UIntegerLiteral>(expr.uint());
+  case Pasc::Expression_ExprKind_UReal:
+    return std::make_unique<URealLiteral>(expr.ureal());
   case Pasc::Expression_ExprKind_BinExpr:
     return std::make_unique<BinaryExpression>(expr.be());
   case Pasc::Expression_ExprKind_WriteParam:
     return std::make_unique<WriteParameter>(expr.wp());
   case Pasc::Expression_ExprKind_FCall:
     return std::make_unique<FunctionCall>(expr.fc());
+  case Pasc::Expression_ExprKind_Str:
+    return std::make_unique<CharString>(expr.cs());
+  case Pasc::Expression_ExprKind_UnExpr:
+    return std::make_unique<UnaryExpression>(expr.ue());
+  case Pasc::Expression_ExprKind_Bool:
+    return std::make_unique<BoolExpr>(expr.bl());
   default:
     throw DeserializeProtobufException("invalid expression kind");
   }
@@ -139,5 +153,50 @@ WriteParameter::WriteParameter(const Pasc::WriteParameter& wp) {
 }
 
 llvm::Value *WriteParameter::codegen(IRVisitor& v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// UREAL LITERAL
+///////////////////////////
+URealLiteral::URealLiteral(const Pasc::URealLiteral &ur) {
+  value = ur.value();
+}
+
+llvm::Value *URealLiteral::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// CHARACTER STRING
+///////////////////////////
+CharString::CharString(const Pasc::CharString &cs) {
+  str = cs.value();
+}
+
+llvm::Value *CharString::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// UNARY EXPRESSION
+///////////////////////////
+UnaryExpression::UnaryExpression(const Pasc::UnaryExpr &ue) {
+  op = deserializeOp(ue.op());
+  operand = deserializeExpr(ue.operand());
+}
+
+llvm::Value *UnaryExpression::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// BOOLEAN EXPRESSION
+///////////////////////////
+BoolExpr::BoolExpr(const Pasc::BoolExpr &bl) {
+  value = bl.value();
+}
+
+llvm::Value *BoolExpr::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }

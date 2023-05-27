@@ -9,31 +9,36 @@ type Writeln struct {
 	Name      string
 	File      *Identifier
 	ParamList []Expression
+	Label     string
 }
 
 // TokenLiteral returns the text value this node's token.
-func (ps *Writeln) TokenLiteral() string {
-	return ps.Name
+func (w *Writeln) TokenLiteral() string {
+	return w.Name
 }
 
 // TokenKind returns this node's token's kind
-func (ps *Writeln) TokenKind() token.Kind {
+func (w *Writeln) TokenKind() token.Kind {
 	return token.Identifier
 }
 
 // StatNode ...
-func (ps *Writeln) StatNode() string {
-	return fmt.Sprintf("%v(%v)", ps.Name, ps.ParamList)
+func (w *Writeln) StatNode() string {
+	return fmt.Sprintf("%v(%v)", w.Name, w.ParamList)
 }
 
-func (ps *Writeln) String() string {
-	return fmt.Sprintf("%v(%v)", ps.Name, ps.ParamList)
+func (w *Writeln) String() string {
+	return fmt.Sprintf("%v(%v)", w.Name, w.ParamList)
 }
 
-func (ps *Writeln) GetName() string {
-	return ps.Name
+func (w *Writeln) GetName() string {
+	return w.Name
 }
 
-func (ps *Writeln) GetParamList() []Expression {
-	return ps.ParamList
+func (w *Writeln) GetParamList() []Expression {
+	return w.ParamList
+}
+
+func (w *Writeln) SetLabel(l string) {
+	w.Label = l
 }

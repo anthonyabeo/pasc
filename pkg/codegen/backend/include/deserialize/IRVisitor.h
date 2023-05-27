@@ -18,18 +18,24 @@ public:
   virtual llvm::Value *codegen(const BinaryExpression &) = 0;
   virtual llvm::Value *codegen(const FunctionCall &) = 0;
   virtual llvm::Value *codegen(const WriteParameter &) = 0;
+  virtual llvm::Value *codegen(const URealLiteral &) = 0;
+  virtual llvm::Value *codegen(const CharString &) = 0;
+  virtual llvm::Value *codegen(const UnaryExpression &) = 0;
+  virtual llvm::Value *codegen(const BoolExpr &) = 0;
 
   virtual llvm::Value *codegen(const AssignStmt &) = 0;
   virtual llvm::Value *codegen(const ReturnStatement &) = 0;
   virtual llvm::Value *codegen(const IfStatement &) = 0;
   virtual llvm::Value *codegen(const ProcedureStmt &) = 0;
   virtual llvm::Value *codegen(const Writeln &) = 0;
+  virtual llvm::Value *codegen(const Write &) = 0;
   virtual llvm::Value *codegen(const FunctionDeclaration &) = 0;
   virtual llvm::Value *codegen(const ProcedureDeclaration &) = 0;
   virtual llvm::Value *codegen(const WhileStatement &) = 0;
   virtual llvm::Value *codegen(const CompoundStatement &) = 0;
   virtual llvm::Value *codegen(const RepeatStatement &) = 0;
   virtual llvm::Value *codegen(const ForStatement &) = 0;
+  virtual llvm::Value *codegen(const GotoStatement &) = 0;
 
   virtual std::vector<llvm::Type*> codegen(const VariableParam &) = 0;
   virtual std::vector<llvm::Type*> codegen(const ValueParam &) = 0;
@@ -39,6 +45,8 @@ public:
   virtual llvm::Type *codegen(const IntegerType &) = 0;
   virtual llvm::Type *codegen(const BoolType &) = 0;
   virtual llvm::Type *codegen(const VoidType &) = 0;
+  virtual llvm::Type *codegen(const RealType &) = 0;
+  virtual llvm::Type *codegen(const StringType &) = 0;
 };
 
 #endif // IR_VISITOR_H

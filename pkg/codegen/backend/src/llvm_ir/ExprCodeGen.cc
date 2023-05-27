@@ -59,6 +59,12 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
     return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_EQ, L, R);
   case Operator::Mod:
     return builder->CreateSRem(L, R);
+  case Operator::Mult:
+    return builder->CreateMul(L, R, "mult");
+  case Operator::And:
+    return builder->CreateAnd(L, R, "and");
+  case Operator::Or:
+    return builder->CreateOr(L, R, "or");
   default:
     throw IRCodegenException("invalid binary operator");
   }
@@ -79,4 +85,56 @@ llvm::Value *IRCodegenVisitor::codegen(const FunctionCall& fc) {
 
 llvm::Value *IRCodegenVisitor::codegen(const WriteParameter& wp) {
   return wp.e->codegen(*this);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const URealLiteral &ur) {
+  return llvm::ConstantFP::get(llvm::Type::getDoubleTy(*ctx), ur.value);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const CharString &cs) {
+  auto charType = llvm::IntegerType::getInt8Ty(*ctx);
+
+  //1. Initialize chars vector
+  std::vector<llvm::Constant *> chars(cs.str.size());
+  for(unsigned int i = 0; i < cs.str.size(); i++)
+    chars[i] = llvm::ConstantInt::get(charType, cs.str[i]);
+
+  //1b. add a zero terminator too
+  chars.push_back(llvm::ConstantInt::get(charType, 0));
+
+  //2. Initialize the string from the characters
+  auto stringType = llvm::ArrayType::get(charType, chars.size());
+
+  //3. Create the declaration statement
+  auto gv = (llvm::GlobalVariable*) module->getOrInsertGlobal(".str", stringType);
+  gv->setInitializer(llvm::ConstantArray::get(stringType, chars));
+  gv->setConstant(true);
+  gv->setLinkage(llvm::GlobalValue::LinkageTypes::InternalLinkage);
+  gv->setUnnamedAddr (llvm::GlobalValue::UnnamedAddr::Global);
+
+  return llvm::ConstantExpr::getBitCast(gv, charType->getPointerTo());
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const UnaryExpression &ue) {
+  auto operand = ue.operand->codegen(*this);
+  if(!operand)
+    throw IRCodegenException("operand is null");
+
+  switch (ue.op) {
+  case Operator::Minus:
+    return builder->CreateNeg(operand);
+  case Operator::Not:
+    return builder->CreateNot(operand, "not");
+  default:
+    throw IRCodegenException("invalid unary operator");
+  }
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const BoolExpr &be) {
+  uint v = 0;
+  if(be.value){
+    v = 1;
+  }
+
+  return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*ctx), v,false);
 }

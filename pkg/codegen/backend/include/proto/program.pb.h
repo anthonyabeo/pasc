@@ -425,6 +425,28 @@ class Block : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   const ::google::protobuf::RepeatedPtrField< ::Pasc::Callable >&
       callables() const;
 
+  // repeated string labels = 4;
+  int labels_size() const;
+  void clear_labels();
+  static const int kLabelsFieldNumber = 4;
+  const ::std::string& labels(int index) const;
+  ::std::string* mutable_labels(int index);
+  void set_labels(int index, const ::std::string& value);
+  #if LANG_CXX11
+  void set_labels(int index, ::std::string&& value);
+  #endif
+  void set_labels(int index, const char* value);
+  void set_labels(int index, const char* value, size_t size);
+  ::std::string* add_labels();
+  void add_labels(const ::std::string& value);
+  #if LANG_CXX11
+  void add_labels(::std::string&& value);
+  #endif
+  void add_labels(const char* value);
+  void add_labels(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& labels() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_labels();
+
   // @@protoc_insertion_point(class_scope:Pasc.Block)
  private:
 
@@ -432,6 +454,7 @@ class Block : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::RepeatedPtrField< ::Pasc::VarDeclaration > vardecl_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Statement > stmts_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Callable > callables_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> labels_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fprogram_2eproto::TableStruct;
 };
@@ -2039,6 +2062,75 @@ inline const ::google::protobuf::RepeatedPtrField< ::Pasc::Callable >&
 Block::callables() const {
   // @@protoc_insertion_point(field_list:Pasc.Block.callables)
   return callables_;
+}
+
+// repeated string labels = 4;
+inline int Block::labels_size() const {
+  return labels_.size();
+}
+inline void Block::clear_labels() {
+  labels_.Clear();
+}
+inline const ::std::string& Block::labels(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.Block.labels)
+  return labels_.Get(index);
+}
+inline ::std::string* Block::mutable_labels(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.Block.labels)
+  return labels_.Mutable(index);
+}
+inline void Block::set_labels(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:Pasc.Block.labels)
+  labels_.Mutable(index)->assign(value);
+}
+#if LANG_CXX11
+inline void Block::set_labels(int index, ::std::string&& value) {
+  // @@protoc_insertion_point(field_set:Pasc.Block.labels)
+  labels_.Mutable(index)->assign(std::move(value));
+}
+#endif
+inline void Block::set_labels(int index, const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  labels_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:Pasc.Block.labels)
+}
+inline void Block::set_labels(int index, const char* value, size_t size) {
+  labels_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:Pasc.Block.labels)
+}
+inline ::std::string* Block::add_labels() {
+  // @@protoc_insertion_point(field_add_mutable:Pasc.Block.labels)
+  return labels_.Add();
+}
+inline void Block::add_labels(const ::std::string& value) {
+  labels_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:Pasc.Block.labels)
+}
+#if LANG_CXX11
+inline void Block::add_labels(::std::string&& value) {
+  labels_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:Pasc.Block.labels)
+}
+#endif
+inline void Block::add_labels(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  labels_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:Pasc.Block.labels)
+}
+inline void Block::add_labels(const char* value, size_t size) {
+  labels_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:Pasc.Block.labels)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+Block::labels() const {
+  // @@protoc_insertion_point(field_list:Pasc.Block.labels)
+  return labels_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+Block::mutable_labels() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.Block.labels)
+  return &labels_;
 }
 
 // -------------------------------------------------------------------

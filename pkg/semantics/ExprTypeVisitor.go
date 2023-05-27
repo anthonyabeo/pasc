@@ -20,8 +20,6 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 	var err error
 
 	switch node := node.(type) {
-	case *ast.StringLiteral:
-		node.EvalType = &base.String{Name: "string"}
 	case *ast.ProcedureStmt:
 		for _, param := range node.ParamList {
 			v.Visit(param)
@@ -90,6 +88,13 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 			}
 		}
 
+		if v.isMultiplyOp(node.Operator) {
+			node.EvalType, err = v.multTypeComputation(node)
+			if err != nil {
+				panic(err)
+			}
+		}
+
 		if v.isRelationalOp(node.Operator) {
 			node.EvalType, err = v.relExprTypeComputation(node)
 			if err != nil {
@@ -98,14 +103,6 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 		}
 	case *ast.UnaryExpression:
 		v.Visit(node.Operand)
-
-		operandType := node.Operand.Attr("type").(types.Type).GetName()
-		if operandType != "integer" && operandType != "real" {
-			err := fmt.Sprintf(
-				"operands of type %v not supported for '/' operation. They must of type integer or real", operandType)
-			panic(err)
-		}
-
 		node.EvalType = node.Operand.Attr("type").(types.Type)
 	case *ast.WhileStatement:
 		v.Visit(node.BoolExpr)
@@ -143,9 +140,16 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 			v.Visit(stmt)
 		}
 		v.Visit(node.BoolExpr)
+	case *ast.GotoStatement:
 	default:
 		panic(fmt.Sprintf("Visit: unexpected expression type %T", node))
 	}
+}
+
+func (v *ExprEvalVisitor) multTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
+	// TODO implement
+
+	return &base.Integer{Name: "integer"}, nil
 }
 
 func (v *ExprEvalVisitor) relExprTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
@@ -218,6 +222,8 @@ func (v *ExprEvalVisitor) arithmeticTypeComputation(n *ast.BinaryExpression) (ty
 				"operands of type %v and %v not supported for 'mod' operation. They must of type integer type", lhsType, rhsType)
 		}
 
+		typ = &base.Integer{Name: "integer"}
+	case token.Or:
 		typ = &base.Integer{Name: "integer"}
 	}
 

@@ -9,6 +9,7 @@ type ForStatement struct {
 	InitValue, FinalValue Expression
 	Body                  Statement
 	Direction             token.Kind
+	Label                 string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -24,4 +25,8 @@ func (f *ForStatement) StatNode() string {
 
 func (f *ForStatement) String() string {
 	return ""
+}
+
+func (f *ForStatement) SetLabel(l string) {
+	f.Label = l
 }

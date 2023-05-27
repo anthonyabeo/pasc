@@ -12,24 +12,32 @@ import (
 	"strconv"
 )
 
-// AstToProtoAst transforms the Go AST into a form that can be
-// serialized into protocol buffers
-func AstToProtoAst(Ast ast.Program) *Program {
-	program := &Program{Kind: TokenKind_PROGRAM, Name: Ast.Name.Name}
-	for _, param := range Ast.ParamList {
+// ProtoSerializer transforms the Go AST into a form that can be
+// serialized into protocol buffers. It then calls the `Serialize`
+// method to perform the actual serialization.
+type ProtoSerializer struct {
+	Ast *ast.Program
+	Out string
+}
+
+func (s *ProtoSerializer) translate() *Program {
+	program := &Program{Kind: TokenKind_PROGRAM, Name: s.Ast.Name.Name}
+	for _, param := range s.Ast.ParamList {
 		program.Params = append(program.Params, param.Name)
 	}
 
-	program.Block = translateBlock(Ast.Block)
+	program.Block = s.translateBlock(s.Ast.Block)
 
 	return program
 }
 
-func translateBlock(blk *ast.Block) *Block {
+func (s *ProtoSerializer) translateBlock(blk *ast.Block) *Block {
 	block := &Block{}
 
 	if blk.Labels != nil {
-
+		for _, label := range blk.Labels.Labels {
+			block.Labels = append(block.Labels, label.Value)
+		}
 	}
 
 	if blk.Consts != nil {
@@ -44,8 +52,8 @@ func translateBlock(blk *ast.Block) *Block {
 		for _, decl := range blk.VarDeclaration.Decls {
 			for _, name := range decl.Names {
 				v := &VarDeclaration{
-					Name: translateExpr(name),
-					Type: translateType(decl.Type),
+					Name: s.translateExpr(name),
+					Type: s.translateType(decl.Type),
 				}
 				block.VarDecl = append(block.VarDecl, v)
 			}
@@ -62,8 +70,8 @@ func translateBlock(blk *ast.Block) *Block {
 					Kind: Callable_Func,
 					Call: &Callable_FuncDecl{
 						FuncDecl: &FuncDeclaration{
-							FuncHeading: translateFuncHeading(call.Heading),
-							Blk:         translateBlock(call.Block),
+							FuncHeading: s.translateFuncHeading(call.Heading),
+							Blk:         s.translateBlock(call.Block),
 						},
 					},
 				}
@@ -72,8 +80,8 @@ func translateBlock(blk *ast.Block) *Block {
 					Kind: Callable_Proc,
 					Call: &Callable_ProcDecl{
 						ProcDecl: &ProcDeclaration{
-							ProcHead: translateProcHeading(call.Heading),
-							Blk:      translateBlock(call.Block),
+							ProcHead: s.translateProcHeading(call.Heading),
+							Blk:      s.translateBlock(call.Block),
 						},
 					},
 				}
@@ -87,32 +95,32 @@ func translateBlock(blk *ast.Block) *Block {
 
 	if blk.Stats != nil {
 		for _, stmt := range blk.Stats {
-			block.Stmts = append(block.Stmts, translateStmt(stmt))
+			block.Stmts = append(block.Stmts, s.translateStmt(stmt))
 		}
 	}
 
 	return block
 }
 
-func translateFuncHeading(fh *ast.FuncHeading) *FuncHeading {
-	head := &FuncHeading{Name: fh.Name.Name, ReturnType: translateType(fh.ReturnType)}
+func (s *ProtoSerializer) translateFuncHeading(fh *ast.FuncHeading) *FuncHeading {
+	head := &FuncHeading{Name: fh.Name.Name, ReturnType: s.translateType(fh.ReturnType)}
 	for _, param := range fh.Parameters {
-		head.Params = append(head.Params, translateFormalParam(param))
+		head.Params = append(head.Params, s.translateFormalParam(param))
 	}
 
 	return head
 }
 
-func translateProcHeading(ph *ast.ProcedureHeading) *ProcHeading {
+func (s *ProtoSerializer) translateProcHeading(ph *ast.ProcedureHeading) *ProcHeading {
 	head := &ProcHeading{Name: ph.Name.Name}
 	for _, param := range ph.Parameters {
-		head.Params = append(head.Params, translateFormalParam(param))
+		head.Params = append(head.Params, s.translateFormalParam(param))
 	}
 
 	return head
 }
 
-func translateFormalParam(fp ast.FormalParameter) *FormalParameter {
+func (s *ProtoSerializer) translateFormalParam(fp ast.FormalParameter) *FormalParameter {
 	var p *FormalParameter
 
 	switch fp := fp.(type) {
@@ -127,7 +135,7 @@ func translateFormalParam(fp ast.FormalParameter) *FormalParameter {
 			Fp: &FormalParameter_ValParam{
 				ValParam: &ValueParam{
 					Names: names,
-					Type:  translateType(fp.Type),
+					Type:  s.translateType(fp.Type),
 				},
 			},
 		}
@@ -142,7 +150,7 @@ func translateFormalParam(fp ast.FormalParameter) *FormalParameter {
 			Fp: &FormalParameter_VParam{
 				VParam: &VariableParam{
 					Names: names,
-					Type:  translateType(fp.Type),
+					Type:  s.translateType(fp.Type),
 				},
 			},
 		}
@@ -150,14 +158,14 @@ func translateFormalParam(fp ast.FormalParameter) *FormalParameter {
 		p = &FormalParameter{
 			Kind: FormalParameter_FuncHead,
 			Fp: &FormalParameter_FHead{
-				FHead: translateFuncHeading(fp),
+				FHead: s.translateFuncHeading(fp),
 			},
 		}
 	case *ast.ProcedureHeading:
 		p = &FormalParameter{
 			Kind: FormalParameter_ProcHead,
 			Fp: &FormalParameter_PHead{
-				PHead: translateProcHeading(fp),
+				PHead: s.translateProcHeading(fp),
 			},
 		}
 	default:
@@ -167,35 +175,37 @@ func translateFormalParam(fp ast.FormalParameter) *FormalParameter {
 	return p
 }
 
-func translateStmt(stmt ast.Statement) *Statement {
-	var s *Statement
+func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
+	var st *Statement
 
 	switch stmt := stmt.(type) {
 	case *ast.AssignStatement:
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_assign,
 			Stmt: &Statement_AssignStmt{
 				AssignStmt: &AssignStatement{
-					Variable: translateExpr(stmt.Variable),
-					Value:    translateExpr(stmt.Value),
+					Variable: s.translateExpr(stmt.Variable),
+					Value:    s.translateExpr(stmt.Value),
+					Label:    stmt.Label,
 				},
 			},
 		}
 	case *ast.ProcedureStmt:
 		var args []*Expression
 		for _, e := range stmt.ParamList {
-			args = append(args, translateExpr(e))
+			args = append(args, s.translateExpr(e))
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_procedure,
 			Stmt: &Statement_ProcStmt{
 				ProcStmt: &ProcedureStatement{
 					Kind: ProcedureStatement_procStmt,
 					Stmt: &ProcedureStatement_Ps{
 						Ps: &ProcedureStatement_ProcStmt{
-							Name:   translateExpr(stmt.Name),
+							Name:   s.translateExpr(stmt.Name),
 							Params: args,
+							Label:  stmt.Label,
 						},
 					},
 				},
@@ -204,10 +214,10 @@ func translateStmt(stmt ast.Statement) *Statement {
 	case *ast.Writeln:
 		var args []*Expression
 		for _, e := range stmt.ParamList {
-			args = append(args, translateExpr(e))
+			args = append(args, s.translateExpr(e))
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_procedure,
 			Stmt: &Statement_ProcStmt{
 				ProcStmt: &ProcedureStatement{
@@ -216,7 +226,72 @@ func translateStmt(stmt ast.Statement) *Statement {
 						WrtLn: &ProcedureStatement_WriteLn{
 							Name:   stmt.Name,
 							Params: args,
-							File:   translateExpr(stmt.File),
+							File:   s.translateExpr(stmt.File),
+							Label:  stmt.Label,
+						},
+					},
+				},
+			},
+		}
+	case *ast.Write:
+		var args []*Expression
+		for _, e := range stmt.ParamList {
+			args = append(args, s.translateExpr(e))
+		}
+
+		st = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_write,
+					Stmt: &ProcedureStatement_Wrt{
+						Wrt: &ProcedureStatement_Write{
+							Name:   stmt.Name,
+							Params: args,
+							File:   s.translateExpr(stmt.File),
+							Label:  stmt.Label,
+						},
+					},
+				},
+			},
+		}
+	case *ast.Read:
+		var vAccess []*Expression
+		for _, e := range stmt.VarAccess {
+			vAccess = append(vAccess, s.translateExpr(e))
+		}
+
+		st = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_read,
+					Stmt: &ProcedureStatement_Rd{
+						Rd: &ProcedureStatement_Read{
+							Name:      stmt.Name,
+							File:      s.translateExpr(stmt.File),
+							VarAccess: vAccess,
+						},
+					},
+				},
+			},
+		}
+	case *ast.ReadLn:
+		var vAccess []*Expression
+		for _, e := range stmt.VarAccess {
+			vAccess = append(vAccess, s.translateExpr(e))
+		}
+
+		st = &Statement{
+			Kind: Statement_procedure,
+			Stmt: &Statement_ProcStmt{
+				ProcStmt: &ProcedureStatement{
+					Kind: ProcedureStatement_readLn,
+					Stmt: &ProcedureStatement_RdLn{
+						RdLn: &ProcedureStatement_ReadLn{
+							Name:      stmt.Name,
+							File:      s.translateExpr(stmt.File),
+							VarAccess: vAccess,
 						},
 					},
 				},
@@ -224,36 +299,39 @@ func translateStmt(stmt ast.Statement) *Statement {
 		}
 	case *ast.IfStatement:
 		ifStatement := &IfStatement{
-			Cond:     translateExpr(stmt.BoolExpr),
-			TruePath: translateStmt(stmt.TruePath),
+			Cond:     s.translateExpr(stmt.BoolExpr),
+			TruePath: s.translateStmt(stmt.TruePath),
+			Label:    stmt.Label,
 		}
 
 		if stmt.ElsePath != nil {
-			ifStatement.ElsePath = translateStmt(stmt.ElsePath)
+			ifStatement.ElsePath = s.translateStmt(stmt.ElsePath)
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_if,
 			Stmt: &Statement_IfStmt{
 				IfStmt: ifStatement,
 			},
 		}
 	case *ast.ReturnStatement:
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_return,
 			Stmt: &Statement_RetStmt{
 				RetStmt: &ReturnStatement{
-					Value: translateExpr(stmt.Expr),
+					Value: s.translateExpr(stmt.Expr),
+					Label: stmt.Label,
 				},
 			},
 		}
 	case *ast.WhileStatement:
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_while,
 			Stmt: &Statement_WhileStmt{
 				WhileStmt: &WhileStatement{
-					Cond: translateExpr(stmt.BoolExpr),
-					Body: translateStmt(stmt.Body),
+					Cond:  s.translateExpr(stmt.BoolExpr),
+					Body:  s.translateStmt(stmt.Body),
+					Label: stmt.Label,
 				},
 			},
 		}
@@ -267,44 +345,47 @@ func translateStmt(stmt ast.Statement) *Statement {
 			panic(fmt.Sprintf("Invalid for-loop direction %v", stmt.Direction))
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_for,
 			Stmt: &Statement_ForStmt{
 				ForStmt: &ForStatement{
-					CtlVar:     translateExpr(stmt.CtrlID),
-					InitValue:  translateExpr(stmt.InitValue),
-					FinalValue: translateExpr(stmt.FinalValue),
-					Body:       translateStmt(stmt.Body),
+					CtlVar:     s.translateExpr(stmt.CtrlID),
+					InitValue:  s.translateExpr(stmt.InitValue),
+					FinalValue: s.translateExpr(stmt.FinalValue),
+					Body:       s.translateStmt(stmt.Body),
 					Dir:        dir,
+					Label:      stmt.Label,
 				},
 			},
 		}
 	case *ast.RepeatStatement:
 		var stmts []*Statement
 		for _, st := range stmt.StmtSeq {
-			stmts = append(stmts, translateStmt(st))
+			stmts = append(stmts, s.translateStmt(st))
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_repeat,
 			Stmt: &Statement_RptStmt{
 				RptStmt: &RepeatStatement{
 					Stmts: stmts,
-					Cond:  translateExpr(stmt.BoolExpr),
+					Cond:  s.translateExpr(stmt.BoolExpr),
+					Label: stmt.Label,
 				},
 			},
 		}
 	case *ast.CompoundStatement:
 		var stmts []*Statement
 		for _, st := range stmt.Statements {
-			stmts = append(stmts, translateStmt(st))
+			stmts = append(stmts, s.translateStmt(st))
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_compound,
 			Stmt: &Statement_CmpdStmt{
 				CmpdStmt: &CompoundStatement{
 					Stmts: stmts,
+					Label: stmt.Label,
 				},
 			},
 		}
@@ -313,44 +394,40 @@ func translateStmt(stmt ast.Statement) *Statement {
 		for _, caseElem := range stmt.List {
 			var constants []*Expression
 			for _, constant := range caseElem.ConstList {
-				constants = append(constants, translateExpr(constant))
+				constants = append(constants, s.translateExpr(constant))
 			}
 
 			caseElems = append(caseElems,
 				&CaseStatement_CaseListElement{
 					Constants: constants,
-					Stmt:      translateStmt(caseElem.Body),
+					Stmt:      s.translateStmt(caseElem.Body),
 				})
 		}
 
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_case,
 			Stmt: &Statement_CaseStmt{
 				CaseStmt: &CaseStatement{
-					CaseIndex: translateExpr(stmt.Index),
+					CaseIndex: s.translateExpr(stmt.Index),
 					Cle:       caseElems,
+					Label:     stmt.Label,
 				},
 			},
 		}
 	case *ast.GotoStatement:
-		v, err := strconv.Atoi(stmt.Label.Value)
-		if err != nil {
-			panic(err)
-		}
-
-		s = &Statement{
+		st = &Statement{
 			Kind: Statement_goto,
 			Stmt: &Statement_GotoStmt{
-				GotoStmt: &GoToStatement{Label: uint32(v)}},
+				GotoStmt: &GoToStatement{Label: stmt.Label.Value}},
 		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
 
-	return s
+	return st
 }
 
-func translateExpr(expr ast.Expression) *Expression {
+func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 	var e *Expression
 
 	switch expr := expr.(type) {
@@ -380,7 +457,6 @@ func translateExpr(expr ast.Expression) *Expression {
 				},
 			},
 		}
-
 	case *ast.URealLiteral:
 		v, err := strconv.ParseFloat(expr.Value, 64)
 		if err != nil {
@@ -392,7 +468,7 @@ func translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Ureal{
 				Ureal: &URealLiteral{Value: v}},
 		}
-	case *ast.BoolLiteral:
+	case *ast.BooleanExpression:
 		v := false
 		if expr.Value() == "true" {
 			v = true
@@ -400,10 +476,14 @@ func translateExpr(expr ast.Expression) *Expression {
 
 		e = &Expression{
 			Kind: Expression_Bool,
-			Expr: &Expression_Bl{Bl: &BoolLiteral{Value: v}},
+			Expr: &Expression_Bl{Bl: &BoolExpr{Value: v}},
 		}
-	case *ast.StringLiteral:
 	case *ast.CharString:
+		e = &Expression{
+			Kind: Expression_Str,
+			Expr: &Expression_Cs{
+				Cs: &CharString{Value: expr.String()}},
+		}
 	case *ast.IdentifiedVariable:
 	case *ast.NilValue:
 		e = &Expression{
@@ -411,25 +491,34 @@ func translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Nl{
 				Nl: &NilValue{Name: "nil"}}}
 	case *ast.UnaryExpression:
+		e = &Expression{
+			Kind: Expression_UnExpr,
+			Expr: &Expression_Ue{
+				Ue: &UnaryExpr{
+					Op:      s.translateOp(expr.Operator.Kind),
+					Operand: s.translateExpr(expr.Operand),
+				},
+			},
+		}
 	case *ast.BinaryExpression:
 		e = &Expression{
 			Kind: Expression_BinExpr,
 			Expr: &Expression_Be{
 				Be: &BinaryExpr{
-					Op:    translateOp(expr.Operator.Kind),
-					Left:  translateExpr(expr.Left),
-					Right: translateExpr(expr.Right),
+					Op:    s.translateOp(expr.Operator.Kind),
+					Left:  s.translateExpr(expr.Left),
+					Right: s.translateExpr(expr.Right),
 				},
 			},
 		}
 	case *ast.WriteParameter:
-		wp := &WriteParameter{E: translateExpr(expr.E)}
+		wp := &WriteParameter{E: s.translateExpr(expr.E)}
 		if expr.TotalWidth != nil {
-			wp.TotalWidth = translateExpr(expr.TotalWidth)
+			wp.TotalWidth = s.translateExpr(expr.TotalWidth)
 		}
 
 		if expr.FracDigits != nil {
-			wp.FracDigits = translateExpr(expr.FracDigits)
+			wp.FracDigits = s.translateExpr(expr.FracDigits)
 		}
 
 		e = &Expression{
@@ -439,7 +528,7 @@ func translateExpr(expr ast.Expression) *Expression {
 	case *ast.FuncDesignator:
 		var args []*Expression
 		for _, exp := range expr.Parameters {
-			args = append(args, translateExpr(exp))
+			args = append(args, s.translateExpr(exp))
 		}
 
 		typ := expr.Scope.Resolve(expr.Name.Name).GetType()
@@ -447,9 +536,9 @@ func translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_FCall,
 			Expr: &Expression_Fc{
 				Fc: &FuncCall{
-					Name:       translateExpr(expr.Name),
+					Name:       s.translateExpr(expr.Name),
 					Args:       args,
-					ReturnType: translateType(typ),
+					ReturnType: s.translateType(typ),
 				},
 			},
 		}
@@ -460,7 +549,7 @@ func translateExpr(expr ast.Expression) *Expression {
 	return e
 }
 
-func translateType(typ types.Type) *Type {
+func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 	var t *Type
 
 	switch typ := typ.(type) {
@@ -493,7 +582,7 @@ func translateType(typ types.Type) *Type {
 	return t
 }
 
-func translateOp(op token.Kind) *Operator {
+func (s *ProtoSerializer) translateOp(op token.Kind) *Operator {
 	switch op {
 	case token.GreaterThan:
 		return &Operator{Op: Operator_Great}
@@ -521,15 +610,22 @@ func translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_In}
 	case token.Equal:
 		return &Operator{Op: Operator_Equal}
+	case token.Star:
+		return &Operator{Op: Operator_Mult}
+	case token.FwdSlash:
+		return &Operator{Op: Operator_FwdSlash}
+	case token.Not:
+		return &Operator{Op: Operator_Not}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", op))
 	}
 
 }
 
-// Serialize accepts `program`, an AST created from calling `serde.AstToProtoAst`,
-// and converts it into a protocol buffers binary file, to be deserialized later.
-func Serialize(program *Program, outExec string) error {
+// Serialize converts the translated AST into a protocol buffers binary file, to be deserialized later.
+func (s *ProtoSerializer) Serialize() error {
+	program := s.translate()
+
 	out, err := proto.Marshal(program)
 	if err != nil {
 		return fmt.Errorf("serialization error: %s", err.Error())
@@ -543,7 +639,7 @@ func Serialize(program *Program, outExec string) error {
 		}
 	}
 
-	fileName := fmt.Sprintf("%s/%s.bin", outPath, outExec)
+	fileName := fmt.Sprintf("%s/%s.bin", outPath, s.Out)
 	if err := os.WriteFile(fileName, out, 0644); err != nil {
 		return fmt.Errorf("Write File Error: %s ", err.Error())
 	}

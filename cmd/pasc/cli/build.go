@@ -67,7 +67,8 @@ func runBuild(ctx context.Context, args []string) error {
 	}
 	sema.Run()
 
-	err = serde.Serialize(serde.AstToProtoAst(*sema.Ast), buildArgs.out)
+	serializer := serde.ProtoSerializer{Ast: prog, Out: buildArgs.out}
+	err = serializer.Serialize()
 	if err != nil {
 		return err
 	}

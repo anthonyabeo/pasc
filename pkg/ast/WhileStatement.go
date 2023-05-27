@@ -11,6 +11,7 @@ type WhileStatement struct {
 	Token    token.Token
 	BoolExpr Expression
 	Body     Statement
+	Label    string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -26,4 +27,8 @@ func (w *WhileStatement) StatNode() string {
 
 func (w *WhileStatement) String() string {
 	return fmt.Sprintf("while(%v) do %v", w.BoolExpr, w.Body)
+}
+
+func (w *WhileStatement) SetLabel(l string) {
+	w.Label = l
 }

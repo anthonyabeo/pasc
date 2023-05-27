@@ -12,6 +12,7 @@ type WithStatement struct {
 	Token         token.Token
 	RecordVarList []Expression
 	Body          Statement
+	Label         string
 }
 
 // TokenLiteral returns the text value this node's token.
@@ -37,4 +38,8 @@ func (w *WithStatement) String() string {
 	}
 
 	return fmt.Sprintf("with %v do %v", strings.Join(recVarList, ", "), w.Body)
+}
+
+func (w *WithStatement) SetLabel(l string) {
+	w.Label = l
 }

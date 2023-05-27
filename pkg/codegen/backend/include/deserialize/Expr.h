@@ -23,7 +23,10 @@ enum class Operator {
   Great,
   GreatEqual,
   LessEqual,
-  LessGreat
+  LessGreat,
+  Mult,
+  FwdSlash,
+  Not
 };
 
 enum Operator deserializeOp(const Pasc::Operator&);
@@ -100,6 +103,44 @@ struct WriteParameter : public Expr {
 
   explicit WriteParameter(const Pasc::WriteParameter&);
   llvm::Value *codegen(IRVisitor&) override;
+};
+
+///////////////////////////
+// UREAL LITERAL
+///////////////////////////
+struct URealLiteral : public Expr {
+  double value;
+
+  explicit URealLiteral(const Pasc::URealLiteral &);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
+///////////////////////////
+// CHARACTER STRING
+///////////////////////////
+struct CharString : public Expr {
+  std::string str;
+
+  explicit CharString(const Pasc::CharString&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
+///////////////////////////
+// UNARY EXPRESSION
+///////////////////////////
+struct UnaryExpression : public Expr {
+  enum Operator op;
+  std::unique_ptr<Expr> operand;
+
+  explicit UnaryExpression(const Pasc::UnaryExpr&);
+  llvm::Value* codegen(IRVisitor&) override;
+};
+
+struct BoolExpr : public Expr {
+  bool value;
+
+  explicit BoolExpr(const Pasc::BoolExpr&);
+  llvm::Value *codegen(IRVisitor &) override;
 };
 
 #endif // EXPR_H

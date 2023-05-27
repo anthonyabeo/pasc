@@ -20,17 +20,18 @@
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_proto_2fexpression_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_BinaryExpr;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<8> scc_info_BinaryExpr;
 }  // namespace protobuf_proto_2fexpression_2eproto
 namespace protobuf_proto_2fstatement_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_Read;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_ReadLn;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_Write;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_GoToStatement;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_AssignStatement;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_ProcStmt;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_Read;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_ReadLn;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_Write;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_WriteLn;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ReturnStatement;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_CompoundStatement;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_CaseStatement;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fstatement_2eproto ::google::protobuf::internal::SCCInfo<5> scc_info_ProcedureStatement;
 }  // namespace protobuf_proto_2fstatement_2eproto
 namespace Pasc {
@@ -104,6 +105,21 @@ class ForStatementDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<ForStatement>
       _instance;
 } _ForStatement_default_instance_;
+class CaseStatement_CaseListElementDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<CaseStatement_CaseListElement>
+      _instance;
+} _CaseStatement_CaseListElement_default_instance_;
+class CaseStatementDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<CaseStatement>
+      _instance;
+} _CaseStatement_default_instance_;
+class GoToStatementDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<GoToStatement>
+      _instance;
+} _GoToStatement_default_instance_;
 class StatementDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Statement>
@@ -116,6 +132,8 @@ class StatementDefaultTypeInternal {
   const ::Pasc::CompoundStatement* cmpdstmt_;
   const ::Pasc::RepeatStatement* rptstmt_;
   const ::Pasc::ForStatement* forstmt_;
+  const ::Pasc::CaseStatement* casestmt_;
+  const ::Pasc::GoToStatement* gotostmt_;
 } _Statement_default_instance_;
 }  // namespace Pasc
 namespace protobuf_proto_2fstatement_2eproto {
@@ -145,8 +163,9 @@ static void InitDefaultsProcedureStatement_Write() {
   ::Pasc::ProcedureStatement_Write::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_Write =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsProcedureStatement_Write}, {}};
+::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_Write =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsProcedureStatement_Write}, {
+      &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,}};
 
 static void InitDefaultsProcedureStatement_Read() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -159,8 +178,9 @@ static void InitDefaultsProcedureStatement_Read() {
   ::Pasc::ProcedureStatement_Read::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_Read =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsProcedureStatement_Read}, {}};
+::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_Read =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsProcedureStatement_Read}, {
+      &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,}};
 
 static void InitDefaultsProcedureStatement_ReadLn() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -173,8 +193,9 @@ static void InitDefaultsProcedureStatement_ReadLn() {
   ::Pasc::ProcedureStatement_ReadLn::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_ProcedureStatement_ReadLn =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsProcedureStatement_ReadLn}, {}};
+::google::protobuf::internal::SCCInfo<1> scc_info_ProcedureStatement_ReadLn =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsProcedureStatement_ReadLn}, {
+      &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,}};
 
 static void InitDefaultsProcedureStatement_ProcStmt() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -240,7 +261,7 @@ static void InitDefaultsReturnStatement() {
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsReturnStatement}, {
       &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,}};
 
-static void InitDefaultsCompoundStatement() {
+static void InitDefaultsCaseStatement() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
@@ -269,6 +290,16 @@ static void InitDefaultsCompoundStatement() {
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
   {
+    void* ptr = &::Pasc::_CaseStatement_CaseListElement_default_instance_;
+    new (ptr) ::Pasc::CaseStatement_CaseListElement();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  {
+    void* ptr = &::Pasc::_CaseStatement_default_instance_;
+    new (ptr) ::Pasc::CaseStatement();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  {
     void* ptr = &::Pasc::_Statement_default_instance_;
     new (ptr) ::Pasc::Statement();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
@@ -278,15 +309,32 @@ static void InitDefaultsCompoundStatement() {
   ::Pasc::CompoundStatement::InitAsDefaultInstance();
   ::Pasc::RepeatStatement::InitAsDefaultInstance();
   ::Pasc::ForStatement::InitAsDefaultInstance();
+  ::Pasc::CaseStatement_CaseListElement::InitAsDefaultInstance();
+  ::Pasc::CaseStatement::InitAsDefaultInstance();
   ::Pasc::Statement::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<4> scc_info_CompoundStatement =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 4, InitDefaultsCompoundStatement}, {
+::google::protobuf::internal::SCCInfo<5> scc_info_CaseStatement =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 5, InitDefaultsCaseStatement}, {
       &protobuf_proto_2fexpression_2eproto::scc_info_BinaryExpr.base,
       &protobuf_proto_2fstatement_2eproto::scc_info_AssignStatement.base,
       &protobuf_proto_2fstatement_2eproto::scc_info_ProcedureStatement.base,
-      &protobuf_proto_2fstatement_2eproto::scc_info_ReturnStatement.base,}};
+      &protobuf_proto_2fstatement_2eproto::scc_info_ReturnStatement.base,
+      &protobuf_proto_2fstatement_2eproto::scc_info_GoToStatement.base,}};
+
+static void InitDefaultsGoToStatement() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::Pasc::_GoToStatement_default_instance_;
+    new (ptr) ::Pasc::GoToStatement();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::Pasc::GoToStatement::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_GoToStatement =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsGoToStatement}, {}};
 
 void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_ProcedureStatement_WriteLn.base);
@@ -297,10 +345,11 @@ void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_ProcedureStatement.base);
   ::google::protobuf::internal::InitSCC(&scc_info_AssignStatement.base);
   ::google::protobuf::internal::InitSCC(&scc_info_ReturnStatement.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CaseStatement.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_GoToStatement.base);
 }
 
-::google::protobuf::Metadata file_level_metadata[14];
+::google::protobuf::Metadata file_level_metadata[17];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[2];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
@@ -312,21 +361,34 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_WriteLn, name_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_WriteLn, file_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_WriteLn, params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_WriteLn, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Write, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Write, name_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Write, file_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Write, params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Write, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Read, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Read, name_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Read, file_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Read, varaccess_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_Read, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ReadLn, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ReadLn, name_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ReadLn, file_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ReadLn, varaccess_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ReadLn, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ProcStmt, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -334,6 +396,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ProcStmt, name_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ProcStmt, params_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement_ProcStmt, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ProcedureStatement, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -353,6 +416,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::AssignStatement, variable_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::AssignStatement, value_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::AssignStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::IfStatement, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -361,12 +425,14 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::IfStatement, cond_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::IfStatement, truepath_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::IfStatement, elsepath_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::IfStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ReturnStatement, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ReturnStatement, value_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ReturnStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::WhileStatement, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -374,12 +440,14 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::WhileStatement, cond_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::WhileStatement, body_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::WhileStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CompoundStatement, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CompoundStatement, stmts_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CompoundStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::RepeatStatement, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -387,6 +455,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::RepeatStatement, stmts_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::RepeatStatement, cond_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::RepeatStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -397,6 +466,28 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, finalvalue_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, body_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, dir_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::ForStatement, label_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement_CaseListElement, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement_CaseListElement, constants_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement_CaseListElement, stmt_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, caseindex_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, cle_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::CaseStatement, label_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::GoToStatement, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::GoToStatement, label_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Statement, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -411,23 +502,28 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   offsetof(::Pasc::StatementDefaultTypeInternal, cmpdstmt_),
   offsetof(::Pasc::StatementDefaultTypeInternal, rptstmt_),
   offsetof(::Pasc::StatementDefaultTypeInternal, forstmt_),
+  offsetof(::Pasc::StatementDefaultTypeInternal, casestmt_),
+  offsetof(::Pasc::StatementDefaultTypeInternal, gotostmt_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Statement, stmt_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::Pasc::ProcedureStatement_WriteLn)},
-  { 8, -1, sizeof(::Pasc::ProcedureStatement_Write)},
-  { 13, -1, sizeof(::Pasc::ProcedureStatement_Read)},
-  { 18, -1, sizeof(::Pasc::ProcedureStatement_ReadLn)},
-  { 23, -1, sizeof(::Pasc::ProcedureStatement_ProcStmt)},
-  { 30, -1, sizeof(::Pasc::ProcedureStatement)},
-  { 42, -1, sizeof(::Pasc::AssignStatement)},
-  { 49, -1, sizeof(::Pasc::IfStatement)},
-  { 57, -1, sizeof(::Pasc::ReturnStatement)},
-  { 63, -1, sizeof(::Pasc::WhileStatement)},
-  { 70, -1, sizeof(::Pasc::CompoundStatement)},
-  { 76, -1, sizeof(::Pasc::RepeatStatement)},
-  { 83, -1, sizeof(::Pasc::ForStatement)},
-  { 93, -1, sizeof(::Pasc::Statement)},
+  { 9, -1, sizeof(::Pasc::ProcedureStatement_Write)},
+  { 18, -1, sizeof(::Pasc::ProcedureStatement_Read)},
+  { 27, -1, sizeof(::Pasc::ProcedureStatement_ReadLn)},
+  { 36, -1, sizeof(::Pasc::ProcedureStatement_ProcStmt)},
+  { 44, -1, sizeof(::Pasc::ProcedureStatement)},
+  { 56, -1, sizeof(::Pasc::AssignStatement)},
+  { 64, -1, sizeof(::Pasc::IfStatement)},
+  { 73, -1, sizeof(::Pasc::ReturnStatement)},
+  { 80, -1, sizeof(::Pasc::WhileStatement)},
+  { 88, -1, sizeof(::Pasc::CompoundStatement)},
+  { 95, -1, sizeof(::Pasc::RepeatStatement)},
+  { 103, -1, sizeof(::Pasc::ForStatement)},
+  { 114, -1, sizeof(::Pasc::CaseStatement_CaseListElement)},
+  { 121, -1, sizeof(::Pasc::CaseStatement)},
+  { 129, -1, sizeof(::Pasc::GoToStatement)},
+  { 135, -1, sizeof(::Pasc::Statement)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -444,6 +540,9 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_CompoundStatement_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_RepeatStatement_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_ForStatement_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_CaseStatement_CaseListElement_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_CaseStatement_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_GoToStatement_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Statement_default_instance_),
 };
 
@@ -462,14 +561,14 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 14);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 17);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\025proto/statement.proto\022\004Pasc\032\021proto/tok"
-      "en.proto\032\026proto/expression.proto\"\302\004\n\022Pro"
+      "en.proto\032\026proto/expression.proto\"\203\007\n\022Pro"
       "cedureStatement\022-\n\004kind\030\001 \001(\0162\037.Pasc.Pro"
       "cedureStatement.PSKind\022-\n\003wrt\030\002 \001(\0132\036.Pa"
       "sc.ProcedureStatement.WriteH\000\0221\n\005wrtLn\030\003"
@@ -477,47 +576,66 @@ void AddDescriptorsImpl() {
       "\022+\n\002rd\030\004 \001(\0132\035.Pasc.ProcedureStatement.R"
       "eadH\000\022/\n\004rdLn\030\005 \001(\0132\037.Pasc.ProcedureStat"
       "ement.ReadLnH\000\022/\n\002ps\030\006 \001(\0132!.Pasc.Proced"
-      "ureStatement.ProcStmtH\000\032Y\n\007WriteLn\022\014\n\004na"
+      "ureStatement.ProcStmtH\000\032h\n\007WriteLn\022\014\n\004na"
       "me\030\001 \001(\t\022\036\n\004file\030\002 \001(\0132\020.Pasc.Expression"
-      "\022 \n\006params\030\003 \003(\0132\020.Pasc.Expression\032\007\n\005Wr"
-      "ite\032\006\n\004Read\032\010\n\006ReadLn\032L\n\010ProcStmt\022\036\n\004nam"
-      "e\030\001 \001(\0132\020.Pasc.Expression\022 \n\006params\030\002 \003("
-      "\0132\020.Pasc.Expression\"@\n\006PSKind\022\007\n\003wln\020\000\022\t"
-      "\n\005write\020\001\022\010\n\004read\020\002\022\n\n\006readLn\020\003\022\014\n\010procS"
-      "tmt\020\004B\006\n\004stmt\"V\n\017AssignStatement\022\"\n\010vari"
-      "able\030\001 \001(\0132\020.Pasc.Expression\022\037\n\005value\030\002 "
-      "\001(\0132\020.Pasc.Expression\"s\n\013IfStatement\022\036\n\004"
-      "cond\030\001 \001(\0132\020.Pasc.Expression\022!\n\010truePath"
-      "\030\002 \001(\0132\017.Pasc.Statement\022!\n\010elsePath\030\003 \001("
-      "\0132\017.Pasc.Statement\"2\n\017ReturnStatement\022\037\n"
-      "\005value\030\001 \001(\0132\020.Pasc.Expression\"O\n\016WhileS"
-      "tatement\022\036\n\004cond\030\001 \001(\0132\020.Pasc.Expression"
-      "\022\035\n\004body\030\002 \001(\0132\017.Pasc.Statement\"3\n\021Compo"
-      "undStatement\022\036\n\005stmts\030\001 \003(\0132\017.Pasc.State"
-      "ment\"Q\n\017RepeatStatement\022\036\n\005stmts\030\001 \003(\0132\017"
-      ".Pasc.Statement\022\036\n\004cond\030\002 \001(\0132\020.Pasc.Exp"
-      "ression\"\270\001\n\014ForStatement\022 \n\006ctlVar\030\001 \001(\013"
-      "2\020.Pasc.Expression\022#\n\tinitValue\030\002 \001(\0132\020."
-      "Pasc.Expression\022$\n\nfinalValue\030\003 \001(\0132\020.Pa"
-      "sc.Expression\022\035\n\004body\030\004 \001(\0132\017.Pasc.State"
-      "ment\022\034\n\003dir\030\005 \001(\0162\017.Pasc.TokenKind\"\367\003\n\tS"
-      "tatement\022&\n\004kind\030\001 \001(\0162\030.Pasc.Statement."
-      "StmtKind\022+\n\nassignStmt\030\002 \001(\0132\025.Pasc.Assi"
-      "gnStatementH\000\022,\n\010procStmt\030\003 \001(\0132\030.Pasc.P"
-      "rocedureStatementH\000\022#\n\006ifStmt\030\004 \001(\0132\021.Pa"
-      "sc.IfStatementH\000\022(\n\007retStmt\030\005 \001(\0132\025.Pasc"
-      ".ReturnStatementH\000\022)\n\twhileStmt\030\006 \001(\0132\024."
-      "Pasc.WhileStatementH\000\022+\n\010cmpdStmt\030\007 \001(\0132"
-      "\027.Pasc.CompoundStatementH\000\022(\n\007rptStmt\030\010 "
-      "\001(\0132\025.Pasc.RepeatStatementH\000\022%\n\007forStmt\030"
-      "\t \001(\0132\022.Pasc.ForStatementH\000\"g\n\010StmtKind\022"
-      "\006\n\002if\020\000\022\n\n\006assign\020\001\022\r\n\tprocedure\020\002\022\n\n\006re"
-      "turn\020\003\022\t\n\005while\020\004\022\014\n\010compound\020\005\022\n\n\006repea"
-      "t\020\006\022\007\n\003for\020\007B\006\n\004stmtB\030Z\026pkg/codegen/seri"
-      "alizerb\006proto3"
+      "\022 \n\006params\030\003 \003(\0132\020.Pasc.Expression\022\r\n\005la"
+      "bel\030\004 \001(\t\032f\n\005Write\022\014\n\004name\030\001 \001(\t\022\036\n\004file"
+      "\030\002 \001(\0132\020.Pasc.Expression\022 \n\006params\030\003 \003(\013"
+      "2\020.Pasc.Expression\022\r\n\005label\030\004 \001(\t\032h\n\004Rea"
+      "d\022\014\n\004name\030\001 \001(\t\022\036\n\004file\030\002 \001(\0132\020.Pasc.Exp"
+      "ression\022#\n\tvarAccess\030\003 \003(\0132\020.Pasc.Expres"
+      "sion\022\r\n\005label\030\004 \001(\t\032j\n\006ReadLn\022\014\n\004name\030\001 "
+      "\001(\t\022\036\n\004file\030\002 \001(\0132\020.Pasc.Expression\022#\n\tv"
+      "arAccess\030\003 \003(\0132\020.Pasc.Expression\022\r\n\005labe"
+      "l\030\004 \001(\t\032[\n\010ProcStmt\022\036\n\004name\030\001 \001(\0132\020.Pasc"
+      ".Expression\022 \n\006params\030\002 \003(\0132\020.Pasc.Expre"
+      "ssion\022\r\n\005label\030\003 \001(\t\"@\n\006PSKind\022\007\n\003wln\020\000\022"
+      "\t\n\005write\020\001\022\010\n\004read\020\002\022\n\n\006readLn\020\003\022\014\n\010proc"
+      "Stmt\020\004B\006\n\004stmt\"e\n\017AssignStatement\022\"\n\010var"
+      "iable\030\001 \001(\0132\020.Pasc.Expression\022\037\n\005value\030\002"
+      " \001(\0132\020.Pasc.Expression\022\r\n\005label\030\003 \001(\t\"\202\001"
+      "\n\013IfStatement\022\036\n\004cond\030\001 \001(\0132\020.Pasc.Expre"
+      "ssion\022!\n\010truePath\030\002 \001(\0132\017.Pasc.Statement"
+      "\022!\n\010elsePath\030\003 \001(\0132\017.Pasc.Statement\022\r\n\005l"
+      "abel\030\004 \001(\t\"A\n\017ReturnStatement\022\037\n\005value\030\001"
+      " \001(\0132\020.Pasc.Expression\022\r\n\005label\030\002 \001(\t\"^\n"
+      "\016WhileStatement\022\036\n\004cond\030\001 \001(\0132\020.Pasc.Exp"
+      "ression\022\035\n\004body\030\002 \001(\0132\017.Pasc.Statement\022\r"
+      "\n\005label\030\003 \001(\t\"B\n\021CompoundStatement\022\036\n\005st"
+      "mts\030\001 \003(\0132\017.Pasc.Statement\022\r\n\005label\030\002 \001("
+      "\t\"`\n\017RepeatStatement\022\036\n\005stmts\030\001 \003(\0132\017.Pa"
+      "sc.Statement\022\036\n\004cond\030\002 \001(\0132\020.Pasc.Expres"
+      "sion\022\r\n\005label\030\003 \001(\t\"\307\001\n\014ForStatement\022 \n\006"
+      "ctlVar\030\001 \001(\0132\020.Pasc.Expression\022#\n\tinitVa"
+      "lue\030\002 \001(\0132\020.Pasc.Expression\022$\n\nfinalValu"
+      "e\030\003 \001(\0132\020.Pasc.Expression\022\035\n\004body\030\004 \001(\0132"
+      "\017.Pasc.Statement\022\034\n\003dir\030\005 \001(\0162\017.Pasc.Tok"
+      "enKind\022\r\n\005label\030\006 \001(\t\"\314\001\n\rCaseStatement\022"
+      "#\n\tcaseIndex\030\001 \001(\0132\020.Pasc.Expression\0220\n\003"
+      "cle\030\002 \003(\0132#.Pasc.CaseStatement.CaseListE"
+      "lement\022\r\n\005label\030\003 \001(\t\032U\n\017CaseListElement"
+      "\022#\n\tconstants\030\001 \003(\0132\020.Pasc.Expression\022\035\n"
+      "\004stmt\030\002 \001(\0132\017.Pasc.Statement\"\036\n\rGoToStat"
+      "ement\022\r\n\005label\030\001 \001(\t\"\335\004\n\tStatement\022&\n\004ki"
+      "nd\030\001 \001(\0162\030.Pasc.Statement.StmtKind\022+\n\nas"
+      "signStmt\030\002 \001(\0132\025.Pasc.AssignStatementH\000\022"
+      ",\n\010procStmt\030\003 \001(\0132\030.Pasc.ProcedureStatem"
+      "entH\000\022#\n\006ifStmt\030\004 \001(\0132\021.Pasc.IfStatement"
+      "H\000\022(\n\007retStmt\030\005 \001(\0132\025.Pasc.ReturnStateme"
+      "ntH\000\022)\n\twhileStmt\030\006 \001(\0132\024.Pasc.WhileStat"
+      "ementH\000\022+\n\010cmpdStmt\030\007 \001(\0132\027.Pasc.Compoun"
+      "dStatementH\000\022(\n\007rptStmt\030\010 \001(\0132\025.Pasc.Rep"
+      "eatStatementH\000\022%\n\007forStmt\030\t \001(\0132\022.Pasc.F"
+      "orStatementH\000\022\'\n\010caseStmt\030\n \001(\0132\023.Pasc.C"
+      "aseStatementH\000\022\'\n\010gotoStmt\030\013 \001(\0132\023.Pasc."
+      "GoToStatementH\000\"{\n\010StmtKind\022\006\n\002if\020\000\022\n\n\006a"
+      "ssign\020\001\022\r\n\tprocedure\020\002\022\n\n\006return\020\003\022\t\n\005wh"
+      "ile\020\004\022\014\n\010compound\020\005\022\n\n\006repeat\020\006\022\007\n\003for\020\007"
+      "\022\010\n\004case\020\010\022\010\n\004goto\020\tB\006\n\004stmtB\030Z\026pkg/code"
+      "gen/serializerb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1854);
+      descriptor, 2622);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/statement.proto", &protobuf_RegisterTypes);
   ::protobuf_proto_2ftoken_2eproto::AddDescriptors();
@@ -577,6 +695,8 @@ bool Statement_StmtKind_IsValid(int value) {
     case 5:
     case 6:
     case 7:
+    case 8:
+    case 9:
       return true;
     default:
       return false;
@@ -592,6 +712,8 @@ const Statement_StmtKind Statement::while_;
 const Statement_StmtKind Statement::compound;
 const Statement_StmtKind Statement::repeat;
 const Statement_StmtKind Statement::for_;
+const Statement_StmtKind Statement::case_;
+const Statement_StmtKind Statement::goto_;
 const Statement_StmtKind Statement::StmtKind_MIN;
 const Statement_StmtKind Statement::StmtKind_MAX;
 const int Statement::StmtKind_ARRAYSIZE;
@@ -616,6 +738,7 @@ void ProcedureStatement_WriteLn::clear_params() {
 const int ProcedureStatement_WriteLn::kNameFieldNumber;
 const int ProcedureStatement_WriteLn::kFileFieldNumber;
 const int ProcedureStatement_WriteLn::kParamsFieldNumber;
+const int ProcedureStatement_WriteLn::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ProcedureStatement_WriteLn::ProcedureStatement_WriteLn()
@@ -634,6 +757,10 @@ ProcedureStatement_WriteLn::ProcedureStatement_WriteLn(const ProcedureStatement_
   if (from.name().size() > 0) {
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_file()) {
     file_ = new ::Pasc::Expression(*from.file_);
   } else {
@@ -644,6 +771,7 @@ ProcedureStatement_WriteLn::ProcedureStatement_WriteLn(const ProcedureStatement_
 
 void ProcedureStatement_WriteLn::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   file_ = NULL;
 }
 
@@ -654,6 +782,7 @@ ProcedureStatement_WriteLn::~ProcedureStatement_WriteLn() {
 
 void ProcedureStatement_WriteLn::SharedDtor() {
   name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete file_;
 }
 
@@ -679,6 +808,7 @@ void ProcedureStatement_WriteLn::Clear() {
 
   params_.Clear();
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && file_ != NULL) {
     delete file_;
   }
@@ -736,6 +866,22 @@ bool ProcedureStatement_WriteLn::MergePartialFromCodedStream(
         break;
       }
 
+      // string label = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.WriteLn.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -787,6 +933,16 @@ void ProcedureStatement_WriteLn::SerializeWithCachedSizes(
       output);
   }
 
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.WriteLn.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -827,6 +983,17 @@ void ProcedureStatement_WriteLn::SerializeWithCachedSizes(
         3, this->params(static_cast<int>(i)), deterministic, target);
   }
 
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.WriteLn.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -860,6 +1027,13 @@ size_t ProcedureStatement_WriteLn::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->name());
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
   }
 
   // .Pasc.Expression file = 2;
@@ -901,6 +1075,10 @@ void ProcedureStatement_WriteLn::MergeFrom(const ProcedureStatement_WriteLn& fro
 
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_file()) {
     mutable_file()->::Pasc::Expression::MergeFrom(from.file());
   }
@@ -933,6 +1111,8 @@ void ProcedureStatement_WriteLn::InternalSwap(ProcedureStatement_WriteLn* other)
   CastToBase(&params_)->InternalSwap(CastToBase(&other->params_));
   name_.Swap(&other->name_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(file_, other->file_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
@@ -946,8 +1126,23 @@ void ProcedureStatement_WriteLn::InternalSwap(ProcedureStatement_WriteLn* other)
 // ===================================================================
 
 void ProcedureStatement_Write::InitAsDefaultInstance() {
+  ::Pasc::_ProcedureStatement_Write_default_instance_._instance.get_mutable()->file_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
+}
+void ProcedureStatement_Write::clear_file() {
+  if (GetArenaNoVirtual() == NULL && file_ != NULL) {
+    delete file_;
+  }
+  file_ = NULL;
+}
+void ProcedureStatement_Write::clear_params() {
+  params_.Clear();
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ProcedureStatement_Write::kNameFieldNumber;
+const int ProcedureStatement_Write::kFileFieldNumber;
+const int ProcedureStatement_Write::kParamsFieldNumber;
+const int ProcedureStatement_Write::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ProcedureStatement_Write::ProcedureStatement_Write()
@@ -959,12 +1154,29 @@ ProcedureStatement_Write::ProcedureStatement_Write()
 }
 ProcedureStatement_Write::ProcedureStatement_Write(const ProcedureStatement_Write& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
+      _internal_metadata_(NULL),
+      params_(from.params_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.name().size() > 0) {
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_file()) {
+    file_ = new ::Pasc::Expression(*from.file_);
+  } else {
+    file_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:Pasc.ProcedureStatement.Write)
 }
 
 void ProcedureStatement_Write::SharedCtor() {
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  file_ = NULL;
 }
 
 ProcedureStatement_Write::~ProcedureStatement_Write() {
@@ -973,6 +1185,9 @@ ProcedureStatement_Write::~ProcedureStatement_Write() {
 }
 
 void ProcedureStatement_Write::SharedDtor() {
+  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete file_;
 }
 
 void ProcedureStatement_Write::SetCachedSize(int size) const {
@@ -995,6 +1210,13 @@ void ProcedureStatement_Write::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  params_.Clear();
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && file_ != NULL) {
+    delete file_;
+  }
+  file_ = NULL;
   _internal_metadata_.Clear();
 }
 
@@ -1007,12 +1229,73 @@ bool ProcedureStatement_Write::MergePartialFromCodedStream(
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
-  handle_unusual:
-    if (tag == 0) {
-      goto success;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string name = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->name().data(), static_cast<int>(this->name().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.Write.name"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.Expression file = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_file()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .Pasc.Expression params = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_params()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.Write.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
     }
-    DO_(::google::protobuf::internal::WireFormat::SkipField(
-          input, tag, _internal_metadata_.mutable_unknown_fields()));
   }
 success:
   // @@protoc_insertion_point(parse_success:Pasc.ProcedureStatement.Write)
@@ -1029,6 +1312,41 @@ void ProcedureStatement_Write::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Write.name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->name(), output);
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->_internal_file(), output);
+  }
+
+  // repeated .Pasc.Expression params = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->params_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3,
+      this->params(static_cast<int>(i)),
+      output);
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Write.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -1042,6 +1360,43 @@ void ProcedureStatement_Write::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:Pasc.ProcedureStatement.Write)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Write.name");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->name(), target);
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->_internal_file(), deterministic, target);
+  }
+
+  // repeated .Pasc.Expression params = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->params_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        3, this->params(static_cast<int>(i)), deterministic, target);
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Write.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->label(), target);
+  }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
@@ -1060,6 +1415,38 @@ size_t ProcedureStatement_Write::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // repeated .Pasc.Expression params = 3;
+  {
+    unsigned int count = static_cast<unsigned int>(this->params_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->params(static_cast<int>(i)));
+    }
+  }
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->name());
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *file_);
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -1087,6 +1474,18 @@ void ProcedureStatement_Write::MergeFrom(const ProcedureStatement_Write& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  params_.MergeFrom(from.params_);
+  if (from.name().size() > 0) {
+
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_file()) {
+    mutable_file()->::Pasc::Expression::MergeFrom(from.file());
+  }
 }
 
 void ProcedureStatement_Write::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1113,6 +1512,12 @@ void ProcedureStatement_Write::Swap(ProcedureStatement_Write* other) {
 }
 void ProcedureStatement_Write::InternalSwap(ProcedureStatement_Write* other) {
   using std::swap;
+  CastToBase(&params_)->InternalSwap(CastToBase(&other->params_));
+  name_.Swap(&other->name_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(file_, other->file_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
@@ -1125,8 +1530,23 @@ void ProcedureStatement_Write::InternalSwap(ProcedureStatement_Write* other) {
 // ===================================================================
 
 void ProcedureStatement_Read::InitAsDefaultInstance() {
+  ::Pasc::_ProcedureStatement_Read_default_instance_._instance.get_mutable()->file_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
+}
+void ProcedureStatement_Read::clear_file() {
+  if (GetArenaNoVirtual() == NULL && file_ != NULL) {
+    delete file_;
+  }
+  file_ = NULL;
+}
+void ProcedureStatement_Read::clear_varaccess() {
+  varaccess_.Clear();
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ProcedureStatement_Read::kNameFieldNumber;
+const int ProcedureStatement_Read::kFileFieldNumber;
+const int ProcedureStatement_Read::kVarAccessFieldNumber;
+const int ProcedureStatement_Read::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ProcedureStatement_Read::ProcedureStatement_Read()
@@ -1138,12 +1558,29 @@ ProcedureStatement_Read::ProcedureStatement_Read()
 }
 ProcedureStatement_Read::ProcedureStatement_Read(const ProcedureStatement_Read& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
+      _internal_metadata_(NULL),
+      varaccess_(from.varaccess_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.name().size() > 0) {
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_file()) {
+    file_ = new ::Pasc::Expression(*from.file_);
+  } else {
+    file_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:Pasc.ProcedureStatement.Read)
 }
 
 void ProcedureStatement_Read::SharedCtor() {
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  file_ = NULL;
 }
 
 ProcedureStatement_Read::~ProcedureStatement_Read() {
@@ -1152,6 +1589,9 @@ ProcedureStatement_Read::~ProcedureStatement_Read() {
 }
 
 void ProcedureStatement_Read::SharedDtor() {
+  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete file_;
 }
 
 void ProcedureStatement_Read::SetCachedSize(int size) const {
@@ -1174,6 +1614,13 @@ void ProcedureStatement_Read::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  varaccess_.Clear();
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && file_ != NULL) {
+    delete file_;
+  }
+  file_ = NULL;
   _internal_metadata_.Clear();
 }
 
@@ -1186,12 +1633,73 @@ bool ProcedureStatement_Read::MergePartialFromCodedStream(
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
-  handle_unusual:
-    if (tag == 0) {
-      goto success;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string name = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->name().data(), static_cast<int>(this->name().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.Read.name"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.Expression file = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_file()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .Pasc.Expression varAccess = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_varaccess()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.Read.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
     }
-    DO_(::google::protobuf::internal::WireFormat::SkipField(
-          input, tag, _internal_metadata_.mutable_unknown_fields()));
   }
 success:
   // @@protoc_insertion_point(parse_success:Pasc.ProcedureStatement.Read)
@@ -1208,6 +1716,41 @@ void ProcedureStatement_Read::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Read.name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->name(), output);
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->_internal_file(), output);
+  }
+
+  // repeated .Pasc.Expression varAccess = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->varaccess_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3,
+      this->varaccess(static_cast<int>(i)),
+      output);
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Read.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -1221,6 +1764,43 @@ void ProcedureStatement_Read::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:Pasc.ProcedureStatement.Read)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Read.name");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->name(), target);
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->_internal_file(), deterministic, target);
+  }
+
+  // repeated .Pasc.Expression varAccess = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->varaccess_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        3, this->varaccess(static_cast<int>(i)), deterministic, target);
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.Read.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->label(), target);
+  }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
@@ -1239,6 +1819,38 @@ size_t ProcedureStatement_Read::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // repeated .Pasc.Expression varAccess = 3;
+  {
+    unsigned int count = static_cast<unsigned int>(this->varaccess_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->varaccess(static_cast<int>(i)));
+    }
+  }
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->name());
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *file_);
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -1266,6 +1878,18 @@ void ProcedureStatement_Read::MergeFrom(const ProcedureStatement_Read& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  varaccess_.MergeFrom(from.varaccess_);
+  if (from.name().size() > 0) {
+
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_file()) {
+    mutable_file()->::Pasc::Expression::MergeFrom(from.file());
+  }
 }
 
 void ProcedureStatement_Read::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1292,6 +1916,12 @@ void ProcedureStatement_Read::Swap(ProcedureStatement_Read* other) {
 }
 void ProcedureStatement_Read::InternalSwap(ProcedureStatement_Read* other) {
   using std::swap;
+  CastToBase(&varaccess_)->InternalSwap(CastToBase(&other->varaccess_));
+  name_.Swap(&other->name_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(file_, other->file_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
@@ -1304,8 +1934,23 @@ void ProcedureStatement_Read::InternalSwap(ProcedureStatement_Read* other) {
 // ===================================================================
 
 void ProcedureStatement_ReadLn::InitAsDefaultInstance() {
+  ::Pasc::_ProcedureStatement_ReadLn_default_instance_._instance.get_mutable()->file_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
+}
+void ProcedureStatement_ReadLn::clear_file() {
+  if (GetArenaNoVirtual() == NULL && file_ != NULL) {
+    delete file_;
+  }
+  file_ = NULL;
+}
+void ProcedureStatement_ReadLn::clear_varaccess() {
+  varaccess_.Clear();
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ProcedureStatement_ReadLn::kNameFieldNumber;
+const int ProcedureStatement_ReadLn::kFileFieldNumber;
+const int ProcedureStatement_ReadLn::kVarAccessFieldNumber;
+const int ProcedureStatement_ReadLn::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ProcedureStatement_ReadLn::ProcedureStatement_ReadLn()
@@ -1317,12 +1962,29 @@ ProcedureStatement_ReadLn::ProcedureStatement_ReadLn()
 }
 ProcedureStatement_ReadLn::ProcedureStatement_ReadLn(const ProcedureStatement_ReadLn& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
+      _internal_metadata_(NULL),
+      varaccess_(from.varaccess_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.name().size() > 0) {
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_file()) {
+    file_ = new ::Pasc::Expression(*from.file_);
+  } else {
+    file_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:Pasc.ProcedureStatement.ReadLn)
 }
 
 void ProcedureStatement_ReadLn::SharedCtor() {
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  file_ = NULL;
 }
 
 ProcedureStatement_ReadLn::~ProcedureStatement_ReadLn() {
@@ -1331,6 +1993,9 @@ ProcedureStatement_ReadLn::~ProcedureStatement_ReadLn() {
 }
 
 void ProcedureStatement_ReadLn::SharedDtor() {
+  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete file_;
 }
 
 void ProcedureStatement_ReadLn::SetCachedSize(int size) const {
@@ -1353,6 +2018,13 @@ void ProcedureStatement_ReadLn::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  varaccess_.Clear();
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && file_ != NULL) {
+    delete file_;
+  }
+  file_ = NULL;
   _internal_metadata_.Clear();
 }
 
@@ -1365,12 +2037,73 @@ bool ProcedureStatement_ReadLn::MergePartialFromCodedStream(
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
-  handle_unusual:
-    if (tag == 0) {
-      goto success;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string name = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->name().data(), static_cast<int>(this->name().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.ReadLn.name"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.Expression file = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_file()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .Pasc.Expression varAccess = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_varaccess()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.ReadLn.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
     }
-    DO_(::google::protobuf::internal::WireFormat::SkipField(
-          input, tag, _internal_metadata_.mutable_unknown_fields()));
   }
 success:
   // @@protoc_insertion_point(parse_success:Pasc.ProcedureStatement.ReadLn)
@@ -1387,6 +2120,41 @@ void ProcedureStatement_ReadLn::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.ReadLn.name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->name(), output);
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->_internal_file(), output);
+  }
+
+  // repeated .Pasc.Expression varAccess = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->varaccess_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3,
+      this->varaccess(static_cast<int>(i)),
+      output);
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.ReadLn.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -1400,6 +2168,43 @@ void ProcedureStatement_ReadLn::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_to_array_start:Pasc.ProcedureStatement.ReadLn)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.ReadLn.name");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->name(), target);
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->_internal_file(), deterministic, target);
+  }
+
+  // repeated .Pasc.Expression varAccess = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->varaccess_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        3, this->varaccess(static_cast<int>(i)), deterministic, target);
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.ReadLn.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->label(), target);
+  }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
@@ -1418,6 +2223,38 @@ size_t ProcedureStatement_ReadLn::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // repeated .Pasc.Expression varAccess = 3;
+  {
+    unsigned int count = static_cast<unsigned int>(this->varaccess_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->varaccess(static_cast<int>(i)));
+    }
+  }
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->name());
+  }
+
+  // string label = 4;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
+  // .Pasc.Expression file = 2;
+  if (this->has_file()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *file_);
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -1445,6 +2282,18 @@ void ProcedureStatement_ReadLn::MergeFrom(const ProcedureStatement_ReadLn& from)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  varaccess_.MergeFrom(from.varaccess_);
+  if (from.name().size() > 0) {
+
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_file()) {
+    mutable_file()->::Pasc::Expression::MergeFrom(from.file());
+  }
 }
 
 void ProcedureStatement_ReadLn::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1471,6 +2320,12 @@ void ProcedureStatement_ReadLn::Swap(ProcedureStatement_ReadLn* other) {
 }
 void ProcedureStatement_ReadLn::InternalSwap(ProcedureStatement_ReadLn* other) {
   using std::swap;
+  CastToBase(&varaccess_)->InternalSwap(CastToBase(&other->varaccess_));
+  name_.Swap(&other->name_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(file_, other->file_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
@@ -1498,6 +2353,7 @@ void ProcedureStatement_ProcStmt::clear_params() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ProcedureStatement_ProcStmt::kNameFieldNumber;
 const int ProcedureStatement_ProcStmt::kParamsFieldNumber;
+const int ProcedureStatement_ProcStmt::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ProcedureStatement_ProcStmt::ProcedureStatement_ProcStmt()
@@ -1512,6 +2368,10 @@ ProcedureStatement_ProcStmt::ProcedureStatement_ProcStmt(const ProcedureStatemen
       _internal_metadata_(NULL),
       params_(from.params_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_name()) {
     name_ = new ::Pasc::Expression(*from.name_);
   } else {
@@ -1521,6 +2381,7 @@ ProcedureStatement_ProcStmt::ProcedureStatement_ProcStmt(const ProcedureStatemen
 }
 
 void ProcedureStatement_ProcStmt::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   name_ = NULL;
 }
 
@@ -1530,6 +2391,7 @@ ProcedureStatement_ProcStmt::~ProcedureStatement_ProcStmt() {
 }
 
 void ProcedureStatement_ProcStmt::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete name_;
 }
 
@@ -1554,6 +2416,7 @@ void ProcedureStatement_ProcStmt::Clear() {
   (void) cached_has_bits;
 
   params_.Clear();
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && name_ != NULL) {
     delete name_;
   }
@@ -1589,6 +2452,22 @@ bool ProcedureStatement_ProcStmt::MergePartialFromCodedStream(
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_params()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ProcedureStatement.ProcStmt.label"));
         } else {
           goto handle_unusual;
         }
@@ -1636,6 +2515,16 @@ void ProcedureStatement_ProcStmt::SerializeWithCachedSizes(
       output);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.ProcStmt.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -1665,6 +2554,17 @@ void ProcedureStatement_ProcStmt::SerializeWithCachedSizes(
         2, this->params(static_cast<int>(i)), deterministic, target);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ProcedureStatement.ProcStmt.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -1691,6 +2591,13 @@ size_t ProcedureStatement_ProcStmt::ByteSizeLong() const {
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           this->params(static_cast<int>(i)));
     }
+  }
+
+  // string label = 3;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
   }
 
   // .Pasc.Expression name = 1;
@@ -1728,6 +2635,10 @@ void ProcedureStatement_ProcStmt::MergeFrom(const ProcedureStatement_ProcStmt& f
   (void) cached_has_bits;
 
   params_.MergeFrom(from.params_);
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_name()) {
     mutable_name()->::Pasc::Expression::MergeFrom(from.name());
   }
@@ -1758,6 +2669,8 @@ void ProcedureStatement_ProcStmt::Swap(ProcedureStatement_ProcStmt* other) {
 void ProcedureStatement_ProcStmt::InternalSwap(ProcedureStatement_ProcStmt* other) {
   using std::swap;
   CastToBase(&params_)->InternalSwap(CastToBase(&other->params_));
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(name_, other->name_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
@@ -2355,6 +3268,7 @@ void AssignStatement::clear_value() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int AssignStatement::kVariableFieldNumber;
 const int AssignStatement::kValueFieldNumber;
+const int AssignStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 AssignStatement::AssignStatement()
@@ -2368,6 +3282,10 @@ AssignStatement::AssignStatement(const AssignStatement& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_variable()) {
     variable_ = new ::Pasc::Expression(*from.variable_);
   } else {
@@ -2382,6 +3300,7 @@ AssignStatement::AssignStatement(const AssignStatement& from)
 }
 
 void AssignStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&variable_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&value_) -
       reinterpret_cast<char*>(&variable_)) + sizeof(value_));
@@ -2393,6 +3312,7 @@ AssignStatement::~AssignStatement() {
 }
 
 void AssignStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete variable_;
   if (this != internal_default_instance()) delete value_;
 }
@@ -2417,6 +3337,7 @@ void AssignStatement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && variable_ != NULL) {
     delete variable_;
   }
@@ -2462,6 +3383,22 @@ bool AssignStatement::MergePartialFromCodedStream(
         break;
       }
 
+      // string label = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.AssignStatement.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2500,6 +3437,16 @@ void AssignStatement::SerializeWithCachedSizes(
       2, this->_internal_value(), output);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.AssignStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -2528,6 +3475,17 @@ void AssignStatement::SerializeWithCachedSizes(
         2, this->_internal_value(), deterministic, target);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.AssignStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -2545,6 +3503,13 @@ size_t AssignStatement::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // string label = 3;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
   // .Pasc.Expression variable = 1;
   if (this->has_variable()) {
     total_size += 1 +
@@ -2586,6 +3551,10 @@ void AssignStatement::MergeFrom(const AssignStatement& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_variable()) {
     mutable_variable()->::Pasc::Expression::MergeFrom(from.variable());
   }
@@ -2618,6 +3587,8 @@ void AssignStatement::Swap(AssignStatement* other) {
 }
 void AssignStatement::InternalSwap(AssignStatement* other) {
   using std::swap;
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(variable_, other->variable_);
   swap(value_, other->value_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -2649,12 +3620,13 @@ void IfStatement::clear_cond() {
 const int IfStatement::kCondFieldNumber;
 const int IfStatement::kTruePathFieldNumber;
 const int IfStatement::kElsePathFieldNumber;
+const int IfStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 IfStatement::IfStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.IfStatement)
 }
@@ -2662,6 +3634,10 @@ IfStatement::IfStatement(const IfStatement& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_cond()) {
     cond_ = new ::Pasc::Expression(*from.cond_);
   } else {
@@ -2681,6 +3657,7 @@ IfStatement::IfStatement(const IfStatement& from)
 }
 
 void IfStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&cond_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&elsepath_) -
       reinterpret_cast<char*>(&cond_)) + sizeof(elsepath_));
@@ -2692,6 +3669,7 @@ IfStatement::~IfStatement() {
 }
 
 void IfStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete cond_;
   if (this != internal_default_instance()) delete truepath_;
   if (this != internal_default_instance()) delete elsepath_;
@@ -2706,7 +3684,7 @@ const ::google::protobuf::Descriptor* IfStatement::descriptor() {
 }
 
 const IfStatement& IfStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -2717,6 +3695,7 @@ void IfStatement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && cond_ != NULL) {
     delete cond_;
   }
@@ -2778,6 +3757,22 @@ bool IfStatement::MergePartialFromCodedStream(
         break;
       }
 
+      // string label = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.IfStatement.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2822,6 +3817,16 @@ void IfStatement::SerializeWithCachedSizes(
       3, this->_internal_elsepath(), output);
   }
 
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.IfStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -2857,6 +3862,17 @@ void IfStatement::SerializeWithCachedSizes(
         3, this->_internal_elsepath(), deterministic, target);
   }
 
+  // string label = 4;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.IfStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -2874,6 +3890,13 @@ size_t IfStatement::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // string label = 4;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
   // .Pasc.Expression cond = 1;
   if (this->has_cond()) {
     total_size += 1 +
@@ -2922,6 +3945,10 @@ void IfStatement::MergeFrom(const IfStatement& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_cond()) {
     mutable_cond()->::Pasc::Expression::MergeFrom(from.cond());
   }
@@ -2957,6 +3984,8 @@ void IfStatement::Swap(IfStatement* other) {
 }
 void IfStatement::InternalSwap(IfStatement* other) {
   using std::swap;
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(cond_, other->cond_);
   swap(truepath_, other->truepath_);
   swap(elsepath_, other->elsepath_);
@@ -2983,6 +4012,7 @@ void ReturnStatement::clear_value() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ReturnStatement::kValueFieldNumber;
+const int ReturnStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ReturnStatement::ReturnStatement()
@@ -2996,6 +4026,10 @@ ReturnStatement::ReturnStatement(const ReturnStatement& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_value()) {
     value_ = new ::Pasc::Expression(*from.value_);
   } else {
@@ -3005,6 +4039,7 @@ ReturnStatement::ReturnStatement(const ReturnStatement& from)
 }
 
 void ReturnStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   value_ = NULL;
 }
 
@@ -3014,6 +4049,7 @@ ReturnStatement::~ReturnStatement() {
 }
 
 void ReturnStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete value_;
 }
 
@@ -3037,6 +4073,7 @@ void ReturnStatement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && value_ != NULL) {
     delete value_;
   }
@@ -3060,6 +4097,22 @@ bool ReturnStatement::MergePartialFromCodedStream(
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_value()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ReturnStatement.label"));
         } else {
           goto handle_unusual;
         }
@@ -3098,6 +4151,16 @@ void ReturnStatement::SerializeWithCachedSizes(
       1, this->_internal_value(), output);
   }
 
+  // string label = 2;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ReturnStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -3119,6 +4182,17 @@ void ReturnStatement::SerializeWithCachedSizes(
         1, this->_internal_value(), deterministic, target);
   }
 
+  // string label = 2;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ReturnStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -3136,6 +4210,13 @@ size_t ReturnStatement::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // string label = 2;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
   // .Pasc.Expression value = 1;
   if (this->has_value()) {
     total_size += 1 +
@@ -3170,6 +4251,10 @@ void ReturnStatement::MergeFrom(const ReturnStatement& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_value()) {
     mutable_value()->::Pasc::Expression::MergeFrom(from.value());
   }
@@ -3199,6 +4284,8 @@ void ReturnStatement::Swap(ReturnStatement* other) {
 }
 void ReturnStatement::InternalSwap(ReturnStatement* other) {
   using std::swap;
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(value_, other->value_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
@@ -3226,12 +4313,13 @@ void WhileStatement::clear_cond() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int WhileStatement::kCondFieldNumber;
 const int WhileStatement::kBodyFieldNumber;
+const int WhileStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 WhileStatement::WhileStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.WhileStatement)
 }
@@ -3239,6 +4327,10 @@ WhileStatement::WhileStatement(const WhileStatement& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_cond()) {
     cond_ = new ::Pasc::Expression(*from.cond_);
   } else {
@@ -3253,6 +4345,7 @@ WhileStatement::WhileStatement(const WhileStatement& from)
 }
 
 void WhileStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&cond_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&body_) -
       reinterpret_cast<char*>(&cond_)) + sizeof(body_));
@@ -3264,6 +4357,7 @@ WhileStatement::~WhileStatement() {
 }
 
 void WhileStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete cond_;
   if (this != internal_default_instance()) delete body_;
 }
@@ -3277,7 +4371,7 @@ const ::google::protobuf::Descriptor* WhileStatement::descriptor() {
 }
 
 const WhileStatement& WhileStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -3288,6 +4382,7 @@ void WhileStatement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && cond_ != NULL) {
     delete cond_;
   }
@@ -3333,6 +4428,22 @@ bool WhileStatement::MergePartialFromCodedStream(
         break;
       }
 
+      // string label = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.WhileStatement.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -3371,6 +4482,16 @@ void WhileStatement::SerializeWithCachedSizes(
       2, this->_internal_body(), output);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.WhileStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -3399,6 +4520,17 @@ void WhileStatement::SerializeWithCachedSizes(
         2, this->_internal_body(), deterministic, target);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.WhileStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -3416,6 +4548,13 @@ size_t WhileStatement::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // string label = 3;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
   // .Pasc.Expression cond = 1;
   if (this->has_cond()) {
     total_size += 1 +
@@ -3457,6 +4596,10 @@ void WhileStatement::MergeFrom(const WhileStatement& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_cond()) {
     mutable_cond()->::Pasc::Expression::MergeFrom(from.cond());
   }
@@ -3489,6 +4632,8 @@ void WhileStatement::Swap(WhileStatement* other) {
 }
 void WhileStatement::InternalSwap(WhileStatement* other) {
   using std::swap;
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(cond_, other->cond_);
   swap(body_, other->body_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -3506,12 +4651,13 @@ void CompoundStatement::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int CompoundStatement::kStmtsFieldNumber;
+const int CompoundStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 CompoundStatement::CompoundStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.CompoundStatement)
 }
@@ -3520,10 +4666,15 @@ CompoundStatement::CompoundStatement(const CompoundStatement& from)
       _internal_metadata_(NULL),
       stmts_(from.stmts_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   // @@protoc_insertion_point(copy_constructor:Pasc.CompoundStatement)
 }
 
 void CompoundStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 CompoundStatement::~CompoundStatement() {
@@ -3532,6 +4683,7 @@ CompoundStatement::~CompoundStatement() {
 }
 
 void CompoundStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void CompoundStatement::SetCachedSize(int size) const {
@@ -3543,7 +4695,7 @@ const ::google::protobuf::Descriptor* CompoundStatement::descriptor() {
 }
 
 const CompoundStatement& CompoundStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -3555,6 +4707,7 @@ void CompoundStatement::Clear() {
   (void) cached_has_bits;
 
   stmts_.Clear();
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -3574,6 +4727,22 @@ bool CompoundStatement::MergePartialFromCodedStream(
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_stmts()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.CompoundStatement.label"));
         } else {
           goto handle_unusual;
         }
@@ -3615,6 +4784,16 @@ void CompoundStatement::SerializeWithCachedSizes(
       output);
   }
 
+  // string label = 2;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.CompoundStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -3635,6 +4814,17 @@ void CompoundStatement::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         1, this->stmts(static_cast<int>(i)), deterministic, target);
+  }
+
+  // string label = 2;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.CompoundStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->label(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3665,6 +4855,13 @@ size_t CompoundStatement::ByteSizeLong() const {
     }
   }
 
+  // string label = 2;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -3693,6 +4890,10 @@ void CompoundStatement::MergeFrom(const CompoundStatement& from) {
   (void) cached_has_bits;
 
   stmts_.MergeFrom(from.stmts_);
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
 }
 
 void CompoundStatement::CopyFrom(const ::google::protobuf::Message& from) {
@@ -3720,6 +4921,8 @@ void CompoundStatement::Swap(CompoundStatement* other) {
 void CompoundStatement::InternalSwap(CompoundStatement* other) {
   using std::swap;
   CastToBase(&stmts_)->InternalSwap(CastToBase(&other->stmts_));
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
@@ -3744,12 +4947,13 @@ void RepeatStatement::clear_cond() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int RepeatStatement::kStmtsFieldNumber;
 const int RepeatStatement::kCondFieldNumber;
+const int RepeatStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 RepeatStatement::RepeatStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.RepeatStatement)
 }
@@ -3758,6 +4962,10 @@ RepeatStatement::RepeatStatement(const RepeatStatement& from)
       _internal_metadata_(NULL),
       stmts_(from.stmts_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_cond()) {
     cond_ = new ::Pasc::Expression(*from.cond_);
   } else {
@@ -3767,6 +4975,7 @@ RepeatStatement::RepeatStatement(const RepeatStatement& from)
 }
 
 void RepeatStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   cond_ = NULL;
 }
 
@@ -3776,6 +4985,7 @@ RepeatStatement::~RepeatStatement() {
 }
 
 void RepeatStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete cond_;
 }
 
@@ -3788,7 +4998,7 @@ const ::google::protobuf::Descriptor* RepeatStatement::descriptor() {
 }
 
 const RepeatStatement& RepeatStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -3800,6 +5010,7 @@ void RepeatStatement::Clear() {
   (void) cached_has_bits;
 
   stmts_.Clear();
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && cond_ != NULL) {
     delete cond_;
   }
@@ -3835,6 +5046,22 @@ bool RepeatStatement::MergePartialFromCodedStream(
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                input, mutable_cond()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.RepeatStatement.label"));
         } else {
           goto handle_unusual;
         }
@@ -3882,6 +5109,16 @@ void RepeatStatement::SerializeWithCachedSizes(
       2, this->_internal_cond(), output);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.RepeatStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -3911,6 +5148,17 @@ void RepeatStatement::SerializeWithCachedSizes(
         2, this->_internal_cond(), deterministic, target);
   }
 
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.RepeatStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -3937,6 +5185,13 @@ size_t RepeatStatement::ByteSizeLong() const {
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           this->stmts(static_cast<int>(i)));
     }
+  }
+
+  // string label = 3;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
   }
 
   // .Pasc.Expression cond = 2;
@@ -3974,6 +5229,10 @@ void RepeatStatement::MergeFrom(const RepeatStatement& from) {
   (void) cached_has_bits;
 
   stmts_.MergeFrom(from.stmts_);
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_cond()) {
     mutable_cond()->::Pasc::Expression::MergeFrom(from.cond());
   }
@@ -4004,6 +5263,8 @@ void RepeatStatement::Swap(RepeatStatement* other) {
 void RepeatStatement::InternalSwap(RepeatStatement* other) {
   using std::swap;
   CastToBase(&stmts_)->InternalSwap(CastToBase(&other->stmts_));
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(cond_, other->cond_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
@@ -4050,12 +5311,13 @@ const int ForStatement::kInitValueFieldNumber;
 const int ForStatement::kFinalValueFieldNumber;
 const int ForStatement::kBodyFieldNumber;
 const int ForStatement::kDirFieldNumber;
+const int ForStatement::kLabelFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ForStatement::ForStatement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.ForStatement)
 }
@@ -4063,6 +5325,10 @@ ForStatement::ForStatement(const ForStatement& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_ctlvar()) {
     ctlvar_ = new ::Pasc::Expression(*from.ctlvar_);
   } else {
@@ -4088,6 +5354,7 @@ ForStatement::ForStatement(const ForStatement& from)
 }
 
 void ForStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&ctlvar_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&dir_) -
       reinterpret_cast<char*>(&ctlvar_)) + sizeof(dir_));
@@ -4099,6 +5366,7 @@ ForStatement::~ForStatement() {
 }
 
 void ForStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete ctlvar_;
   if (this != internal_default_instance()) delete initvalue_;
   if (this != internal_default_instance()) delete finalvalue_;
@@ -4114,7 +5382,7 @@ const ::google::protobuf::Descriptor* ForStatement::descriptor() {
 }
 
 const ForStatement& ForStatement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -4125,6 +5393,7 @@ void ForStatement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && ctlvar_ != NULL) {
     delete ctlvar_;
   }
@@ -4218,6 +5487,22 @@ bool ForStatement::MergePartialFromCodedStream(
         break;
       }
 
+      // string label = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.ForStatement.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -4274,6 +5559,16 @@ void ForStatement::SerializeWithCachedSizes(
       5, this->dir(), output);
   }
 
+  // string label = 6;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ForStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->label(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -4322,6 +5617,17 @@ void ForStatement::SerializeWithCachedSizes(
       5, this->dir(), target);
   }
 
+  // string label = 6;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.ForStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->label(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -4339,6 +5645,13 @@ size_t ForStatement::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // string label = 6;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
   // .Pasc.Expression ctlVar = 1;
   if (this->has_ctlvar()) {
     total_size += 1 +
@@ -4400,6 +5713,10 @@ void ForStatement::MergeFrom(const ForStatement& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
   if (from.has_ctlvar()) {
     mutable_ctlvar()->::Pasc::Expression::MergeFrom(from.ctlvar());
   }
@@ -4441,6 +5758,8 @@ void ForStatement::Swap(ForStatement* other) {
 }
 void ForStatement::InternalSwap(ForStatement* other) {
   using std::swap;
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(ctlvar_, other->ctlvar_);
   swap(initvalue_, other->initvalue_);
   swap(finalvalue_, other->finalvalue_);
@@ -4450,6 +5769,873 @@ void ForStatement::InternalSwap(ForStatement* other) {
 }
 
 ::google::protobuf::Metadata ForStatement::GetMetadata() const {
+  protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void CaseStatement_CaseListElement::InitAsDefaultInstance() {
+  ::Pasc::_CaseStatement_CaseListElement_default_instance_._instance.get_mutable()->stmt_ = const_cast< ::Pasc::Statement*>(
+      ::Pasc::Statement::internal_default_instance());
+}
+void CaseStatement_CaseListElement::clear_constants() {
+  constants_.Clear();
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CaseStatement_CaseListElement::kConstantsFieldNumber;
+const int CaseStatement_CaseListElement::kStmtFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CaseStatement_CaseListElement::CaseStatement_CaseListElement()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.CaseStatement.CaseListElement)
+}
+CaseStatement_CaseListElement::CaseStatement_CaseListElement(const CaseStatement_CaseListElement& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      constants_(from.constants_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_stmt()) {
+    stmt_ = new ::Pasc::Statement(*from.stmt_);
+  } else {
+    stmt_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:Pasc.CaseStatement.CaseListElement)
+}
+
+void CaseStatement_CaseListElement::SharedCtor() {
+  stmt_ = NULL;
+}
+
+CaseStatement_CaseListElement::~CaseStatement_CaseListElement() {
+  // @@protoc_insertion_point(destructor:Pasc.CaseStatement.CaseListElement)
+  SharedDtor();
+}
+
+void CaseStatement_CaseListElement::SharedDtor() {
+  if (this != internal_default_instance()) delete stmt_;
+}
+
+void CaseStatement_CaseListElement::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* CaseStatement_CaseListElement::descriptor() {
+  ::protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const CaseStatement_CaseListElement& CaseStatement_CaseListElement::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  return *internal_default_instance();
+}
+
+
+void CaseStatement_CaseListElement::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.CaseStatement.CaseListElement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  constants_.Clear();
+  if (GetArenaNoVirtual() == NULL && stmt_ != NULL) {
+    delete stmt_;
+  }
+  stmt_ = NULL;
+  _internal_metadata_.Clear();
+}
+
+bool CaseStatement_CaseListElement::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.CaseStatement.CaseListElement)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .Pasc.Expression constants = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_constants()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.Statement stmt = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_stmt()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.CaseStatement.CaseListElement)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.CaseStatement.CaseListElement)
+  return false;
+#undef DO_
+}
+
+void CaseStatement_CaseListElement::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.CaseStatement.CaseListElement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .Pasc.Expression constants = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->constants_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1,
+      this->constants(static_cast<int>(i)),
+      output);
+  }
+
+  // .Pasc.Statement stmt = 2;
+  if (this->has_stmt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->_internal_stmt(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.CaseStatement.CaseListElement)
+}
+
+::google::protobuf::uint8* CaseStatement_CaseListElement::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.CaseStatement.CaseListElement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .Pasc.Expression constants = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->constants_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->constants(static_cast<int>(i)), deterministic, target);
+  }
+
+  // .Pasc.Statement stmt = 2;
+  if (this->has_stmt()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->_internal_stmt(), deterministic, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.CaseStatement.CaseListElement)
+  return target;
+}
+
+size_t CaseStatement_CaseListElement::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.CaseStatement.CaseListElement)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .Pasc.Expression constants = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->constants_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->constants(static_cast<int>(i)));
+    }
+  }
+
+  // .Pasc.Statement stmt = 2;
+  if (this->has_stmt()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *stmt_);
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CaseStatement_CaseListElement::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.CaseStatement.CaseListElement)
+  GOOGLE_DCHECK_NE(&from, this);
+  const CaseStatement_CaseListElement* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const CaseStatement_CaseListElement>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.CaseStatement.CaseListElement)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.CaseStatement.CaseListElement)
+    MergeFrom(*source);
+  }
+}
+
+void CaseStatement_CaseListElement::MergeFrom(const CaseStatement_CaseListElement& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.CaseStatement.CaseListElement)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  constants_.MergeFrom(from.constants_);
+  if (from.has_stmt()) {
+    mutable_stmt()->::Pasc::Statement::MergeFrom(from.stmt());
+  }
+}
+
+void CaseStatement_CaseListElement::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.CaseStatement.CaseListElement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CaseStatement_CaseListElement::CopyFrom(const CaseStatement_CaseListElement& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.CaseStatement.CaseListElement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CaseStatement_CaseListElement::IsInitialized() const {
+  return true;
+}
+
+void CaseStatement_CaseListElement::Swap(CaseStatement_CaseListElement* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CaseStatement_CaseListElement::InternalSwap(CaseStatement_CaseListElement* other) {
+  using std::swap;
+  CastToBase(&constants_)->InternalSwap(CastToBase(&other->constants_));
+  swap(stmt_, other->stmt_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata CaseStatement_CaseListElement::GetMetadata() const {
+  protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void CaseStatement::InitAsDefaultInstance() {
+  ::Pasc::_CaseStatement_default_instance_._instance.get_mutable()->caseindex_ = const_cast< ::Pasc::Expression*>(
+      ::Pasc::Expression::internal_default_instance());
+}
+void CaseStatement::clear_caseindex() {
+  if (GetArenaNoVirtual() == NULL && caseindex_ != NULL) {
+    delete caseindex_;
+  }
+  caseindex_ = NULL;
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CaseStatement::kCaseIndexFieldNumber;
+const int CaseStatement::kCleFieldNumber;
+const int CaseStatement::kLabelFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CaseStatement::CaseStatement()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.CaseStatement)
+}
+CaseStatement::CaseStatement(const CaseStatement& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      cle_(from.cle_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_caseindex()) {
+    caseindex_ = new ::Pasc::Expression(*from.caseindex_);
+  } else {
+    caseindex_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:Pasc.CaseStatement)
+}
+
+void CaseStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  caseindex_ = NULL;
+}
+
+CaseStatement::~CaseStatement() {
+  // @@protoc_insertion_point(destructor:Pasc.CaseStatement)
+  SharedDtor();
+}
+
+void CaseStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete caseindex_;
+}
+
+void CaseStatement::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* CaseStatement::descriptor() {
+  ::protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const CaseStatement& CaseStatement::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
+  return *internal_default_instance();
+}
+
+
+void CaseStatement::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.CaseStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cle_.Clear();
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && caseindex_ != NULL) {
+    delete caseindex_;
+  }
+  caseindex_ = NULL;
+  _internal_metadata_.Clear();
+}
+
+bool CaseStatement::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.CaseStatement)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .Pasc.Expression caseIndex = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_caseindex()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_cle()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string label = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.CaseStatement.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.CaseStatement)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.CaseStatement)
+  return false;
+#undef DO_
+}
+
+void CaseStatement::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.CaseStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Pasc.Expression caseIndex = 1;
+  if (this->has_caseindex()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->_internal_caseindex(), output);
+  }
+
+  // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cle_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2,
+      this->cle(static_cast<int>(i)),
+      output);
+  }
+
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.CaseStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->label(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.CaseStatement)
+}
+
+::google::protobuf::uint8* CaseStatement::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.CaseStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Pasc.Expression caseIndex = 1;
+  if (this->has_caseindex()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->_internal_caseindex(), deterministic, target);
+  }
+
+  // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cle_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->cle(static_cast<int>(i)), deterministic, target);
+  }
+
+  // string label = 3;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.CaseStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->label(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.CaseStatement)
+  return target;
+}
+
+size_t CaseStatement::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.CaseStatement)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .Pasc.CaseStatement.CaseListElement cle = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->cle_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->cle(static_cast<int>(i)));
+    }
+  }
+
+  // string label = 3;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
+  // .Pasc.Expression caseIndex = 1;
+  if (this->has_caseindex()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *caseindex_);
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CaseStatement::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.CaseStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  const CaseStatement* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const CaseStatement>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.CaseStatement)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.CaseStatement)
+    MergeFrom(*source);
+  }
+}
+
+void CaseStatement::MergeFrom(const CaseStatement& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.CaseStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cle_.MergeFrom(from.cle_);
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  if (from.has_caseindex()) {
+    mutable_caseindex()->::Pasc::Expression::MergeFrom(from.caseindex());
+  }
+}
+
+void CaseStatement::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.CaseStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CaseStatement::CopyFrom(const CaseStatement& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.CaseStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CaseStatement::IsInitialized() const {
+  return true;
+}
+
+void CaseStatement::Swap(CaseStatement* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CaseStatement::InternalSwap(CaseStatement* other) {
+  using std::swap;
+  CastToBase(&cle_)->InternalSwap(CastToBase(&other->cle_));
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(caseindex_, other->caseindex_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata CaseStatement::GetMetadata() const {
+  protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void GoToStatement::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int GoToStatement::kLabelFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+GoToStatement::GoToStatement()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2fstatement_2eproto::scc_info_GoToStatement.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.GoToStatement)
+}
+GoToStatement::GoToStatement(const GoToStatement& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.label().size() > 0) {
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Pasc.GoToStatement)
+}
+
+void GoToStatement::SharedCtor() {
+  label_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+GoToStatement::~GoToStatement() {
+  // @@protoc_insertion_point(destructor:Pasc.GoToStatement)
+  SharedDtor();
+}
+
+void GoToStatement::SharedDtor() {
+  label_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void GoToStatement::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* GoToStatement::descriptor() {
+  ::protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const GoToStatement& GoToStatement::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_GoToStatement.base);
+  return *internal_default_instance();
+}
+
+
+void GoToStatement::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.GoToStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+bool GoToStatement::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.GoToStatement)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string label = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_label()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->label().data(), static_cast<int>(this->label().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.GoToStatement.label"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.GoToStatement)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.GoToStatement)
+  return false;
+#undef DO_
+}
+
+void GoToStatement::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.GoToStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string label = 1;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.GoToStatement.label");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->label(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.GoToStatement)
+}
+
+::google::protobuf::uint8* GoToStatement::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.GoToStatement)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string label = 1;
+  if (this->label().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->label().data(), static_cast<int>(this->label().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.GoToStatement.label");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->label(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.GoToStatement)
+  return target;
+}
+
+size_t GoToStatement::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.GoToStatement)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string label = 1;
+  if (this->label().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->label());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void GoToStatement::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.GoToStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  const GoToStatement* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const GoToStatement>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.GoToStatement)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.GoToStatement)
+    MergeFrom(*source);
+  }
+}
+
+void GoToStatement::MergeFrom(const GoToStatement& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.GoToStatement)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.label().size() > 0) {
+
+    label_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.label_);
+  }
+}
+
+void GoToStatement::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.GoToStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GoToStatement::CopyFrom(const GoToStatement& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.GoToStatement)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GoToStatement::IsInitialized() const {
+  return true;
+}
+
+void GoToStatement::Swap(GoToStatement* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void GoToStatement::InternalSwap(GoToStatement* other) {
+  using std::swap;
+  label_.Swap(&other->label_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata GoToStatement::GetMetadata() const {
   protobuf_proto_2fstatement_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_proto_2fstatement_2eproto::file_level_metadata[kIndexInFileMessages];
 }
@@ -4474,6 +6660,10 @@ void Statement::InitAsDefaultInstance() {
       ::Pasc::RepeatStatement::internal_default_instance());
   ::Pasc::_Statement_default_instance_.forstmt_ = const_cast< ::Pasc::ForStatement*>(
       ::Pasc::ForStatement::internal_default_instance());
+  ::Pasc::_Statement_default_instance_.casestmt_ = const_cast< ::Pasc::CaseStatement*>(
+      ::Pasc::CaseStatement::internal_default_instance());
+  ::Pasc::_Statement_default_instance_.gotostmt_ = const_cast< ::Pasc::GoToStatement*>(
+      ::Pasc::GoToStatement::internal_default_instance());
 }
 void Statement::set_allocated_assignstmt(::Pasc::AssignStatement* assignstmt) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
@@ -4587,6 +6777,34 @@ void Statement::set_allocated_forstmt(::Pasc::ForStatement* forstmt) {
   }
   // @@protoc_insertion_point(field_set_allocated:Pasc.Statement.forStmt)
 }
+void Statement::set_allocated_casestmt(::Pasc::CaseStatement* casestmt) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  clear_stmt();
+  if (casestmt) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      casestmt = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, casestmt, submessage_arena);
+    }
+    set_has_casestmt();
+    stmt_.casestmt_ = casestmt;
+  }
+  // @@protoc_insertion_point(field_set_allocated:Pasc.Statement.caseStmt)
+}
+void Statement::set_allocated_gotostmt(::Pasc::GoToStatement* gotostmt) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  clear_stmt();
+  if (gotostmt) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      gotostmt = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, gotostmt, submessage_arena);
+    }
+    set_has_gotostmt();
+    stmt_.gotostmt_ = gotostmt;
+  }
+  // @@protoc_insertion_point(field_set_allocated:Pasc.Statement.gotoStmt)
+}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Statement::kKindFieldNumber;
 const int Statement::kAssignStmtFieldNumber;
@@ -4597,12 +6815,14 @@ const int Statement::kWhileStmtFieldNumber;
 const int Statement::kCmpdStmtFieldNumber;
 const int Statement::kRptStmtFieldNumber;
 const int Statement::kForStmtFieldNumber;
+const int Statement::kCaseStmtFieldNumber;
+const int Statement::kGotoStmtFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Statement::Statement()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+      &protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:Pasc.Statement)
 }
@@ -4645,6 +6865,14 @@ Statement::Statement(const Statement& from)
       mutable_forstmt()->::Pasc::ForStatement::MergeFrom(from.forstmt());
       break;
     }
+    case kCaseStmt: {
+      mutable_casestmt()->::Pasc::CaseStatement::MergeFrom(from.casestmt());
+      break;
+    }
+    case kGotoStmt: {
+      mutable_gotostmt()->::Pasc::GoToStatement::MergeFrom(from.gotostmt());
+      break;
+    }
     case STMT_NOT_SET: {
       break;
     }
@@ -4677,7 +6905,7 @@ const ::google::protobuf::Descriptor* Statement::descriptor() {
 }
 
 const Statement& Statement::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CompoundStatement.base);
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2fstatement_2eproto::scc_info_CaseStatement.base);
   return *internal_default_instance();
 }
 
@@ -4715,6 +6943,14 @@ void Statement::clear_stmt() {
     }
     case kForStmt: {
       delete stmt_.forstmt_;
+      break;
+    }
+    case kCaseStmt: {
+      delete stmt_.casestmt_;
+      break;
+    }
+    case kGotoStmt: {
+      delete stmt_.gotostmt_;
       break;
     }
     case STMT_NOT_SET: {
@@ -4857,6 +7093,30 @@ bool Statement::MergePartialFromCodedStream(
         break;
       }
 
+      // .Pasc.CaseStatement caseStmt = 10;
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_casestmt()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .Pasc.GoToStatement gotoStmt = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(90u /* 90 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_gotostmt()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -4937,6 +7197,18 @@ void Statement::SerializeWithCachedSizes(
       9, this->_internal_forstmt(), output);
   }
 
+  // .Pasc.CaseStatement caseStmt = 10;
+  if (has_casestmt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      10, this->_internal_casestmt(), output);
+  }
+
+  // .Pasc.GoToStatement gotoStmt = 11;
+  if (has_gotostmt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      11, this->_internal_gotostmt(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -5011,6 +7283,20 @@ void Statement::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         9, this->_internal_forstmt(), deterministic, target);
+  }
+
+  // .Pasc.CaseStatement caseStmt = 10;
+  if (has_casestmt()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        10, this->_internal_casestmt(), deterministic, target);
+  }
+
+  // .Pasc.GoToStatement gotoStmt = 11;
+  if (has_gotostmt()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        11, this->_internal_gotostmt(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -5093,6 +7379,20 @@ size_t Statement::ByteSizeLong() const {
           *stmt_.forstmt_);
       break;
     }
+    // .Pasc.CaseStatement caseStmt = 10;
+    case kCaseStmt: {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          *stmt_.casestmt_);
+      break;
+    }
+    // .Pasc.GoToStatement gotoStmt = 11;
+    case kGotoStmt: {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          *stmt_.gotostmt_);
+      break;
+    }
     case STMT_NOT_SET: {
       break;
     }
@@ -5158,6 +7458,14 @@ void Statement::MergeFrom(const Statement& from) {
     }
     case kForStmt: {
       mutable_forstmt()->::Pasc::ForStatement::MergeFrom(from.forstmt());
+      break;
+    }
+    case kCaseStmt: {
+      mutable_casestmt()->::Pasc::CaseStatement::MergeFrom(from.casestmt());
+      break;
+    }
+    case kGotoStmt: {
+      mutable_gotostmt()->::Pasc::GoToStatement::MergeFrom(from.gotostmt());
       break;
     }
     case STMT_NOT_SET: {
@@ -5244,6 +7552,15 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::RepeatStatement* Arena::Cr
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::ForStatement* Arena::CreateMaybeMessage< ::Pasc::ForStatement >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::ForStatement >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::CaseStatement_CaseListElement* Arena::CreateMaybeMessage< ::Pasc::CaseStatement_CaseListElement >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::CaseStatement_CaseListElement >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::CaseStatement* Arena::CreateMaybeMessage< ::Pasc::CaseStatement >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::CaseStatement >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::GoToStatement* Arena::CreateMaybeMessage< ::Pasc::GoToStatement >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::GoToStatement >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::Statement* Arena::CreateMaybeMessage< ::Pasc::Statement >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::Statement >(arena);

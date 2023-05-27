@@ -42,6 +42,8 @@ message Expression {
     FCall = 5;
     Nil = 6;
     UReal = 7;
+    UnExpr = 8;
+    Str = 9;
   }
 
   ExprKind kind = 1;
@@ -51,9 +53,11 @@ message Expression {
     BinaryExpr be = 4;
     WriteParameter wp = 5;
     FuncCall fc = 6;
-    BoolLiteral bl = 7;
+    BoolExpr bl = 7;
     NilValue nl = 8;
     URealLiteral ureal = 9;
+    UnaryExpr ue = 10;
+    CharString cs = 11;
   }
 }
 
@@ -74,7 +78,7 @@ message UIntLiteral {
   uint32 value = 1;
 }
 
-message BoolLiteral {
+message BoolExpr {
   bool value = 1;
 }
 
@@ -84,6 +88,15 @@ message NilValue {
 
 message URealLiteral {
   double value = 1;
+}
+
+message UnaryExpr {
+  Operator op = 1;
+  Expression operand = 2;
+}
+
+message CharString {
+  string value = 1;
 }
 
 message FuncCall {
@@ -100,7 +113,7 @@ message Operator {
     Plus = 0;
     Minus = 1;
     Div = 2;
-//    Sub = 3;
+    Mult = 3;
     Mod = 4;
     And = 5;
     Or = 6;
@@ -111,6 +124,8 @@ message Operator {
     GreatEqual = 11;
     LessEqual = 12;
     LessGreat = 13;
+    FwdSlash = 14;
+    Not = 15;
   }
 
   OpKind op = 1;
