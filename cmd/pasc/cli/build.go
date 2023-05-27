@@ -10,6 +10,7 @@ import (
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -27,13 +28,18 @@ var buildCmd = &ffcli.Command{
 	Exec: runBuild,
 	FlagSet: (func() *flag.FlagSet {
 		fs := flag.NewFlagSet("build", flag.ExitOnError)
-		fs.StringVar(&buildArgs.out, "out", "outExec", "output executable name")
+		fs.StringVar(&buildArgs.out, "o", "a.out", "output executable name")
 
 		return fs
 	})(),
 }
 
 func runBuild(ctx context.Context, args []string) error {
+	fullPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		return err
+	}
+
 	if len(args) < 1 {
 		return fmt.Errorf("program file missing")
 	}
@@ -70,14 +76,14 @@ func runBuild(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
-	b := &exec.Cmd{
+
+	backend := &exec.Cmd{
 		Path:   backendPath,
-		Args:   []string{backendPath, fmt.Sprintf("pkg/codegen/out/%s.bin", buildArgs.out)},
+		Args:   []string{backendPath, fmt.Sprintf("pkg/codegen/out/%s.bin", buildArgs.out), buildArgs.out},
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
-
-	if err := b.Run(); err != nil {
+	if err := backend.Run(); err != nil {
 		return err
 	}
 
@@ -89,7 +95,8 @@ func runBuild(ctx context.Context, args []string) error {
 	llc := &exec.Cmd{
 		Path: llcPath,
 		Args: []string{llcPath, "-filetype=obj",
-			fmt.Sprintf("../../../bin/%s.ll", buildArgs.out), "-o", fmt.Sprintf("../../../bin/%s.o", buildArgs.out)},
+			fmt.Sprintf("%s/bin/%s.ll", fullPath, buildArgs.out), "-o",
+			fmt.Sprintf("%s/bin/%s.o", fullPath, buildArgs.out)},
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
@@ -105,8 +112,8 @@ func runBuild(ctx context.Context, args []string) error {
 	clang := &exec.Cmd{
 		Path: clangPath,
 		Args: []string{clangPath,
-			fmt.Sprintf("../../../bin/%s.o", buildArgs.out), "-o",
-			fmt.Sprintf("../../../bin/%s", buildArgs.out),
+			fmt.Sprintf("%s/bin/%s.o", fullPath, buildArgs.out), "-o",
+			fmt.Sprintf("%s/bin/%s", fullPath, buildArgs.out),
 			"-L/usr/local/lib",
 		},
 		Stdout: os.Stdout,

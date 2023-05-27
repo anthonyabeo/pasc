@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     }
 
     std::ostringstream file_name;
-    file_name << "bin/" << programIR->name << ".ll";
+    file_name << "bin/" << argv[2] << ".ll";
 
     std::ofstream out(file_name.str());
     out << llvm_out;
