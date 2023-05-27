@@ -529,7 +529,7 @@ func translateOp(op token.Kind) *Operator {
 
 // Serialize accepts `program`, an AST created from calling `serde.AstToProtoAst`,
 // and converts it into a protocol buffers binary file, to be deserialized later.
-func Serialize(program *Program) error {
+func Serialize(program *Program, outExec string) error {
 	out, err := proto.Marshal(program)
 	if err != nil {
 		return fmt.Errorf("serialization error: %s", err.Error())
@@ -543,7 +543,7 @@ func Serialize(program *Program) error {
 		}
 	}
 
-	fileName := fmt.Sprintf("%s/%s.bin", outPath, program.Name)
+	fileName := fmt.Sprintf("%s/%s.bin", outPath, outExec)
 	if err := os.WriteFile(fileName, out, 0644); err != nil {
 		return fmt.Errorf("Write File Error: %s ", err.Error())
 	}
