@@ -20,7 +20,7 @@ var buildArgs struct {
 
 var buildCmd = &ffcli.Command{
 	Name:       "build",
-	ShortUsage: "build [-o exec-name]",
+	ShortUsage: "pasc build [-o output] <program-file>",
 	ShortHelp:  "Compile and produce an executable",
 	LongHelp: strings.TrimSpace(`
 		

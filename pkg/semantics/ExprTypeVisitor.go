@@ -88,13 +88,6 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 			}
 		}
 
-		if v.isMultiplyOp(node.Operator) {
-			node.EvalType, err = v.multTypeComputation(node)
-			if err != nil {
-				panic(err)
-			}
-		}
-
 		if v.isRelationalOp(node.Operator) {
 			node.EvalType, err = v.relExprTypeComputation(node)
 			if err != nil {
@@ -144,12 +137,6 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 	default:
 		panic(fmt.Sprintf("Visit: unexpected expression type %T", node))
 	}
-}
-
-func (v *ExprEvalVisitor) multTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
-	// TODO implement
-
-	return &base.Integer{Name: "integer"}, nil
 }
 
 func (v *ExprEvalVisitor) relExprTypeComputation(n *ast.BinaryExpression) (types.Type, error) {
