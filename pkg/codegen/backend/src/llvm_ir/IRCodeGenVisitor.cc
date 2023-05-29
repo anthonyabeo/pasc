@@ -63,7 +63,7 @@ llvm::AllocaInst *IRCodegenVisitor::CreateEntryBlockAlloca(
   return TmpB.CreateAlloca(type, nullptr, Name);
 }
 
-llvm::BasicBlock *IRCodegenVisitor::GetBBFromLabel(const std::string label) {
+llvm::BasicBlock *IRCodegenVisitor::GetBBFromLabel(const std::string& label) {
   llvm::BasicBlock* basicBlock = nullptr;
 
   auto TheFunction = builder->GetInsertBlock()->getParent();

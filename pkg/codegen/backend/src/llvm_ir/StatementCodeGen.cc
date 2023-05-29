@@ -50,22 +50,14 @@ llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
                                 printfArgsTypes,
                                 true));
 
-  // The format string for the printf function, declared as a global literal
-  llvm::Value *str;
-
   std::vector<llvm::Value *> argsV;
-  for (auto& p : stmt.params) {
-    auto val = p->codegen(*this);
 
-    if(val->getType() == llvm::Type::getDoubleTy(*ctx)) {
-      str = builder->CreateGlobalStringPtr("%f\n", "str");
-    } else if(val->getType() == llvm::Type::getInt32Ty(*ctx)) {
-      str = builder->CreateGlobalStringPtr("%d\n", "str");
-    } /*else if(val->getType() == llvm::Type::ArrayType) {*/ else {
-      str = val;
-    }
+  // The format string for the printf function, declared as a global literal
+  llvm::Value *str = stmt.params[0]->codegen(*this);
+  argsV.push_back(str);
 
-    argsV.push_back(str);
+  for (int i = 1; i < stmt.params.size(); ++i) {
+    auto val = stmt.params[i]->codegen(*this);
     argsV.push_back(val);
   }
 
@@ -88,22 +80,15 @@ llvm::Value *IRCodegenVisitor::codegen(const Write &stmt) {
                               printfArgsTypes,
                               true));
 
-  // The format string for the printf function, declared as a global literal
-  llvm::Value *str;
-
   std::vector<llvm::Value *> argsV;
-  for (auto& p : stmt.params) {
-    auto val = p->codegen(*this);
 
-    if(val->getType() == llvm::Type::getDoubleTy(*ctx)) {
-      str = builder->CreateGlobalStringPtr("%f", "str");
-    } else if(val->getType() == llvm::Type::getInt32Ty(*ctx)) {
-      str = builder->CreateGlobalStringPtr("%d", "str");
-    } /*else if(val->getType() == llvm::Type::ArrayType) {*/ else {
-      str = val;
-    }
+  // The format string for the printf function, declared as a global literal
+  llvm::Value *str = stmt.params[0]->codegen(*this);
+  argsV.push_back(str);
 
-    argsV.push_back(str);
+  for (int i = 1; i < stmt.params.size(); ++i) {
+    auto val = stmt.params[i]->codegen(*this);
+    argsV.push_back(val);
   }
 
   return builder->CreateCall(printfFunc, argsV, "call");

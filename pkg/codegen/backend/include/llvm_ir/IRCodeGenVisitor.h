@@ -28,7 +28,7 @@ public:
   std::string dumpLLVMIRToString();
 
   static llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function*, llvm::StringRef, llvm::Type*);
-  llvm::BasicBlock* GetBBFromLabel(const std::string);
+  llvm::BasicBlock* GetBBFromLabel(const std::string&);
 
   // Expressions
   llvm::Value *codegen(const VariableID&) override;
