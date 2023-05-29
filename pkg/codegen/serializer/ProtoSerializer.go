@@ -213,8 +213,14 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 		}
 	case *ast.Writeln:
 		var args []*Expression
-		for _, e := range stmt.ParamList {
-			args = append(args, s.translateExpr(e))
+		args = append(args, &Expression{
+			Kind: Expression_Str,
+			Expr: &Expression_Cs{
+				Cs: &CharString{Value: stmt.ParamList[0].String() + "\n"}},
+		})
+
+		for i := 1; i < len(stmt.ParamList); i++ {
+			args = append(args, s.translateExpr(stmt.ParamList[i]))
 		}
 
 		st = &Statement{
