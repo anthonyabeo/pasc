@@ -193,7 +193,6 @@ func (v *ExprEvalVisitor) arithmeticTypeComputation(n *ast.BinaryExpression) (ty
 		} else {
 			typ = &base.Real{Name: "real"}
 		}
-
 	case token.FwdSlash:
 		if lhsType != "integer" && lhsType != "real" &&
 			rhsType != "integer" && rhsType != "real" {
@@ -210,7 +209,7 @@ func (v *ExprEvalVisitor) arithmeticTypeComputation(n *ast.BinaryExpression) (ty
 		}
 
 		typ = &base.Integer{Name: "integer"}
-	case token.Or:
+	case token.Or, token.And:
 		typ = &base.Integer{Name: "integer"}
 	}
 

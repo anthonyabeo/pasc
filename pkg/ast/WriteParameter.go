@@ -1,11 +1,10 @@
 package ast
 
 import (
-	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
-// WriteParameter is the node that represents a single parameter to be passed to the wite(ln) procedure
+// WriteParameter is the node that represents a single parameter to be passed to the write[ln] procedure
 type WriteParameter struct {
 	E          Expression
 	TotalWidth Expression
@@ -28,5 +27,6 @@ func (w *WriteParameter) Attr(attr string) any {
 }
 
 func (w *WriteParameter) String() string {
-	return fmt.Sprintf("%v:%v:%v", w.E, w.TotalWidth, w.FracDigits)
+	//return fmt.Sprintf("%v:%v:%v", w.E, w.TotalWidth, w.FracDigits)
+	return w.E.String()
 }

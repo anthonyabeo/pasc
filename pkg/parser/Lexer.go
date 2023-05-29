@@ -121,7 +121,6 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			}
 
 			return token.Token{Kind: token.Colon, Text: ":"}, nil
-
 		default:
 			if lex.isLetter() {
 				name := lex.readName()

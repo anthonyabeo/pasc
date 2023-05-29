@@ -50,6 +50,7 @@ func (v *StaticTypeCheckVisitor) Visit(node ast.Node) {
 	case *ast.ForStatement:
 	case *ast.RepeatStatement:
 	case *ast.GotoStatement:
+	case *ast.UnaryExpression:
 	default:
 		panic(fmt.Sprintf("Visit: unexpected node type %T", node))
 	}
