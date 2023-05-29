@@ -18,6 +18,6 @@ begin
     else
         val := m or n;
 
-    writeln(val);
-    writeln(sum)
+    writeln('Val: %d', val);
+    writeln('Sum: %d', sum)
 end.
