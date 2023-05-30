@@ -3,18 +3,18 @@ An implementation of the Pascal Programming Language as defined by the [ISO 7185
 
 # Getting Started
 Pasc is implemented in Go and C++. You should have recent toolchains for both languages installed on your system. 
-See the `Requirements` section to see the list of project dependencies.
+See the `Requirements` section for a list of additional project dependencies.
 
 ## Requirements
-* `Go version >= 1.18`
-* `cmake version >= 3.2`
-* `GNU Make >= 3.5` 
-* `protoc v3.6.1`
-* `protoc-gen-go v1.28.1`
+* `Go >= v1.18`
+* `cmake >= v3.2`
+* `GNU Make >= v3.5` 
+* `protoc == v3.6.1`
+* `protoc-gen-go == v1.28.1`
 
 ## Build
 Once we have these requirements installed, Use `make` commands to build an executable.
-* `make install` - install dependencies
+* `make deps` - install dependencies
 * `make build` - build and install both the front-end and back-end
 * `make test` - run tests
 
@@ -28,10 +28,10 @@ $ cd pasc
 
 # install dependencies, run tests, and build and executable 
 $ make test
-$ make install
+$ make deps
 $ make build
 
-# compiler <program-file>
+# compile <program-file>
 $ pasc build [-o exec-name] <program-file> 
 
 # run program
