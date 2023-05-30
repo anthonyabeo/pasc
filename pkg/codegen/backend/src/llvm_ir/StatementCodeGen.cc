@@ -29,9 +29,9 @@ llvm::Value *IRCodegenVisitor::codegen(const AssignStmt &stmt) {
     throw IRCodegenException(buf.str());
   }
 
-  return builder->CreateStore(val, variable);
+  builder->CreateStore(val, variable);
 
-//  return val;
+  return val;
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const Writeln &stmt) {
@@ -114,9 +114,10 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
   llvm::BasicBlock *ElseBB = nullptr;
   if(is.else_path) {
     ElseBB = llvm::BasicBlock::Create(*ctx, "else");
+    builder->CreateCondBr(condV, ThenBB, ElseBB);
+  } else {
+    builder->CreateCondBr(condV, ThenBB, MergeBB);
   }
-
-  builder->CreateCondBr(condV, ThenBB, ElseBB);
 
   // Emit then value.
   builder->SetInsertPoint(ThenBB);
@@ -149,13 +150,13 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
   TheFunction->insert(TheFunction->end(), MergeBB);
   builder->SetInsertPoint(MergeBB);
 
-  if (ThenV->getType() == llvm::Type::getVoidTy(*ctx) ||
+  if (ThenV->getType() == llvm::Type::getVoidTy(*ctx) || !ElseV ||
       ElseV->getType() == llvm::Type::getVoidTy(*ctx) ||
       (ThenV->getType() != ElseV->getType())) {
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
   }
 
-  auto *PN = builder->CreatePHI(ThenV->getType(), 2, "iftmp");
+  llvm::PHINode *PN = builder->CreatePHI(ThenV->getType(), 2, "iftmp");
   PN->addIncoming(ThenV, ThenBB);
   if(is.else_path)
     PN->addIncoming(ElseV, ElseBB);
