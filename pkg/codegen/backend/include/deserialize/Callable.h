@@ -61,6 +61,7 @@ struct FunctionDeclaration : public Callable {
   std::string directive;
 
   void call() override;
+  std::string getName() override;
   explicit FunctionDeclaration(const Pasc::FuncDeclaration&);
   llvm::Value *codegen(IRVisitor &) override;
 };
@@ -71,6 +72,7 @@ struct ProcedureDeclaration : public Callable {
   std::string directive;
 
   void call() override;
+  std::string getName() override;
   explicit ProcedureDeclaration(const Pasc::ProcDeclaration&);
   llvm::Value *codegen(IRVisitor &) override;
 };

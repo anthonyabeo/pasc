@@ -34,6 +34,10 @@ std::unique_ptr<FormalParameter> deserializeFormalParam(const Pasc::FormalParame
 //////////////////////////
 void FunctionDeclaration::call() {}
 
+std::string FunctionDeclaration::getName() {
+  return funcHead->getName();
+}
+
 FunctionDeclaration::FunctionDeclaration(const Pasc::FuncDeclaration& fd) {
   funcHead = std::make_unique<FuncHeading>(fd.funcheading());
   if(fd.has_blk())
@@ -49,6 +53,10 @@ llvm::Value *FunctionDeclaration::codegen(IRVisitor &v) {
 // PROCEDURE DECLARATION
 //////////////////////////
 void ProcedureDeclaration::call() {}
+
+std::string ProcedureDeclaration::getName() {
+  return procHead->getName();
+}
 
 ProcedureDeclaration::ProcedureDeclaration(const Pasc::ProcDeclaration& pd) {
   procHead = std::make_unique<ProcHeading>(pd.prochead());
