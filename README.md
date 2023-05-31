@@ -1,5 +1,9 @@
 # PASCAL COMPILER (PASC)
-An implementation of the Pascal Programming Language as defined by the [ISO 7185:1990 Standard](docs/pascal-iso7185.pdf). 
+An implementation of the Pascal Programming Language as defined by the [ISO 7185:1990 Standard](docs/pascal-iso7185.pdf).  
+
+This is a compiler implementation, with a front-end that generates LLVM IR, and a backend that utilizes the LLVM
+toolchain to optimize the IR and generate executables. In the midst of that, the program is serialized to and
+from [protocol buffers](https://protobuf.dev/) to accommodate the Go front-end and C++ backends.
 
 # Getting Started
 Pasc is implemented in Go and C++. You should have recent toolchains for both languages installed on your system. 
