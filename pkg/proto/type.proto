@@ -11,6 +11,7 @@ message Type {
     CHAR = 3;
     VOID = 4;
     STR = 5;
+    ENUM = 6;
   }
 
   message Integer {
@@ -37,6 +38,10 @@ message Type {
     string name = 1;
   }
 
+  message Enum {
+    repeated string elem = 1;
+  }
+
   TypeKind tk = 1;
   oneof type {
     Integer int = 2;
@@ -45,5 +50,6 @@ message Type {
     Char char = 5;
     Void void = 6;
     String str = 7;
+    Enum en = 8;
   }
 }
