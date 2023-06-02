@@ -18,6 +18,8 @@ struct Block {
   std::vector<std::unique_ptr<VariableDeclaration>> VarDeclrs;
   std::vector<std::unique_ptr<Statement>> Stmts;
   std::vector<std::string> Labels;
+  std::vector<std::unique_ptr<ConstantDefinition>> Consts;
+  std::vector<std::unique_ptr<TypeDefinition>> Types;
 
   explicit Block(const Pasc::Block &);
 };

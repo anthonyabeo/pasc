@@ -15,4 +15,18 @@ struct VariableDeclaration : public Declaration {
   explicit VariableDeclaration(const Pasc::VarDeclaration &);
 };
 
+struct ConstantDefinition {
+  std::string name;
+  std::unique_ptr<Expr> value;
+
+  explicit ConstantDefinition(const Pasc::ConstDefinition&);
+};
+
+struct TypeDefinition {
+  std::string name;
+  std::unique_ptr<Type> type;
+
+  explicit TypeDefinition(const Pasc::TypeDefinition&);
+};
+
 #endif // DECLARATION_H

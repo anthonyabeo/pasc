@@ -39,7 +39,8 @@ message Type {
   }
 
   message Enum {
-    repeated string elem = 1;
+    string name = 1;
+    repeated string elems = 2;
   }
 
   TypeKind tk = 1;

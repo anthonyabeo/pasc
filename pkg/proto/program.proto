@@ -24,7 +24,8 @@ message Block {
     repeated Statement stmts = 2;
     repeated Callable callables = 3;
     repeated string labels = 4;
-    repeated Constant consts = 5;
+    repeated ConstDefinition consts = 5;
+    repeated TypeDefinition types = 6;
 }
 
 
@@ -103,7 +104,12 @@ message VarDeclaration {
 //////////////////////////////////
 //  CONSTANT DEFINITION
 //////////////////////////////////
-message Constant {
+message ConstDefinition {
     Expression name = 1;
     Expression value = 2;
+}
+
+message TypeDefinition {
+    string name = 1;
+    Type type = 2;
 }

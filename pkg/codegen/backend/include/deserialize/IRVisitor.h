@@ -36,6 +36,7 @@ public:
   virtual llvm::Value *codegen(const RepeatStatement &) = 0;
   virtual llvm::Value *codegen(const ForStatement &) = 0;
   virtual llvm::Value *codegen(const GotoStatement &) = 0;
+  virtual llvm::Value *codegen(const CaseStatement &) = 0;
 
   virtual std::vector<llvm::Type*> codegen(const VariableParam &) = 0;
   virtual std::vector<llvm::Type*> codegen(const ValueParam &) = 0;
@@ -47,6 +48,7 @@ public:
   virtual llvm::Type *codegen(const VoidType &) = 0;
   virtual llvm::Type *codegen(const RealType &) = 0;
   virtual llvm::Type *codegen(const StringType &) = 0;
+  virtual llvm::Type *codegen(const EnumType &) = 0;
 };
 
 #endif // IR_VISITOR_H

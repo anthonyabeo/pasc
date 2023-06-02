@@ -56,6 +56,7 @@ public:
   llvm::Value *codegen(const RepeatStatement&) override;
   llvm::Value *codegen(const ForStatement&) override;
   llvm::Value *codegen(const GotoStatement&) override;
+  llvm::Value *codegen(const CaseStatement&) override;
 
   std::vector<llvm::Type*> codegen(const FuncHeading&) override;
   std::vector<llvm::Type*> codegen(const ProcHeading&) override;
@@ -68,6 +69,7 @@ public:
   llvm::Type *codegen(const VoidType&) override;
   llvm::Type *codegen(const RealType&) override;
   llvm::Type *codegen(const StringType&) override;
+  llvm::Type *codegen(const EnumType&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation
