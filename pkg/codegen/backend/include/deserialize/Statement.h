@@ -153,4 +153,23 @@ struct GotoStatement : public Statement {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+///////////////////////////
+// CASE STATEMENT
+///////////////////////////
+struct CaseListElement {
+  std::vector<std::unique_ptr<Expr>> consts;
+  std::unique_ptr<Statement> body;
+
+  explicit CaseListElement(const Pasc::CaseStatement_CaseListElement&);
+};
+
+struct CaseStatement : public Statement {
+  std::unique_ptr<Expr> index;
+  std::vector<CaseListElement> caseListElems;
+  std::string label;
+
+  explicit CaseStatement(const Pasc::CaseStatement&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
 #endif // STATEMENT_H

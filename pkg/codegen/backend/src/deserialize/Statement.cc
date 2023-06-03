@@ -28,6 +28,8 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
     return std::make_unique<ForStatement>(stmt.forstmt());
   case Pasc::Statement_StmtKind_goto_:
     return std::make_unique<GotoStatement>(stmt.gotostmt());
+  case Pasc::Statement_StmtKind_case_:
+    return std::make_unique<CaseStatement>(stmt.casestmt());
   default:
     throw DeserializeProtobufException("invalid statement kind");
   }
@@ -210,5 +212,27 @@ GotoStatement::GotoStatement(const Pasc::GoToStatement &gs) {
 }
 
 llvm::Value *GotoStatement::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////////
+// CASE STATEMENT
+///////////////////////////
+CaseListElement::CaseListElement(const Pasc::CaseStatement_CaseListElement &cle) {
+  body = deserializeStmt(cle.stmt());
+  for (int i = 0; i < cle.constants_size(); ++i) {
+    consts.push_back(deserializeExpr(cle.constants(i)));
+  }
+}
+
+CaseStatement::CaseStatement(const Pasc::CaseStatement &cs) {
+  index = deserializeExpr(cs.caseindex());
+  for (int i = 0; i < cs.cle_size(); ++i) {
+    caseListElems.emplace_back(cs.cle(i));
+  }
+  label = cs.label();
+}
+
+llvm::Value *CaseStatement::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
