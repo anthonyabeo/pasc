@@ -57,4 +57,13 @@ struct StringType : public Type {
   llvm::Type *codegen(IRVisitor &) override;
 };
 
+struct EnumType : public Type {
+  std::string name;
+  std::vector<std::string> elems;
+
+  explicit EnumType(const Pasc::Type_Enum&);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &) override;
+};
+
 #endif // TYPE_H

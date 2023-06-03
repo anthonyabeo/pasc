@@ -16,6 +16,10 @@ std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
     return std::make_unique<VoidType>(t.void_());
   case Pasc::Type_TypeKind_REAL:
     return std::make_unique<RealType>(t.real());
+  case Pasc::Type_TypeKind_STR:
+    return std::make_unique<StringType>(t.str());
+  case Pasc::Type_TypeKind_ENUM:
+    return std::make_unique<EnumType>(t.en());
   default:
     throw DeserializeProtobufException("invalid case");
   }
@@ -81,5 +85,21 @@ StringType::StringType(const Pasc::Type_String &st) {
 std::string StringType::GetName() const { return name; }
 
 llvm::Type *StringType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////
+// ENUM
+///////////////////////
+EnumType::EnumType(const Pasc::Type_Enum &en) {
+  name = en.name();
+  for (int i = 0; i < en.elems_size(); ++i) {
+    elems.push_back(en.elems(i));
+  }
+}
+
+std::string EnumType::GetName() const { return name; }
+
+llvm::Type *EnumType::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
