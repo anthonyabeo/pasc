@@ -43,7 +43,7 @@ namespace protobuf_proto_2fprogram_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[11];
+  static const ::google::protobuf::internal::ParseTable schema[13];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -57,6 +57,9 @@ extern BlockDefaultTypeInternal _Block_default_instance_;
 class Callable;
 class CallableDefaultTypeInternal;
 extern CallableDefaultTypeInternal _Callable_default_instance_;
+class ConstDefinition;
+class ConstDefinitionDefaultTypeInternal;
+extern ConstDefinitionDefaultTypeInternal _ConstDefinition_default_instance_;
 class FormalParameter;
 class FormalParameterDefaultTypeInternal;
 extern FormalParameterDefaultTypeInternal _FormalParameter_default_instance_;
@@ -75,6 +78,9 @@ extern ProcHeadingDefaultTypeInternal _ProcHeading_default_instance_;
 class Program;
 class ProgramDefaultTypeInternal;
 extern ProgramDefaultTypeInternal _Program_default_instance_;
+class TypeDefinition;
+class TypeDefinitionDefaultTypeInternal;
+extern TypeDefinitionDefaultTypeInternal _TypeDefinition_default_instance_;
 class ValueParam;
 class ValueParamDefaultTypeInternal;
 extern ValueParamDefaultTypeInternal _ValueParam_default_instance_;
@@ -89,12 +95,14 @@ namespace google {
 namespace protobuf {
 template<> ::Pasc::Block* Arena::CreateMaybeMessage<::Pasc::Block>(Arena*);
 template<> ::Pasc::Callable* Arena::CreateMaybeMessage<::Pasc::Callable>(Arena*);
+template<> ::Pasc::ConstDefinition* Arena::CreateMaybeMessage<::Pasc::ConstDefinition>(Arena*);
 template<> ::Pasc::FormalParameter* Arena::CreateMaybeMessage<::Pasc::FormalParameter>(Arena*);
 template<> ::Pasc::FuncDeclaration* Arena::CreateMaybeMessage<::Pasc::FuncDeclaration>(Arena*);
 template<> ::Pasc::FuncHeading* Arena::CreateMaybeMessage<::Pasc::FuncHeading>(Arena*);
 template<> ::Pasc::ProcDeclaration* Arena::CreateMaybeMessage<::Pasc::ProcDeclaration>(Arena*);
 template<> ::Pasc::ProcHeading* Arena::CreateMaybeMessage<::Pasc::ProcHeading>(Arena*);
 template<> ::Pasc::Program* Arena::CreateMaybeMessage<::Pasc::Program>(Arena*);
+template<> ::Pasc::TypeDefinition* Arena::CreateMaybeMessage<::Pasc::TypeDefinition>(Arena*);
 template<> ::Pasc::ValueParam* Arena::CreateMaybeMessage<::Pasc::ValueParam>(Arena*);
 template<> ::Pasc::VarDeclaration* Arena::CreateMaybeMessage<::Pasc::VarDeclaration>(Arena*);
 template<> ::Pasc::VariableParam* Arena::CreateMaybeMessage<::Pasc::VariableParam>(Arena*);
@@ -447,6 +455,30 @@ class Block : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   const ::google::protobuf::RepeatedPtrField< ::std::string>& labels() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_labels();
 
+  // repeated .Pasc.ConstDefinition consts = 5;
+  int consts_size() const;
+  void clear_consts();
+  static const int kConstsFieldNumber = 5;
+  ::Pasc::ConstDefinition* mutable_consts(int index);
+  ::google::protobuf::RepeatedPtrField< ::Pasc::ConstDefinition >*
+      mutable_consts();
+  const ::Pasc::ConstDefinition& consts(int index) const;
+  ::Pasc::ConstDefinition* add_consts();
+  const ::google::protobuf::RepeatedPtrField< ::Pasc::ConstDefinition >&
+      consts() const;
+
+  // repeated .Pasc.TypeDefinition types = 6;
+  int types_size() const;
+  void clear_types();
+  static const int kTypesFieldNumber = 6;
+  ::Pasc::TypeDefinition* mutable_types(int index);
+  ::google::protobuf::RepeatedPtrField< ::Pasc::TypeDefinition >*
+      mutable_types();
+  const ::Pasc::TypeDefinition& types(int index) const;
+  ::Pasc::TypeDefinition* add_types();
+  const ::google::protobuf::RepeatedPtrField< ::Pasc::TypeDefinition >&
+      types() const;
+
   // @@protoc_insertion_point(class_scope:Pasc.Block)
  private:
 
@@ -455,6 +487,8 @@ class Block : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::RepeatedPtrField< ::Pasc::Statement > stmts_;
   ::google::protobuf::RepeatedPtrField< ::Pasc::Callable > callables_;
   ::google::protobuf::RepeatedPtrField< ::std::string> labels_;
+  ::google::protobuf::RepeatedPtrField< ::Pasc::ConstDefinition > consts_;
+  ::google::protobuf::RepeatedPtrField< ::Pasc::TypeDefinition > types_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fprogram_2eproto::TableStruct;
 };
@@ -1772,6 +1806,252 @@ class VarDeclaration : public ::google::protobuf::Message /* @@protoc_insertion_
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_proto_2fprogram_2eproto::TableStruct;
 };
+// -------------------------------------------------------------------
+
+class ConstDefinition : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.ConstDefinition) */ {
+ public:
+  ConstDefinition();
+  virtual ~ConstDefinition();
+
+  ConstDefinition(const ConstDefinition& from);
+
+  inline ConstDefinition& operator=(const ConstDefinition& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  ConstDefinition(ConstDefinition&& from) noexcept
+    : ConstDefinition() {
+    *this = ::std::move(from);
+  }
+
+  inline ConstDefinition& operator=(ConstDefinition&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ConstDefinition& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ConstDefinition* internal_default_instance() {
+    return reinterpret_cast<const ConstDefinition*>(
+               &_ConstDefinition_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  void Swap(ConstDefinition* other);
+  friend void swap(ConstDefinition& a, ConstDefinition& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ConstDefinition* New() const final {
+    return CreateMaybeMessage<ConstDefinition>(NULL);
+  }
+
+  ConstDefinition* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<ConstDefinition>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const ConstDefinition& from);
+  void MergeFrom(const ConstDefinition& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ConstDefinition* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .Pasc.Expression name = 1;
+  bool has_name() const;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  private:
+  const ::Pasc::Expression& _internal_name() const;
+  public:
+  const ::Pasc::Expression& name() const;
+  ::Pasc::Expression* release_name();
+  ::Pasc::Expression* mutable_name();
+  void set_allocated_name(::Pasc::Expression* name);
+
+  // .Pasc.Expression value = 2;
+  bool has_value() const;
+  void clear_value();
+  static const int kValueFieldNumber = 2;
+  private:
+  const ::Pasc::Expression& _internal_value() const;
+  public:
+  const ::Pasc::Expression& value() const;
+  ::Pasc::Expression* release_value();
+  ::Pasc::Expression* mutable_value();
+  void set_allocated_value(::Pasc::Expression* value);
+
+  // @@protoc_insertion_point(class_scope:Pasc.ConstDefinition)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::Pasc::Expression* name_;
+  ::Pasc::Expression* value_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_proto_2fprogram_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class TypeDefinition : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.TypeDefinition) */ {
+ public:
+  TypeDefinition();
+  virtual ~TypeDefinition();
+
+  TypeDefinition(const TypeDefinition& from);
+
+  inline TypeDefinition& operator=(const TypeDefinition& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  TypeDefinition(TypeDefinition&& from) noexcept
+    : TypeDefinition() {
+    *this = ::std::move(from);
+  }
+
+  inline TypeDefinition& operator=(TypeDefinition&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TypeDefinition& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TypeDefinition* internal_default_instance() {
+    return reinterpret_cast<const TypeDefinition*>(
+               &_TypeDefinition_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    12;
+
+  void Swap(TypeDefinition* other);
+  friend void swap(TypeDefinition& a, TypeDefinition& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TypeDefinition* New() const final {
+    return CreateMaybeMessage<TypeDefinition>(NULL);
+  }
+
+  TypeDefinition* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<TypeDefinition>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const TypeDefinition& from);
+  void MergeFrom(const TypeDefinition& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TypeDefinition* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // .Pasc.Type type = 2;
+  bool has_type() const;
+  void clear_type();
+  static const int kTypeFieldNumber = 2;
+  private:
+  const ::Pasc::Type& _internal_type() const;
+  public:
+  const ::Pasc::Type& type() const;
+  ::Pasc::Type* release_type();
+  ::Pasc::Type* mutable_type();
+  void set_allocated_type(::Pasc::Type* type);
+
+  // @@protoc_insertion_point(class_scope:Pasc.TypeDefinition)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  ::Pasc::Type* type_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_proto_2fprogram_2eproto::TableStruct;
+};
 // ===================================================================
 
 
@@ -2131,6 +2411,66 @@ inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 Block::mutable_labels() {
   // @@protoc_insertion_point(field_mutable_list:Pasc.Block.labels)
   return &labels_;
+}
+
+// repeated .Pasc.ConstDefinition consts = 5;
+inline int Block::consts_size() const {
+  return consts_.size();
+}
+inline void Block::clear_consts() {
+  consts_.Clear();
+}
+inline ::Pasc::ConstDefinition* Block::mutable_consts(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.Block.consts)
+  return consts_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Pasc::ConstDefinition >*
+Block::mutable_consts() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.Block.consts)
+  return &consts_;
+}
+inline const ::Pasc::ConstDefinition& Block::consts(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.Block.consts)
+  return consts_.Get(index);
+}
+inline ::Pasc::ConstDefinition* Block::add_consts() {
+  // @@protoc_insertion_point(field_add:Pasc.Block.consts)
+  return consts_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Pasc::ConstDefinition >&
+Block::consts() const {
+  // @@protoc_insertion_point(field_list:Pasc.Block.consts)
+  return consts_;
+}
+
+// repeated .Pasc.TypeDefinition types = 6;
+inline int Block::types_size() const {
+  return types_.size();
+}
+inline void Block::clear_types() {
+  types_.Clear();
+}
+inline ::Pasc::TypeDefinition* Block::mutable_types(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.Block.types)
+  return types_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Pasc::TypeDefinition >*
+Block::mutable_types() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.Block.types)
+  return &types_;
+}
+inline const ::Pasc::TypeDefinition& Block::types(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.Block.types)
+  return types_.Get(index);
+}
+inline ::Pasc::TypeDefinition* Block::add_types() {
+  // @@protoc_insertion_point(field_add:Pasc.Block.types)
+  return types_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Pasc::TypeDefinition >&
+Block::types() const {
+  // @@protoc_insertion_point(field_list:Pasc.Block.types)
+  return types_;
 }
 
 // -------------------------------------------------------------------
@@ -3393,9 +3733,218 @@ inline void VarDeclaration::set_allocated_type(::Pasc::Type* type) {
   // @@protoc_insertion_point(field_set_allocated:Pasc.VarDeclaration.type)
 }
 
+// -------------------------------------------------------------------
+
+// ConstDefinition
+
+// .Pasc.Expression name = 1;
+inline bool ConstDefinition::has_name() const {
+  return this != internal_default_instance() && name_ != NULL;
+}
+inline const ::Pasc::Expression& ConstDefinition::_internal_name() const {
+  return *name_;
+}
+inline const ::Pasc::Expression& ConstDefinition::name() const {
+  const ::Pasc::Expression* p = name_;
+  // @@protoc_insertion_point(field_get:Pasc.ConstDefinition.name)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* ConstDefinition::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.ConstDefinition.name)
+  
+  ::Pasc::Expression* temp = name_;
+  name_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* ConstDefinition::mutable_name() {
+  
+  if (name_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    name_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.ConstDefinition.name)
+  return name_;
+}
+inline void ConstDefinition::set_allocated_name(::Pasc::Expression* name) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(name_);
+  }
+  if (name) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      name = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, name, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  name_ = name;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ConstDefinition.name)
+}
+
+// .Pasc.Expression value = 2;
+inline bool ConstDefinition::has_value() const {
+  return this != internal_default_instance() && value_ != NULL;
+}
+inline const ::Pasc::Expression& ConstDefinition::_internal_value() const {
+  return *value_;
+}
+inline const ::Pasc::Expression& ConstDefinition::value() const {
+  const ::Pasc::Expression* p = value_;
+  // @@protoc_insertion_point(field_get:Pasc.ConstDefinition.value)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Expression*>(
+      &::Pasc::_Expression_default_instance_);
+}
+inline ::Pasc::Expression* ConstDefinition::release_value() {
+  // @@protoc_insertion_point(field_release:Pasc.ConstDefinition.value)
+  
+  ::Pasc::Expression* temp = value_;
+  value_ = NULL;
+  return temp;
+}
+inline ::Pasc::Expression* ConstDefinition::mutable_value() {
+  
+  if (value_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Expression>(GetArenaNoVirtual());
+    value_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.ConstDefinition.value)
+  return value_;
+}
+inline void ConstDefinition::set_allocated_value(::Pasc::Expression* value) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(value_);
+  }
+  if (value) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, value, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  value_ = value;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.ConstDefinition.value)
+}
+
+// -------------------------------------------------------------------
+
+// TypeDefinition
+
+// string name = 1;
+inline void TypeDefinition::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TypeDefinition::name() const {
+  // @@protoc_insertion_point(field_get:Pasc.TypeDefinition.name)
+  return name_.GetNoArena();
+}
+inline void TypeDefinition::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.TypeDefinition.name)
+}
+#if LANG_CXX11
+inline void TypeDefinition::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.TypeDefinition.name)
+}
+#endif
+inline void TypeDefinition::set_name(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.TypeDefinition.name)
+}
+inline void TypeDefinition::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.TypeDefinition.name)
+}
+inline ::std::string* TypeDefinition::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.TypeDefinition.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TypeDefinition::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.TypeDefinition.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TypeDefinition::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.TypeDefinition.name)
+}
+
+// .Pasc.Type type = 2;
+inline bool TypeDefinition::has_type() const {
+  return this != internal_default_instance() && type_ != NULL;
+}
+inline const ::Pasc::Type& TypeDefinition::_internal_type() const {
+  return *type_;
+}
+inline const ::Pasc::Type& TypeDefinition::type() const {
+  const ::Pasc::Type* p = type_;
+  // @@protoc_insertion_point(field_get:Pasc.TypeDefinition.type)
+  return p != NULL ? *p : *reinterpret_cast<const ::Pasc::Type*>(
+      &::Pasc::_Type_default_instance_);
+}
+inline ::Pasc::Type* TypeDefinition::release_type() {
+  // @@protoc_insertion_point(field_release:Pasc.TypeDefinition.type)
+  
+  ::Pasc::Type* temp = type_;
+  type_ = NULL;
+  return temp;
+}
+inline ::Pasc::Type* TypeDefinition::mutable_type() {
+  
+  if (type_ == NULL) {
+    auto* p = CreateMaybeMessage<::Pasc::Type>(GetArenaNoVirtual());
+    type_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.TypeDefinition.type)
+  return type_;
+}
+inline void TypeDefinition::set_allocated_type(::Pasc::Type* type) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(type_);
+  }
+  if (type) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      type = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, type, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  type_ = type;
+  // @@protoc_insertion_point(field_set_allocated:Pasc.TypeDefinition.type)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

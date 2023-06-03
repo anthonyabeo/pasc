@@ -33,7 +33,7 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::pr
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2fexpression_2eproto ::google::protobuf::internal::SCCInfo<8> scc_info_BinaryExpr;
 }  // namespace protobuf_proto_2fexpression_2eproto
 namespace protobuf_proto_2ftype_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<6> scc_info_Type;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<7> scc_info_Type;
 }  // namespace protobuf_proto_2ftype_2eproto
 namespace Pasc {
 class Identifier_VariableDefaultTypeInternal {

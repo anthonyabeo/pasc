@@ -39,7 +39,7 @@ namespace protobuf_proto_2ftype_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[7];
+  static const ::google::protobuf::internal::ParseTable schema[8];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -56,6 +56,9 @@ extern Type_BooleanDefaultTypeInternal _Type_Boolean_default_instance_;
 class Type_Char;
 class Type_CharDefaultTypeInternal;
 extern Type_CharDefaultTypeInternal _Type_Char_default_instance_;
+class Type_Enum;
+class Type_EnumDefaultTypeInternal;
+extern Type_EnumDefaultTypeInternal _Type_Enum_default_instance_;
 class Type_Integer;
 class Type_IntegerDefaultTypeInternal;
 extern Type_IntegerDefaultTypeInternal _Type_Integer_default_instance_;
@@ -74,6 +77,7 @@ namespace protobuf {
 template<> ::Pasc::Type* Arena::CreateMaybeMessage<::Pasc::Type>(Arena*);
 template<> ::Pasc::Type_Boolean* Arena::CreateMaybeMessage<::Pasc::Type_Boolean>(Arena*);
 template<> ::Pasc::Type_Char* Arena::CreateMaybeMessage<::Pasc::Type_Char>(Arena*);
+template<> ::Pasc::Type_Enum* Arena::CreateMaybeMessage<::Pasc::Type_Enum>(Arena*);
 template<> ::Pasc::Type_Integer* Arena::CreateMaybeMessage<::Pasc::Type_Integer>(Arena*);
 template<> ::Pasc::Type_Real* Arena::CreateMaybeMessage<::Pasc::Type_Real>(Arena*);
 template<> ::Pasc::Type_String* Arena::CreateMaybeMessage<::Pasc::Type_String>(Arena*);
@@ -89,12 +93,13 @@ enum Type_TypeKind {
   Type_TypeKind_CHAR = 3,
   Type_TypeKind_VOID = 4,
   Type_TypeKind_STR = 5,
+  Type_TypeKind_ENUM = 6,
   Type_TypeKind_Type_TypeKind_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Type_TypeKind_Type_TypeKind_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Type_TypeKind_IsValid(int value);
 const Type_TypeKind Type_TypeKind_TypeKind_MIN = Type_TypeKind_INTEGER;
-const Type_TypeKind Type_TypeKind_TypeKind_MAX = Type_TypeKind_STR;
+const Type_TypeKind Type_TypeKind_TypeKind_MAX = Type_TypeKind_ENUM;
 const int Type_TypeKind_TypeKind_ARRAYSIZE = Type_TypeKind_TypeKind_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Type_TypeKind_descriptor();
@@ -775,6 +780,140 @@ class Type_String : public ::google::protobuf::Message /* @@protoc_insertion_poi
 };
 // -------------------------------------------------------------------
 
+class Type_Enum : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.Type.Enum) */ {
+ public:
+  Type_Enum();
+  virtual ~Type_Enum();
+
+  Type_Enum(const Type_Enum& from);
+
+  inline Type_Enum& operator=(const Type_Enum& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Type_Enum(Type_Enum&& from) noexcept
+    : Type_Enum() {
+    *this = ::std::move(from);
+  }
+
+  inline Type_Enum& operator=(Type_Enum&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Type_Enum& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Type_Enum* internal_default_instance() {
+    return reinterpret_cast<const Type_Enum*>(
+               &_Type_Enum_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  void Swap(Type_Enum* other);
+  friend void swap(Type_Enum& a, Type_Enum& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Type_Enum* New() const final {
+    return CreateMaybeMessage<Type_Enum>(NULL);
+  }
+
+  Type_Enum* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<Type_Enum>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const Type_Enum& from);
+  void MergeFrom(const Type_Enum& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Type_Enum* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string elems = 2;
+  int elems_size() const;
+  void clear_elems();
+  static const int kElemsFieldNumber = 2;
+  const ::std::string& elems(int index) const;
+  ::std::string* mutable_elems(int index);
+  void set_elems(int index, const ::std::string& value);
+  #if LANG_CXX11
+  void set_elems(int index, ::std::string&& value);
+  #endif
+  void set_elems(int index, const char* value);
+  void set_elems(int index, const char* value, size_t size);
+  ::std::string* add_elems();
+  void add_elems(const ::std::string& value);
+  #if LANG_CXX11
+  void add_elems(::std::string&& value);
+  #endif
+  void add_elems(const char* value);
+  void add_elems(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& elems() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_elems();
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // @@protoc_insertion_point(class_scope:Pasc.Type.Enum)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> elems_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_proto_2ftype_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Pasc.Type) */ {
  public:
   Type();
@@ -811,6 +950,7 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
     kChar = 5,
     kVoid = 6,
     kStr = 7,
+    kEn = 8,
     TYPE_NOT_SET = 0,
   };
 
@@ -820,7 +960,7 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
                &_Type_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   void Swap(Type* other);
   friend void swap(Type& a, Type& b) {
@@ -876,6 +1016,7 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   typedef Type_Char Char;
   typedef Type_Void Void;
   typedef Type_String String;
+  typedef Type_Enum Enum;
 
   typedef Type_TypeKind TypeKind;
   static const TypeKind INTEGER =
@@ -890,6 +1031,8 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
     Type_TypeKind_VOID;
   static const TypeKind STR =
     Type_TypeKind_STR;
+  static const TypeKind ENUM =
+    Type_TypeKind_ENUM;
   static inline bool TypeKind_IsValid(int value) {
     return Type_TypeKind_IsValid(value);
   }
@@ -991,6 +1134,18 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::Pasc::Type_String* mutable_str();
   void set_allocated_str(::Pasc::Type_String* str);
 
+  // .Pasc.Type.Enum en = 8;
+  bool has_en() const;
+  void clear_en();
+  static const int kEnFieldNumber = 8;
+  private:
+  const ::Pasc::Type_Enum& _internal_en() const;
+  public:
+  const ::Pasc::Type_Enum& en() const;
+  ::Pasc::Type_Enum* release_en();
+  ::Pasc::Type_Enum* mutable_en();
+  void set_allocated_en(::Pasc::Type_Enum* en);
+
   void clear_type();
   TypeCase type_case() const;
   // @@protoc_insertion_point(class_scope:Pasc.Type)
@@ -1001,6 +1156,7 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   void set_has_char_();
   void set_has_void_();
   void set_has_str();
+  void set_has_en();
 
   inline bool has_type() const;
   inline void clear_has_type();
@@ -1015,6 +1171,7 @@ class Type : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
     ::Pasc::Type_Char* char__;
     ::Pasc::Type_Void* void__;
     ::Pasc::Type_String* str_;
+    ::Pasc::Type_Enum* en_;
   } type_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -1372,6 +1529,132 @@ inline void Type_String::set_allocated_name(::std::string* name) {
 
 // -------------------------------------------------------------------
 
+// Type_Enum
+
+// string name = 1;
+inline void Type_Enum::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Type_Enum::name() const {
+  // @@protoc_insertion_point(field_get:Pasc.Type.Enum.name)
+  return name_.GetNoArena();
+}
+inline void Type_Enum::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Pasc.Type.Enum.name)
+}
+#if LANG_CXX11
+inline void Type_Enum::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Pasc.Type.Enum.name)
+}
+#endif
+inline void Type_Enum::set_name(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Pasc.Type.Enum.name)
+}
+inline void Type_Enum::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Pasc.Type.Enum.name)
+}
+inline ::std::string* Type_Enum::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Pasc.Type.Enum.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Type_Enum::release_name() {
+  // @@protoc_insertion_point(field_release:Pasc.Type.Enum.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Type_Enum::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Pasc.Type.Enum.name)
+}
+
+// repeated string elems = 2;
+inline int Type_Enum::elems_size() const {
+  return elems_.size();
+}
+inline void Type_Enum::clear_elems() {
+  elems_.Clear();
+}
+inline const ::std::string& Type_Enum::elems(int index) const {
+  // @@protoc_insertion_point(field_get:Pasc.Type.Enum.elems)
+  return elems_.Get(index);
+}
+inline ::std::string* Type_Enum::mutable_elems(int index) {
+  // @@protoc_insertion_point(field_mutable:Pasc.Type.Enum.elems)
+  return elems_.Mutable(index);
+}
+inline void Type_Enum::set_elems(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:Pasc.Type.Enum.elems)
+  elems_.Mutable(index)->assign(value);
+}
+#if LANG_CXX11
+inline void Type_Enum::set_elems(int index, ::std::string&& value) {
+  // @@protoc_insertion_point(field_set:Pasc.Type.Enum.elems)
+  elems_.Mutable(index)->assign(std::move(value));
+}
+#endif
+inline void Type_Enum::set_elems(int index, const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  elems_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:Pasc.Type.Enum.elems)
+}
+inline void Type_Enum::set_elems(int index, const char* value, size_t size) {
+  elems_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:Pasc.Type.Enum.elems)
+}
+inline ::std::string* Type_Enum::add_elems() {
+  // @@protoc_insertion_point(field_add_mutable:Pasc.Type.Enum.elems)
+  return elems_.Add();
+}
+inline void Type_Enum::add_elems(const ::std::string& value) {
+  elems_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:Pasc.Type.Enum.elems)
+}
+#if LANG_CXX11
+inline void Type_Enum::add_elems(::std::string&& value) {
+  elems_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:Pasc.Type.Enum.elems)
+}
+#endif
+inline void Type_Enum::add_elems(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  elems_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:Pasc.Type.Enum.elems)
+}
+inline void Type_Enum::add_elems(const char* value, size_t size) {
+  elems_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:Pasc.Type.Enum.elems)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+Type_Enum::elems() const {
+  // @@protoc_insertion_point(field_list:Pasc.Type.Enum.elems)
+  return elems_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+Type_Enum::mutable_elems() {
+  // @@protoc_insertion_point(field_mutable_list:Pasc.Type.Enum.elems)
+  return &elems_;
+}
+
+// -------------------------------------------------------------------
+
 // Type
 
 // .Pasc.Type.TypeKind tk = 1;
@@ -1652,6 +1935,50 @@ inline ::Pasc::Type_String* Type::mutable_str() {
   return type_.str_;
 }
 
+// .Pasc.Type.Enum en = 8;
+inline bool Type::has_en() const {
+  return type_case() == kEn;
+}
+inline void Type::set_has_en() {
+  _oneof_case_[0] = kEn;
+}
+inline void Type::clear_en() {
+  if (has_en()) {
+    delete type_.en_;
+    clear_has_type();
+  }
+}
+inline const ::Pasc::Type_Enum& Type::_internal_en() const {
+  return *type_.en_;
+}
+inline ::Pasc::Type_Enum* Type::release_en() {
+  // @@protoc_insertion_point(field_release:Pasc.Type.en)
+  if (has_en()) {
+    clear_has_type();
+      ::Pasc::Type_Enum* temp = type_.en_;
+    type_.en_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::Pasc::Type_Enum& Type::en() const {
+  // @@protoc_insertion_point(field_get:Pasc.Type.en)
+  return has_en()
+      ? *type_.en_
+      : *reinterpret_cast< ::Pasc::Type_Enum*>(&::Pasc::_Type_Enum_default_instance_);
+}
+inline ::Pasc::Type_Enum* Type::mutable_en() {
+  if (!has_en()) {
+    clear_type();
+    set_has_en();
+    type_.en_ = CreateMaybeMessage< ::Pasc::Type_Enum >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Pasc.Type.en)
+  return type_.en_;
+}
+
 inline bool Type::has_type() const {
   return type_case() != TYPE_NOT_SET;
 }
@@ -1664,6 +1991,8 @@ inline Type::TypeCase Type::type_case() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

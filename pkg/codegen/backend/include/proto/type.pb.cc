@@ -22,6 +22,7 @@
 namespace protobuf_proto_2ftype_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Type_Boolean;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Type_Char;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Type_Enum;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Type_Integer;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Type_Real;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_proto_2ftype_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Type_String;
@@ -58,6 +59,11 @@ class Type_StringDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<Type_String>
       _instance;
 } _Type_String_default_instance_;
+class Type_EnumDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<Type_Enum>
+      _instance;
+} _Type_Enum_default_instance_;
 class TypeDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Type>
@@ -68,6 +74,7 @@ class TypeDefaultTypeInternal {
   const ::Pasc::Type_Char* char__;
   const ::Pasc::Type_Void* void__;
   const ::Pasc::Type_String* str_;
+  const ::Pasc::Type_Enum* en_;
 } _Type_default_instance_;
 }  // namespace Pasc
 namespace protobuf_proto_2ftype_2eproto {
@@ -155,6 +162,20 @@ static void InitDefaultsType_String() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_Type_String =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsType_String}, {}};
 
+static void InitDefaultsType_Enum() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::Pasc::_Type_Enum_default_instance_;
+    new (ptr) ::Pasc::Type_Enum();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::Pasc::Type_Enum::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_Type_Enum =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsType_Enum}, {}};
+
 static void InitDefaultsType() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -166,14 +187,15 @@ static void InitDefaultsType() {
   ::Pasc::Type::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<6> scc_info_Type =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 6, InitDefaultsType}, {
+::google::protobuf::internal::SCCInfo<7> scc_info_Type =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 7, InitDefaultsType}, {
       &protobuf_proto_2ftype_2eproto::scc_info_Type_Integer.base,
       &protobuf_proto_2ftype_2eproto::scc_info_Type_Real.base,
       &protobuf_proto_2ftype_2eproto::scc_info_Type_Boolean.base,
       &protobuf_proto_2ftype_2eproto::scc_info_Type_Char.base,
       &protobuf_proto_2ftype_2eproto::scc_info_Type_Void.base,
-      &protobuf_proto_2ftype_2eproto::scc_info_Type_String.base,}};
+      &protobuf_proto_2ftype_2eproto::scc_info_Type_String.base,
+      &protobuf_proto_2ftype_2eproto::scc_info_Type_Enum.base,}};
 
 void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_Type_Integer.base);
@@ -182,10 +204,11 @@ void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_Type_Char.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Type_Void.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Type_String.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_Type_Enum.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Type.base);
 }
 
-::google::protobuf::Metadata file_level_metadata[7];
+::google::protobuf::Metadata file_level_metadata[8];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
@@ -226,6 +249,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type_String, name_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type_Enum, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type_Enum, name_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type_Enum, elems_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type, _internal_metadata_),
   ~0u,  // no _extensions_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type, _oneof_case_[0]),
@@ -237,6 +267,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   offsetof(::Pasc::TypeDefaultTypeInternal, char__),
   offsetof(::Pasc::TypeDefaultTypeInternal, void__),
   offsetof(::Pasc::TypeDefaultTypeInternal, str_),
+  offsetof(::Pasc::TypeDefaultTypeInternal, en_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::Pasc::Type, type_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
@@ -246,7 +277,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 18, -1, sizeof(::Pasc::Type_Char)},
   { 24, -1, sizeof(::Pasc::Type_Void)},
   { 30, -1, sizeof(::Pasc::Type_String)},
-  { 36, -1, sizeof(::Pasc::Type)},
+  { 36, -1, sizeof(::Pasc::Type_Enum)},
+  { 43, -1, sizeof(::Pasc::Type)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -256,6 +288,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Type_Char_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Type_Void_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Type_String_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Type_Enum_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::Pasc::_Type_default_instance_),
 };
 
@@ -274,29 +307,31 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 7);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 8);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\020proto/type.proto\022\004Pasc\"\324\003\n\004Type\022\037\n\002tk\030"
+      "\n\020proto/type.proto\022\004Pasc\"\242\004\n\004Type\022\037\n\002tk\030"
       "\001 \001(\0162\023.Pasc.Type.TypeKind\022!\n\003int\030\002 \001(\0132"
       "\022.Pasc.Type.IntegerH\000\022\037\n\004real\030\003 \001(\0132\017.Pa"
       "sc.Type.RealH\000\022\"\n\004bool\030\004 \001(\0132\022.Pasc.Type"
       ".BooleanH\000\022\037\n\004char\030\005 \001(\0132\017.Pasc.Type.Cha"
       "rH\000\022\037\n\004void\030\006 \001(\0132\017.Pasc.Type.VoidH\000\022 \n\003"
-      "str\030\007 \001(\0132\021.Pasc.Type.StringH\000\032\027\n\007Intege"
-      "r\022\014\n\004name\030\001 \001(\t\032\027\n\007Boolean\022\014\n\004name\030\001 \001(\t"
-      "\032\024\n\004Real\022\014\n\004name\030\001 \001(\t\032\024\n\004Char\022\014\n\004name\030\001"
-      " \001(\t\032\024\n\004Void\022\014\n\004name\030\001 \001(\t\032\026\n\006String\022\014\n\004"
-      "name\030\001 \001(\t\"K\n\010TypeKind\022\013\n\007INTEGER\020\000\022\010\n\004R"
-      "EAL\020\001\022\013\n\007BOOLEAN\020\002\022\010\n\004CHAR\020\003\022\010\n\004VOID\020\004\022\007"
-      "\n\003STR\020\005B\006\n\004typeB\030Z\026pkg/codegen/serialize"
-      "rb\006proto3"
+      "str\030\007 \001(\0132\021.Pasc.Type.StringH\000\022\035\n\002en\030\010 \001"
+      "(\0132\017.Pasc.Type.EnumH\000\032\027\n\007Integer\022\014\n\004name"
+      "\030\001 \001(\t\032\027\n\007Boolean\022\014\n\004name\030\001 \001(\t\032\024\n\004Real\022"
+      "\014\n\004name\030\001 \001(\t\032\024\n\004Char\022\014\n\004name\030\001 \001(\t\032\024\n\004V"
+      "oid\022\014\n\004name\030\001 \001(\t\032\026\n\006String\022\014\n\004name\030\001 \001("
+      "\t\032#\n\004Enum\022\014\n\004name\030\001 \001(\t\022\r\n\005elems\030\002 \003(\t\"U"
+      "\n\010TypeKind\022\013\n\007INTEGER\020\000\022\010\n\004REAL\020\001\022\013\n\007BOO"
+      "LEAN\020\002\022\010\n\004CHAR\020\003\022\010\n\004VOID\020\004\022\007\n\003STR\020\005\022\010\n\004E"
+      "NUM\020\006B\006\n\004typeB\030Z\026pkg/codegen/serializerb"
+      "\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 529);
+      descriptor, 607);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "proto/type.proto", &protobuf_RegisterTypes);
 }
@@ -325,6 +360,7 @@ bool Type_TypeKind_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
       return true;
     default:
       return false;
@@ -338,6 +374,7 @@ const Type_TypeKind Type::BOOLEAN;
 const Type_TypeKind Type::CHAR;
 const Type_TypeKind Type::VOID;
 const Type_TypeKind Type::STR;
+const Type_TypeKind Type::ENUM;
 const Type_TypeKind Type::TypeKind_MIN;
 const Type_TypeKind Type::TypeKind_MAX;
 const int Type::TypeKind_ARRAYSIZE;
@@ -1797,6 +1834,298 @@ void Type_String::InternalSwap(Type_String* other) {
 
 // ===================================================================
 
+void Type_Enum::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Type_Enum::kNameFieldNumber;
+const int Type_Enum::kElemsFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Type_Enum::Type_Enum()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_proto_2ftype_2eproto::scc_info_Type_Enum.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:Pasc.Type.Enum)
+}
+Type_Enum::Type_Enum(const Type_Enum& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      elems_(from.elems_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.name().size() > 0) {
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Pasc.Type.Enum)
+}
+
+void Type_Enum::SharedCtor() {
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+Type_Enum::~Type_Enum() {
+  // @@protoc_insertion_point(destructor:Pasc.Type.Enum)
+  SharedDtor();
+}
+
+void Type_Enum::SharedDtor() {
+  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void Type_Enum::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* Type_Enum::descriptor() {
+  ::protobuf_proto_2ftype_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2ftype_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const Type_Enum& Type_Enum::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_proto_2ftype_2eproto::scc_info_Type_Enum.base);
+  return *internal_default_instance();
+}
+
+
+void Type_Enum::Clear() {
+// @@protoc_insertion_point(message_clear_start:Pasc.Type.Enum)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  elems_.Clear();
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+bool Type_Enum::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:Pasc.Type.Enum)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string name = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->name().data(), static_cast<int>(this->name().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.Type.Enum.name"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated string elems = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_elems()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->elems(this->elems_size() - 1).data(),
+            static_cast<int>(this->elems(this->elems_size() - 1).length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "Pasc.Type.Enum.elems"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:Pasc.Type.Enum)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:Pasc.Type.Enum)
+  return false;
+#undef DO_
+}
+
+void Type_Enum::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:Pasc.Type.Enum)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.Type.Enum.name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->name(), output);
+  }
+
+  // repeated string elems = 2;
+  for (int i = 0, n = this->elems_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->elems(i).data(), static_cast<int>(this->elems(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.Type.Enum.elems");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->elems(i), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:Pasc.Type.Enum)
+}
+
+::google::protobuf::uint8* Type_Enum::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:Pasc.Type.Enum)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), static_cast<int>(this->name().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.Type.Enum.name");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->name(), target);
+  }
+
+  // repeated string elems = 2;
+  for (int i = 0, n = this->elems_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->elems(i).data(), static_cast<int>(this->elems(i).length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "Pasc.Type.Enum.elems");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(2, this->elems(i), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Pasc.Type.Enum)
+  return target;
+}
+
+size_t Type_Enum::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Pasc.Type.Enum)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated string elems = 2;
+  total_size += 1 *
+      ::google::protobuf::internal::FromIntSize(this->elems_size());
+  for (int i = 0, n = this->elems_size(); i < n; i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->elems(i));
+  }
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->name());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Type_Enum::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:Pasc.Type.Enum)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Type_Enum* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Type_Enum>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Pasc.Type.Enum)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:Pasc.Type.Enum)
+    MergeFrom(*source);
+  }
+}
+
+void Type_Enum::MergeFrom(const Type_Enum& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:Pasc.Type.Enum)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  elems_.MergeFrom(from.elems_);
+  if (from.name().size() > 0) {
+
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+}
+
+void Type_Enum::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:Pasc.Type.Enum)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Type_Enum::CopyFrom(const Type_Enum& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Pasc.Type.Enum)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Type_Enum::IsInitialized() const {
+  return true;
+}
+
+void Type_Enum::Swap(Type_Enum* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Type_Enum::InternalSwap(Type_Enum* other) {
+  using std::swap;
+  elems_.InternalSwap(CastToBase(&other->elems_));
+  name_.Swap(&other->name_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata Type_Enum::GetMetadata() const {
+  protobuf_proto_2ftype_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_proto_2ftype_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void Type::InitAsDefaultInstance() {
   ::Pasc::_Type_default_instance_.int__ = const_cast< ::Pasc::Type_Integer*>(
       ::Pasc::Type_Integer::internal_default_instance());
@@ -1810,6 +2139,8 @@ void Type::InitAsDefaultInstance() {
       ::Pasc::Type_Void::internal_default_instance());
   ::Pasc::_Type_default_instance_.str_ = const_cast< ::Pasc::Type_String*>(
       ::Pasc::Type_String::internal_default_instance());
+  ::Pasc::_Type_default_instance_.en_ = const_cast< ::Pasc::Type_Enum*>(
+      ::Pasc::Type_Enum::internal_default_instance());
 }
 void Type::set_allocated_int_(::Pasc::Type_Integer* int_) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
@@ -1895,6 +2226,20 @@ void Type::set_allocated_str(::Pasc::Type_String* str) {
   }
   // @@protoc_insertion_point(field_set_allocated:Pasc.Type.str)
 }
+void Type::set_allocated_en(::Pasc::Type_Enum* en) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  clear_type();
+  if (en) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      en = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, en, submessage_arena);
+    }
+    set_has_en();
+    type_.en_ = en;
+  }
+  // @@protoc_insertion_point(field_set_allocated:Pasc.Type.en)
+}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Type::kTkFieldNumber;
 const int Type::kIntFieldNumber;
@@ -1903,6 +2248,7 @@ const int Type::kBoolFieldNumber;
 const int Type::kCharFieldNumber;
 const int Type::kVoidFieldNumber;
 const int Type::kStrFieldNumber;
+const int Type::kEnFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Type::Type()
@@ -1941,6 +2287,10 @@ Type::Type(const Type& from)
     }
     case kStr: {
       mutable_str()->::Pasc::Type_String::MergeFrom(from.str());
+      break;
+    }
+    case kEn: {
+      mutable_en()->::Pasc::Type_Enum::MergeFrom(from.en());
       break;
     }
     case TYPE_NOT_SET: {
@@ -2005,6 +2355,10 @@ void Type::clear_type() {
     }
     case kStr: {
       delete type_.str_;
+      break;
+    }
+    case kEn: {
+      delete type_.en_;
       break;
     }
     case TYPE_NOT_SET: {
@@ -2123,6 +2477,18 @@ bool Type::MergePartialFromCodedStream(
         break;
       }
 
+      // .Pasc.Type.Enum en = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_en()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2191,6 +2557,12 @@ void Type::SerializeWithCachedSizes(
       7, this->_internal_str(), output);
   }
 
+  // .Pasc.Type.Enum en = 8;
+  if (has_en()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, this->_internal_en(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -2251,6 +2623,13 @@ void Type::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         7, this->_internal_str(), deterministic, target);
+  }
+
+  // .Pasc.Type.Enum en = 8;
+  if (has_en()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        8, this->_internal_en(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2319,6 +2698,13 @@ size_t Type::ByteSizeLong() const {
           *type_.str_);
       break;
     }
+    // .Pasc.Type.Enum en = 8;
+    case kEn: {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          *type_.en_);
+      break;
+    }
     case TYPE_NOT_SET: {
       break;
     }
@@ -2376,6 +2762,10 @@ void Type::MergeFrom(const Type& from) {
     }
     case kStr: {
       mutable_str()->::Pasc::Type_String::MergeFrom(from.str());
+      break;
+    }
+    case kEn: {
+      mutable_en()->::Pasc::Type_Enum::MergeFrom(from.en());
       break;
     }
     case TYPE_NOT_SET: {
@@ -2441,6 +2831,9 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::Type_Void* Arena::CreateMa
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::Type_String* Arena::CreateMaybeMessage< ::Pasc::Type_String >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::Type_String >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::Type_Enum* Arena::CreateMaybeMessage< ::Pasc::Type_Enum >(Arena* arena) {
+  return Arena::CreateInternal< ::Pasc::Type_Enum >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Pasc::Type* Arena::CreateMaybeMessage< ::Pasc::Type >(Arena* arena) {
   return Arena::CreateInternal< ::Pasc::Type >(arena);
