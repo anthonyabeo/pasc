@@ -4,7 +4,7 @@ type
 
 var
     x, y  : integer;
-    op      : operator;
+    op    : operator;
 
 begin
     x := 10;
@@ -17,5 +17,5 @@ begin
         times: x := x * y
     end;
 
-    writeln(x)
+    writeln('Val: %d', x)
 end.
