@@ -436,3 +436,54 @@ llvm::Value *IRCodegenVisitor::codegen(const GotoStatement &gs) {
     llvm::BasicBlock* Label = GetBBFromLabel(gs.label);
     return builder->CreateBr(Label);
 }
+
+llvm::Value *IRCodegenVisitor::codegen(const CaseStatement &cs) {
+    if(!cs.label.empty()) {
+      llvm::BasicBlock* Label;
+      Label = GetBBFromLabel(cs.label);
+
+      // set it as the current insertion point
+      builder->SetInsertPoint(Label);
+    }
+
+    auto CurrentInsertBB = builder->GetInsertBlock();
+
+    auto TheFunction = CurrentInsertBB->getParent();
+    auto ContBlk = llvm::BasicBlock::Create(*ctx, "cont", TheFunction);
+    auto DefaultBlk = llvm::BasicBlock::Create(*ctx, "default", TheFunction);
+    builder->SetInsertPoint(DefaultBlk);
+    builder->CreateBr(ContBlk);
+
+    builder->SetInsertPoint(CurrentInsertBB);
+    llvm::Value* value = cs.index->codegen(*this);
+    if(!value)
+      throw IRCodegenException("Invalid case-index in case statement");
+
+    auto switchStmt = builder->CreateSwitch(
+        value, DefaultBlk, cs.caseListElems.size());
+
+    for (auto& cle : cs.caseListElems) {
+      auto Block = llvm::BasicBlock::Create(*ctx, "", TheFunction);
+      builder->SetInsertPoint(Block);
+
+      auto BodyV = cle.body->codegen(*this);
+      if(!BodyV)
+        throw IRCodegenException("Invalid case-body in case statement");
+      builder->CreateBr(ContBlk);
+
+      for (auto&c :cle.consts) {
+        auto TagV = c->codegen(*this);
+
+        auto Tag = dyn_cast<llvm::ConstantInt>(TagV);
+        if (!Tag) {
+          throw IRCodegenException("invalid tag");
+        }
+
+        switchStmt->addCase(Tag, Block);
+      }
+    }
+
+    builder->SetInsertPoint(ContBlk);
+
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+}

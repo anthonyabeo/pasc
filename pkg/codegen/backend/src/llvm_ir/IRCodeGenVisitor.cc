@@ -86,6 +86,18 @@ void IRCodegenVisitor::codegenBlock(const Block &blk) {
     llvm::BasicBlock::Create(*ctx, label, TheFunction);
   }
 
+  for (auto&constDef : blk.Consts) {
+    auto ConstV = constDef->value->codegen(*this);
+    if(!ConstV)
+      throw IRCodegenException("invalid constant value");
+
+    llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
+    auto alloca = CreateEntryBlockAlloca(TheFunction, constDef->name, ConstV->getType());
+    curScope->Define(constDef->name, alloca);
+
+    builder->CreateStore(ConstV, alloca);
+  }
+
   for (auto &varDecl : blk.VarDeclrs) {
     auto typ = varDecl->type->codegen(*this);
 

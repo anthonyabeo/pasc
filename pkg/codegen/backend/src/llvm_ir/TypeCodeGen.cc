@@ -22,6 +22,10 @@ llvm::Type *IRCodegenVisitor::codegen(const StringType &typeIR) {
         typeIR.name.size());
 }
 
+llvm::Type *IRCodegenVisitor::codegen(const EnumType &et) {
+    return llvm::Type::getInt32Ty(*ctx);
+}
+
 ////////////////////
 // PARAMETER TYPES
 ////////////////////
