@@ -8,3 +8,5 @@ pkg/codegen/backend/build/
 pkg/codegen/backend/.idea/
 pkg/codegen/backend/*.ll
 bin/
+pkg/codegen/backend/include/proto/*.pb.*
+pkg/codegen/serializer/*.pb.*
