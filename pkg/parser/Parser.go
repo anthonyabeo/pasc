@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/symbols"
@@ -22,6 +23,7 @@ type Parser struct {
 	k, idx    int
 	curScope  symbols.Scope
 	symTable  *symbols.GlobalScope
+	curBlock  *ast.Block
 }
 
 // NewParser constructs and returns an instance of parser
@@ -164,14 +166,16 @@ func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 
 func (p *Parser) block() (*ast.Block, error) {
 	var (
-		err             error
-		varDecl         *ast.VarDeclaration
-		callables       []ast.Statement
-		constDefinition *ast.ConstDefinition
+		err       error
+		varDecl   *ast.VarDeclaration
+		callables []ast.Statement
+		//constDefinition *ast.ConstDefinition
 		labelDefinition *ast.LabelDefinition
 		typeDefinition  *ast.TypeDefinition
 		compoundStmt    *ast.CompoundStatement
 	)
+
+	constDefinition := new(ast.ConstDefinition)
 
 	block := &ast.Block{}
 
@@ -193,6 +197,26 @@ func (p *Parser) block() (*ast.Block, error) {
 		typeDefinition, err = p.typeDefinitionPart()
 		if err != nil {
 			return nil, err
+		}
+	}
+	for _, typDef := range typeDefinition.Types {
+		if typDef.TypeDenoter.GetName() == "enum" {
+			enumTyp := typDef.TypeDenoter.(*structured.Enumerated)
+			for i, enum := range enumTyp.List {
+				constDef := &ast.ConstDef{
+					Name: enum,
+					Value: &ast.UIntegerLiteral{
+						Token: token.Token{Kind: token.Identifier, Text: strconv.Itoa(i)},
+						Value: strconv.Itoa(i),
+					},
+				}
+				constDefinition.Consts = append(constDefinition.Consts, constDef)
+
+				err = p.curScope.Define(symbols.NewConst(enum.Name, symbols.CONST, enumTyp))
+				if err != nil {
+					return nil, err
+				}
+			}
 		}
 	}
 
@@ -385,19 +409,10 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 					return nil, err
 				}
 			case token.LParen:
-				enumT, err := p.enumType()
+				typ, err = p.enumType()
 				if err != nil {
 					return nil, err
 				}
-
-				for _, enum := range enumT.List {
-					err = p.curScope.Define(symbols.NewConst(enum.Name, symbols.CONST, enumT))
-					if err != nil {
-						return nil, err
-					}
-				}
-
-				typ = enumT
 			case token.Record:
 				typ, err = p.recordType()
 				if err != nil {
@@ -1651,10 +1666,10 @@ func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
 // case-list-element = case-constant-list ':' statement .
 func (p *Parser) caseListElement() (*ast.CaseElement, error) {
 	var (
-		err      error
-		caseElem *ast.CaseElement
+		err error
 	)
 
+	caseElem := new(ast.CaseElement)
 	caseElem.ConstList, err = p.caseConstantList()
 	if err != nil {
 		return nil, err
