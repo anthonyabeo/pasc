@@ -7,6 +7,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 	"google.golang.org/protobuf/proto"
 	"os"
 	"strconv"
@@ -16,8 +17,9 @@ import (
 // serialized into protocol buffers. It then calls the `Serialize`
 // method to perform the actual serialization.
 type ProtoSerializer struct {
-	Ast *ast.Program
-	Out string
+	Ast       *ast.Program
+	Out       string
+	Constants map[string]string
 }
 
 func (s *ProtoSerializer) translate() *Program {
@@ -41,11 +43,27 @@ func (s *ProtoSerializer) translateBlock(blk *ast.Block) *Block {
 	}
 
 	if blk.Consts != nil {
+		for _, constDef := range blk.Consts.Consts {
+			c := &ConstDefinition{
+				Name:  s.translateExpr(constDef.Name),
+				Value: s.translateExpr(constDef.Value),
+			}
 
+			block.Consts = append(block.Consts, c)
+
+			s.Constants[constDef.Name.Name] = constDef.Value.String()
+		}
 	}
 
 	if blk.Types != nil {
+		for _, typeDef := range blk.Types.Types {
+			t := &TypeDefinition{
+				Name: typeDef.Name.Name,
+				Type: s.translateType(typeDef.TypeDenoter),
+			}
 
+			block.Types = append(block.Types, t)
+		}
 	}
 
 	if blk.VarDeclaration != nil {
@@ -400,7 +418,21 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 		for _, caseElem := range stmt.List {
 			var constants []*Expression
 			for _, constant := range caseElem.ConstList {
-				constants = append(constants, s.translateExpr(constant))
+				val := s.Constants[constant.String()]
+
+				v, err := strconv.Atoi(val)
+				if err != nil {
+					panic(err)
+				}
+
+				constants = append(constants, &Expression{
+					Kind: Expression_UInt,
+					Expr: &Expression_Uint{
+						Uint: &UIntLiteral{
+							Value: uint32(v),
+						},
+					},
+				})
 			}
 
 			caseElems = append(caseElems,
@@ -581,6 +613,18 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			Tk:   Type_CHAR,
 			Type: &Type_Char_{Char: &Type_Char{Name: typ.GetName()}},
 		}
+	case *structured.Enumerated:
+		var elems []string
+		for _, elem := range typ.List {
+			elems = append(elems, elem.Name)
+		}
+
+		t = &Type{
+			Tk:   Type_ENUM,
+			Type: &Type_En{En: &Type_Enum{Name: typ.GetName(), Elems: elems}},
+		}
+	case *structured.Array:
+	case *structured.Record:
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", typ))
 	}
