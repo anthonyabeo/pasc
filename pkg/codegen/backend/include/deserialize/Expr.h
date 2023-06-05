@@ -136,6 +136,9 @@ struct UnaryExpression : public Expr {
   llvm::Value* codegen(IRVisitor&) override;
 };
 
+///////////////////////////
+// BOOLEAN EXPRESSION
+///////////////////////////
 struct BoolExpr : public Expr {
   bool value;
 
@@ -143,4 +146,27 @@ struct BoolExpr : public Expr {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+///////////////////////////
+// INDEXED VARIABLE
+///////////////////////////
+struct IndexedVariable : public Identifier {
+  std::string arrayName;
+  std::vector<std::unique_ptr<Expr>> indices;
+
+  explicit IndexedVariable(const Pasc::Identifier_IndexedVariable&);
+  llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
+};
+
+///////////////////////////
+// FIELD DESIGNATOR
+///////////////////////////
+struct FieldDesignator : public Identifier {
+  std::string recordName;
+  std::unique_ptr<Expr> fieldSpec;
+
+  explicit FieldDesignator(const Pasc::Identifier_FieldDesignator&);
+  llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
+};
 #endif // EXPR_H

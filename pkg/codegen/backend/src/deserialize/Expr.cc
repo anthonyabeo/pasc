@@ -79,9 +79,9 @@ std::unique_ptr<Identifier> deserializeID(const Pasc::Identifier &id) {
   case Pasc::Identifier_IDKind_EntireVar:
     return std::make_unique<VariableID>(id.var().name());
   case Pasc::Identifier_IDKind_IdxVar:
-    break ;
+    return std::make_unique<IndexedVariable>(id.iv());
   case Pasc::Identifier_IDKind_Field:
-    break ;
+    return std::make_unique<FieldDesignator>(id.fld());
   default:
     throw DeserializeProtobufException("invalid identifier kind");
   }
@@ -96,22 +96,70 @@ UIntegerLiteral::UIntegerLiteral(const Pasc::UIntLiteral &lit) {
   value = lit.value();
 }
 
-llvm::Value *UIntegerLiteral::codegen(IRVisitor &v) { return v.codegen(*this); }
+llvm::Value *UIntegerLiteral::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
 
 
 ///////////////////////////
 // VARIABLE IDENTIFIER
 ///////////////////////////
-VariableID::VariableID(const std::string &n) {name = n; }
-llvm::Value *VariableID::codegen(IRVisitor &v) { return v.codegen(*this); }
-std::string VariableID::get_name() { return name; }
+VariableID::VariableID(const std::string &n) {
+  name = n;
+}
+
+llvm::Value *VariableID::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+std::string VariableID::get_name() {
+  return name;
+}
+
+///////////////////////////
+// INDEXED VARIABLE
+///////////////////////////
+IndexedVariable::IndexedVariable(const Pasc::Identifier_IndexedVariable &iv) {
+  arrayName = iv.arrayvar();
+  for (int i = 0; i < iv.idxexpr_size(); ++i) {
+    indices.push_back(deserializeExpr(iv.idxexpr(i)));
+  }
+}
+
+llvm::Value *IndexedVariable::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+std::string IndexedVariable::get_name() {
+  return arrayName;
+}
+
+///////////////////////////
+// FIELD DESIGNATOR
+///////////////////////////
+FieldDesignator::FieldDesignator(const Pasc::Identifier_FieldDesignator &fd) {
+  recordName = fd.recordvar();
+  fieldSpec = deserializeExpr(fd.fieldspec());
+}
+
+llvm::Value *FieldDesignator::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+std::string FieldDesignator::get_name() {
+  return recordName;
+}
 
 ///////////////////////////
 // RVALUE IDENTIFIER
 ///////////////////////////
-IdentifierExpr::IdentifierExpr(const Pasc::Identifier &id) {identifier = deserializeID(id); }
+IdentifierExpr::IdentifierExpr(const Pasc::Identifier &id) {
+  identifier = deserializeID(id);
+}
 
-llvm::Value *IdentifierExpr::codegen(IRVisitor &v) { return v.codegen(*this); }
+llvm::Value *IdentifierExpr::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
 
 ///////////////////////////
 // BINARY EXPRESSION
