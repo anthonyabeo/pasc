@@ -17,11 +17,13 @@ message Identifier {
   }
 
   message IndexedVariable {
-
+    string arrayVar = 1;
+    repeated Expression idxExpr = 2;
   }
 
   message FieldDesignator {
-
+    string RecordVar = 1;
+    Expression FieldSpec = 2;
   }
 
   IDKind kind = 1;

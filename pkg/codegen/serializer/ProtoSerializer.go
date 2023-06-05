@@ -481,6 +481,41 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 				},
 			},
 		}
+	case *ast.IndexedVariable:
+		var indices []*Expression
+		for _, idx := range expr.IndexExpr {
+			indices = append(indices, s.translateExpr(idx))
+		}
+
+		e = &Expression{
+			Kind: Expression_Ident,
+			Expr: &Expression_Id{
+				Id: &Identifier{
+					Kind: Identifier_IdxVar,
+					Value: &Identifier_Iv{
+						Iv: &Identifier_IndexedVariable{
+							ArrayVar: expr.ArrayVar.String(),
+							IdxExpr:  indices,
+						},
+					},
+				},
+			},
+		}
+	case *ast.FieldDesignator:
+		e = &Expression{
+			Kind: Expression_Ident,
+			Expr: &Expression_Id{
+				Id: &Identifier{
+					Kind: Identifier_Field,
+					Value: &Identifier_Fld{
+						Fld: &Identifier_FieldDesignator{
+							RecordVar: expr.RecordVar.String(),
+							FieldSpec: s.translateExpr(expr.FieldSpec),
+						},
+					},
+				},
+			},
+		}
 	case *ast.UIntegerLiteral:
 		v, err := strconv.Atoi(expr.Value)
 		if err != nil {
