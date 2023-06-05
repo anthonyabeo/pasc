@@ -41,6 +41,8 @@ public:
   llvm::Value* codegen(const CharString&) override;
   llvm::Value* codegen(const UnaryExpression&) override;
   llvm::Value* codegen(const BoolExpr&) override;
+  llvm::Value* codegen(const IndexedVariable&) override;
+  llvm::Value* codegen(const FieldDesignator&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
