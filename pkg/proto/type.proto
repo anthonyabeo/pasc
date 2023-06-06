@@ -12,6 +12,8 @@ message Type {
     VOID = 4;
     STR = 5;
     ENUM = 6;
+    SUB_RANGE = 7;
+    ARRAY = 8;
   }
 
   message Integer {
@@ -43,6 +45,19 @@ message Type {
     repeated string elems = 2;
   }
 
+  message SubRange {
+    string name = 1;
+    string start = 2;
+    string end = 3;
+    Type hostType = 4;
+  }
+
+  message Array {
+    string name = 1;
+    repeated Type indices = 2;
+    Type compType = 3;
+  }
+
   TypeKind tk = 1;
   oneof type {
     Integer int = 2;
@@ -52,5 +67,7 @@ message Type {
     Void void = 6;
     String str = 7;
     Enum en = 8;
+    SubRange subR = 9;
+    Array arr = 10;
   }
 }

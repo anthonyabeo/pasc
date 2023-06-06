@@ -46,6 +46,7 @@ message Expression {
     UReal = 7;
     UnExpr = 8;
     Str = 9;
+    Rng = 10;
   }
 
   ExprKind kind = 1;
@@ -60,6 +61,7 @@ message Expression {
     URealLiteral ureal = 9;
     UnaryExpr ue = 10;
     CharString cs = 11;
+    Range rng = 12;
   }
 }
 
@@ -105,6 +107,11 @@ message FuncCall {
   Expression name = 1;
   repeated Expression args = 2;
   Type returnType = 3;
+}
+
+message Range {
+  Expression start = 1;
+  Expression end = 2;
 }
 
 //////////////////////////////////
