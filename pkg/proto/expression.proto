@@ -46,7 +46,7 @@ message Expression {
     UReal = 7;
     UnExpr = 8;
     Str = 9;
-    Rng = 10;
+    Rg = 10;
   }
 
   ExprKind kind = 1;

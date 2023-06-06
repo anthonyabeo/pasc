@@ -615,6 +615,15 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 				},
 			},
 		}
+	case *ast.Range:
+		e = &Expression{
+			Kind: Expression_Rg,
+			Expr: &Expression_Rng{
+				Rng: &Range{
+					Start: s.translateExpr(expr.Start),
+					End:   s.translateExpr(expr.End),
+				}},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", expr))
 	}
@@ -659,6 +668,29 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			Type: &Type_En{En: &Type_Enum{Name: typ.GetName(), Elems: elems}},
 		}
 	case *structured.Array:
+		var indices []*Type
+		for _, idxType := range typ.Indices {
+			indices = append(indices, s.translateType(idxType))
+		}
+
+		t = &Type{
+			Tk: Type_ARRAY,
+			Type: &Type_Arr{Arr: &Type_Array{
+				Name:     typ.GetName(),
+				Indices:  indices,
+				CompType: s.translateType(typ.ComponentType),
+			}},
+		}
+	case *structured.SubRange:
+		t = &Type{
+			Tk: Type_SUB_RANGE,
+			Type: &Type_SubR{SubR: &Type_SubRange{
+				Name:     typ.GetName(),
+				Start:    typ.Range.Start.String(),
+				End:      typ.Range.End.String(),
+				HostType: s.translateType(typ.HostType),
+			}},
+		}
 	case *structured.Record:
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", typ))
