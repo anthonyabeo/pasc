@@ -169,4 +169,16 @@ struct FieldDesignator : public Identifier {
   llvm::Value *codegen(IRVisitor&) override;
   std::string get_name() override;
 };
+
+///////////////////////////
+// RANGE
+//////////////////////////
+struct Range : public Expr {
+  std::unique_ptr<Expr> start;
+  std::unique_ptr<Expr> end;
+
+  explicit Range(const Pasc::Range&);
+  llvm::Value* codegen(IRVisitor&) override;
+};
+
 #endif // EXPR_H

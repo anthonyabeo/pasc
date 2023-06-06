@@ -20,6 +20,10 @@ std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
     return std::make_unique<StringType>(t.str());
   case Pasc::Type_TypeKind_ENUM:
     return std::make_unique<EnumType>(t.en());
+  case Pasc::Type_TypeKind_SUB_RANGE:
+    return std::make_unique<SubRangeType>(t.subr());
+  case Pasc::Type_TypeKind_ARRAY:
+    return std::make_unique<ArrayType>(t.arr());
   default:
     throw DeserializeProtobufException("invalid case");
   }
@@ -103,3 +107,36 @@ std::string EnumType::GetName() const { return name; }
 llvm::Type *EnumType::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+///////////////////////
+// SUBRANGE
+///////////////////////
+SubRangeType::SubRangeType(const Pasc::Type_SubRange &srt) {
+  name = srt.name();
+  start = srt.start();
+  end = srt.end();
+  host_type = deserializeType(srt.hosttype());
+}
+
+llvm::Type *SubRangeType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+std::string SubRangeType::GetName() const { return name; }
+
+///////////////////////
+// ARRAY
+///////////////////////
+ArrayType::ArrayType(const Pasc::Type_Array &arr) {
+  name = arr.name();
+  comp_type = deserializeType(arr.comptype());
+  for (int i = 0; i < arr.indices_size(); ++i) {
+    indices.push_back(deserializeType(arr.indices(i)));
+  }
+}
+
+llvm::Type *ArrayType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+std::string ArrayType::GetName() const { return name; }

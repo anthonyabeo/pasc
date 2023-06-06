@@ -66,4 +66,25 @@ struct EnumType : public Type {
   llvm::Type *codegen(IRVisitor &) override;
 };
 
+struct SubRangeType : public Type {
+  std::string name;
+  std::string start;
+  std::string end;
+  std::unique_ptr<Type> host_type;
+
+  explicit SubRangeType(const Pasc::Type_SubRange&);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &) override;
+};
+
+struct ArrayType : public Type {
+  std::string name;
+  std::vector<std::unique_ptr<Type>> indices;
+  std::unique_ptr<Type> comp_type;
+
+  explicit ArrayType(const Pasc::Type_Array&);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &) override;
+};
+
 #endif // TYPE_H

@@ -24,6 +24,7 @@ public:
   virtual llvm::Value *codegen(const BoolExpr &) = 0;
   virtual llvm::Value *codegen(const IndexedVariable &) = 0;
   virtual llvm::Value *codegen(const FieldDesignator &) = 0;
+  virtual llvm::Value *codegen(const Range &) = 0;
 
   virtual llvm::Value *codegen(const AssignStmt &) = 0;
   virtual llvm::Value *codegen(const ReturnStatement &) = 0;
@@ -51,6 +52,8 @@ public:
   virtual llvm::Type *codegen(const RealType &) = 0;
   virtual llvm::Type *codegen(const StringType &) = 0;
   virtual llvm::Type *codegen(const EnumType &) = 0;
+  virtual llvm::Type *codegen(const SubRangeType &) = 0;
+  virtual llvm::Type *codegen(const ArrayType &) = 0;
 };
 
 #endif // IR_VISITOR_H
