@@ -171,11 +171,12 @@ func (p *Parser) block() (*ast.Block, error) {
 		callables []ast.Statement
 		//constDefinition *ast.ConstDefinition
 		labelDefinition *ast.LabelDefinition
-		typeDefinition  *ast.TypeDefinition
-		compoundStmt    *ast.CompoundStatement
+		//typeDefinition  *ast.TypeDefinition
+		compoundStmt *ast.CompoundStatement
 	)
 
 	constDefinition := new(ast.ConstDefinition)
+	typeDefinition := new(ast.TypeDefinition)
 
 	block := &ast.Block{}
 
@@ -199,6 +200,7 @@ func (p *Parser) block() (*ast.Block, error) {
 			return nil, err
 		}
 	}
+
 	for _, typDef := range typeDefinition.Types {
 		if typDef.TypeDenoter.GetName() == "enum" {
 			enumTyp := typDef.TypeDenoter.(*structured.Enumerated)
@@ -721,7 +723,9 @@ func (p *Parser) subRangeType() (*structured.SubRange, error) {
 	}
 
 	return &structured.SubRange{
-		Range: &ast.Range{Start: start, End: end}}, nil
+		Range:    &ast.Range{Start: start, End: end},
+		HostType: p.getTypeOf(start),
+	}, nil
 }
 
 func (p *Parser) enumType() (*structured.Enumerated, error) {
@@ -854,7 +858,7 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 			return nil, err
 		}
 
-		idxType = &structured.SubRange{Range: &ast.Range{Start: start, End: end}}
+		idxType = &structured.SubRange{Range: &ast.Range{Start: start, End: end}, HostType: p.getTypeOf(start)}
 	default:
 		sym := p.curScope.Resolve(p.lAheadToken(1).Text)
 		if sym == nil {

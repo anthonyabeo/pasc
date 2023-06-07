@@ -43,6 +43,7 @@ public:
   llvm::Value* codegen(const BoolExpr&) override;
   llvm::Value* codegen(const IndexedVariable&) override;
   llvm::Value* codegen(const FieldDesignator&) override;
+  llvm::Value* codegen(const Range&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
@@ -72,6 +73,8 @@ public:
   llvm::Type *codegen(const RealType&) override;
   llvm::Type *codegen(const StringType&) override;
   llvm::Type *codegen(const EnumType&) override;
+  llvm::Type *codegen(const SubRangeType&) override;
+  llvm::Type *codegen(const ArrayType&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation
