@@ -69,7 +69,7 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<UnaryExpression>(expr.ue());
   case Pasc::Expression_ExprKind_Bool:
     return std::make_unique<BoolExpr>(expr.bl());
-  case Pasc::Expression_ExprKind_Rng:
+  case Pasc::Expression_ExprKind_Rg:
     return std::make_unique<Range>(expr.rng());
   default:
     throw DeserializeProtobufException("invalid expression kind");

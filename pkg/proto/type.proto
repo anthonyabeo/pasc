@@ -47,8 +47,8 @@ message Type {
 
   message SubRange {
     string name = 1;
-    string start = 2;
-    string end = 3;
+    uint64 start = 2;
+    uint64 end = 3;
     Type hostType = 4;
   }
 
