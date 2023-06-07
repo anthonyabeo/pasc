@@ -686,8 +686,8 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			Tk: Type_SUB_RANGE,
 			Type: &Type_SubR{SubR: &Type_SubRange{
 				Name:     typ.GetName(),
-				Start:    typ.Range.Start.String(),
-				End:      typ.Range.End.String(),
+				Start:    uint64([]rune(typ.Range.Start.String())[0]),
+				End:      uint64([]rune(typ.Range.End.String())[0]),
 				HostType: s.translateType(typ.HostType),
 			}},
 		}
