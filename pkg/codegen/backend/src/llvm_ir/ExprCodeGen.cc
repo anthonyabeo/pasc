@@ -65,6 +65,13 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
     return builder->CreateAnd(L, R, "and");
   case Operator::Or:
     return builder->CreateOr(L, R, "or");
+  case Operator::Div:
+    return builder->CreateSDiv(L, R, "div");
+  case Operator::FwdSlash:
+    return builder->CreateFDiv(L, R);
+  case Operator::In:
+  case Operator::LessGreat:
+    return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_NE, L, R);
   default:
     throw IRCodegenException("invalid binary operator");
   }
@@ -137,4 +144,64 @@ llvm::Value *IRCodegenVisitor::codegen(const BoolExpr &be) {
   }
 
   return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*ctx), v,false);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const Range &rng) {
+  std::vector<llvm::Constant*> range;
+
+  auto start = rng.start->codegen(*this);
+  auto st = dyn_cast<llvm::ConstantInt>(start);
+
+  auto end = rng.end->codegen(*this);
+  auto ed = dyn_cast<llvm::ConstantInt>(end);
+  for (uint64_t i = st->getValue().getSExtValue(); i < ed->getValue().getSExtValue(); ++i) {
+    range.push_back(llvm::ConstantInt::get(llvm::Type::getInt32Ty(*ctx), i));
+  }
+
+  return llvm::ConstantVector::get(range);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const IndexedVariable &iv) {
+  auto array = curScope->Resolve(iv.arrayName);
+  if (!array) {
+    throw IRCodegenException("undefined array, " + iv.arrayName);
+  }
+
+  // TODO generalize to n-D arrays
+  auto index = iv.indices[0]->codegen(*this);
+  if (!index) {
+    throw IRCodegenException("invalid array index");
+  }
+
+  return builder->CreateGEP(index->getType(), array, index);
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const IndexedVarExpr &ive) {
+  auto array = curScope->Resolve(ive.arrayName);
+  if (!array) {
+    throw IRCodegenException("undefined array, " + ive.arrayName);
+  }
+
+  // TODO generalize to n-D arrays
+  auto index = ive.indices[0]->codegen(*this);
+  if (!index) {
+    throw IRCodegenException("invalid array index");
+  }
+
+  auto GEP = builder->CreateGEP(index->getType(), array, index);
+
+  llvm::Value *idVal = builder->CreateLoad(index->getType(), GEP);
+  if (!idVal) {
+    throw IRCodegenException(std::string("cannot read value of: " + ive.arrayName));
+  }
+
+  return idVal;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const FieldDesignator &fd) {
+  return nullptr;
+}
+
+llvm::Value *IRCodegenVisitor::codegen(const FieldDesigExpr &fde) {
+  return nullptr;
 }

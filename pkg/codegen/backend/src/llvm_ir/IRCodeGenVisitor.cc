@@ -102,9 +102,9 @@ void IRCodegenVisitor::codegenBlock(const Block &blk) {
     auto typ = varDecl->type->codegen(*this);
 
     llvm::Function *TheFunction = builder->GetInsertBlock()->getParent();
-    auto alloca = CreateEntryBlockAlloca(TheFunction, varDecl->name->name, typ);
+    auto alloca = CreateEntryBlockAlloca(TheFunction, varDecl->name->get_name(), typ);
 
-    curScope->Define(varDecl->name->name, alloca);
+    curScope->Define(varDecl->name->get_name(), alloca);
   }
 
   for (auto& call : blk.callables) {

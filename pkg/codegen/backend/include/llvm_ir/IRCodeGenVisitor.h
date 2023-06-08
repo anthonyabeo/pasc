@@ -42,7 +42,9 @@ public:
   llvm::Value* codegen(const UnaryExpression&) override;
   llvm::Value* codegen(const BoolExpr&) override;
   llvm::Value* codegen(const IndexedVariable&) override;
+  llvm::Value* codegen(const IndexedVarExpr&) override;
   llvm::Value* codegen(const FieldDesignator&) override;
+  llvm::Value* codegen(const FieldDesigExpr&) override;
   llvm::Value* codegen(const Range&) override;
 
   // Statements

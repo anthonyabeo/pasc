@@ -26,6 +26,26 @@ llvm::Type *IRCodegenVisitor::codegen(const EnumType &et) {
     return llvm::Type::getInt32Ty(*ctx);
 }
 
+llvm::Type *IRCodegenVisitor::codegen(const ArrayType &arr) {
+    auto comp_type = arr.comp_type->codegen(*this);
+
+    auto idx = arr.indices[0]->codegen(*this);
+
+    auto foo =
+        dyn_cast<llvm::ArrayType>(idx);
+
+    auto numElems = foo->getNumElements();
+    return llvm::ArrayType::get(comp_type, numElems);
+}
+
+llvm::Type *IRCodegenVisitor::codegen(const SubRangeType &srt) {
+    auto host_type = srt.host_type->codegen(*this);
+    if(!host_type)
+      throw IRCodegenException("invalid host type for subrange-type");
+
+    return llvm::ArrayType::get(host_type, (srt.end-srt.start)+1);
+}
+
 ////////////////////
 // PARAMETER TYPES
 ////////////////////
