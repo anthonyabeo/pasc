@@ -19,7 +19,7 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &);
 // ASSIGNMENT STATEMENT
 ///////////////////////////
 struct AssignStmt : public Statement {
-  std::unique_ptr<Identifier> variable;
+  std::unique_ptr<Expr> variable;
   std::unique_ptr<Expr> value;
   std::string label;
 
@@ -51,7 +51,7 @@ struct ProcedureStatement : public Statement {
 std::unique_ptr<ProcedureStatement> deserializeProcedureStatement(const Pasc::ProcedureStatement&);
 
 struct ProcedureStmt : public ProcedureStatement {
-  std::unique_ptr<Identifier> name;
+  std::unique_ptr<Expr> name;
   std::vector<std::unique_ptr<Expr>> params;
   std::string label;
 
@@ -132,7 +132,7 @@ struct RepeatStatement : public Statement {
 // FOR STATEMENT
 ///////////////////////////
 struct ForStatement : public Statement {
-  std::unique_ptr<Identifier> ctlVar;
+  std::unique_ptr<Expr> ctlVar;
   std::unique_ptr<Expr> initValue;
   std::unique_ptr<Expr> finalValue;
   std::unique_ptr<Statement> body;

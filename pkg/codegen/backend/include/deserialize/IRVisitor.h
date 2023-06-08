@@ -23,7 +23,9 @@ public:
   virtual llvm::Value *codegen(const UnaryExpression &) = 0;
   virtual llvm::Value *codegen(const BoolExpr &) = 0;
   virtual llvm::Value *codegen(const IndexedVariable &) = 0;
+  virtual llvm::Value *codegen(const IndexedVarExpr &) = 0;
   virtual llvm::Value *codegen(const FieldDesignator &) = 0;
+  virtual llvm::Value *codegen(const FieldDesigExpr &) = 0;
   virtual llvm::Value *codegen(const Range &) = 0;
 
   virtual llvm::Value *codegen(const AssignStmt &) = 0;

@@ -39,7 +39,7 @@ std::unique_ptr<Statement> deserializeStmt(const Pasc::Statement &stmt) {
 // ASSIGNMENT STATEMENT
 ///////////////////////////
 AssignStmt::AssignStmt(const Pasc::AssignStatement &stmt) {
-  variable = deserializeID(stmt.variable().id());
+  variable = deserializeVar(stmt.variable());
   value = deserializeExpr(stmt.value());
   label = stmt.label();
 }
@@ -85,7 +85,7 @@ std::unique_ptr<ProcedureStatement> deserializeProcedureStatement(const Pasc::Pr
 }
 
 ProcedureStmt::ProcedureStmt(const Pasc::ProcedureStatement_ProcStmt& stmt) {
-  name = deserializeID(stmt.name().id());
+  name = deserializeVar(stmt.name());
   for (size_t i = 0; i < stmt.params_size(); i++) {
     params.push_back(deserializeExpr(stmt.params(i)));
   }
@@ -192,7 +192,7 @@ llvm::Value *RepeatStatement::codegen(IRVisitor &v) {
 // FOR STATEMENT
 ///////////////////////////
 ForStatement::ForStatement(const Pasc::ForStatement &fs) {
-  ctlVar = deserializeID(fs.ctlvar().id());
+  ctlVar = deserializeVar(fs.ctlvar());
   initValue = deserializeExpr(fs.initvalue());
   finalValue = deserializeExpr(fs.finalvalue());
   body = deserializeStmt(fs.body());

@@ -68,8 +68,8 @@ struct EnumType : public Type {
 
 struct SubRangeType : public Type {
   std::string name;
-  uint64_t start;
-  uint64_t end;
+  int32_t start;
+  int32_t end;
   std::unique_ptr<Type> host_type;
 
   explicit SubRangeType(const Pasc::Type_SubRange&);

@@ -33,21 +33,22 @@ enum Operator deserializeOp(const Pasc::Operator&);
 
 struct Expr {
   virtual ~Expr() = default;
+  virtual std::string get_name() = 0;
   virtual llvm::Value *codegen(IRVisitor &v) = 0;
 };
 
 std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &);
 
 /// @brief Identifier denotes a user-defined, non-keyword symbol
-struct Identifier {
-  virtual ~Identifier()  = default;
-  virtual llvm::Value *codegen(IRVisitor &v) = 0;
-  virtual std::string get_name() = 0;
-};
+//struct Identifier {
+//  virtual ~Identifier()  = default;
+//  virtual llvm::Value *codegen(IRVisitor &v) = 0;
+//  virtual std::string get_name() = 0;
+//};
 
-std::unique_ptr<Identifier> deserializeID(const Pasc::Identifier &id);
+std::unique_ptr<Expr> deserializeVar(const Pasc::Expression &id);
 
-struct VariableID : public Identifier {
+struct VariableID : public Expr {
   std::string name;
 
   explicit VariableID(const std::string&);
@@ -62,6 +63,7 @@ struct UIntegerLiteral : public Expr {
 
   explicit UIntegerLiteral(const Pasc::UIntLiteral &);
   llvm::Value *codegen(IRVisitor &) override;
+  std::string get_name() override;
 };
 
 
@@ -72,25 +74,46 @@ struct BinaryExpression : public Expr {
 
   explicit BinaryExpression(const Pasc::BinaryExpr&);
   llvm::Value* codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
 
 struct IdentifierExpr : public Expr {
-  std::unique_ptr<Identifier> identifier;
+  std::unique_ptr<Expr> identifier;
 
-  explicit IdentifierExpr(const Pasc::Identifier&);
+  explicit IdentifierExpr(const Pasc::Expression&);
   llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
+};
+
+struct IndexedVarExpr : public Expr {
+  std::string arrayName;
+  std::vector<std::unique_ptr<Expr>> indices;
+
+  explicit IndexedVarExpr(const Pasc::IndexedVariable&);
+  llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
+};
+
+struct FieldDesigExpr : public Expr {
+  std::string recordName;
+  std::unique_ptr<Expr> fieldSpec;
+
+  explicit FieldDesigExpr(const Pasc::FieldDesignator&);
+  llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
 // FUNCTION CALL
 ///////////////////////////
 struct FunctionCall : public Expr {
-  std::unique_ptr<Identifier> name;
+  std::unique_ptr<Expr> name;
   std::vector<std::unique_ptr<Expr>> args;
   std::unique_ptr<Type> ret_type;
 
   explicit FunctionCall(const Pasc::FuncCall&);
   llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
@@ -103,6 +126,7 @@ struct WriteParameter : public Expr {
 
   explicit WriteParameter(const Pasc::WriteParameter&);
   llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
@@ -113,6 +137,7 @@ struct URealLiteral : public Expr {
 
   explicit URealLiteral(const Pasc::URealLiteral &);
   llvm::Value *codegen(IRVisitor &) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
@@ -123,6 +148,7 @@ struct CharString : public Expr {
 
   explicit CharString(const Pasc::CharString&);
   llvm::Value *codegen(IRVisitor &) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
@@ -134,6 +160,7 @@ struct UnaryExpression : public Expr {
 
   explicit UnaryExpression(const Pasc::UnaryExpr&);
   llvm::Value* codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
@@ -144,16 +171,17 @@ struct BoolExpr : public Expr {
 
   explicit BoolExpr(const Pasc::BoolExpr&);
   llvm::Value *codegen(IRVisitor &) override;
+  std::string get_name() override;
 };
 
 ///////////////////////////
 // INDEXED VARIABLE
 ///////////////////////////
-struct IndexedVariable : public Identifier {
+struct IndexedVariable : public Expr {
   std::string arrayName;
   std::vector<std::unique_ptr<Expr>> indices;
 
-  explicit IndexedVariable(const Pasc::Identifier_IndexedVariable&);
+  explicit IndexedVariable(const Pasc::IndexedVariable&);
   llvm::Value *codegen(IRVisitor&) override;
   std::string get_name() override;
 };
@@ -161,11 +189,11 @@ struct IndexedVariable : public Identifier {
 ///////////////////////////
 // FIELD DESIGNATOR
 ///////////////////////////
-struct FieldDesignator : public Identifier {
+struct FieldDesignator : public Expr {
   std::string recordName;
   std::unique_ptr<Expr> fieldSpec;
 
-  explicit FieldDesignator(const Pasc::Identifier_FieldDesignator&);
+  explicit FieldDesignator(const Pasc::FieldDesignator&);
   llvm::Value *codegen(IRVisitor&) override;
   std::string get_name() override;
 };
@@ -179,6 +207,7 @@ struct Range : public Expr {
 
   explicit Range(const Pasc::Range&);
   llvm::Value* codegen(IRVisitor&) override;
+  std::string get_name() override;
 };
 
 #endif // EXPR_H

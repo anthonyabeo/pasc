@@ -51,8 +51,12 @@ enum Operator deserializeOp(const Pasc::Operator& opt) {
 /// @return std::unique_ptr<Expr> a pointer to an expression type
 std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
   switch (expr.kind()) {
-  case Pasc::Expression_ExprKind_Ident:
-    return std::make_unique<IdentifierExpr>(expr.id());
+  case Pasc::Expression_ExprKind_Var:
+    return std::make_unique<IdentifierExpr>(expr);
+  case Pasc::Expression_ExprKind_IdxVar:
+    return std::make_unique<IndexedVarExpr>(expr.iv());
+  case Pasc::Expression_ExprKind_Field:
+    return std::make_unique<FieldDesigExpr>(expr.fld());
   case Pasc::Expression_ExprKind_UInt:
     return std::make_unique<UIntegerLiteral>(expr.uint());
   case Pasc::Expression_ExprKind_UReal:
@@ -76,19 +80,17 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
   }
 }
 
-std::unique_ptr<Identifier> deserializeID(const Pasc::Identifier &id) {
+std::unique_ptr<Expr> deserializeVar(const Pasc::Expression &id) {
   switch (id.kind()) {
-  case Pasc::Identifier_IDKind_EntireVar:
-    return std::make_unique<VariableID>(id.var().name());
-  case Pasc::Identifier_IDKind_IdxVar:
+  case Pasc::Expression_ExprKind_IdxVar:
     return std::make_unique<IndexedVariable>(id.iv());
-  case Pasc::Identifier_IDKind_Field:
+  case Pasc::Expression_ExprKind_Var:
+    return std::make_unique<VariableID>(id.variable().name());
+  case Pasc::Expression_ExprKind_Field:
     return std::make_unique<FieldDesignator>(id.fld());
   default:
-    throw DeserializeProtobufException("invalid identifier kind");
+    throw DeserializeProtobufException("invalid expression kind");
   }
-
-  return nullptr;
 };
 
 //////////////////////////////
@@ -101,6 +103,8 @@ UIntegerLiteral::UIntegerLiteral(const Pasc::UIntLiteral &lit) {
 llvm::Value *UIntegerLiteral::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+std::string UIntegerLiteral::get_name() {return "";}
 
 
 ///////////////////////////
@@ -121,7 +125,7 @@ std::string VariableID::get_name() {
 ///////////////////////////
 // INDEXED VARIABLE
 ///////////////////////////
-IndexedVariable::IndexedVariable(const Pasc::Identifier_IndexedVariable &iv) {
+IndexedVariable::IndexedVariable(const Pasc::IndexedVariable &iv) {
   arrayName = iv.arrayvar();
   for (int i = 0; i < iv.idxexpr_size(); ++i) {
     indices.push_back(deserializeExpr(iv.idxexpr(i)));
@@ -139,7 +143,7 @@ std::string IndexedVariable::get_name() {
 ///////////////////////////
 // FIELD DESIGNATOR
 ///////////////////////////
-FieldDesignator::FieldDesignator(const Pasc::Identifier_FieldDesignator &fd) {
+FieldDesignator::FieldDesignator(const Pasc::FieldDesignator &fd) {
   recordName = fd.recordvar();
   fieldSpec = deserializeExpr(fd.fieldspec());
 }
@@ -155,12 +159,50 @@ std::string FieldDesignator::get_name() {
 ///////////////////////////
 // RVALUE IDENTIFIER
 ///////////////////////////
-IdentifierExpr::IdentifierExpr(const Pasc::Identifier &id) {
-  identifier = deserializeID(id);
+IdentifierExpr::IdentifierExpr(const Pasc::Expression &id) {
+  identifier = deserializeVar(id);
 }
 
 llvm::Value *IdentifierExpr::codegen(IRVisitor &v) {
   return v.codegen(*this);
+}
+
+std::string IdentifierExpr::get_name() {
+  return identifier->get_name();
+}
+
+///////////////////////////
+// RVALUE INDEXED VARIABLE
+///////////////////////////
+IndexedVarExpr::IndexedVarExpr(const Pasc::IndexedVariable &iv) {
+  arrayName = iv.arrayvar();
+  for (int i = 0; i < iv.idxexpr_size(); ++i) {
+    indices.push_back(deserializeExpr(iv.idxexpr(i)));
+  }
+}
+
+llvm::Value *IndexedVarExpr::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+std::string IndexedVarExpr::get_name() {
+    return arrayName;
+}
+
+///////////////////////////
+// RVALUE FIELD DESIGNATOR
+///////////////////////////
+FieldDesigExpr::FieldDesigExpr(const Pasc::FieldDesignator &fde) {
+    recordName = fde.recordvar();
+    fieldSpec = deserializeExpr(fde.fieldspec());
+}
+
+llvm::Value *FieldDesigExpr::codegen(IRVisitor &v) {
+    return v.codegen(*this);
+}
+
+std::string FieldDesigExpr::get_name() {
+    return recordName;
 }
 
 ///////////////////////////
@@ -176,11 +218,15 @@ llvm::Value *BinaryExpression::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
 
+std::string BinaryExpression::get_name() {
+  return "";
+}
+
 ///////////////////////////
 // FUNCTION CALL
 ///////////////////////////
 FunctionCall::FunctionCall(const Pasc::FuncCall& fc) {
-  name = deserializeID(fc.name().id());
+  name = deserializeVar(fc.name());
   for (int i = 0; i < fc.args_size(); ++i) {
     args.push_back(deserializeExpr(fc.args(i)));
   }
@@ -188,6 +234,10 @@ FunctionCall::FunctionCall(const Pasc::FuncCall& fc) {
 
 llvm::Value *FunctionCall::codegen(IRVisitor& v) {
   return v.codegen(*this);
+}
+
+std::string FunctionCall::get_name() {
+  return "";
 }
 
 ///////////////////////////
@@ -206,6 +256,8 @@ llvm::Value *WriteParameter::codegen(IRVisitor& v) {
   return v.codegen(*this);
 }
 
+std::string WriteParameter::get_name() { return ""; }
+
 ///////////////////////////
 // UREAL LITERAL
 ///////////////////////////
@@ -217,6 +269,8 @@ llvm::Value *URealLiteral::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
 
+std::string URealLiteral::get_name() { return ""; }
+
 ///////////////////////////
 // CHARACTER STRING
 ///////////////////////////
@@ -227,6 +281,8 @@ CharString::CharString(const Pasc::CharString &cs) {
 llvm::Value *CharString::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+std::string CharString::get_name() { return str; }
 
 ///////////////////////////
 // UNARY EXPRESSION
@@ -240,6 +296,8 @@ llvm::Value *UnaryExpression::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
 
+std::string UnaryExpression::get_name() { return ""; }
+
 ///////////////////////////
 // BOOLEAN EXPRESSION
 ///////////////////////////
@@ -250,6 +308,8 @@ BoolExpr::BoolExpr(const Pasc::BoolExpr &bl) {
 llvm::Value *BoolExpr::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+std::string BoolExpr::get_name() { return ""; }
 
 ///////////////////////////
 // RANGE
@@ -262,3 +322,5 @@ Range::Range(const Pasc::Range &rng) {
 llvm::Value *Range::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+std::string Range::get_name() { return ""; }
