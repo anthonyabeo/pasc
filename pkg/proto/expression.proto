@@ -5,40 +5,12 @@ option go_package = "pkg/codegen/serializer";
 
 import "proto/type.proto";
 
-message Identifier {
-  enum IDKind {
-    EntireVar = 0;
-    IdxVar = 1;
-    Field = 2;
-  }
-
-  message Variable {
-    string name = 1;
-  }
-
-  message IndexedVariable {
-    string arrayVar = 1;
-    repeated Expression idxExpr = 2;
-  }
-
-  message FieldDesignator {
-    string RecordVar = 1;
-    Expression FieldSpec = 2;
-  }
-
-  IDKind kind = 1;
-  oneof value {
-    Variable var = 2;
-    IndexedVariable iv = 3;
-    FieldDesignator fld = 4;
-  }
-}
 
 message Expression {
   enum ExprKind {
     UInt = 0;
     Bool = 1;
-    Ident = 2;
+    Var = 2;
     BinExpr = 3;
     WriteParam = 4;
     FCall = 5;
@@ -47,11 +19,13 @@ message Expression {
     UnExpr = 8;
     Str = 9;
     Rg = 10;
+    IdxVar = 11;
+    Field = 12;
   }
 
   ExprKind kind = 1;
   oneof expr {
-    Identifier id = 2;
+    Variable variable = 2;
     UIntLiteral uint = 3;
     BinaryExpr be = 4;
     WriteParameter wp = 5;
@@ -62,7 +36,23 @@ message Expression {
     UnaryExpr ue = 10;
     CharString cs = 11;
     Range rng = 12;
+    IndexedVariable iv = 13;
+    FieldDesignator fld = 14;
   }
+}
+
+message Variable {
+  string name = 1;
+}
+
+message IndexedVariable {
+  string arrayVar = 1;
+  repeated Expression idxExpr = 2;
+}
+
+message FieldDesignator {
+  string RecordVar = 1;
+  Expression FieldSpec = 2;
 }
 
 message WriteParameter {

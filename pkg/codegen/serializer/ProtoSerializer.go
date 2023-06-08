@@ -471,15 +471,9 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 	switch expr := expr.(type) {
 	case *ast.Identifier:
 		e = &Expression{
-			Kind: Expression_Ident,
-			Expr: &Expression_Id{
-				Id: &Identifier{
-					Kind: Identifier_EntireVar,
-					Value: &Identifier_Var{
-						Var: &Identifier_Variable{Name: expr.Name},
-					},
-				},
-			},
+			Kind: Expression_Var,
+			Expr: &Expression_Variable{
+				Variable: &Variable{Name: expr.Name}},
 		}
 	case *ast.IndexedVariable:
 		var indices []*Expression
@@ -488,33 +482,19 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 		}
 
 		e = &Expression{
-			Kind: Expression_Ident,
-			Expr: &Expression_Id{
-				Id: &Identifier{
-					Kind: Identifier_IdxVar,
-					Value: &Identifier_Iv{
-						Iv: &Identifier_IndexedVariable{
-							ArrayVar: expr.ArrayVar.String(),
-							IdxExpr:  indices,
-						},
-					},
-				},
-			},
+			Kind: Expression_IdxVar,
+			Expr: &Expression_Iv{Iv: &IndexedVariable{
+				ArrayVar: expr.ArrayVar.String(),
+				IdxExpr:  indices,
+			}},
 		}
 	case *ast.FieldDesignator:
 		e = &Expression{
-			Kind: Expression_Ident,
-			Expr: &Expression_Id{
-				Id: &Identifier{
-					Kind: Identifier_Field,
-					Value: &Identifier_Fld{
-						Fld: &Identifier_FieldDesignator{
-							RecordVar: expr.RecordVar.String(),
-							FieldSpec: s.translateExpr(expr.FieldSpec),
-						},
-					},
-				},
-			},
+			Kind: Expression_Field,
+			Expr: &Expression_Fld{Fld: &FieldDesignator{
+				RecordVar: expr.RecordVar.String(),
+				FieldSpec: s.translateExpr(expr.FieldSpec),
+			}},
 		}
 	case *ast.UIntegerLiteral:
 		v, err := strconv.Atoi(expr.Value)
@@ -682,12 +662,29 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			}},
 		}
 	case *structured.SubRange:
+		var (
+			start, end int
+			err        error
+		)
+		switch typ.HostType.(type) {
+		case *base.Integer:
+			start, err = strconv.Atoi(typ.Range.Start.String())
+			if err != nil {
+				panic(err)
+			}
+
+			end, err = strconv.Atoi(typ.Range.End.String())
+			if err != nil {
+				panic(err)
+			}
+		}
+
 		t = &Type{
 			Tk: Type_SUB_RANGE,
 			Type: &Type_SubR{SubR: &Type_SubRange{
 				Name:     typ.GetName(),
-				Start:    uint64([]rune(typ.Range.Start.String())[0]),
-				End:      uint64([]rune(typ.Range.End.String())[0]),
+				Start:    int32(start),
+				End:      int32(end),
 				HostType: s.translateType(typ.HostType),
 			}},
 		}
