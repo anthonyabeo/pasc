@@ -166,17 +166,14 @@ func (p *Parser) programParameterList() ([]*ast.Identifier, error) {
 
 func (p *Parser) block() (*ast.Block, error) {
 	var (
-		err       error
-		varDecl   *ast.VarDeclaration
-		callables []ast.Statement
-		//constDefinition *ast.ConstDefinition
+		err             error
+		varDecl         *ast.VarDeclaration
+		callables       []ast.Statement
+		constDefinition *ast.ConstDefinition
 		labelDefinition *ast.LabelDefinition
-		//typeDefinition  *ast.TypeDefinition
-		compoundStmt *ast.CompoundStatement
+		typeDefinition  *ast.TypeDefinition
+		compoundStmt    *ast.CompoundStatement
 	)
-
-	constDefinition := new(ast.ConstDefinition)
-	typeDefinition := new(ast.TypeDefinition)
 
 	block := &ast.Block{}
 
@@ -199,24 +196,23 @@ func (p *Parser) block() (*ast.Block, error) {
 		if err != nil {
 			return nil, err
 		}
-	}
 
-	for _, typDef := range typeDefinition.Types {
-		if typDef.TypeDenoter.GetName() == "enum" {
-			enumTyp := typDef.TypeDenoter.(*structured.Enumerated)
-			for i, enum := range enumTyp.List {
-				constDef := &ast.ConstDef{
-					Name: enum,
-					Value: &ast.UIntegerLiteral{
-						Token: token.Token{Kind: token.Identifier, Text: strconv.Itoa(i)},
-						Value: strconv.Itoa(i),
-					},
-				}
-				constDefinition.Consts = append(constDefinition.Consts, constDef)
+		if constDefinition == nil {
+			constDefinition = new(ast.ConstDefinition)
+		}
 
-				err = p.curScope.Define(symbols.NewConst(enum.Name, symbols.CONST, enumTyp))
-				if err != nil {
-					return nil, err
+		for _, typDef := range typeDefinition.Types {
+			if typDef.TypeDenoter.GetName() == "enum" {
+				enumTyp := typDef.TypeDenoter.(*structured.Enumerated)
+				for i, enum := range enumTyp.List {
+					constDef := &ast.ConstDef{
+						Name: enum,
+						Value: &ast.UIntegerLiteral{
+							Token: token.Token{Kind: token.Identifier, Text: strconv.Itoa(i)},
+							Value: strconv.Itoa(i),
+						},
+					}
+					constDefinition.Consts = append(constDefinition.Consts, constDef)
 				}
 			}
 		}
@@ -411,10 +407,19 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 					return nil, err
 				}
 			case token.LParen:
-				typ, err = p.enumType()
+				enumTyp, err := p.enumType()
 				if err != nil {
 					return nil, err
 				}
+
+				for _, enum := range enumTyp.List {
+					err = p.curScope.Define(symbols.NewConst(enum.Name, symbols.CONST, enumTyp))
+					if err != nil {
+						return nil, err
+					}
+				}
+
+				typ = enumTyp
 			case token.Record:
 				typ, err = p.recordType()
 				if err != nil {
