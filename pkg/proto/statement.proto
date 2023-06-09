@@ -118,6 +118,12 @@ message GoToStatement {
   string label = 1;
 }
 
+message WithStatement {
+  repeated Expression recordVarList = 1;
+  Statement body = 2;
+  string label = 3;
+}
+
 message Statement {
   enum StmtKind {
     if = 0;
@@ -130,6 +136,7 @@ message Statement {
     for = 7;
     case = 8;
     goto = 9;
+    with = 10;
   }
 
   StmtKind kind = 1;
@@ -144,5 +151,6 @@ message Statement {
     ForStatement forStmt = 9;
     CaseStatement caseStmt = 10;
     GoToStatement gotoStmt = 11;
+    WithStatement withStmt = 12;
   }
 }

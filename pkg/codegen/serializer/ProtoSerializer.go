@@ -458,6 +458,22 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 			Stmt: &Statement_GotoStmt{
 				GotoStmt: &GoToStatement{Label: stmt.Label.Value}},
 		}
+	case *ast.WithStatement:
+		var varList []*Expression
+		for _, v := range stmt.RecordVarList {
+			varList = append(varList, s.translateExpr(v))
+		}
+
+		st = &Statement{
+			Kind: Statement_with,
+			Stmt: &Statement_WithStmt{
+				WithStmt: &WithStatement{
+					RecordVarList: varList,
+					Body:          s.translateStmt(stmt.Body),
+					Label:         stmt.Label,
+				},
+			},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", stmt))
 	}
