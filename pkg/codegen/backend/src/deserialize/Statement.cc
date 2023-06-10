@@ -236,3 +236,18 @@ CaseStatement::CaseStatement(const Pasc::CaseStatement &cs) {
 llvm::Value *CaseStatement::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
+
+///////////////////////////
+// WITH STATEMENT
+///////////////////////////
+WithStatement::WithStatement(const Pasc::WithStatement &ws) {
+  label = ws.label();
+  body = deserializeStmt(ws.body());
+  for (int i = 0; i < ws.recordvarlist_size(); ++i) {
+    recordVarList.push_back(deserializeExpr(ws.recordvarlist(i)));
+  }
+}
+
+llvm::Value *WithStatement::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}

@@ -172,4 +172,16 @@ struct CaseStatement : public Statement {
   llvm::Value *codegen(IRVisitor &) override;
 };
 
+///////////////////////////
+// WITH STATEMENT
+///////////////////////////
+struct WithStatement : public Statement {
+  std::vector<std::unique_ptr<Expr>> recordVarList;
+  std::unique_ptr<Statement> body;
+  std::string label;
+
+  explicit WithStatement(const Pasc::WithStatement&);
+  llvm::Value *codegen(IRVisitor &) override;
+};
+
 #endif // STATEMENT_H
