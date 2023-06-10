@@ -62,6 +62,7 @@ public:
   llvm::Value *codegen(const ForStatement&) override;
   llvm::Value *codegen(const GotoStatement&) override;
   llvm::Value *codegen(const CaseStatement&) override;
+  llvm::Value *codegen(const WithStatement&) override;
 
   std::vector<llvm::Type*> codegen(const FuncHeading&) override;
   std::vector<llvm::Type*> codegen(const ProcHeading&) override;

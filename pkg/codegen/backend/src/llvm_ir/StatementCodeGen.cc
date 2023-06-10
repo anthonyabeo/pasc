@@ -487,3 +487,7 @@ llvm::Value *IRCodegenVisitor::codegen(const CaseStatement &cs) {
 
     return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
 }
+
+llvm::Value *IRCodegenVisitor::codegen(const WithStatement &ws) {
+    return llvm::Constant::getNullValue(llvm::Type::getInt32Ty(*ctx));
+}

@@ -42,6 +42,7 @@ public:
   virtual llvm::Value *codegen(const ForStatement &) = 0;
   virtual llvm::Value *codegen(const GotoStatement &) = 0;
   virtual llvm::Value *codegen(const CaseStatement &) = 0;
+  virtual llvm::Value *codegen(const WithStatement &) = 0;
 
   virtual std::vector<llvm::Type*> codegen(const VariableParam &) = 0;
   virtual std::vector<llvm::Type*> codegen(const ValueParam &) = 0;
