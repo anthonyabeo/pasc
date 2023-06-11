@@ -11,8 +11,9 @@ See the `Requirements` section for a list of additional project dependencies.
 
 ## Requirements
 * `Go >= v1.18`
+* `git >= 2.30`
 * `cmake >= v3.2`
-* `GNU Make >= v3.5` 
+* `GNU Make >= v3.5`
 * `protoc == v3.6.1`
 * `protoc-gen-go == v1.28.1`
 
@@ -31,20 +32,35 @@ $ git clone https://github.com/anthonyabeo/pasc.git
 $ cd pasc
 
 # install dependencies, run tests, and build and executable 
-$ make test
 $ make deps
+$ make test
 $ make build
+```
+## Usage
+```shell
+$ pasc --help
 
-# compile <program-file>
-$ pasc build [-o exec-name] <program-file> 
+USAGE
+  pasc [flags] <subcommand> [command flags]
 
-# run program
-$ ./bin/<exec-name>
+SUBCOMMANDS
+  build  Compile and produce an executable
+
+
+$ pasc build --help                     
+USAGE
+  pasc build [-o output] <program-file>
+
+FLAGS
+  --o string
+        output executable name (default a.out)
+
 ```
 
 ## Examples
+Compile a simple example program that utilizes if-statements. This will produce an executable called `ifstmt` in the
+root-level `bin` directory.
 ```bash
-# Run an example program that assign a value to a variable then print its to standard output
 $ pasc build -o ifstmt examples/ifstmt.pas
 $ ./bin/ifstmt
 ```
