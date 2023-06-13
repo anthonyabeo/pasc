@@ -57,6 +57,7 @@ public:
   virtual llvm::Type *codegen(const EnumType &) = 0;
   virtual llvm::Type *codegen(const SubRangeType &) = 0;
   virtual llvm::Type *codegen(const ArrayType &) = 0;
+  virtual llvm::Type *codegen(const CharType &) = 0;
 };
 
 #endif // IR_VISITOR_H

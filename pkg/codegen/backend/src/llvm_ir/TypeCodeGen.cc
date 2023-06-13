@@ -46,6 +46,10 @@ llvm::Type *IRCodegenVisitor::codegen(const SubRangeType &srt) {
     return llvm::ArrayType::get(host_type, (srt.end-srt.start)+1);
 }
 
+llvm::Type *IRCodegenVisitor::codegen(const CharType &ct) {
+    return llvm::Type::getInt8Ty(*ctx);
+}
+
 ////////////////////
 // PARAMETER TYPES
 ////////////////////
