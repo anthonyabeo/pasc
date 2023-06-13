@@ -87,4 +87,12 @@ struct ArrayType : public Type {
   llvm::Type *codegen(IRVisitor &) override;
 };
 
+struct CharType : public Type {
+  std::string name;
+
+  explicit CharType(const Pasc::Type_Char &);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &) override;
+};
+
 #endif // TYPE_H

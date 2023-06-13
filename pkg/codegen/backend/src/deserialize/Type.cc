@@ -140,3 +140,16 @@ llvm::Type *ArrayType::codegen(IRVisitor &v) {
 }
 
 std::string ArrayType::GetName() const { return name; }
+
+///////////////////////
+// CHAR
+///////////////////////
+CharType::CharType(const Pasc::Type_Char &ct) {
+  name = ct.name();
+}
+
+std::string CharType::GetName() const { return name; }
+
+llvm::Type *CharType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
