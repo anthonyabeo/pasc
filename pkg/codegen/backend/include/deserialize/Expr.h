@@ -39,13 +39,6 @@ struct Expr {
 
 std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &);
 
-/// @brief Identifier denotes a user-defined, non-keyword symbol
-//struct Identifier {
-//  virtual ~Identifier()  = default;
-//  virtual llvm::Value *codegen(IRVisitor &v) = 0;
-//  virtual std::string get_name() = 0;
-//};
-
 std::unique_ptr<Expr> deserializeVar(const Pasc::Expression &id);
 
 struct VariableID : public Expr {

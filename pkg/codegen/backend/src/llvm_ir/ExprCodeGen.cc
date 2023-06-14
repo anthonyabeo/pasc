@@ -130,6 +130,7 @@ llvm::Value *IRCodegenVisitor::codegen(const UnaryExpression &ue) {
   switch (ue.op) {
   case Operator::Minus:
     return builder->CreateNeg(operand);
+  case Operator::Plus:
   case Operator::Not:
     return builder->CreateNot(operand, "not");
   default:
@@ -173,7 +174,17 @@ llvm::Value *IRCodegenVisitor::codegen(const IndexedVariable &iv) {
     throw IRCodegenException("invalid array index");
   }
 
-  return builder->CreateGEP(index->getType(), array, index);
+  auto GEP = builder->CreateGEP(index->getType(), array, index);
+
+  for (int i = 1; i < iv.indices.size(); ++i) {
+    index = iv.indices[i]->codegen(*this);
+    if (!index)
+      throw IRCodegenException("invalid array index");
+
+    GEP = builder->CreateGEP(index->getType(), GEP, index);
+  }
+
+  return GEP;
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const IndexedVarExpr &ive) {
@@ -189,6 +200,13 @@ llvm::Value *IRCodegenVisitor::codegen(const IndexedVarExpr &ive) {
   }
 
   auto GEP = builder->CreateGEP(index->getType(), array, index);
+  for (int i = 1; i < ive.indices.size(); ++i) {
+    index = ive.indices[i]->codegen(*this);
+    if (!index)
+      throw IRCodegenException("invalid array index");
+
+    GEP = builder->CreateGEP(index->getType(), GEP, index);
+  }
 
   llvm::Value *idVal = builder->CreateLoad(index->getType(), GEP);
   if (!idVal) {

@@ -28,14 +28,41 @@ llvm::Type *IRCodegenVisitor::codegen(const EnumType &et) {
 
 llvm::Type *IRCodegenVisitor::codegen(const ArrayType &arr) {
     auto comp_type = arr.comp_type->codegen(*this);
+    uint64_t numElems = 0;
 
-    auto idx = arr.indices[0]->codegen(*this);
+    if(arr.indices.size() > 1) {
+      for (int i = arr.indices.size() - 1; i >= 0 ; --i) {
+        auto idx = arr.indices[i]->codegen(*this);
+        if(llvm::isa<llvm::ArrayType>(idx)) {
+          auto IndexType = llvm::dyn_cast<llvm::ArrayType>(idx);
+          numElems = IndexType->getNumElements();
+        } else if (llvm::isa<llvm::IntegerType>(idx)) {
+          // TODO fix
+          numElems = 5;
+        } else {
+          // TODO fix
+          numElems = 19;
+        }
 
-    auto foo =
-        dyn_cast<llvm::ArrayType>(idx);
+        comp_type = llvm::ArrayType::get(comp_type, numElems);
+      }
 
-    auto numElems = foo->getNumElements();
-    return llvm::ArrayType::get(comp_type, numElems);
+      return comp_type;
+    } else {
+      auto idx = arr.indices[0]->codegen(*this);
+      if(llvm::isa<llvm::ArrayType>(idx)) {
+        auto IndexType = llvm::dyn_cast<llvm::ArrayType>(idx);
+        numElems = IndexType->getNumElements();
+      } else if (llvm::isa<llvm::IntegerType>(idx)) {
+        // TODO fix
+        numElems = 5;
+      } else {
+        // TODO fix
+        numElems = 19;
+      }
+
+      return llvm::ArrayType::get(comp_type, numElems);
+    }
 }
 
 llvm::Type *IRCodegenVisitor::codegen(const SubRangeType &srt) {
