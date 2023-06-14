@@ -31,7 +31,7 @@ deps:
 
 	curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.tar.gz
 	tar -xvf protobuf-cpp-3.6.1.tar.gz -C /tmp
-	cd /tmp/protobuf-cpp-3.6.1 && ./configure && make && make check && make install
+	cd /tmp/protobuf-3.6.1 && ./configure && make && make check && make install
 	sudo ldconfig
 
 	protoc --version
