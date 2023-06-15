@@ -8,7 +8,9 @@ var
 
 begin
     bar[1, 2] := 249;
+    bar[3][4] := 382;
     writeln('bar[1, 2] = %d', bar[1, 2]);
+    writeln('bar[3][4] = %d', bar[3][4]);
 
     for i := 1 to 10 do
         arr[i-1] := i*i;
