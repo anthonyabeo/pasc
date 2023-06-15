@@ -2271,10 +2271,28 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 	if sym == nil {
 		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
 	} else if sym.GetType().GetName() == "array" {
-		expr, err = p.indexedVariable()
+		iExpr, err := p.indexedVariable()
 		if err != nil {
 			return nil, err
 		}
+
+		for p.lAheadKind(1) == token.LSqBrace {
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+			ie, err := p.expression()
+			if err != nil {
+				return nil, err
+			}
+
+			iExpr.IndexExpr = append(iExpr.IndexExpr, ie)
+
+			if err = p.match(token.RSqBrace); err != nil {
+				return nil, err
+			}
+		}
+
+		expr = iExpr
 	} else if sym.GetType().GetName() == "record" {
 		recVar := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.consume(); err != nil {
