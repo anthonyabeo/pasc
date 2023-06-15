@@ -113,7 +113,7 @@ llvm::Value *IRCodegenVisitor::codegen(const CharString &cs) {
   auto stringType = llvm::ArrayType::get(charType, chars.size());
 
   //3. Create the declaration statement
-  auto gv = (llvm::GlobalVariable*) module->getOrInsertGlobal(".str", stringType);
+  auto gv = (llvm::GlobalVariable*) module->getOrInsertGlobal("", stringType);
   gv->setInitializer(llvm::ConstantArray::get(stringType, chars));
   gv->setConstant(true);
   gv->setLinkage(llvm::GlobalValue::LinkageTypes::InternalLinkage);

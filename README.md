@@ -32,7 +32,7 @@ $ cd pasc
 # install dependencies, run tests, and build and executable 
 $ sudo make deps
 $ make test
-$ make build
+$ sudo make build
 ```
 
 ## Usage
