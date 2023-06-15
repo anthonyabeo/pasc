@@ -37,11 +37,14 @@ llvm::Type *IRCodegenVisitor::codegen(const ArrayType &arr) {
           auto IndexType = llvm::dyn_cast<llvm::ArrayType>(idx);
           numElems = IndexType->getNumElements();
         } else if (llvm::isa<llvm::IntegerType>(idx)) {
-          // TODO fix
-          numElems = 5;
-        } else {
-          // TODO fix
-          numElems = 19;
+          auto IndexType = llvm::dyn_cast<llvm::IntegerType>(idx);
+            if(IndexType->isIntegerTy(1)) {
+              numElems = 2;
+            } else if (IndexType->isIntegerTy(8)) {
+              numElems = UCHAR_MAX;
+            } else {
+              numElems = UINT_MAX;
+            }
         }
 
         comp_type = llvm::ArrayType::get(comp_type, numElems);
@@ -54,11 +57,14 @@ llvm::Type *IRCodegenVisitor::codegen(const ArrayType &arr) {
         auto IndexType = llvm::dyn_cast<llvm::ArrayType>(idx);
         numElems = IndexType->getNumElements();
       } else if (llvm::isa<llvm::IntegerType>(idx)) {
-        // TODO fix
-        numElems = 5;
-      } else {
-        // TODO fix
-        numElems = 19;
+        auto IndexType = llvm::dyn_cast<llvm::IntegerType>(idx);
+        if(IndexType->isIntegerTy(1)) {
+            numElems = 2;
+        } else if (IndexType->isIntegerTy(8)) {
+            numElems = UCHAR_MAX;
+        } else {
+            numElems = UINT_MAX;
+        }
       }
 
       return llvm::ArrayType::get(comp_type, numElems);

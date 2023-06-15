@@ -131,6 +131,7 @@ llvm::Value *IRCodegenVisitor::codegen(const UnaryExpression &ue) {
   case Operator::Minus:
     return builder->CreateNeg(operand);
   case Operator::Plus:
+    return operand;
   case Operator::Not:
     return builder->CreateNot(operand, "not");
   default:
@@ -168,7 +169,6 @@ llvm::Value *IRCodegenVisitor::codegen(const IndexedVariable &iv) {
     throw IRCodegenException("undefined array, " + iv.arrayName);
   }
 
-  // TODO generalize to n-D arrays
   auto index = iv.indices[0]->codegen(*this);
   if (!index) {
     throw IRCodegenException("invalid array index");
@@ -193,7 +193,6 @@ llvm::Value *IRCodegenVisitor::codegen(const IndexedVarExpr &ive) {
     throw IRCodegenException("undefined array, " + ive.arrayName);
   }
 
-  // TODO generalize to n-D arrays
   auto index = ive.indices[0]->codegen(*this);
   if (!index) {
     throw IRCodegenException("invalid array index");
