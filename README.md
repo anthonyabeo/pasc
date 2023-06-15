@@ -14,8 +14,6 @@ See the `Requirements` section for a list of additional project dependencies.
 * `git >= 2.30`
 * `cmake >= v3.2`
 * `GNU Make >= v3.5`
-* `protoc == v3.6.1`
-* `protoc-gen-go == v1.28.1`
 
 ## Build
 Once we have these requirements installed, Use `make` commands to build an executable.
@@ -32,10 +30,11 @@ $ git clone https://github.com/anthonyabeo/pasc.git
 $ cd pasc
 
 # install dependencies, run tests, and build and executable 
-$ make deps
+$ sudo make deps
 $ make test
 $ make build
 ```
+
 ## Usage
 ```shell
 $ pasc --help
