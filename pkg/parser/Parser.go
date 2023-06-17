@@ -435,7 +435,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 				if err != nil {
 					return nil, err
 				}
-			case token.Plus, token.Minus, token.UIntLiteral, token.CharString, token.URealLiteral, token.Identifier:
+			case token.Plus, token.Minus, token.UIntLiteral, token.StrLiteral, token.URealLiteral, token.Identifier:
 				typ, err = p.subRangeType()
 				if err != nil {
 					return nil, err
@@ -843,7 +843,7 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 		}
 
 		idxType = &structured.Enumerated{List: list}
-	case token.Plus, token.Minus, token.UIntLiteral, token.CharString:
+	case token.Plus, token.Minus, token.UIntLiteral, token.StrLiteral:
 		var (
 			err        error
 			start, end ast.Expression
@@ -904,7 +904,7 @@ func (p *Parser) isNewType() bool {
 		p.lAheadKind(1) == token.Plus ||
 		p.lAheadKind(1) == token.Minus ||
 		p.lAheadKind(1) == token.UIntLiteral ||
-		p.lAheadKind(1) == token.CharString ||
+		p.lAheadKind(1) == token.StrLiteral ||
 		p.lAheadKind(1) == token.URealLiteral ||
 		p.lAheadKind(1) == token.Identifier ||
 		p.lAheadKind(1) == token.Caret
@@ -987,8 +987,8 @@ func (p *Parser) constant() (ast.Expression, error) {
 	)
 
 	switch p.lAheadKind(1) {
-	case token.CharString:
-		expr = &ast.CharString{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
+	case token.StrLiteral:
+		expr = &ast.StrLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	default:
 		if p.isSign() {
 			sign = p.lAheadToken(1)
@@ -2193,7 +2193,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 		} else {
 			expr, err = p.variableAccess()
 		}
-	case token.UIntLiteral, token.URealLiteral, token.CharString, token.Nil:
+	case token.UIntLiteral, token.URealLiteral, token.StrLiteral, token.Nil:
 		expr, err = p.unsignedConstant()
 		if err != nil {
 			return nil, err
@@ -2398,8 +2398,8 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	switch p.lAheadKind(1) {
 	case token.UIntLiteral, token.URealLiteral:
 		expr, err = p.unsignedNumber()
-	case token.CharString:
-		expr = &ast.CharString{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
+	case token.StrLiteral:
+		expr = &ast.StrLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	case token.Identifier:
 		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text, Scope: p.curScope}
 	case token.Nil:

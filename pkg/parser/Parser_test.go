@@ -33,7 +33,7 @@ func TestParseBasicProgram(t *testing.T) {
 	}
 
 	args := []ast.Expression{
-		&ast.CharString{Token: token.NewToken(token.CharString, "Hello, World!"), Value: "Hello, World!"},
+		&ast.StrLiteral{Token: token.NewToken(token.StrLiteral, "Hello, World!"), Value: "Hello, World!"},
 	}
 	if !testWriteln(t, program.Block.Stats[0], "writeln", args) {
 		return
@@ -114,7 +114,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 
 	// third statement
 	args := []ast.Expression{
-		&ast.CharString{Token: token.NewToken(token.CharString, "Hello, world!"), Value: "Hello, world!"},
+		&ast.StrLiteral{Token: token.NewToken(token.StrLiteral, "Hello, world!"), Value: "Hello, world!"},
 	}
 
 	if !testWriteln(t, program.Block.Stats[2], "writeln", args) {

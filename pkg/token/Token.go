@@ -57,7 +57,7 @@ const (
 
 	Identifier
 	SemiColon
-	CharString
+	StrLiteral
 	Period
 	LParen
 	RParen
@@ -145,7 +145,7 @@ var tokenKindStrings = [...]string{
 
 	Identifier:          "identifier",
 	SemiColon:           ";",
-	CharString:          "char-string",
+	StrLiteral:          "str-literal",
 	Period:              ".",
 	LParen:              "(",
 	RParen:              ")",

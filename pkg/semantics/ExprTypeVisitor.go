@@ -69,7 +69,7 @@ func (v *ExprEvalVisitor) Visit(node ast.Node) {
 			panic(fmt.Sprintf("symbol %v is undefined", node.Name))
 		}
 		node.EvalType = sym.GetType()
-	case *ast.CharString:
+	case *ast.StrLiteral:
 		if len(node.Value) > 1 {
 			node.EvalType = &base.String{Name: "string"}
 		}
