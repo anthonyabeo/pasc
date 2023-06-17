@@ -547,7 +547,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_Bool,
 			Expr: &Expression_Bl{Bl: &BoolExpr{Value: v}},
 		}
-	case *ast.CharString:
+	case *ast.StrLiteral:
 		e = &Expression{
 			Kind: Expression_Str,
 			Expr: &Expression_Cs{
@@ -653,6 +653,12 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			Tk:   Type_CHAR,
 			Type: &Type_Char_{Char: &Type_Char{Name: typ.GetName()}},
 		}
+	case *base.String:
+		t = &Type{
+			Tk:   Type_STR,
+			Type: &Type_Str{Str: &Type_String{Name: typ.Name}},
+		}
+
 	case *structured.Enumerated:
 		var elems []string
 		for _, elem := range typ.List {
