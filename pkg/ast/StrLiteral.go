@@ -5,25 +5,25 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
-// CharString models the node for character string literals
-type CharString struct {
+// StrLiteral models the node for character string literals
+type StrLiteral struct {
 	Token    token.Token
 	Value    string
 	EvalType types.Type
 }
 
 // TokenLiteral returns the text value this node's token.
-func (c *CharString) TokenLiteral() string { return c.Token.Text }
+func (c *StrLiteral) TokenLiteral() string { return c.Token.Text }
 
-func (c *CharString) exprNode() {}
+func (c *StrLiteral) exprNode() {}
 
 // TokenKind returns this node's token's kind
-func (c *CharString) TokenKind() token.Kind {
+func (c *StrLiteral) TokenKind() token.Kind {
 	return c.Token.Kind
 }
 
 // Attr ...
-func (c *CharString) Attr(attr string) any {
+func (c *StrLiteral) Attr(attr string) any {
 	switch attr {
 	case "type":
 		return c.EvalType
@@ -32,6 +32,6 @@ func (c *CharString) Attr(attr string) any {
 	}
 }
 
-func (c *CharString) String() string {
+func (c *StrLiteral) String() string {
 	return c.Value
 }

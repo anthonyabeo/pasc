@@ -24,7 +24,7 @@ func NewLexer(input string) Lexer {
 	return lex
 }
 
-// Consume read the the current byte in the input and advances the pointer to the next byte
+// Consume read the current byte in the input and advances the pointer to the next byte
 func (lex *Lexer) consume() {
 	if lex.curReadPos >= len(lex.input) {
 		lex.curChar = byte(token.EOF)
@@ -53,7 +53,7 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			return token.Token{Kind: token.SemiColon, Text: ";"}, nil
 		case '\'':
 			lex.consume()
-			tok := token.Token{Kind: token.CharString, Text: lex.readStringLiteral()}
+			tok := token.Token{Kind: token.StrLiteral, Text: lex.readStringLiteral()}
 			lex.consume()
 
 			return tok, nil
@@ -130,14 +130,10 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			if lex.isDigit() {
 				uNum := lex.readUnsignedNumber()
 				if strings.Contains(uNum, "e") || strings.Contains(uNum, ".") {
-					return token.Token{
-						Kind: token.URealLiteral,
-						Text: uNum}, nil
+					return token.Token{Kind: token.URealLiteral, Text: uNum}, nil
 				}
 
-				return token.Token{
-					Kind: token.UIntLiteral,
-					Text: uNum}, nil
+				return token.Token{Kind: token.UIntLiteral, Text: uNum}, nil
 			}
 
 			return token.Token{}, fmt.Errorf("invalid character: %v", string(lex.curChar))
@@ -239,7 +235,26 @@ func (lex *Lexer) isLetter() bool {
 }
 
 func (lex *Lexer) consumeWhiteSpace() {
-	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\n' || lex.curChar == '\r' {
+	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\n' || lex.curChar == '\r' ||
+		(lex.curChar == '(' && lex.input[lex.curReadPos] == '*') || lex.curChar == '{' {
+
+		if (lex.curChar == '(' && lex.input[lex.curReadPos] == '*') || lex.curChar == '{' {
+			for {
+				if lex.curChar == '*' && lex.input[lex.curReadPos] == ')' {
+					lex.consume()
+					lex.consume()
+					break
+				}
+
+				if lex.curChar == '}' {
+					lex.consume()
+					break
+				}
+
+				lex.consume()
+			}
+		}
+
 		lex.consume()
 	}
 }

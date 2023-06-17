@@ -43,7 +43,7 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 		{token.Begin, "begin"},
 		{token.Identifier, "writeln"},
 		{token.LParen, "("},
-		{token.CharString, "Hello, World!"},
+		{token.StrLiteral, "Hello, World!"},
 		{token.RParen, ")"},
 		{token.SemiColon, ";"},
 		{token.End, "end"},
@@ -76,10 +76,11 @@ func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
 		a, b, sum : integer;
 
 	begin
+		(* this is a comment *)
 		a := 1;
 		b := 2;
 		sum := a + b;
-
+		
 		writeln(sum);
 	end.
 `
@@ -180,6 +181,7 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 		123e+4
 		1.2
 		0.000232
+		(* this is a comment *)
 		0.000232e-4837294
 		3.142
 		1.2e4938
@@ -220,10 +222,12 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 
 func TestTokenizeSubRangeType(t *testing.T) {
 	input := `
+		(* this is a comment *)
 		1900..1999
 		red..green
 		'0'..'9'
 		-10..+10
+		{ this is a comment }
 	`
 
 	tests := []struct {
@@ -236,9 +240,9 @@ func TestTokenizeSubRangeType(t *testing.T) {
 		{token.Identifier, "red"},
 		{token.Range, ".."},
 		{token.Identifier, "green"},
-		{token.CharString, "0"},
+		{token.StrLiteral, "0"},
 		{token.Range, ".."},
-		{token.CharString, "9"},
+		{token.StrLiteral, "9"},
 		{token.Minus, "-"},
 		{token.UIntLiteral, "10"},
 		{token.Range, ".."},
@@ -268,6 +272,7 @@ func TestTokenizeSubRangeType(t *testing.T) {
 func TestTokenizePointer(t *testing.T) {
 	input := `
 		p1^.mother := true
+		{ this is a comment }
 		p1^.sibling^.father^
 	`
 
