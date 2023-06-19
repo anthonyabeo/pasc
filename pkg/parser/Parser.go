@@ -225,11 +225,9 @@ func (p *Parser) block() (*ast.Block, error) {
 		}
 	}
 
-	for p.lAheadKind(1) == token.Function || p.lAheadKind(1) == token.Procedure {
-		callables, err = p.procedureAndFunctionDeclarationPart()
-		if err != nil {
-			return nil, err
-		}
+	callables, err = p.procedureAndFunctionDeclarationPart()
+	if err != nil {
+		return nil, err
 	}
 
 	compoundStmt, err = p.compoundStatement()
@@ -1031,29 +1029,31 @@ func (p *Parser) constant() (ast.Expression, error) {
 func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) {
 	var callables []ast.Statement
 
-	switch p.lAheadKind(1) {
-	case token.Function:
-		funcDecl, err := p.functionDeclaration()
-		if err != nil {
-			return nil, err
+	for p.lAheadKind(1) == token.Function || p.lAheadKind(1) == token.Procedure {
+		switch p.lAheadKind(1) {
+		case token.Function:
+			funcDecl, err := p.functionDeclaration()
+			if err != nil {
+				return nil, err
+			}
+
+			callables = append(callables, funcDecl)
+		case token.Procedure:
+			procedureDecl, err := p.procedureDeclaration()
+			if err != nil {
+				return nil, err
+			}
+
+			callables = append(callables, procedureDecl)
+		default:
+			return nil, fmt.Errorf(
+				"parse Error: expected 'procedure' or 'function', got %v instead",
+				p.lAheadToken(1).Text)
 		}
 
-		callables = append(callables, funcDecl)
-	case token.Procedure:
-		procedureDecl, err := p.procedureDeclaration()
-		if err != nil {
+		if err := p.match(token.SemiColon); err != nil {
 			return nil, err
 		}
-
-		callables = append(callables, procedureDecl)
-	default:
-		return nil, fmt.Errorf(
-			"parse Error: expected 'procedure' or 'function', got %v instead",
-			p.lAheadToken(1).Text)
-	}
-
-	if err := p.match(token.SemiColon); err != nil {
-		return nil, err
 	}
 
 	return callables, nil
