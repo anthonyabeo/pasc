@@ -5,11 +5,7 @@ var
 function
     abs(x : integer) : integer;
     begin
-        if x < 0
-        then
-            abs := -1 * x
-        else
-            abs := x
+        abs := x * ((2*x + 1) mod 2)
     end;
 
 function
@@ -20,13 +16,13 @@ function
         old, estimate, eps : real;
 
     begin
-        eps := 2.22e-16;
+        eps := 2e-52;
         estimate := x;
 
         repeat
             old := estimate;
             estimate := (old + x / old) * 0.5
-        until abs(estimate - old) < eps * estimate;
+        until abs(estimate - old) < (eps * estimate);
 
         {eps being a global constant}
         Sqrt := estimate
