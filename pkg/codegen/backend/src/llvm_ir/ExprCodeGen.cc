@@ -16,7 +16,7 @@ llvm::Value* IRCodegenVisitor::codegen(const IdentifierExpr &expr) {
         std::string("Identifier not found: " + expr.identifier->get_name()));
   }
 
-  llvm::Value *idVal = builder->CreateLoad(id->getAllocatedType(), id);
+  llvm::Value *idVal = builder->CreateLoad(id->getAllocatedType(), id, "ld");
   if (!idVal) {
     throw IRCodegenException(
         std::string("cannot read value of: " + expr.identifier->get_name()));
@@ -40,37 +40,117 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
 
   switch (binExpr.op) {
   case Operator::Less:
-  return builder->CreateCmp(
-        llvm::CmpInst::Predicate::ICMP_SLT, L, R, "cond");
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateCmp(llvm::CmpInst::Predicate::FCMP_ULT,
+                                FL, FR);
+    }
+
+    return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SLT,
+                              L, R, "cond");
   case Operator::Great:
-  return builder->CreateCmp(
-      llvm::CmpInst::Predicate::ICMP_SGT, L, R, "cond");
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateCmp(llvm::CmpInst::Predicate::FCMP_UGT,
+                                FL, FR);
+    }
+
+    return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SGT,
+                              L, R, "cond");
   case Operator::GreatEqual:
-  return builder->CreateCmp(
-      llvm::CmpInst::Predicate::ICMP_SGE, L, R, "cond");
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateCmp(llvm::CmpInst::Predicate::FCMP_UGE,
+                                FL, FR);
+    }
+
+    return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SGE,
+                              L, R, "cond");
   case Operator::LessEqual:
-    return builder->CreateCmp(
-      llvm::CmpInst::Predicate::ICMP_SLE, L, R, "cond");
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateCmp(llvm::CmpInst::Predicate::FCMP_ULE,
+                                FL, FR);
+    }
+
+    return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_SLE,
+                              L, R, "cond");
   case Operator::Plus:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateFAdd(FL, FR, "fadd");
+    }
+
     return builder->CreateAdd(L, R, "add");
   case Operator::Minus:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateFSub(FL, FR, "fsub");
+    }
+
     return builder->CreateSub(L, R, "sub");
   case Operator::Equal:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateCmp(llvm::CmpInst::Predicate::FCMP_UEQ,
+                                FL, FR);
+    }
+
     return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_EQ, L, R);
   case Operator::Mod:
     return builder->CreateSRem(L, R);
   case Operator::Mult:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateFMul(FL, FR, "fmult");
+    }
+
     return builder->CreateMul(L, R, "mult");
   case Operator::And:
     return builder->CreateAnd(L, R, "and");
   case Operator::Or:
     return builder->CreateOr(L, R, "or");
   case Operator::Div:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateFDiv(FL, FR, "fdiv");
+    }
+
     return builder->CreateSDiv(L, R, "div");
-  case Operator::FwdSlash:
-    return builder->CreateFDiv(L, R);
+  case Operator::FwdSlash: {
+    auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+    auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+    return builder->CreateFDiv(FL, FR);
+  }
   case Operator::In:
   case Operator::LessGreat:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
+      auto FR = builder->CreateSIToFP(R, llvm::Type::getDoubleTy(*ctx));
+
+      return builder->CreateCmp(llvm::CmpInst::Predicate::FCMP_UNE,
+                                FL, FR);
+    }
+    
     return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_NE, L, R);
   default:
     throw IRCodegenException("invalid binary operator");
