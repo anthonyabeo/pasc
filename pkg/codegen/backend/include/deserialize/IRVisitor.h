@@ -27,6 +27,7 @@ public:
   virtual llvm::Value *codegen(const FieldDesignator &) = 0;
   virtual llvm::Value *codegen(const FieldDesigExpr &) = 0;
   virtual llvm::Value *codegen(const Range &) = 0;
+  virtual llvm::Value *codegen(const Nil &) = 0;
 
   virtual llvm::Value *codegen(const AssignStmt &) = 0;
   virtual llvm::Value *codegen(const ReturnStatement &) = 0;

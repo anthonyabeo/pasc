@@ -302,3 +302,7 @@ llvm::Value *IRCodegenVisitor::codegen(const FieldDesignator &fd) {
 llvm::Value *IRCodegenVisitor::codegen(const FieldDesigExpr &fde) {
   return nullptr;
 }
+
+llvm::Value *IRCodegenVisitor::codegen(const Nil &nil) {
+  return nullptr;
+}

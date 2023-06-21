@@ -46,6 +46,7 @@ public:
   llvm::Value* codegen(const FieldDesignator&) override;
   llvm::Value* codegen(const FieldDesigExpr&) override;
   llvm::Value* codegen(const Range&) override;
+  llvm::Value* codegen(const Nil&) override;
 
   // Statements
   llvm::Value *codegen(const AssignStmt &) override;
