@@ -75,6 +75,8 @@ std::unique_ptr<Expr> deserializeExpr(const Pasc::Expression &expr) {
     return std::make_unique<BoolExpr>(expr.bl());
   case Pasc::Expression_ExprKind_Rg:
     return std::make_unique<Range>(expr.rng());
+  case Pasc::Expression_ExprKind_Nil:
+    return std::make_unique<Nil>(expr.nl());
   default:
     throw DeserializeProtobufException("invalid expression kind");
   }
@@ -324,3 +326,14 @@ llvm::Value *Range::codegen(IRVisitor &v) {
 }
 
 std::string Range::get_name() { return ""; }
+
+///////////////////////////
+// NIL
+///////////////////////////
+Nil::Nil(const Pasc::NilValue &nil) {
+  name = nil.name();
+}
+
+llvm::Value *Nil::codegen(IRVisitor &v) { return v.codegen(*this); }
+
+std::string Nil::get_name() { return name; }

@@ -96,6 +96,14 @@ struct FieldDesigExpr : public Expr {
   std::string get_name() override;
 };
 
+struct Nil : public Expr {
+  std::string name;
+
+  explicit Nil(const Pasc::NilValue&);
+  llvm::Value *codegen(IRVisitor&) override;
+  std::string get_name() override;
+};
+
 ///////////////////////////
 // FUNCTION CALL
 ///////////////////////////
