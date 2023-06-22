@@ -658,7 +658,6 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			Tk:   Type_STR,
 			Type: &Type_Str{Str: &Type_String{Name: typ.Name}},
 		}
-
 	case *structured.Enumerated:
 		var elems []string
 		for _, elem := range typ.List {
@@ -711,6 +710,35 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 			}},
 		}
 	case *structured.Record:
+		var fixedPart []*Type_Record_RecordSection
+
+		for _, field := range typ.FieldList {
+			switch field := field.(type) {
+			case *structured.FixedPart:
+				var idList []string
+				for _, rs := range field.Entry {
+					for _, id := range rs.List {
+						idList = append(idList, id.Name)
+					}
+
+					recordSec := &Type_Record_RecordSection{
+						IdList: idList,
+						Type:   s.translateType(rs.Type),
+					}
+
+					fixedPart = append(fixedPart, recordSec)
+				}
+
+			case *structured.VariantPart:
+			}
+		}
+
+		t = &Type{
+			Tk: Type_RECORD,
+			Type: &Type_Rec{Rec: &Type_Record{
+				FixedPart: fixedPart,
+			}},
+		}
 	default:
 		panic(fmt.Sprintf("Unimplemented %v", typ))
 	}
