@@ -83,6 +83,15 @@ llvm::Type *IRCodegenVisitor::codegen(const CharType &ct) {
     return llvm::Type::getInt8Ty(*ctx);
 }
 
+llvm::Type *IRCodegenVisitor::codegen(const RecordType &r) {
+    std::vector<llvm::Type*> elements(r.fields.size());
+    for (const auto & field : r.fields) {
+      elements.push_back(field.second->codegen(*this));
+    }
+
+    return llvm::StructType::get(*ctx, elements);
+}
+
 ////////////////////
 // PARAMETER TYPES
 ////////////////////

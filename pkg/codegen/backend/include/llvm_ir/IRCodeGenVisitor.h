@@ -80,6 +80,7 @@ public:
   llvm::Type *codegen(const SubRangeType&) override;
   llvm::Type *codegen(const ArrayType&) override;
   llvm::Type *codegen(const CharType&) override;
+  llvm::Type *codegen(const RecordType&) override;
 };
 
 /// @brief IRCodegenException is a custom exception for code generation
