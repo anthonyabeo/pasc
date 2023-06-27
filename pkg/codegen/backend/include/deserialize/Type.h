@@ -95,4 +95,14 @@ struct CharType : public Type {
   llvm::Type *codegen(IRVisitor &) override;
 };
 
+
+struct RecordType : public Type {
+  std::string name;
+  std::map<std::string, std::unique_ptr<Type>> fields;
+
+  explicit RecordType(const Pasc::Type_Record &);
+  [[nodiscard]] std::string GetName() const override;
+  llvm::Type *codegen(IRVisitor &) override;
+};
+
 #endif // TYPE_H

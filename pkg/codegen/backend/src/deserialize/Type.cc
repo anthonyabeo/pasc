@@ -24,6 +24,8 @@ std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
     return std::make_unique<SubRangeType>(t.subr());
   case Pasc::Type_TypeKind_ARRAY:
     return std::make_unique<ArrayType>(t.arr());
+  case Pasc::Type_TypeKind_RECORD:
+    return std::make_unique<RecordType>(t.rec());
   default:
     throw DeserializeProtobufException("invalid case");
   }
@@ -151,5 +153,26 @@ CharType::CharType(const Pasc::Type_Char &ct) {
 std::string CharType::GetName() const { return name; }
 
 llvm::Type *CharType::codegen(IRVisitor &v) {
+  return v.codegen(*this);
+}
+
+///////////////////////
+// RECORD
+///////////////////////
+RecordType::RecordType(const Pasc::Type_Record &rec) {
+  for (int i = 0; i < rec.fixedpart_size(); ++i) {
+    auto& rec_sec = rec.fixedpart(i);
+    for (int j = 0; j < rec_sec.idlist_size(); ++j) {
+      auto field_name = rec_sec.idlist(j);
+      fields.insert({field_name, deserializeType(rec_sec.type())});
+    }
+  }
+}
+
+std::string RecordType::GetName() const {
+  return name;
+}
+
+llvm::Type *RecordType::codegen(IRVisitor &v) {
   return v.codegen(*this);
 }
