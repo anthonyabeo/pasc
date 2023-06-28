@@ -518,9 +518,11 @@ func (p *Parser) recordType() (*structured.Record, error) {
 func (p *Parser) fieldList() ([]structured.Field, error) {
 	var (
 		err       error
-		varPart   *structured.VariantPart
 		fieldList []structured.Field
 	)
+
+	fixedPart := &structured.FixedPart{}
+	varPart := &structured.VariantPart{}
 
 	if p.lAheadKind(1) == token.Case {
 		varPart, err = p.variantPart()
@@ -529,14 +531,11 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 		}
 		fieldList = append(fieldList, varPart)
 	} else {
-		fixedPart := &structured.FixedPart{}
-
 		recordSec, err := p.recordSection()
 		if err != nil {
 			return nil, err
 		}
 		fixedPart.Entry = append(fixedPart.Entry, recordSec)
-		fieldList = append(fieldList, fixedPart)
 
 		for p.lAheadKind(1) == token.SemiColon {
 			if err = p.consume(); err != nil {
@@ -555,7 +554,6 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 					return nil, err
 				}
 				fixedPart.Entry = append(fixedPart.Entry, recordSec)
-				fieldList = append(fieldList, fixedPart)
 			}
 		}
 	}
@@ -565,6 +563,8 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 			return nil, err
 		}
 	}
+
+	fieldList = append(fieldList, fixedPart, varPart)
 
 	return fieldList, nil
 }
