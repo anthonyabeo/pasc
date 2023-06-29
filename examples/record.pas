@@ -2,12 +2,14 @@ program Record;
 
 var
     date : record
-       year : 0..2000;
-       month : 1..12;
-       day : 1..31
+       year : integer;
+       month : integer;
+       day : integer
     end;
 
 begin
+    date.day := 7;
     date.month := 12;
-    writeln('%d', date.month)
+    date.year := 1992;
+    writeln('%d/%d/%d', date.day, date.month, date.year)
 end.
