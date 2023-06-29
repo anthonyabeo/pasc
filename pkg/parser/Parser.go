@@ -564,7 +564,18 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 		}
 	}
 
+	offset := 0
 	fieldList = append(fieldList, fixedPart, varPart)
+	for _, recSec := range fixedPart.Entry {
+		for _, rec := range recSec.List {
+			err = p.curScope.Define(symbols.NewField(rec.Name, symbols.FIELD, recSec.Type, strconv.Itoa(offset)))
+			if err != nil {
+				return nil, err
+			}
+
+			offset++
+		}
+	}
 
 	return fieldList, nil
 }
@@ -586,13 +597,6 @@ func (p *Parser) recordSection() (*structured.RecordSection, error) {
 	recordSec.Type, err = p.typeDenoter()
 	if err != nil {
 		return nil, err
-	}
-
-	for _, rec := range recordSec.List {
-		err = p.curScope.Define(symbols.NewField(rec.Name, symbols.FIELD, recordSec.Type))
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return recordSec, nil
@@ -2378,7 +2382,10 @@ func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, e
 	} else if field.GetKind() != symbols.FIELD {
 		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recVar.String())
 	} else {
-		fieldDes.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
+		//fieldDes.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
+		f := field.(*symbols.Field)
+
+		fieldDes.FieldSpec = &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: f.Offset}
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}
