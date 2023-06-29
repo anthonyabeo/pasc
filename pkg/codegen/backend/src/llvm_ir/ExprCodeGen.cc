@@ -296,11 +296,31 @@ llvm::Value *IRCodegenVisitor::codegen(const IndexedVarExpr &ive) {
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const FieldDesignator &fd) {
-  return nullptr;
+  auto record = curScope->Resolve(fd.recordName);
+  if(!record)
+    throw IRCodegenException("undefined record, " + fd.recordName);
+
+  auto field = fd.fieldSpec->codegen(*this);
+  auto f = llvm::dyn_cast<llvm::ConstantInt>(field);
+
+  return builder->CreateStructGEP(record->getAllocatedType(), record, f->getSExtValue());
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const FieldDesigExpr &fde) {
-  return nullptr;
+  auto record = curScope->Resolve(fde.recordName);
+  if(!record)
+    throw IRCodegenException("undefined record, " + fde.recordName);
+
+  auto field = fde.fieldSpec->codegen(*this);
+  auto f = llvm::dyn_cast<llvm::ConstantInt>(field);
+
+  auto GEP = builder->CreateStructGEP(record->getAllocatedType(), record, f->getSExtValue());
+
+  llvm::Value *idVal = builder->CreateLoad(f->getType(), GEP);
+  if (!idVal)
+    throw IRCodegenException(std::string("cannot read value of: " + fde.recordName));
+
+  return idVal;
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const Nil &nil) {

@@ -84,7 +84,7 @@ llvm::Type *IRCodegenVisitor::codegen(const CharType &ct) {
 }
 
 llvm::Type *IRCodegenVisitor::codegen(const RecordType &r) {
-    std::vector<llvm::Type*> elements(r.fields.size());
+    std::vector<llvm::Type*> elements;
     for (const auto & field : r.fields) {
       elements.push_back(field.second->codegen(*this));
     }
