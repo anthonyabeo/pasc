@@ -4,14 +4,15 @@ import "github.com/anthonyabeo/pasc/pkg/types"
 
 // Field denotes a record field symbol
 type Field struct {
-	Name string
-	Kind Kind
-	Type types.Type
+	Name   string
+	Kind   Kind
+	Type   types.Type
+	Offset string
 }
 
 // NewField creates and returns a new field symbol
-func NewField(name string, kind Kind, typ types.Type) *Field {
-	return &Field{Name: name, Kind: kind, Type: typ}
+func NewField(name string, kind Kind, typ types.Type, offset string) *Field {
+	return &Field{Name: name, Kind: kind, Type: typ, Offset: offset}
 }
 
 // GetKind returns the kind of this symbol
