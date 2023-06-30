@@ -324,5 +324,5 @@ llvm::Value *IRCodegenVisitor::codegen(const FieldDesigExpr &fde) {
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const Nil &nil) {
-  return nullptr;
+  return llvm::ConstantPointerNull::get(llvm::PointerType::get(*ctx, 0));
 }
