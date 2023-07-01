@@ -1,4 +1,4 @@
-package symbols
+package semantics
 
 import "github.com/anthonyabeo/pasc/pkg/types"
 
@@ -17,7 +17,12 @@ const (
 
 // Symbol denotes a generic symbol
 type Symbol interface {
-	GetName() string
-	GetKind() Kind
-	GetType() types.Type
+	Name() string
+	Kind() Kind
+	Type() types.Type
+
+	Depth() int
+	Var() Symbol
+	SetVar(Symbol)
+	SetDepth(int)
 }

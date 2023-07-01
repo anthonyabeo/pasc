@@ -6,7 +6,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
-// BoolExpression defines a boolean value node in the AST
+// BooleanExpression defines a boolean value node in the AST
 type BooleanExpression struct {
 	token token.Token
 	value string
