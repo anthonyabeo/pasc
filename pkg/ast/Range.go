@@ -9,28 +9,18 @@ import (
 type Range struct {
 	Token      token.Token
 	Start, End Expression
-	EvalType   types.Type
+	EType      types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (r *Range) TokenLiteral() string { return r.Token.Text }
+func (r *Range) Accept(v Visitor) {
+	v.VisitRange(r)
+}
+
+func (r *Range) Type() types.Type {
+	return r.EType
+}
 
 func (r *Range) exprNode() {}
-
-// TokenKind ...
-func (r *Range) TokenKind() token.Kind {
-	return r.Token.Kind
-}
-
-// Attr ...
-func (r *Range) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return r.EvalType
-	default:
-		return ""
-	}
-}
 
 func (r *Range) String() string {
 	return "range"

@@ -15,24 +15,10 @@ type CaseStatement struct {
 	Label string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (c *CaseStatement) TokenLiteral() string { return c.Token.Text }
+func (c *CaseStatement) stmt() {}
 
-// TokenKind returns this node's token's kind
-func (c *CaseStatement) TokenKind() token.Kind { return c.Token.Kind }
-
-// StatNode ...
-func (c *CaseStatement) StatNode() string {
-	var caseList []string
-	for _, elem := range c.List {
-		caseList = append(caseList, elem.String(), "\n")
-	}
-
-	return fmt.Sprintf(`
-	case %v of
-		%v
-	end
-	`, c.Index.String(), strings.Join(caseList, ", "))
+func (c *CaseStatement) Accept(v Visitor) {
+	v.VisitCaseStatement(c)
 }
 
 func (c *CaseStatement) String() string {
@@ -64,5 +50,5 @@ func (c *CaseElement) String() string {
 		constList = append(constList, c.String())
 	}
 
-	return fmt.Sprintf(`%v:%v`, strings.Join(constList, ", "), c.Body.StatNode())
+	return fmt.Sprintf(`%v:%v`, strings.Join(constList, ", "), c.Body)
 }

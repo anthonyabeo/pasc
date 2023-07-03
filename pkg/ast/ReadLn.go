@@ -2,7 +2,6 @@ package ast
 
 import (
 	"fmt"
-	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 type ReadLn struct {
@@ -12,19 +11,10 @@ type ReadLn struct {
 	Label     string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (r *ReadLn) TokenLiteral() string {
-	return r.Name
-}
+func (r *ReadLn) stmt() {}
 
-// TokenKind returns this node's token's kind
-func (r *ReadLn) TokenKind() token.Kind {
-	return token.Identifier
-}
-
-// StatNode ...
-func (r *ReadLn) StatNode() string {
-	return fmt.Sprintf("%v(%v)", r.Name, r.VarAccess)
+func (r *ReadLn) Accept(v Visitor) {
+	v.VisitReadLn(r)
 }
 
 func (r *ReadLn) String() string {

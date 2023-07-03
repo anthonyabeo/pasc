@@ -1,32 +1,25 @@
 package ast
 
-import (
-	"github.com/anthonyabeo/pasc/pkg/token"
-)
+import "github.com/anthonyabeo/pasc/pkg/types"
 
 // WriteParameter is the node that represents a single parameter to be passed to the write[ln] procedure
 type WriteParameter struct {
 	E          Expression
 	TotalWidth Expression
 	FracDigits Expression
+	EType      types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (w *WriteParameter) TokenLiteral() string { return "write-parameter" }
+func (w *WriteParameter) expr() {}
 
-func (w *WriteParameter) exprNode() {}
-
-// TokenKind ...
-func (w *WriteParameter) TokenKind() token.Kind {
-	return token.And
+func (w *WriteParameter) Accept(v Visitor) {
+	v.VisitWriteParameter(w)
 }
 
-// Attr ...
-func (w *WriteParameter) Attr(attr string) any {
-	return ""
+func (w *WriteParameter) Type() types.Type {
+	return w.EType
 }
 
 func (w *WriteParameter) String() string {
-	//return fmt.Sprintf("%v:%v:%v", w.E, w.TotalWidth, w.FracDigits)
 	return w.E.String()
 }

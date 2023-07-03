@@ -2,7 +2,6 @@ package ast
 
 import (
 	"fmt"
-
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
@@ -14,16 +13,12 @@ type WhileStatement struct {
 	Label    string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (w *WhileStatement) TokenLiteral() string { return w.Token.Text }
-
-// TokenKind returns this node's token's kind
-func (w *WhileStatement) TokenKind() token.Kind { return w.Token.Kind }
+func (w *WhileStatement) Accept(v Visitor) {
+	v.VisitWhileStatement(w)
+}
 
 // StatNode ...
-func (w *WhileStatement) StatNode() string {
-	return fmt.Sprintf("while(%v) do %v", w.BoolExpr, w.Body)
-}
+func (w *WhileStatement) stmt() {}
 
 func (w *WhileStatement) String() string {
 	return fmt.Sprintf("while(%v) do %v", w.BoolExpr, w.Body)

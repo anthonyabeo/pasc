@@ -8,7 +8,7 @@ type ConstDefinition struct {
 	Consts []*ConstDef
 }
 
-// ConstDef models an single constat definition
+// ConstDef models a single constant definition
 type ConstDef struct {
 	Name  *Identifier
 	Value Expression

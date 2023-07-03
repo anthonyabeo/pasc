@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
@@ -12,35 +11,22 @@ import (
 type IndexedVariable struct {
 	ArrayVar  Expression
 	IndexExpr []Expression
-	EvalType  types.Type
+	EType     types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (id *IndexedVariable) TokenLiteral() string {
-	return "indexed-variable"
+func (iv *IndexedVariable) Accept(v Visitor) {
+	v.VisitIndexedVariable(iv)
+}
+func (iv *IndexedVariable) Type() types.Type {
+	return iv.EType
 }
 
-func (id *IndexedVariable) exprNode() {}
+func (iv *IndexedVariable) expr() {}
 
-// TokenKind returns this node's token's kind
-func (id *IndexedVariable) TokenKind() token.Kind {
-	return token.Array
-}
-
-// Attr ...
-func (id *IndexedVariable) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return id.EvalType
-	default:
-		return ""
-	}
-}
-
-func (id *IndexedVariable) String() string {
+func (iv *IndexedVariable) String() string {
 	var idxExprList []string
-	for _, expr := range id.IndexExpr {
+	for _, expr := range iv.IndexExpr {
 		idxExprList = append(idxExprList, expr.String())
 	}
-	return fmt.Sprintf(`%v[%v]`, id.ArrayVar.String(), strings.Join(idxExprList, ", "))
+	return fmt.Sprintf(`%v[%v]`, iv.ArrayVar.String(), strings.Join(idxExprList, ", "))
 }

@@ -6,28 +6,20 @@ import (
 )
 
 type ReturnStatement struct {
-	Token token.Token
-	Expr  Expression
-	Label string
+	TokenKind token.Kind
+	Expr      Expression
+	Label     string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (r *ReturnStatement) TokenLiteral() string {
-	return r.Token.Text
-}
-
-// TokenKind returns this node's token kind
-func (r *ReturnStatement) TokenKind() token.Kind {
-	return r.Token.Kind
+func (r *ReturnStatement) Accept(v Visitor) {
+	v.VisitReturnStatement(r)
 }
 
 // StatNode ...
-func (r *ReturnStatement) StatNode() string {
-	return fmt.Sprintf("return %v", r.Expr)
-}
+func (r *ReturnStatement) stmt() {}
 
 func (r *ReturnStatement) String() string {
-	return r.StatNode()
+	return fmt.Sprintf("return %s", r.Expr)
 }
 
 func (r *ReturnStatement) SetLabel(l string) {

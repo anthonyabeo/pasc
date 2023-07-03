@@ -7,29 +7,19 @@ import (
 
 // NilValue represents node for nil values.
 type NilValue struct {
-	Token    token.Token
-	EvalType types.Type
+	TokenKind token.Kind
+	EType     types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (n *NilValue) TokenLiteral() string { return n.Token.Text }
-
-func (n *NilValue) exprNode() {}
-
-// TokenKind ...
-func (n *NilValue) TokenKind() token.Kind {
-	return n.Token.Kind
+func (n *NilValue) Accept(v Visitor) {
+	v.VisitNil(n)
 }
 
-// Attr ...
-func (n *NilValue) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return n.EvalType
-	default:
-		return ""
-	}
+func (n *NilValue) Type() types.Type {
+	return n.EType
 }
+
+func (n *NilValue) expr() {}
 
 func (n *NilValue) String() string {
 	return "nil"

@@ -15,16 +15,10 @@ type ProcedureDeclaration struct {
 	Label     string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (p *ProcedureDeclaration) TokenLiteral() string { return p.Heading.Token.Text }
-
-// TokenKind returns this node's token's kind
-func (p *ProcedureDeclaration) TokenKind() token.Kind { return p.Heading.Token.Kind }
-
-// StatNode ...
-func (p *ProcedureDeclaration) StatNode() string {
-	return fmt.Sprintf("%s()", p.Heading.Name)
+func (p *ProcedureDeclaration) Accept(v Visitor) {
+	v.VisitProcedureDecl(p)
 }
+func (p *ProcedureDeclaration) stmt() {}
 
 func (p *ProcedureDeclaration) String() string {
 	return fmt.Sprintf("%s()", p.Heading.Name)
@@ -36,7 +30,7 @@ func (p *ProcedureDeclaration) SetLabel(l string) {
 
 // ProcedureHeading denotes a procedure's signature.
 type ProcedureHeading struct {
-	Token      token.Token
+	TokenKind  token.Kind
 	Name       *Identifier
 	Parameters []FormalParameter
 }

@@ -1,54 +1,27 @@
 package ast
 
 import (
-	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
-	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
-// BooleanExpression defines a boolean value node in the AST
-type BooleanExpression struct {
-	token token.Token
-	value string
+// BoolLiteral defines a boolean literal value node in the AST
+type BoolLiteral struct {
+	Value string
+	EType types.Type
 }
 
-// NewBoolLiteral creates and returns a new StringLiteral
-//func NewBoolLiteral(token token.Token, value string) *BooleanExpression {
-//	return &BooleanExpression{token: token, value: value}
-//}
-
-// TokenLiteral returns the text value this node's token.
-func (b *BooleanExpression) TokenLiteral() string {
-	return b.token.Text
+func (b *BoolLiteral) String() string {
+	return b.Value
 }
 
-// TokenKind ...
-func (b *BooleanExpression) TokenKind() token.Kind {
-	return b.token.Kind
-}
-
-func (b *BooleanExpression) String() string {
-	return b.value
-}
-
-// Value ...
-func (b *BooleanExpression) Value() string {
-	return b.value
+// Accept ...
+func (b *BoolLiteral) Accept(v Visitor) {
+	v.VisitBoolLiteral(b)
 }
 
 // Type ...
-func (b *BooleanExpression) Type() types.Type {
-	return &base.Boolean{Name: "Boolean"}
+func (b *BoolLiteral) Type() types.Type {
+	return b.EType
 }
 
-func (b *BooleanExpression) exprNode() {}
-
-// Attr ...
-func (b *BooleanExpression) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return b.Type()
-	default:
-		return ""
-	}
-}
+func (b *BoolLiteral) expr() {}
