@@ -36,3 +36,15 @@ func AreCompatibleTypes(a, b types.Type) bool {
 
 	return false
 }
+
+func IsSimpleType(t types.Type) bool {
+	return IsOrdinalType(t) || t.GetName() == "real"
+}
+
+func IsOrdinalType(t types.Type) bool {
+	return t.GetName() == "enum" ||
+		t.GetName() == "integer" ||
+		t.GetName() == "char" ||
+		t.GetName() == "subrange" ||
+		t.GetName() == "Boolean"
+}
