@@ -95,8 +95,6 @@ func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) {
 	if !AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
 		panic(fmt.Sprintf("cannot assign %s to %s", a.Value, a.Variable))
 	}
-
-	a.EType = a.Variable.Type()
 }
 
 // VisitIndexedVariable ...
@@ -158,4 +156,96 @@ func (s *Visitor) VisitBoolLiteral(b *ast.BoolLiteral) {
 
 func (s *Visitor) VisitURealLiteral(ur *ast.URealLiteral) {
 	ur.EType = &base.Real{Name: "real"}
+}
+
+func (s *Visitor) VisitForStatement(f *ast.ForStatement) {
+
+}
+
+func (s *Visitor) VisitIfStatement(i *ast.IfStatement) {
+
+}
+
+func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) {
+
+}
+
+func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) {
+
+}
+
+func (s *Visitor) VisitIdentifiedVariable(i *ast.IdentifiedVariable) {
+
+}
+
+func (s *Visitor) VisitWhileStatement(w *ast.WhileStatement) {
+
+}
+
+func (s *Visitor) VisitWithStatement(w *ast.WithStatement) {
+
+}
+
+func (s *Visitor) VisitRepeatStatement(r *ast.RepeatStatement) {
+
+}
+
+func (s *Visitor) VisitReturnStatement(r *ast.ReturnStatement) {
+
+}
+
+func (s *Visitor) VisitFieldDesignator(f *ast.FieldDesignator) {
+
+}
+
+func (s *Visitor) VisitRange(r *ast.Range) {
+
+}
+
+func (s *Visitor) VisitCompoundStatement(cs *ast.CompoundStatement) {
+
+}
+
+func (s *Visitor) VisitStrLiteral(str *ast.StrLiteral) {
+
+}
+
+func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) {
+
+}
+
+func (s *Visitor) VisitProcedureDecl(p *ast.ProcedureDeclaration) {
+
+}
+
+func (s *Visitor) VisitRead(r *ast.Read) {
+
+}
+
+func (s *Visitor) VisitReadLn(r *ast.ReadLn) {
+
+}
+
+func (s *Visitor) VisitWrite(w *ast.Write) {
+
+}
+
+func (s *Visitor) VisitWriteln(w *ast.Writeln) {
+
+}
+
+func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) {
+
+}
+
+func (s *Visitor) VisitNil(n *ast.NilValue) {
+
+}
+
+func (s *Visitor) VisitCaseStatement(c *ast.CaseStatement) {
+
+}
+
+func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) {
+	
 }
