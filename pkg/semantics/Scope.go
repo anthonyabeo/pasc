@@ -3,7 +3,6 @@ package semantics
 import (
 	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
@@ -11,7 +10,7 @@ import (
 type SymbolTable interface {
 	OpenScope()
 	CloseScope()
-	EnterSymbol(string, Kind, types.Type)
+	EnterSymbol(string, Symbol)
 	RetrieveSymbol(string) Symbol
 	DeclaredLocally(string) bool
 }
