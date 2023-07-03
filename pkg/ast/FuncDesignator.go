@@ -3,8 +3,6 @@ package ast
 import (
 	"fmt"
 
-	"github.com/anthonyabeo/pasc/pkg/symbols"
-	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
@@ -12,32 +10,18 @@ import (
 type FuncDesignator struct {
 	Name       *Identifier
 	Parameters []Expression
-	EvalType   types.Type
-	Scope      symbols.Scope
+	EType      types.Type
+	//Scope      semantics_tests.Scope
 }
 
-// TokenLiteral returns the text value this node's token.
-func (f *FuncDesignator) TokenLiteral() string {
-	// TODO change this to f.Token.Text
-	return "function"
+func (f *FuncDesignator) Type() types.Type {
+	return f.EType
+}
+func (f *FuncDesignator) Accept(v Visitor) {
+	v.VisitFuncDesignator(f)
 }
 
-func (f *FuncDesignator) exprNode() {}
-
-// TokenKind ...
-func (f *FuncDesignator) TokenKind() token.Kind {
-	return token.Function
-}
-
-// Attr ...
-func (f *FuncDesignator) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return f.EvalType
-	default:
-		return ""
-	}
-}
+func (f *FuncDesignator) expr() {}
 
 func (f *FuncDesignator) String() string {
 	return fmt.Sprintf("%v(%v)", f.Name, f.Parameters)

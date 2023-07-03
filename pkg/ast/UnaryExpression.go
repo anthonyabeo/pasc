@@ -11,27 +11,17 @@ import (
 type UnaryExpression struct {
 	Operator token.Token
 	Operand  Expression
-	EvalType types.Type
+	EType    types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (u *UnaryExpression) TokenLiteral() string { return u.Operator.Text }
+func (u *UnaryExpression) expr() {}
 
-func (u *UnaryExpression) exprNode() {}
-
-// TokenKind returns this node's token's kind
-func (u *UnaryExpression) TokenKind() token.Kind {
-	return u.Operator.Kind
+func (u *UnaryExpression) Type() types.Type {
+	return u.EType
 }
 
-// Attr ...
-func (u *UnaryExpression) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return u.EvalType
-	default:
-		return ""
-	}
+func (u *UnaryExpression) Accept(v Visitor) {
+	v.VisitUnaryExpr(u)
 }
 
 func (u *UnaryExpression) String() string {

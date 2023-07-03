@@ -5,31 +5,28 @@ import (
 	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // WithStatement models the AST node of a With Statement
 type WithStatement struct {
-	Token         token.Token
+	TokenKind     token.Kind
 	RecordVarList []Expression
 	Body          Statement
 	Label         string
+	EType         types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (w *WithStatement) TokenLiteral() string { return w.Token.Text }
+func (w *WithStatement) Accept(v Visitor) {
+	v.VisitWithStatement(w)
+}
 
-// TokenKind returns this node's token's kind
-func (w *WithStatement) TokenKind() token.Kind { return w.Token.Kind }
+func (w *WithStatement) Type() types.Type {
+	return w.EType
+}
 
 // StatNode ...
-func (w *WithStatement) StatNode() string {
-	var recVarList []string
-	for _, recVar := range w.RecordVarList {
-		recVarList = append(recVarList, recVar.String())
-	}
-
-	return fmt.Sprintf("with %v do %v", strings.Join(recVarList, ", "), w.Body)
-}
+func (w *WithStatement) stmt() {}
 
 func (w *WithStatement) String() string {
 	var recVarList []string

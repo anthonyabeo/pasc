@@ -2,9 +2,9 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"strings"
 
-	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -14,19 +14,14 @@ type FuncDeclaration struct {
 	Heading   *FuncHeading
 	Block     *Block
 	Directive *Identifier
-	Scope     symbols.Scope
 	Label     string
+	Scope     semantics.SymbolTable
 }
 
-// TokenLiteral returns the text value this node's token.
-func (f *FuncDeclaration) TokenLiteral() string { return f.Heading.Token.Text }
+func (f *FuncDeclaration) stmt() {}
 
-// TokenKind returns this node's token's kind
-func (f *FuncDeclaration) TokenKind() token.Kind { return f.Heading.Token.Kind }
-
-// StatNode ...
-func (f *FuncDeclaration) StatNode() string {
-	return fmt.Sprintf("function(%v):%v", f.Heading.Parameters, f.Heading.ReturnType)
+func (f *FuncDeclaration) Accept(v Visitor) {
+	v.VisitFuncDeclaration(f)
 }
 
 func (f *FuncDeclaration) String() string {
@@ -39,11 +34,15 @@ func (f *FuncDeclaration) SetLabel(l string) {
 
 // FuncHeading denotes a function's signature.
 type FuncHeading struct {
-	Token      token.Token
+	TokenKind  token.Kind
 	Name       *Identifier
 	Parameters []FormalParameter
 	ReturnType types.Type
 	Lbl        string
+}
+
+func (f *FuncHeading) GetName() string {
+	return f.Name.Name
 }
 
 func (f *FuncHeading) formalParam() {}

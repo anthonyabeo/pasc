@@ -2,7 +2,6 @@ package ast
 
 import (
 	"fmt"
-	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 type Write struct {
@@ -12,19 +11,10 @@ type Write struct {
 	Label     string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (w *Write) TokenLiteral() string {
-	return w.Name
-}
+func (w *Write) stmt() {}
 
-// TokenKind returns this node's token's kind
-func (w *Write) TokenKind() token.Kind {
-	return token.Identifier
-}
-
-// StatNode ...
-func (w *Write) StatNode() string {
-	return fmt.Sprintf("%v(%v)", w.Name, w.ParamList)
+func (w *Write) Accept(v Visitor) {
+	v.VisitWrite(w)
 }
 
 func (w *Write) String() string {

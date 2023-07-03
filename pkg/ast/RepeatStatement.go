@@ -9,32 +9,23 @@ import (
 
 // RepeatStatement models the AST node of a Repeat Statement
 type RepeatStatement struct {
-	Token    token.Token
-	StmtSeq  []Statement
-	BoolExpr Expression
-	Label    string
+	TokenKind token.Kind
+	StmtSeq   []Statement
+	BoolExpr  Expression
+	Label     string
 }
 
-// TokenLiteral returns the text value this node's token.
-func (r *RepeatStatement) TokenLiteral() string { return r.Token.Text }
-
-// TokenKind returns this node's token's kind
-func (r *RepeatStatement) TokenKind() token.Kind { return r.Token.Kind }
+func (r *RepeatStatement) Accept(v Visitor) {
+	v.VisitRepeatStatement(r)
+}
 
 // StatNode ...
-func (r *RepeatStatement) StatNode() string {
-	var stmtSeq []string
-	for _, stmt := range r.StmtSeq {
-		stmtSeq = append(stmtSeq, stmt.StatNode())
-	}
-
-	return fmt.Sprintf("repeat\n\t%vuntil%v", strings.Join(stmtSeq, "\n\t"), r.BoolExpr)
-}
+func (r *RepeatStatement) stmt() {}
 
 func (r *RepeatStatement) String() string {
 	var stmtSeq []string
 	for _, stmt := range r.StmtSeq {
-		stmtSeq = append(stmtSeq, stmt.StatNode())
+		stmtSeq = append(stmtSeq, stmt.String())
 	}
 
 	return fmt.Sprintf("repeat\n\t%vuntil%v", strings.Join(stmtSeq, "\n\t"), r.BoolExpr)

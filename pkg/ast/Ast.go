@@ -1,26 +1,26 @@
 package ast
 
 import (
-	"github.com/anthonyabeo/pasc/pkg/token"
+	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // Node defines a generic node in the AST
 type Node interface {
-	TokenLiteral() string
-	TokenKind() token.Kind
+	fmt.Stringer
+	Accept(Visitor)
 }
 
 // Statement models a generic node for statement types
 type Statement interface {
 	Node
-	StatNode() string
+	stmt()
 	SetLabel(string)
 }
 
 // Expression models a generic node for expression types
 type Expression interface {
 	Node
-	exprNode()
-	Attr(string) any
-	String() string
+	Type() types.Type
+	expr()
 }

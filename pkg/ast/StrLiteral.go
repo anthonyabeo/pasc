@@ -7,29 +7,19 @@ import (
 
 // StrLiteral models the node for character string literals
 type StrLiteral struct {
-	Token    token.Token
-	Value    string
-	EvalType types.Type
+	TokenKind token.Kind
+	Value     string
+	EType     types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (c *StrLiteral) TokenLiteral() string { return c.Token.Text }
+func (c *StrLiteral) expr() {}
 
-func (c *StrLiteral) exprNode() {}
-
-// TokenKind returns this node's token's kind
-func (c *StrLiteral) TokenKind() token.Kind {
-	return c.Token.Kind
+func (c *StrLiteral) Accept(v Visitor) {
+	v.VisitStrLiteral(c)
 }
 
-// Attr ...
-func (c *StrLiteral) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return c.EvalType
-	default:
-		return ""
-	}
+func (c *StrLiteral) Type() types.Type {
+	return c.EType
 }
 
 func (c *StrLiteral) String() string {
