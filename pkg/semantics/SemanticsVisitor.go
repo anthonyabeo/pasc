@@ -106,37 +106,82 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 	b.Left.Accept(s)
 	b.Right.Accept(s)
 
+	lhsType := b.Left.Type().GetName()
+	rhsType := b.Right.Type().GetName()
+
 	switch b.Operator.Kind {
 	case token.Plus, token.Minus, token.Star:
-		if b.Left.Type().GetName() != "integer" && b.Left.Type().GetName() != "real" {
-			panic(fmt.Sprintf("%s must be integer or real type", b.Left))
+		if lhsType != "integer" && lhsType != "real" && lhsType != "set" {
+			panic(fmt.Sprintf("%s must be integer, real or set type", b.Left))
 		}
 
-		if b.Right.Type().GetName() != "integer" && b.Right.Type().GetName() != "real" {
-			panic(fmt.Sprintf("%s must be integer or real type", b.Right))
+		if rhsType != "integer" && rhsType != "real" && rhsType != "set" {
+			panic(fmt.Sprintf("%s must be integer, real or set type", b.Right))
 		}
 
-		if b.Left.Type().GetName() == "integer" && b.Right.Type().GetName() == "integer" {
+		if lhsType == "set" && rhsType == "set" {
+			b.EType = b.Left.Type()
+		} else if lhsType == "integer" && rhsType == "integer" {
 			b.EType = b.Left.Type()
 		} else {
 			b.EType = &base.Real{Name: "real"}
 		}
 	case token.FwdSlash:
-		if b.Left.Type().GetName() != "integer" && b.Left.Type().GetName() != "real" {
+		if lhsType != "integer" && lhsType != "real" {
 			panic(fmt.Sprintf("%s must be integer or real type", b.Left))
 		}
 
-		if b.Right.Type().GetName() != "integer" && b.Right.Type().GetName() != "real" {
+		if rhsType != "integer" && rhsType != "real" {
 			panic(fmt.Sprintf("%s must be integer or real type", b.Right))
 		}
 
 		b.EType = &base.Real{Name: "real"}
-	case token.Div, token.Mod:
-		if b.Left.Type().GetName() != "integer" && b.Right.Type().GetName() != "integer" {
+	case token.Div, token.Mod, token.And, token.Or:
+		if lhsType != "integer" && rhsType != "integer" {
 			panic("both operands must be integer-type for 'mod' expression")
 		}
 
 		b.EType = b.Left.Type()
+	case token.Equal, token.LessThanGreaterThan:
+		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "pointer" && lhsType != "set" {
+			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
+		}
+
+		if !IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "pointer" && rhsType != "set" {
+			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
+		}
+
+		b.EType = &base.Boolean{Name: "Boolean"}
+	case token.LessThan, token.GreaterThan:
+		if !IsSimpleType(b.Left.Type()) && lhsType != "string" {
+			panic(fmt.Sprintf("%s must be a simple-type or string-type", lhsType))
+		}
+
+		if !IsSimpleType(b.Right.Type()) && rhsType != "string" {
+			panic(fmt.Sprintf("%s must be a simple-type or string-type", rhsType))
+		}
+
+		b.EType = &base.Boolean{Name: "Boolean"}
+	case token.LessThanOrEqual, token.GreaterThanOrEqual:
+		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "set" {
+			panic(fmt.Sprintf("%s must be a simple-type, string or set", rhsType))
+		}
+
+		if !IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "set" {
+			panic(fmt.Sprintf("%s must be a simple-type, string or set", lhsType))
+		}
+
+		b.EType = &base.Boolean{Name: "Boolean"}
+	case token.In:
+		if !IsOrdinalType(b.Left.Type()) {
+			panic(fmt.Sprintf("cannot use %s, a non-ordinal type in an 'in' expression", lhsType))
+		}
+
+		if rhsType != "set" {
+			panic(fmt.Sprintf("%s is not an appropriate RHS of an 'in' expression.", rhsType))
+		}
+
+		b.EType = &base.Boolean{Name: "Boolean"}
 	}
 }
 
@@ -247,5 +292,5 @@ func (s *Visitor) VisitCaseStatement(c *ast.CaseStatement) {
 }
 
 func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) {
-	
+
 }
