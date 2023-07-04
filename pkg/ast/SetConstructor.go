@@ -7,29 +7,19 @@ import (
 
 // SetConstructor ...
 type SetConstructor struct {
-	Token    token.Token
-	Members  []Expression
-	EvalType types.Type
+	Token   token.Token
+	Members []Expression
+	EType   types.Type
 }
 
-// TokenLiteral returns the text value this node's token.
-func (s *SetConstructor) TokenLiteral() string { return s.Token.Text }
+func (s *SetConstructor) expr() {}
 
-func (s *SetConstructor) exprNode() {}
-
-// TokenKind ...
-func (s *SetConstructor) TokenKind() token.Kind {
-	return s.Token.Kind
+func (s *SetConstructor) Accept(v Visitor) {
+	v.VisitSetConstructor(s)
 }
 
-// Attr ...
-func (s *SetConstructor) Attr(attr string) any {
-	switch attr {
-	case "type":
-		return s.EvalType
-	default:
-		return ""
-	}
+func (s *SetConstructor) Type() types.Type {
+	return s.EType
 }
 
 func (s *SetConstructor) String() string {

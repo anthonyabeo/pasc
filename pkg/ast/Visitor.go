@@ -33,4 +33,5 @@ type Visitor interface {
 	VisitNil(*NilValue)
 	VisitCaseStatement(*CaseStatement)
 	VisitWriteParameter(*WriteParameter)
+	VisitSetConstructor(*SetConstructor)
 }
