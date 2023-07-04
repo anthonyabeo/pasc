@@ -1,13 +1,15 @@
 package ast
 
 import (
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // BoolLiteral defines a boolean literal value node in the AST
 type BoolLiteral struct {
-	Value string
-	EType types.Type
+	TokenKind token.Kind
+	Value     string
+	EType     types.Type
 }
 
 func (b *BoolLiteral) String() string {
