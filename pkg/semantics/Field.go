@@ -8,13 +8,14 @@ type Field struct {
 	kind Kind
 	typ  types.Type
 
-	depth int
-	vr    Symbol
+	depth  int
+	vr     Symbol
+	Offset string
 }
 
 // NewField creates and returns a new field symbol
-func NewField(name string, kind Kind, typ types.Type) *Field {
-	return &Field{name: name, kind: kind, typ: typ}
+func NewField(name string, kind Kind, typ types.Type, offset string) *Field {
+	return &Field{name: name, kind: kind, typ: typ, Offset: offset}
 }
 
 // Kind returns the kind of this symbol
