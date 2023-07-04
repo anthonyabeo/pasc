@@ -10,11 +10,12 @@ type Function struct {
 
 	depth int
 	vr    Symbol
+	Scope SymbolTable
 }
 
 // NewFunction creates and returns a new function symbol
-func NewFunction(name string, kind Kind, typ types.Type) *Function {
-	return &Function{name: name, kind: kind, typ: typ}
+func NewFunction(name string, kind Kind, typ types.Type, scope SymbolTable) *Function {
+	return &Function{name: name, kind: kind, typ: typ, Scope: scope}
 }
 
 // Kind returns the kind of this symbol

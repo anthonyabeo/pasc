@@ -2,7 +2,6 @@ package ast
 
 import (
 	"fmt"
-	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -15,7 +14,6 @@ type FuncDeclaration struct {
 	Block     *Block
 	Directive *Identifier
 	Label     string
-	Scope     semantics.SymbolTable
 }
 
 func (f *FuncDeclaration) stmt() {}
