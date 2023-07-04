@@ -31,14 +31,9 @@ func (l *LValueVisitor) isLValue(sym Symbol) bool {
 
 // VisitIndexedVariable ...
 func (l *LValueVisitor) VisitIndexedVariable(iv *ast.IndexedVariable) {
-	//sym := l.SymbolTable.RetrieveSymbol(iv.ArrayVar.String())
-	//if sym == nil {
-	//	panic("undefined symbol")
-	//}
-	//
-	//if sym.Type() != ArrayType {
-	//	panic("cannot index non-array type")
-	//}
-	//
-	//iv.EType =
+
+}
+
+func (l *LValueVisitor) VisitFieldDesignator(f *ast.FieldDesignator) {
+
 }

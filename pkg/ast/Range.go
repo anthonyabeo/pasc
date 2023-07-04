@@ -20,7 +20,7 @@ func (r *Range) Type() types.Type {
 	return r.EType
 }
 
-func (r *Range) exprNode() {}
+func (r *Range) expr() {}
 
 func (r *Range) String() string {
 	return "range"
