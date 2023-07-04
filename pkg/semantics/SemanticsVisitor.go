@@ -294,3 +294,7 @@ func (s *Visitor) VisitCaseStatement(c *ast.CaseStatement) {
 func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) {
 
 }
+
+func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) {
+
+}
