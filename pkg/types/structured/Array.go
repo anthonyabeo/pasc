@@ -2,14 +2,15 @@ package structured
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
-	"strings"
 )
 
 // Array ...
 type Array struct {
-	Token         token.Token
+	TokenKind     token.Kind
 	Indices       []types.Ordinal
 	ComponentType types.Type
 }

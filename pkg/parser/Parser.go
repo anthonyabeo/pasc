@@ -421,7 +421,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 func (p *Parser) pointerType() (*structured.Pointer, error) {
 	var err error
 
-	ptr := &structured.Pointer{Token: p.lAheadToken(1)}
+	ptr := &structured.Pointer{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.Caret); err != nil {
 		return nil, err
 	}
@@ -437,7 +437,7 @@ func (p *Parser) pointerType() (*structured.Pointer, error) {
 func (p *Parser) fileType() (*structured.File, error) {
 	var err error
 
-	file := &structured.File{Token: p.lAheadToken(1)}
+	file := &structured.File{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.File); err != nil {
 		return nil, err
 	}
@@ -458,7 +458,7 @@ func (p *Parser) fileType() (*structured.File, error) {
 func (p *Parser) recordType() (*structured.Record, error) {
 	var err error
 
-	record := &structured.Record{Token: p.lAheadToken(1), Scope: semantics.NewWonkySymbolTable()}
+	record := &structured.Record{TokenKind: p.lAheadKind(1), Scope: semantics.NewWonkySymbolTable()}
 
 	if err = p.match(token.Record); err != nil {
 		return nil, err
@@ -726,7 +726,7 @@ func (p *Parser) enumType() (*structured.Enumerated, error) {
 func (p *Parser) setType() (*structured.Set, error) {
 	var err error
 
-	set := &structured.Set{Token: p.lAheadToken(1)}
+	set := &structured.Set{TokenKind: p.lAheadKind(1)}
 	if err := p.match(token.Set); err != nil {
 		return nil, err
 	}
@@ -749,7 +749,7 @@ func (p *Parser) arrayType() (*structured.Array, error) {
 		idxType types.Ordinal
 	)
 
-	arrayType := &structured.Array{Token: p.lAheadToken(1)}
+	arrayType := &structured.Array{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.Array); err != nil {
 		return nil, err
 	}
@@ -1768,7 +1768,7 @@ func (p *Parser) repeatStatement() (*ast.RepeatStatement, error) {
 func (p *Parser) whileStatement() (*ast.WhileStatement, error) {
 	var err error
 
-	whileStmt := &ast.WhileStatement{Token: p.lAheadToken(1)}
+	whileStmt := &ast.WhileStatement{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.While); err != nil {
 		return nil, err
 	}
@@ -2117,7 +2117,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 			member ast.Expression
 		)
 
-		setConst := &ast.SetConstructor{Token: token.NewToken(token.Set, "set")}
+		setConst := &ast.SetConstructor{TokenKind: token.Set}
 		if err = p.match(token.LSqBrace); err != nil {
 			return nil, err
 		}
@@ -2422,7 +2422,7 @@ func (p *Parser) isSign() bool {
 func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 	var err error
 
-	ifStmt := &ast.IfStatement{Token: p.lAheadToken(1)}
+	ifStmt := &ast.IfStatement{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.If); err != nil {
 		return nil, err
 	}

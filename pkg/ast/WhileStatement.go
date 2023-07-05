@@ -7,10 +7,10 @@ import (
 
 // WhileStatement models the AST node of a While Statement
 type WhileStatement struct {
-	Token    token.Token
-	BoolExpr Expression
-	Body     Statement
-	Label    string
+	TokenKind token.Kind
+	BoolExpr  Expression
+	Body      Statement
+	Label     string
 }
 
 func (w *WhileStatement) Accept(v Visitor) {

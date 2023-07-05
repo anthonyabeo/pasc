@@ -7,11 +7,11 @@ import (
 
 // IfStatement is the node in the AST that represents an If Statement
 type IfStatement struct {
-	Token    token.Token
-	BoolExpr Expression
-	TruePath Statement
-	ElsePath Statement
-	Label    string
+	TokenKind token.Kind
+	BoolExpr  Expression
+	TruePath  Statement
+	ElsePath  Statement
+	Label     string
 }
 
 func (f *IfStatement) Accept(v Visitor) {

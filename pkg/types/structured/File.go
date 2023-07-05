@@ -7,7 +7,7 @@ import (
 
 // File models a file data type
 type File struct {
-	Token         token.Token
+	TokenKind     token.Kind
 	ComponentType types.Type
 }
 
