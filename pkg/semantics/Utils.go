@@ -14,7 +14,7 @@ import (
 // e) T1 and T2 are compatible string-types.
 // TODO complete implementation
 func AreAssignmentCompatible(src types.Type, dest types.Type) bool {
-	if src.GetName() == dest.GetName() {
+	if src.Name() == dest.Name() {
 		return true
 	}
 
@@ -30,7 +30,7 @@ func AreAssignmentCompatible(src types.Type, dest types.Type) bool {
 // d) T1 and T2 are string-types with the same number of components.
 // TODO complete implementation
 func AreCompatibleTypes(a, b types.Type) bool {
-	if a.GetName() == b.GetName() {
+	if a.Name() == b.Name() {
 		return true
 	}
 
@@ -38,13 +38,13 @@ func AreCompatibleTypes(a, b types.Type) bool {
 }
 
 func IsSimpleType(t types.Type) bool {
-	return IsOrdinalType(t) || t.GetName() == "real"
+	return IsOrdinalType(t) || t.Name() == "real"
 }
 
 func IsOrdinalType(t types.Type) bool {
-	return t.GetName() == "enum" ||
-		t.GetName() == "integer" ||
-		t.GetName() == "char" ||
-		t.GetName() == "subrange" ||
-		t.GetName() == "Boolean"
+	return t.Name() == "enum" ||
+		t.Name() == "integer" ||
+		t.Name() == "char" ||
+		t.Name() == "subrange" ||
+		t.Name() == "Boolean"
 }

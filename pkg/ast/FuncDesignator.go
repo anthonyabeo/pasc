@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -11,7 +12,6 @@ type FuncDesignator struct {
 	Name       *Identifier
 	Parameters []Expression
 	EType      types.Type
-	//Scope      semantics_tests.Scope
 }
 
 func (f *FuncDesignator) Type() types.Type {
@@ -24,5 +24,10 @@ func (f *FuncDesignator) Accept(v Visitor) {
 func (f *FuncDesignator) expr() {}
 
 func (f *FuncDesignator) String() string {
-	return fmt.Sprintf("%v(%v)", f.Name, f.Parameters)
+	var args []string
+	for _, arg := range f.Parameters {
+		args = append(args, arg.String())
+	}
+
+	return fmt.Sprintf("%v(%v)", f.Name, strings.Join(args, ", "))
 }
