@@ -1,6 +1,7 @@
 package structured
 
 import (
+	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -11,7 +12,11 @@ type Set struct {
 	BaseType types.Ordinal
 }
 
-// GetName ...
-func (s *Set) GetName() string {
+// Name ...
+func (s *Set) Name() string {
 	return "set"
+}
+
+func (s *Set) String() string {
+	return fmt.Sprintf("set of %s", s.BaseType)
 }

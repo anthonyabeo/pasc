@@ -2,12 +2,20 @@ package base
 
 // Boolean is an integer data type
 type Boolean struct {
-	Name string
+	name string
 }
 
-// GetName ...
-func (b *Boolean) GetName() string {
-	return b.Name
+func NewBoolean(name string) *Boolean {
+	return &Boolean{name: name}
+}
+
+// Name ...
+func (b *Boolean) Name() string {
+	return b.name
+}
+
+func (b *Boolean) String() string {
+	return b.name
 }
 
 func (b *Boolean) isBuiltIn() bool {

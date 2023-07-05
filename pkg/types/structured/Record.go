@@ -14,9 +14,13 @@ type Record struct {
 	Scope     semantics.SymbolTable
 }
 
-// GetName ...
-func (r *Record) GetName() string {
+// Name ...
+func (r *Record) Name() string {
 	return "record"
+}
+
+func (r *Record) String() string {
+	return "Record-Type-to-be-implemented"
 }
 
 // RecordSection ...

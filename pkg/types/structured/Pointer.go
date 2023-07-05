@@ -11,7 +11,11 @@ type Pointer struct {
 	DomainType types.Type
 }
 
-// GetName ...
-func (p *Pointer) GetName() string {
+// Name ...
+func (p *Pointer) Name() string {
+	return "pointer"
+}
+
+func (p *Pointer) String() string {
 	return "pointer"
 }

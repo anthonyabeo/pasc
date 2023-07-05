@@ -11,7 +11,11 @@ type File struct {
 	ComponentType types.Type
 }
 
-// GetName ...
-func (f *File) GetName() string {
+// Name ...
+func (f *File) Name() string {
+	return "file"
+}
+
+func (f *File) String() string {
 	return "file"
 }
