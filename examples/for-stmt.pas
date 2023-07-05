@@ -9,11 +9,11 @@ begin
     for i := 1 to 5 do
         sum := sum + i;
 
-    writeln( sum );
+    writeln('%d', sum );
 
     res := 0;
     for j := 5 downto 1 do
         res := res + j;
 
-    writeln( res )
+    writeln('%d', res )
 end.

@@ -13,7 +13,7 @@ begin
         j := k
     until j = 0;
 
-    writeln(i);
-    writeln(j);
-    writeln(k)
+    writeln('%d', i);
+    writeln('%d', j);
+    writeln('%d', k)
 end.

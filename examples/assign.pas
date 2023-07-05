@@ -6,13 +6,13 @@ var
 begin
 	a := 5;
     b := a;
-	writeln( b );
+	writeln('%d', b );
 
 	x := 1e10;
 	y := 5e-3;
-	writeln( x );
-	writeln( y );
+	writeln('%d', x );
+	writeln('%d', y );
 
 	b := -a;
-	writeln( b )
+	writeln('%d', b )
 end.
