@@ -21,5 +21,5 @@ begin
     b := 200;
     result := max(a, b);
 
-    writeln(result)
+    writeln('%d', result)
 end.
