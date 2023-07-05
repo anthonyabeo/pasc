@@ -5,8 +5,8 @@ type Integer struct {
 	name string
 }
 
-func NewInteger(name string) *Integer {
-	return &Integer{name: name}
+func NewInteger() *Integer {
+	return &Integer{name: "integer"}
 }
 
 // Name ...

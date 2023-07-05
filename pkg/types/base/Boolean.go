@@ -5,8 +5,8 @@ type Boolean struct {
 	name string
 }
 
-func NewBoolean(name string) *Boolean {
-	return &Boolean{name: name}
+func NewBoolean() *Boolean {
+	return &Boolean{name: "Boolean"}
 }
 
 // Name ...

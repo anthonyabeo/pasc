@@ -10,8 +10,8 @@ func (r *Real) Name() string {
 	return r.name
 }
 
-func NewReal(name string) *Real {
-	return &Real{name: name}
+func NewReal() *Real {
+	return &Real{name: "real"}
 }
 
 func (r *Real) String() string {

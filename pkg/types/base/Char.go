@@ -5,8 +5,8 @@ type Char struct {
 	name string
 }
 
-func NewChar(name string) *Char {
-	return &Char{name: name}
+func NewChar() *Char {
+	return &Char{name: "char"}
 }
 
 // Name returns the character
