@@ -1,12 +1,16 @@
 package base
 
 type String struct {
-	Name string
+	name string
 }
 
-// GetName returns the character
-func (s *String) GetName() string {
-	return s.Name
+// Name returns the character
+func (s *String) Name() string {
+	return s.name
+}
+
+func (s *String) String() string {
+	return s.name
 }
 
 func (s *String) isBuiltIn() bool {

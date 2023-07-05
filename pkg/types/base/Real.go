@@ -2,12 +2,20 @@ package base
 
 // Real is an real data type
 type Real struct {
-	Name string
+	name string
 }
 
-// GetName ...
-func (r *Real) GetName() string {
-	return r.Name
+// Name ...
+func (r *Real) Name() string {
+	return r.name
+}
+
+func NewReal(name string) *Real {
+	return &Real{name: name}
+}
+
+func (r *Real) String() string {
+	return r.name
 }
 
 func (r *Real) isBuiltIn() bool {

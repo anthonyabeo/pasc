@@ -1,8 +1,11 @@
 package types
 
+import "fmt"
+
 // Type represents some data type
 type Type interface {
-	GetName() string
+	fmt.Stringer
+	Name() string
 }
 
 // BuiltIn represents a generic non-user-defined data type

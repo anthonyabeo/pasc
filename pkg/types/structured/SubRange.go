@@ -11,9 +11,13 @@ type SubRange struct {
 	HostType types.Type
 }
 
-// GetName ...
-func (s *SubRange) GetName() string {
+// Name ...
+func (s *SubRange) Name() string {
 	return "subrange"
+}
+
+func (s *SubRange) String() string {
+	return s.Range.String()
 }
 
 func (s *SubRange) Ord() {}
