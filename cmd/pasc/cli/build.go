@@ -4,14 +4,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	serde "github.com/anthonyabeo/pasc/pkg/codegen/serializer"
-	"github.com/anthonyabeo/pasc/pkg/parser"
-	"github.com/anthonyabeo/pasc/pkg/semantics"
-	"github.com/peterbourgon/ff/v3/ffcli"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	serde "github.com/anthonyabeo/pasc/pkg/codegen/serializer"
+	"github.com/anthonyabeo/pasc/pkg/parser"
+	"github.com/anthonyabeo/pasc/pkg/semantics"
+	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
 var buildArgs struct {
@@ -49,25 +50,22 @@ func runBuild(ctx context.Context, args []string) error {
 		return err
 	}
 
+	symTable := semantics.NewWonkySymbolTable()
 	lex := parser.NewLexer(string(input))
-	pars, err := parser.NewParser(lex)
+	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		return err
 	}
 
-	prog, err := pars.Program()
+	program, err := pars.Program()
 	if err != nil {
 		return err
 	}
 
-	sema := &semantics.SemanticAnalyzer{
-		Ast:               prog,
-		ExprEval:          &semantics.ExprEvalVisitor{SymbolTable: pars.SymbolTable()},
-		StaticTypeChecker: &semantics.StaticTypeCheckVisitor{},
-	}
-	sema.Run()
+	sema := semantics.NewSemaVisitor(program, symTable)
+	sema.VisitProgram()
 
-	serializer := serde.ProtoSerializer{Ast: prog, Out: buildArgs.out, Constants: make(map[string]string)}
+	serializer := serde.NewProtoSerialize(program, buildArgs.out, symTable)
 	err = serializer.Serialize()
 	if err != nil {
 		return err
