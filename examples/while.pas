@@ -12,5 +12,5 @@ begin
         a := a - 1
     end;
 
-    writeln(sum)
+    writeln('%d', sum)
 end.

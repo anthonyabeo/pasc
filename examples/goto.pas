@@ -14,7 +14,7 @@ begin
             a := 2;
             b := 3;
             prod := a*b;
-            writeln(prod);
+            writeln('%d', prod);
             goto 4833
         end;
 
@@ -22,7 +22,7 @@ begin
         begin
             a := 7;
             a := a mod prod;
-            writeln(a)
+            writeln('%d', a)
         end;
 
     writeln('Hello, world!')
