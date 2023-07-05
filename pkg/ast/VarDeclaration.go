@@ -25,5 +25,5 @@ type VarDecl struct {
 }
 
 func (v *VarDecl) String() string {
-	return fmt.Sprintf("%v: %v", v.Names, v.Type.GetName())
+	return fmt.Sprintf("%v: %v", v.Names, v.Type)
 }

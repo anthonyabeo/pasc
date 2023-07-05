@@ -28,7 +28,7 @@ func (v *ValueParam) String() string {
 		vList = append(vList, id.Name)
 	}
 
-	return fmt.Sprintf("%v: %v", strings.Join(vList, ", "), v.Type.GetName())
+	return fmt.Sprintf("%v: %v", strings.Join(vList, ", "), v.Type)
 }
 
 // VariableParam denotes a variable parameter specification
@@ -46,5 +46,5 @@ func (v *VariableParam) String() string {
 		vList = append(vList, id.Name)
 	}
 
-	return fmt.Sprintf("var %v: %v", strings.Join(vList, ", "), v.Type.GetName())
+	return fmt.Sprintf("var %v: %v", strings.Join(vList, ", "), v.Type)
 }

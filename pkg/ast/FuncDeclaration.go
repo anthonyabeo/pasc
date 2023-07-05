@@ -33,14 +33,14 @@ func (f *FuncDeclaration) SetLabel(l string) {
 // FuncHeading denotes a function's signature.
 type FuncHeading struct {
 	TokenKind  token.Kind
-	Name       *Identifier
+	FName      *Identifier
 	Parameters []FormalParameter
 	ReturnType types.Type
 	Lbl        string
 }
 
-func (f *FuncHeading) GetName() string {
-	return f.Name.Name
+func (f *FuncHeading) Name() string {
+	return f.FName.Name
 }
 
 func (f *FuncHeading) formalParam() {}
@@ -51,5 +51,5 @@ func (f *FuncHeading) String() string {
 		pList = append(pList, p.String())
 	}
 
-	return fmt.Sprintf("function %s(%s):%s", f.Name.Name, strings.Join(pList, ", "), f.ReturnType.GetName())
+	return fmt.Sprintf("function %s(%s):%s", f.FName.Name, strings.Join(pList, ", "), f.ReturnType)
 }
