@@ -1,6 +1,7 @@
 package semantics
 
 import (
+	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/ast"
 )
 
@@ -13,11 +14,12 @@ type LValueVisitor struct {
 func (l *LValueVisitor) VisitIdentifier(id *ast.Identifier) {
 	sym := l.symbolTable.RetrieveSymbol(id.Name)
 	if sym == nil {
-		panic("undefined symbol")
+		panic(fmt.Sprintf("undefined symbol %s", sym.Name()))
 	}
 
 	if l.isLValue(sym) {
-		panic("is not an l-value")
+		panic(fmt.Sprintf("cannot assign to '%s' (of type '%s'). It is not an l-value",
+			sym.Name(), sym.Type()))
 	}
 
 	id.EType = sym.Type()
