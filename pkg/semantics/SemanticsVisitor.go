@@ -25,28 +25,28 @@ func (s *Visitor) VisitProgram() {
 }
 
 func (s *Visitor) VisitBlock(blk *ast.Block) {
-	if blk.VarDeclaration != nil {
-		for _, varDecl := range blk.VarDeclaration.Decls {
-			for _, id := range varDecl.Names {
-				if s.symbolTable.DeclaredLocally(id.Name) {
-					panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", id.Name, varDecl.Type.GetName()))
-				}
-
-				s.symbolTable.EnterSymbol(id.Name, NewVariable(id.Name, VARIABLE, varDecl.Type))
-			}
-		}
-	}
-
-	if blk.Consts != nil {
-		for _, constDef := range blk.Consts.Consts {
-			if s.symbolTable.DeclaredLocally(constDef.Name.Name) {
-				panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", constDef.Name.Name, constDef.Value.Type()))
-			}
-
-			s.symbolTable.EnterSymbol(
-				constDef.Name.Name, NewConst(constDef.Name.Name, CONST, constDef.Value.Type(), constDef.Value))
-		}
-	}
+	//if blk.VarDeclaration != nil {
+	//	for _, varDecl := range blk.VarDeclaration.Decls {
+	//		for _, id := range varDecl.Names {
+	//			if s.symbolTable.DeclaredLocally(id.Name) {
+	//				panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", id.Name, varDecl.Type.GetName()))
+	//			}
+	//
+	//			s.symbolTable.EnterSymbol(id.Name, NewVariable(id.Name, VARIABLE, varDecl.Type))
+	//		}
+	//	}
+	//}
+	//
+	//if blk.Consts != nil {
+	//	for _, constDef := range blk.Consts.Consts {
+	//		if s.symbolTable.DeclaredLocally(constDef.Name.Name) {
+	//			panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", constDef.Name.Name, constDef.Value.Type()))
+	//		}
+	//
+	//		s.symbolTable.EnterSymbol(
+	//			constDef.Name.Name, NewConst(constDef.Name.Name, CONST, constDef.Value.Type(), constDef.Value))
+	//	}
+	//}
 
 	if blk.Stats != nil {
 		for _, stmt := range blk.Stats {
@@ -78,7 +78,7 @@ func (s *Visitor) isRValue(sym Symbol) bool {
 
 // VisitUIntLiteral ...
 func (s *Visitor) VisitUIntLiteral(i *ast.UIntegerLiteral) {
-	i.EType = &base.Integer{Name: "integer"}
+	i.EType = base.NewInteger()
 }
 
 // VisitAssignStmt ...
@@ -93,7 +93,8 @@ func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) {
 	a.Variable.Accept(v)
 	a.Value.Accept(s)
 	if !AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
-		panic(fmt.Sprintf("cannot assign %s to %s", a.Value, a.Variable))
+		panic(fmt.Sprintf("cannot assign '%s' (of type %s) to '%s' (of type %s)",
+			a.Value, a.Value.Type(), a.Variable, a.Variable.Type()))
 	}
 }
 
@@ -106,8 +107,8 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 	b.Left.Accept(s)
 	b.Right.Accept(s)
 
-	lhsType := b.Left.Type().GetName()
-	rhsType := b.Right.Type().GetName()
+	lhsType := b.Left.Type().Name()
+	rhsType := b.Right.Type().Name()
 
 	switch b.Operator.Kind {
 	case token.Plus, token.Minus, token.Star:
@@ -124,7 +125,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 		} else if lhsType == "integer" && rhsType == "integer" {
 			b.EType = b.Left.Type()
 		} else {
-			b.EType = &base.Real{Name: "real"}
+			b.EType = base.NewReal()
 		}
 	case token.FwdSlash:
 		if lhsType != "integer" && lhsType != "real" {
@@ -135,10 +136,10 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 			panic(fmt.Sprintf("%s must be integer or real type", b.Right))
 		}
 
-		b.EType = &base.Real{Name: "real"}
-	case token.Div, token.Mod, token.And, token.Or:
+		b.EType = base.NewReal()
+	case token.Div, token.Mod:
 		if lhsType != "integer" && rhsType != "integer" {
-			panic("both operands must be integer-type for 'mod' expression")
+			panic("both operands must be integer-type for 'mod' or 'div' expression")
 		}
 
 		b.EType = b.Left.Type()
@@ -151,7 +152,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
 		}
 
-		b.EType = &base.Boolean{Name: "Boolean"}
+		b.EType = base.NewBoolean()
 	case token.LessThan, token.GreaterThan:
 		if !IsSimpleType(b.Left.Type()) && lhsType != "string" {
 			panic(fmt.Sprintf("%s must be a simple-type or string-type", lhsType))
@@ -161,7 +162,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 			panic(fmt.Sprintf("%s must be a simple-type or string-type", rhsType))
 		}
 
-		b.EType = &base.Boolean{Name: "Boolean"}
+		b.EType = base.NewBoolean()
 	case token.LessThanOrEqual, token.GreaterThanOrEqual:
 		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "set" {
 			panic(fmt.Sprintf("%s must be a simple-type, string or set", rhsType))
@@ -171,7 +172,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 			panic(fmt.Sprintf("%s must be a simple-type, string or set", lhsType))
 		}
 
-		b.EType = &base.Boolean{Name: "Boolean"}
+		b.EType = base.NewBoolean()
 	case token.In:
 		if !IsOrdinalType(b.Left.Type()) {
 			panic(fmt.Sprintf("cannot use %s, a non-ordinal type in an 'in' expression", lhsType))
@@ -181,7 +182,13 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 			panic(fmt.Sprintf("%s is not an appropriate RHS of an 'in' expression.", rhsType))
 		}
 
-		b.EType = &base.Boolean{Name: "Boolean"}
+		b.EType = base.NewBoolean()
+	case token.And, token.Or:
+		if lhsType != "Boolean" && rhsType != "Boolean" {
+			panic(fmt.Sprintf("both operands must evaluate to 'Boolean' type"))
+		}
+
+		b.EType = base.NewBoolean()
 	}
 }
 
@@ -191,16 +198,16 @@ func (s *Visitor) VisitUnaryExpr(u *ast.UnaryExpression) {
 	case token.Minus, token.Plus:
 		u.EType = u.Operand.Type()
 	case token.Not:
-		u.EType = &base.Boolean{Name: "Boolean"}
+		u.EType = base.NewBoolean()
 	}
 }
 
 func (s *Visitor) VisitBoolLiteral(b *ast.BoolLiteral) {
-	b.EType = &base.Boolean{Name: "Boolean"}
+	b.EType = base.NewBoolean()
 }
 
 func (s *Visitor) VisitURealLiteral(ur *ast.URealLiteral) {
-	ur.EType = &base.Real{Name: "real"}
+	ur.EType = base.NewReal()
 }
 
 func (s *Visitor) VisitForStatement(f *ast.ForStatement) {
@@ -212,7 +219,19 @@ func (s *Visitor) VisitIfStatement(i *ast.IfStatement) {
 }
 
 func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) {
+	for _, arg := range f.Parameters {
+		arg.Accept(s)
+	}
 
+	function := s.symbolTable.RetrieveSymbol(f.Name.Name)
+	if function == nil {
+		panic(fmt.Sprintf("undeclared symbol %v", f.Name.Name))
+	} else if function.Kind() != FUNCTION {
+		panic(fmt.Sprintf("attempting to call %s, which is not a function", f.Name.Name))
+	} else {
+		fHead := function.Type().(*ast.FuncHeading)
+		f.EType = fHead.ReturnType
+	}
 }
 
 func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) {
