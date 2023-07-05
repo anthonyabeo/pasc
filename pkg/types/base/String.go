@@ -4,6 +4,10 @@ type String struct {
 	name string
 }
 
+func NewString() *String {
+	return &String{name: "string"}
+}
+
 // Name returns the character
 func (s *String) Name() string {
 	return s.name

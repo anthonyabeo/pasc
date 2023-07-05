@@ -1,15 +1,17 @@
 package ast
 
 import (
+	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
+	"strings"
 )
 
 // SetConstructor ...
 type SetConstructor struct {
-	Token   token.Token
-	Members []Expression
-	EType   types.Type
+	TokenKind token.Kind
+	Members   []Expression
+	EType     types.Type
 }
 
 func (s *SetConstructor) expr() {}
@@ -23,5 +25,10 @@ func (s *SetConstructor) Type() types.Type {
 }
 
 func (s *SetConstructor) String() string {
-	return "nil"
+	var members []string
+	for _, m := range s.Members {
+		members = append(members, m.String())
+	}
+	
+	return fmt.Sprintf("[%s]", strings.Join(members, ", "))
 }

@@ -9,7 +9,7 @@ import (
 
 // Record denoted a record type
 type Record struct {
-	Token     token.Token
+	TokenKind token.Kind
 	FieldList []Field
 	Scope     semantics.SymbolTable
 }

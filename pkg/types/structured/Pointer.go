@@ -7,7 +7,7 @@ import (
 
 // Pointer models a pointer data type
 type Pointer struct {
-	Token      token.Token
+	TokenKind  token.Kind
 	DomainType types.Type
 }
 
