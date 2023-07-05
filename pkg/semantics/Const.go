@@ -59,3 +59,7 @@ func (c *Const) SetVar(sym Symbol) {
 func (c *Const) String() string {
 	return c.name
 }
+
+func (c *Const) Value() ast.Expression {
+	return c.value
+}
