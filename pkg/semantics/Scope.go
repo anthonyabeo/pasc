@@ -36,13 +36,13 @@ func NewWonkySymbolTable() *WonkySymbolTable {
 }
 
 func (w *WonkySymbolTable) initSymbolTable() {
-	w.EnterSymbol("integer", NewInteger("integer", TYPE, base.NewInteger("integer")))
-	w.EnterSymbol("Boolean", NewBoolean("Boolean", TYPE, base.NewBoolean("Boolean")))
-	w.EnterSymbol("real", NewReal("real", TYPE, base.NewReal("real")))
-	w.EnterSymbol("char", NewChar("char", TYPE, base.NewChar("char")))
+	w.EnterSymbol("integer", NewInteger("integer", TYPE, base.NewInteger()))
+	w.EnterSymbol("Boolean", NewBoolean("Boolean", TYPE, base.NewBoolean()))
+	w.EnterSymbol("real", NewReal("real", TYPE, base.NewReal()))
+	w.EnterSymbol("char", NewChar("char", TYPE, base.NewChar()))
 
-	w.EnterSymbol("true", NewConst("true", CONST, base.NewBoolean("Boolean"), &ast.BoolLiteral{Value: "true"}))
-	w.EnterSymbol("false", NewConst("false", CONST, base.NewBoolean("Boolean"), &ast.BoolLiteral{Value: "false"}))
+	w.EnterSymbol("true", NewConst("true", CONST, base.NewBoolean(), &ast.BoolLiteral{Value: "true"}))
+	w.EnterSymbol("false", NewConst("false", CONST, base.NewBoolean(), &ast.BoolLiteral{Value: "false"}))
 }
 
 // OpenScope ...
