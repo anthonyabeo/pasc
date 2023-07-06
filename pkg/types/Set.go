@@ -1,16 +1,15 @@
-package structured
+package types
 
 import (
 	"fmt"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
-	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // Set models a set data type
 type Set struct {
 	TokenKind token.Kind
-	BaseType  types.Ordinal
+	BaseType  Ordinal
 }
 
 // Name ...
