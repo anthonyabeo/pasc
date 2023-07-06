@@ -723,10 +723,10 @@ func (p *Parser) enumType() (*structured.Enumerated, error) {
 	return &structured.Enumerated{List: list}, nil
 }
 
-func (p *Parser) setType() (*structured.Set, error) {
+func (p *Parser) setType() (*types.Set, error) {
 	var err error
 
-	set := &structured.Set{TokenKind: p.lAheadKind(1)}
+	set := &types.Set{TokenKind: p.lAheadKind(1)}
 	if err := p.match(token.Set); err != nil {
 		return nil, err
 	}
