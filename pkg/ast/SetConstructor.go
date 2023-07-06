@@ -2,9 +2,10 @@ package ast
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
-	"strings"
 )
 
 // SetConstructor ...
@@ -29,6 +30,6 @@ func (s *SetConstructor) String() string {
 	for _, m := range s.Members {
 		members = append(members, m.String())
 	}
-	
+
 	return fmt.Sprintf("[%s]", strings.Join(members, ", "))
 }

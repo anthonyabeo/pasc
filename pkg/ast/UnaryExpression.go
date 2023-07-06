@@ -25,5 +25,5 @@ func (u *UnaryExpression) Accept(v Visitor) {
 }
 
 func (u *UnaryExpression) String() string {
-	return fmt.Sprintf("%v%v", u.Operator.Text, u.Operand)
+	return fmt.Sprintf("%v %v", u.Operator.Text, u.Operand)
 }
