@@ -185,7 +185,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 
 	stmt = program.Block.Stats[3].(*ast.AssignStatement)
-	if !testUnaryExpression(t, stmt.Value, token.NewToken(token.Minus, "-"), "-5") {
+	if !testUnaryExpression(t, stmt.Value, token.NewToken(token.Minus, "-"), "5") {
 		return
 	}
 }
@@ -725,8 +725,8 @@ func testWhileStatement(t *testing.T, stmt ast.Statement) bool {
 		return false
 	}
 
-	if whileStmt.Token.Kind != token.While {
-		t.Errorf("expected token to kind 'while', got '%v' instead.", whileStmt.Token.Text)
+	if whileStmt.TokenKind != token.While {
+		t.Errorf("expected token to kind 'while', got '%v' instead.", whileStmt.TokenKind)
 		return false
 	}
 
@@ -1053,8 +1053,8 @@ func testIfStatement(
 		return false
 	}
 
-	if ifStmt.Token.Kind != token.If {
-		t.Errorf("expected token type to be %v, got %v", token.If, ifStmt.Token.Text)
+	if ifStmt.TokenKind != token.If {
+		t.Errorf("expected token type to be %v, got %v", token.If, ifStmt.TokenKind)
 		return false
 	}
 
@@ -1086,7 +1086,7 @@ func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token
 		return false
 	}
 
-	if uexpr.String() != operand {
+	if uexpr.Operand.String() != operand {
 		t.Errorf("expected operand to be %v, got %v instead", operand, uexpr.String())
 		return false
 	}
