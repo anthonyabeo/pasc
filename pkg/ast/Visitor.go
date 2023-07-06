@@ -34,4 +34,8 @@ type Visitor interface {
 	VisitCaseStatement(*CaseStatement)
 	VisitWriteParameter(*WriteParameter)
 	VisitSetConstructor(*SetConstructor)
+	VisitValueParam(*ValueParam)
+	VisitVariableParam(*VariableParam)
+	VisitFuncHeading(*FuncHeading)
+	VisitProcedureHeading(*ProcedureHeading)
 }
