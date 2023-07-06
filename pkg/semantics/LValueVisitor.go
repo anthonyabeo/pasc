@@ -1,8 +1,9 @@
-package semantics
+package semantics_tests
 
 import (
 	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/semantics"
 )
 
 // LValueVisitor ...
@@ -25,10 +26,10 @@ func (l *LValueVisitor) VisitIdentifier(id *ast.Identifier) {
 	id.EType = sym.Type()
 }
 
-func (l *LValueVisitor) isLValue(sym Symbol) bool {
-	return sym.Kind() != VARIABLE &&
-		sym.Kind() != FIELD &&
-		sym.Kind() != FUNCTION
+func (l *LValueVisitor) isLValue(sym semantics.Symbol) bool {
+	return sym.Kind() != semantics.VARIABLE &&
+		sym.Kind() != semantics.FIELD &&
+		sym.Kind() != semantics.FUNCTION
 }
 
 // VisitIndexedVariable ...

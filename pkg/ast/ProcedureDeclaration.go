@@ -35,13 +35,17 @@ type ProcedureHeading struct {
 	Parameters []FormalParameter
 }
 
-func (f *ProcedureHeading) formalParam() {}
+func (p *ProcedureHeading) formalParam() {}
 
-func (f *ProcedureHeading) String() string {
+func (p *ProcedureHeading) Accept(vst Visitor) {
+	vst.VisitProcedureHeading(p)
+}
+
+func (p *ProcedureHeading) String() string {
 	var pList []string
-	for _, p := range f.Parameters {
-		pList = append(pList, p.String())
+	for _, param := range p.Parameters {
+		pList = append(pList, param.String())
 	}
 
-	return fmt.Sprintf("function %s(%s)", f.Name.Name, strings.Join(pList, ", "))
+	return fmt.Sprintf("function %s(%s)", p.Name.Name, strings.Join(pList, ", "))
 }
