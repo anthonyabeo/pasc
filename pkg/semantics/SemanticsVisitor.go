@@ -210,7 +210,32 @@ func (s *Visitor) VisitURealLiteral(ur *ast.URealLiteral) {
 }
 
 func (s *Visitor) VisitForStatement(f *ast.ForStatement) {
+	f.CtrlID.Accept(s)
+	f.InitValue.Accept(s)
+	f.FinalValue.Accept(s)
 
+	if _, ok := f.CtrlID.EType.(types.Ordinal); !ok {
+		panic(fmt.Sprintf("loop control variable %s must be of type, integer, char, Boolean, enum or subrange type,"+
+			"currently it is a '%s' type", f.CtrlID, f.CtrlID.EType))
+	}
+
+	// check that ctrlID is compatible to initValue and finalValue
+	if !AreCompatibleTypes(f.InitValue.Type(), f.CtrlID.EType) {
+		panic(fmt.Sprintf("control variable'%s' (of type '%s'), is not compatible with initial value of type '%s'",
+			f.CtrlID, f.CtrlID.EType, f.InitValue.Type()))
+	}
+
+	if !AreCompatibleTypes(f.FinalValue.Type(), f.CtrlID.EType) {
+		panic(fmt.Sprintf("control variable'%s' (of type '%s'), is not compatible with final value of type '%s'",
+			f.CtrlID, f.CtrlID.EType, f.FinalValue.Type()))
+	}
+
+	// check that the right direction is set
+	if f.Direction != token.To && f.Direction != token.DownTo {
+		panic(fmt.Sprintf("invalid loop direction. use 'to'or 'downto'"))
+	}
+
+	f.Body.Accept(s)
 }
 
 func (s *Visitor) VisitIfStatement(i *ast.IfStatement) {
