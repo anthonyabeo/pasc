@@ -1,10 +1,13 @@
-package semantics
+package semantics_tests
 
 import (
 	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // Visitor ...
@@ -14,10 +17,7 @@ type Visitor struct {
 }
 
 func NewSemaVisitor(program *ast.Program, symTable *WonkySymbolTable) *Visitor {
-	return &Visitor{
-		program:     program,
-		symbolTable: symTable,
-	}
+	return &Visitor{program: program, symbolTable: symTable}
 }
 
 func (s *Visitor) VisitProgram() {
@@ -69,11 +69,11 @@ func (s *Visitor) VisitIdentifier(id *ast.Identifier) {
 	id.EType = sym.Type()
 }
 
-func (s *Visitor) isRValue(sym Symbol) bool {
-	return sym.Kind() == CONST ||
-		sym.Kind() == VARIABLE ||
-		sym.Kind() == FIELD ||
-		sym.Kind() == FUNCTION
+func (s *Visitor) isRValue(sym semantics.Symbol) bool {
+	return sym.Kind() == semantics.CONST ||
+		sym.Kind() == semantics.VARIABLE ||
+		sym.Kind() == semantics.FIELD ||
+		sym.Kind() == semantics.FUNCTION
 }
 
 // VisitUIntLiteral ...
@@ -92,7 +92,7 @@ func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) {
 
 	a.Variable.Accept(v)
 	a.Value.Accept(s)
-	if !AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
+	if !semantics.AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
 		panic(fmt.Sprintf("cannot assign '%s' (of type %s) to '%s' (of type %s)",
 			a.Value, a.Value.Type(), a.Variable, a.Variable.Type()))
 	}
@@ -144,37 +144,37 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 
 		b.EType = b.Left.Type()
 	case token.Equal, token.LessThanGreaterThan:
-		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "pointer" && lhsType != "set" {
+		if !semantics.IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "pointer" && lhsType != "set" {
 			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
 		}
 
-		if !IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "pointer" && rhsType != "set" {
+		if !semantics.IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "pointer" && rhsType != "set" {
 			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
 		}
 
 		b.EType = base.NewBoolean()
 	case token.LessThan, token.GreaterThan:
-		if !IsSimpleType(b.Left.Type()) && lhsType != "string" {
+		if !semantics.IsSimpleType(b.Left.Type()) && lhsType != "string" {
 			panic(fmt.Sprintf("%s must be a simple-type or string-type", lhsType))
 		}
 
-		if !IsSimpleType(b.Right.Type()) && rhsType != "string" {
+		if !semantics.IsSimpleType(b.Right.Type()) && rhsType != "string" {
 			panic(fmt.Sprintf("%s must be a simple-type or string-type", rhsType))
 		}
 
 		b.EType = base.NewBoolean()
 	case token.LessThanOrEqual, token.GreaterThanOrEqual:
-		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "set" {
+		if !semantics.IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "set" {
 			panic(fmt.Sprintf("%s must be a simple-type, string or set", rhsType))
 		}
 
-		if !IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "set" {
+		if !semantics.IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "set" {
 			panic(fmt.Sprintf("%s must be a simple-type, string or set", lhsType))
 		}
 
 		b.EType = base.NewBoolean()
 	case token.In:
-		if !IsOrdinalType(b.Left.Type()) {
+		if !semantics.IsOrdinalType(b.Left.Type()) {
 			panic(fmt.Sprintf("cannot use %s, a non-ordinal type in an 'in' expression", lhsType))
 		}
 
@@ -185,7 +185,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 		b.EType = base.NewBoolean()
 	case token.And, token.Or:
 		if lhsType != "Boolean" && rhsType != "Boolean" {
-			panic(fmt.Sprintf("both operands must evaluate to 'Boolean' type"))
+			panic(fmt.Sprintf("'%s' and '%s' must evaluate to 'Boolean' type", lhsType, rhsType))
 		}
 
 		b.EType = base.NewBoolean()
@@ -215,7 +215,11 @@ func (s *Visitor) VisitForStatement(f *ast.ForStatement) {
 }
 
 func (s *Visitor) VisitIfStatement(i *ast.IfStatement) {
-
+	i.BoolExpr.Accept(s)
+	i.TruePath.Accept(s)
+	if i.ElsePath != nil {
+		i.ElsePath.Accept(s)
+	}
 }
 
 func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) {
@@ -226,7 +230,7 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) {
 	function := s.symbolTable.RetrieveSymbol(f.Name.Name)
 	if function == nil {
 		panic(fmt.Sprintf("undeclared symbol %v", f.Name.Name))
-	} else if function.Kind() != FUNCTION {
+	} else if function.Kind() != semantics.FUNCTION {
 		panic(fmt.Sprintf("attempting to call %s, which is not a function", f.Name.Name))
 	} else {
 		fHead := function.Type().(*ast.FuncHeading)
@@ -235,7 +239,7 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) {
 }
 
 func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) {
-
+	g.Label.Accept(s)
 }
 
 func (s *Visitor) VisitIdentifiedVariable(i *ast.IdentifiedVariable) {
@@ -243,19 +247,28 @@ func (s *Visitor) VisitIdentifiedVariable(i *ast.IdentifiedVariable) {
 }
 
 func (s *Visitor) VisitWhileStatement(w *ast.WhileStatement) {
-
+	w.BoolExpr.Accept(s)
+	w.Body.Accept(s)
 }
 
 func (s *Visitor) VisitWithStatement(w *ast.WithStatement) {
+	for _, r := range w.RecordVarList {
+		r.Accept(s)
+	}
 
+	w.Body.Accept(s)
 }
 
 func (s *Visitor) VisitRepeatStatement(r *ast.RepeatStatement) {
+	for _, stmt := range r.StmtSeq {
+		stmt.Accept(s)
+	}
 
+	r.BoolExpr.Accept(s)
 }
 
 func (s *Visitor) VisitReturnStatement(r *ast.ReturnStatement) {
-
+	r.Expr.Accept(s)
 }
 
 func (s *Visitor) VisitFieldDesignator(f *ast.FieldDesignator) {
@@ -267,11 +280,13 @@ func (s *Visitor) VisitRange(r *ast.Range) {
 }
 
 func (s *Visitor) VisitCompoundStatement(cs *ast.CompoundStatement) {
-
+	for _, stmt := range cs.Statements {
+		stmt.Accept(s)
+	}
 }
 
 func (s *Visitor) VisitStrLiteral(str *ast.StrLiteral) {
-
+	str.EType = base.NewString()
 }
 
 func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) {
@@ -299,7 +314,10 @@ func (s *Visitor) VisitWriteln(w *ast.Writeln) {
 }
 
 func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) {
-
+	p.Name.Accept(s)
+	for _, param := range p.ParamList {
+		param.Accept(s)
+	}
 }
 
 func (s *Visitor) VisitNil(n *ast.NilValue) {
@@ -315,5 +333,16 @@ func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) {
 }
 
 func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) {
+	for _, m := range st.Members {
+		m.Accept(s)
+	}
 
+	if len(st.Members) == 0 {
+		panic("")
+	}
+
+	st.EType = &structured.Set{
+		TokenKind: token.Set,
+		BaseType:  st.Members[0].Type().(types.Ordinal),
+	}
 }

@@ -10,8 +10,8 @@ import (
 
 // FormalParameter denotes a generic formal parameter type
 type FormalParameter interface {
+	Node
 	formalParam()
-	String() string
 }
 
 // ValueParam denoted a value parameter specification
@@ -21,6 +21,10 @@ type ValueParam struct {
 }
 
 func (v *ValueParam) formalParam() {}
+
+func (v *ValueParam) Accept(vst Visitor) {
+	vst.VisitValueParam(v)
+}
 
 func (v *ValueParam) String() string {
 	var vList []string
@@ -39,6 +43,10 @@ type VariableParam struct {
 }
 
 func (v *VariableParam) formalParam() {}
+
+func (v *VariableParam) Accept(vst Visitor) {
+	vst.VisitVariableParam(v)
+}
 
 func (v *VariableParam) String() string {
 	var vList []string

@@ -45,6 +45,10 @@ func (f *FuncHeading) Name() string {
 
 func (f *FuncHeading) formalParam() {}
 
+func (f *FuncHeading) Accept(vst Visitor) {
+	vst.VisitFuncHeading(f)
+}
+
 func (f *FuncHeading) String() string {
 	var pList []string
 	for _, p := range f.Parameters {
