@@ -699,8 +699,8 @@ func (p *Parser) subRangeType() (*structured.SubRange, error) {
 	}
 
 	return &structured.SubRange{
-		Range: &ast.Range{Start: start, End: end},
-		//HostType: p.getTypeOf(start),
+		Range:    &ast.Range{Start: start, End: end},
+		HostType: start.Type(),
 	}, nil
 }
 
@@ -743,13 +743,13 @@ func (p *Parser) setType() (*types.Set, error) {
 	return set, nil
 }
 
-func (p *Parser) arrayType() (*structured.Array, error) {
+func (p *Parser) arrayType() (*types.Array, error) {
 	var (
 		err     error
 		idxType types.Ordinal
 	)
 
-	arrayType := &structured.Array{TokenKind: p.lAheadKind(1)}
+	arrayType := &types.Array{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.Array); err != nil {
 		return nil, err
 	}
