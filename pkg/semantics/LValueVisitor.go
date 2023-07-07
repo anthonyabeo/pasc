@@ -3,6 +3,7 @@ package semantics
 import (
 	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // LValueVisitor ...
@@ -33,7 +34,28 @@ func (l *LValueVisitor) isLValue(sym Symbol) bool {
 
 // VisitIndexedVariable ...
 func (l *LValueVisitor) VisitIndexedVariable(iv *ast.IndexedVariable) {
+	for _, idx := range iv.IndexExpr {
+		idx.Accept(l)
 
+		if _, ok := idx.Type().(types.Ordinal); !ok {
+			panic(fmt.Sprintf("'%s' (of type '%s') cannot be used as index type in array %s",
+				idx, idx.Type(), iv))
+		}
+	}
+
+	array := l.symbolTable.RetrieveSymbol(iv.ArrayVar.String()).Type()
+	for i := 0; i < len(iv.IndexExpr); i++ {
+		arr := array.(*types.Array)
+		if arr == nil {
+			panic(fmt.Sprintf(""))
+		} else if arr.Name() != "array" {
+			panic(fmt.Sprintf("cannot index into non-array type, %s", iv.ArrayVar))
+		} else {
+			array = arr.ComponentType
+		}
+	}
+
+	iv.EType = array
 }
 
 func (l *LValueVisitor) VisitFieldDesignator(f *ast.FieldDesignator) {
