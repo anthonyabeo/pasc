@@ -1,10 +1,10 @@
 package parser
 
 import (
+	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"testing"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/symbols"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
@@ -18,7 +18,8 @@ func TestParseBasicProgram(t *testing.T) {
 `
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -33,7 +34,7 @@ func TestParseBasicProgram(t *testing.T) {
 	}
 
 	args := []ast.Expression{
-		&ast.StrLiteral{Token: token.NewToken(token.StrLiteral, "Hello, World!"), Value: "Hello, World!"},
+		&ast.StrLiteral{TokenKind: token.StrLiteral, Value: "Hello, World!"},
 	}
 	if !testWriteln(t, program.Block.Stats[0], "writeln", args) {
 		return
@@ -51,7 +52,8 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -86,7 +88,8 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -101,20 +104,20 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	}
 
 	// first statement
-	value := &ast.UIntegerLiteral{Token: token.Token{Text: "1", Kind: token.UIntLiteral}, Value: "1"}
+	value := &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "1"}
 	if !testAssignmentStatement(t, program.Block.Stats[0], "a", value) {
 		return
 	}
 
 	// second statement
-	value = &ast.UIntegerLiteral{Token: token.Token{Text: "2", Kind: token.UIntLiteral}, Value: "2"}
+	value = &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "2"}
 	if !testAssignmentStatement(t, program.Block.Stats[1], "b", value) {
 		return
 	}
 
 	// third statement
 	args := []ast.Expression{
-		&ast.StrLiteral{Token: token.NewToken(token.StrLiteral, "Hello, world!"), Value: "Hello, world!"},
+		&ast.StrLiteral{TokenKind: token.StrLiteral, Value: "Hello, world!"},
 	}
 
 	if !testWriteln(t, program.Block.Stats[2], "writeln", args) {
@@ -143,7 +146,8 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 `
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -159,8 +163,8 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 
 	expr := &ast.BinaryExpression{
 		Operator: token.NewToken(token.Plus, "+"),
-		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
-		Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
+		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "a"},
+		Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "b"},
 	}
 
 	if !testAssignmentStatement(t, program.Block.Stats[2], "sum", expr) {
@@ -174,7 +178,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 
 	uexpr := &ast.UnaryExpression{
 		Operator: token.NewToken(token.Minus, "-"),
-		Operand:  &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5"), Value: "5"},
+		Operand:  &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "5"},
 	}
 	if !testAssignmentStatement(t, program.Block.Stats[3], "a", uexpr) {
 		return
@@ -211,7 +215,8 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -228,10 +233,10 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	params := []ast.FormalParameter{
 		&ast.ValueParam{
 			Names: []*ast.Identifier{
-				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
-				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
+				{TokenKind: token.Identifier, Name: "n"},
+				{TokenKind: token.Identifier, Name: "m"},
 			},
-			Type: &base.Integer{Name: "integer"},
+			Type: base.NewInteger(),
 		},
 	}
 	if !testFuncDeclaration(t, program.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0, 0) {
@@ -273,7 +278,8 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -290,10 +296,10 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	paramList := []ast.FormalParameter{
 		&ast.ValueParam{
 			Names: []*ast.Identifier{
-				{Token: token.NewToken(token.Identifier, "n"), Name: "n"},
-				{Token: token.NewToken(token.Identifier, "m"), Name: "m"},
+				{TokenKind: token.Identifier, Name: "n"},
+				{TokenKind: token.Identifier, Name: "m"},
 			},
-			Type: &base.Integer{Name: "integer"},
+			Type: base.NewInteger(),
 		},
 	}
 	if !testFuncDeclaration(t, program.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0, 0) {
@@ -305,17 +311,13 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	}
 
 	ifStmt := funcDecl.Block.Stats[0].(*ast.IfStatement)
-	value := &ast.Identifier{
-		Token: token.NewToken(token.Identifier, "n"),
-		Name:  "n",
-	}
+
+	value := &ast.Identifier{TokenKind: token.Identifier, Name: "n"}
 	if !testAssignmentStatement(t, ifStmt.TruePath, "result", value) {
 		return
 	}
 
-	value.Token.Text = "m"
 	value.Name = "m"
-
 	if !testAssignmentStatement(t, ifStmt.ElsePath, "result", value) {
 		return
 	}
@@ -325,7 +327,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 	input := `
 	program MaxProgram;
 	var
-		a, b : integer;
+		a, b, result : integer;
 	
 	function 
 		max(n, m : integer): integer;
@@ -351,7 +353,8 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -366,10 +369,10 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 	}
 
 	value := &ast.FuncDesignator{
-		Name: &ast.Identifier{Token: token.Token{Kind: token.Identifier, Text: "max"}, Name: "max"},
+		Name: &ast.Identifier{TokenKind: token.Identifier, Name: "max"},
 		Parameters: []ast.Expression{
-			&ast.Identifier{Token: token.Token{Kind: token.Identifier, Text: "a"}, Name: "a"},
-			&ast.Identifier{Token: token.Token{Kind: token.Identifier, Text: "b"}, Name: "b"},
+			&ast.Identifier{TokenKind: token.Identifier, Name: "a"},
+			&ast.Identifier{TokenKind: token.Identifier, Name: "b"},
 		},
 	}
 
@@ -404,7 +407,8 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -456,7 +460,8 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 `
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -472,11 +477,11 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 
 	value := &ast.BinaryExpression{
 		Operator: token.NewToken(token.Star, "*"),
-		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
+		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "a"},
 		Right: &ast.BinaryExpression{
 			Operator: token.NewToken(token.Star, "*"),
-			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
-			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "c"), Name: "c"},
+			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "b"},
+			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "c"},
 		},
 	}
 
@@ -486,77 +491,15 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 
 	value = &ast.BinaryExpression{
 		Operator: token.NewToken(token.Star, "+"),
-		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "d"), Name: "d"},
+		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "d"},
 		Right: &ast.BinaryExpression{
 			Operator: token.NewToken(token.Star, "*"),
-			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "e"), Name: "e"},
-			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "f"), Name: "f"},
+			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "e"},
+			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "f"},
 		},
 	}
 
 	if !testAssignmentStatement(t, program.Block.Stats[1], "foo", value) {
-		return
-	}
-}
-
-func TestSymbolTableGenerated(t *testing.T) {
-	input := `
-	program MaxProgram;
-	var 
-		a, b, sum : integer;
-
-	function max(n, m :integer): integer;
-	var result: integer;
-
-	begin
-		if (n > m) then
-			result := n
-		else
-			result := m;
-
-		max := result
-	end;
-
-	begin
-		a := 100;
-		b := 200;
-		result := max(a, b);
-
-		writeln(result)
-	end.
-	`
-
-	lex := NewLexer(input)
-	pars, err := NewParser(lex)
-	if err != nil {
-		t.Error(err)
-	}
-
-	program, err := pars.Program()
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !testProgramAST(t, program, "MaxProgram", []string{}, 4, 1, 1, 0, 0) {
-		return
-	}
-
-	symTable := pars.SymbolTable()
-	if !testGlobalSymbolTable(t, symTable, nil, "global", len(symTable.Symbols)) {
-		return
-	}
-
-	max := symTable.Resolve("max")
-	if max.GetKind() != symbols.FUNCTION {
-		t.Errorf("expected symbol of kind %v, got %v instead", symbols.FUNCTION, max.GetKind())
-	}
-
-	m, ok := max.(*symbols.Function)
-	if !ok || m.Scope == nil {
-		t.Errorf("expected a function symbol type")
-	}
-
-	if !testLocalSymbolTable(t, m.Scope, symTable, "max", 3) {
 		return
 	}
 }
@@ -577,7 +520,8 @@ func TestParsingConstantDefinition(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -588,10 +532,6 @@ func TestParsingConstantDefinition(t *testing.T) {
 	}
 
 	if !testProgramAST(t, program, "HelloWorld", []string{}, 1, 2, 0, 0, 0) {
-		return
-	}
-
-	if !testGlobalSymbolTable(t, pars.symTable, nil, "global", 11) {
 		return
 	}
 }
@@ -610,7 +550,8 @@ func TestParseForStatement(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -624,21 +565,21 @@ func TestParseForStatement(t *testing.T) {
 		return
 	}
 
-	initVal := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "1"), Value: "1"}
-	finalVal := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5"), Value: "5"}
+	initVal := &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "1"}
+	finalVal := &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "5"}
 	body := &ast.AssignStatement{
-		Token:    token.NewToken(token.Initialize, ":="),
-		Variable: &ast.Identifier{Token: token.NewToken(token.Identifier, "sum")},
+		TokenKind: token.Initialize,
+		Variable:  &ast.Identifier{TokenKind: token.Identifier, Name: "sum"},
 		Value: &ast.BinaryExpression{
 			Operator: token.NewToken(token.Plus, "+"),
-			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "sum")},
-			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "i")},
+			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "sum"},
+			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "i"},
 		},
 	}
 
 	stmt := &ast.ForStatement{
-		Token:      token.NewToken(token.For, "for"),
-		CtrlID:     &ast.Identifier{Token: token.NewToken(token.Identifier, "i")},
+		TokenKind:  token.For,
+		CtrlID:     &ast.Identifier{TokenKind: token.Identifier, Name: "i"},
 		InitValue:  initVal,
 		FinalValue: finalVal,
 		Body:       body,
@@ -670,7 +611,8 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 	end.
 	`
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -686,31 +628,31 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 
 	procDecl := &ast.ProcedureDeclaration{
 		Heading: &ast.ProcedureHeading{
-			Token: token.NewToken(token.Procedure, "procedure"),
-			Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "bisect")},
+			TokenKind: token.Procedure,
+			Name:      &ast.Identifier{TokenKind: token.Identifier, Name: "bisect"},
 			Parameters: []ast.FormalParameter{
 				&ast.FuncHeading{
-					Token: token.NewToken(token.Function, "function"),
-					Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "f"), Name: "f"},
+					TokenKind: token.Function,
+					FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "f"},
 					Parameters: []ast.FormalParameter{
 						&ast.ValueParam{
-							Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "x"), Name: "x"}},
-							Type:  &base.Real{Name: "real"},
+							Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "x"}},
+							Type:  base.NewReal(),
 						},
 					},
-					ReturnType: &base.Real{Name: "real"},
+					ReturnType: base.NewReal(),
 				},
 				&ast.ValueParam{
 					Names: []*ast.Identifier{
-						{Token: token.NewToken(token.Identifier, "a"), Name: "a"},
-						{Token: token.NewToken(token.Identifier, "b"), Name: "b"},
+						{TokenKind: token.Identifier, Name: "a"},
+						{TokenKind: token.Identifier, Name: "b"},
 					},
-					Type: &base.Real{Name: "real"},
+					Type: base.NewReal(),
 				},
 				&ast.VariableParam{
 					Token: token.Var,
-					Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "result"), Name: "result"}},
-					Type:  &base.Real{Name: "real"},
+					Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "result"}},
+					Type:  base.NewReal(),
 				},
 			},
 		},
@@ -719,17 +661,17 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 				Token: token.NewToken(token.Const, "const"),
 				Consts: []*ast.ConstDef{
 					{
-						Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "eps"), Name: "eps"},
-						Value: &ast.URealLiteral{Token: token.NewToken(token.URealLiteral, "real"), Value: "1e-10"},
+						Name:  &ast.Identifier{TokenKind: token.Identifier, Name: "eps"},
+						Value: &ast.URealLiteral{TokenKind: token.URealLiteral, Value: "1e-10"},
 					},
 				},
 			},
 			VarDeclaration: &ast.VarDeclaration{
-				Token: token.NewToken(token.Var, "var"),
+				TokenKind: token.Var,
 				Decls: []*ast.VarDecl{
 					{
-						Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "midpoint"), Name: "real"}},
-						Type:  &base.Real{Name: "real"},
+						Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "midpoint"}},
+						Type:  base.NewReal(),
 					},
 				},
 			},
@@ -756,7 +698,8 @@ func TestParseWhileStatement(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -800,13 +743,8 @@ func testReturnStatement(t *testing.T, stmt ast.Statement, expr string) bool {
 		return false
 	}
 
-	if retStmt.TokenKind() != token.Return {
-		t.Errorf("expected token to be of kind %v, got %v", token.Return, retStmt.TokenKind())
-		return false
-	}
-
-	if retStmt.TokenLiteral() != "return" {
-		t.Errorf("expected token literal to be 'return', got %v", retStmt.TokenLiteral())
+	if retStmt.TokenKind != token.Return {
+		t.Errorf("expected token to be of kind %v, got %v", token.Return, retStmt.TokenKind)
 		return false
 	}
 
@@ -832,15 +770,15 @@ func testForStatement(
 		return false
 	}
 
-	if forStmt.CtrlID.TokenKind() != token.Identifier {
+	if forStmt.CtrlID.TokenKind != token.Identifier {
 		t.Errorf("expected variable to be of kind %v, got %v",
-			token.Identifier, forStmt.CtrlID.Token.Kind)
+			token.Identifier, forStmt.CtrlID.TokenKind)
 		return false
 	}
 
-	if forStmt.CtrlID.TokenLiteral() != ctrlVar {
+	if forStmt.CtrlID.String() != ctrlVar {
 		t.Errorf("expected assignment value to be %v. got %v instead",
-			ctrlVar, forStmt.CtrlID.TokenLiteral())
+			ctrlVar, forStmt.CtrlID)
 
 		return false
 	}
@@ -864,10 +802,10 @@ func testForStatement(
 		return false
 	}
 
-	if forStmt.Body.StatNode() != body.StatNode() {
-		t.Errorf("expected body to be %s, got %s instead", body.StatNode(), forStmt.Body.StatNode())
-		return false
-	}
+	//if forStmt.Body.StatNode() != body.StatNode() {
+	//	t.Errorf("expected body to be %s, got %s instead", body.StatNode(), forStmt.Body.StatNode())
+	//	return false
+	//}
 
 	return true
 }
@@ -884,13 +822,13 @@ func testProcedureDeclaration(
 		return false
 	}
 
-	if procDecl.Heading.Token.Kind != token.Procedure {
-		t.Errorf("procedure declaration has wrong token type, %v", procDecl.Heading.Token.Text)
+	if procDecl.Heading.TokenKind != token.Procedure {
+		t.Errorf("procedure declaration has wrong token type, %v", procDecl.Heading.TokenKind)
 		return false
 	}
 
-	if procDecl.Heading.Name.TokenLiteral() != procedureName {
-		t.Errorf("expected procedure name to be %v, got %v instead", procedureName, procDecl.Heading.Name.TokenLiteral())
+	if procDecl.Heading.Name.String() != procedureName {
+		t.Errorf("expected procedure name to be %v, got %v instead", procedureName, procDecl.Heading.Name.String())
 		return false
 	}
 
@@ -932,72 +870,6 @@ func testProcedureDeclaration(
 	return true
 }
 
-func testGlobalSymbolTable(
-	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
-) bool {
-	if symTable == nil {
-		t.Errorf("symbol table is nil")
-		return false
-	}
-
-	if symTable.GetEnclosingScope() != parentScope {
-		t.Errorf("enclosing scopes do not match")
-		return false
-	}
-
-	if symTable.GetScopeName() != scopeName {
-		t.Errorf("expected scope name to be %v, got %v instead", scopeName, symTable.GetScopeName())
-		return false
-	}
-
-	symTab, ok := symTable.(*symbols.GlobalScope)
-	if !ok {
-		t.Errorf("expected a global symbol table")
-		return false
-	}
-
-	if len(symTab.Symbols) != numSymbols {
-		t.Errorf("expetecd global scope to have %v entries, got %v instead",
-			numSymbols, len(symTab.Symbols))
-		return false
-	}
-
-	return true
-}
-
-func testLocalSymbolTable(
-	t *testing.T, symTable, parentScope symbols.Scope, scopeName string, numSymbols int,
-) bool {
-	if symTable == nil {
-		t.Errorf("symbol table is nil")
-		return false
-	}
-
-	if symTable.GetEnclosingScope() != parentScope {
-		t.Errorf("enclosing scopes do not match")
-		return false
-	}
-
-	if symTable.GetScopeName() != scopeName {
-		t.Errorf("expected scope name to be %v, got %v instead", scopeName, symTable.GetScopeName())
-		return false
-	}
-
-	symTab, ok := symTable.(*symbols.LocalScope)
-	if !ok {
-		t.Errorf("expected a global symbol table")
-		return false
-	}
-
-	if len(symTab.Symbols) != numSymbols {
-		t.Errorf("expetecd global scope to have %v entries, got %v instead",
-			numSymbols, len(symTab.Symbols))
-		return false
-	}
-
-	return true
-}
-
 func testAssignmentStatement(t *testing.T, stmt ast.Statement, variable string, value ast.Expression) bool {
 	assignStmt, ok := stmt.(*ast.AssignStatement)
 	if !ok {
@@ -1006,13 +878,13 @@ func testAssignmentStatement(t *testing.T, stmt ast.Statement, variable string, 
 	}
 
 	if assignStmt.Variable.String() != variable {
-		t.Errorf("expected variable to be %v, got %v instead,", variable, assignStmt.Variable.String())
+		t.Errorf("expected variable to be '%v', got '%v' instead,", variable, assignStmt.Variable.String())
 		return false
 	}
 
-	if assignStmt.Value.TokenLiteral() != value.TokenLiteral() {
-		t.Errorf("expected assignment value to be %v. got %v instead",
-			value.TokenLiteral(), assignStmt.Value.TokenLiteral())
+	if assignStmt.Value.String() != value.String() {
+		t.Errorf("expected assignment value to be '%v'. got '%v' instead",
+			value.String(), assignStmt.Value.String())
 
 		return false
 	}
@@ -1090,9 +962,9 @@ func testFuncDesignator(t *testing.T, funcDesg ast.Expression, funcName string, 
 	}
 
 	for i, j := 0, 0; i < len(params) && j < len(fDesg.Parameters); i, j = i+1, j+1 {
-		if params[i].TokenLiteral() != fDesg.Parameters[j].TokenLiteral() {
+		if params[i].String() != fDesg.Parameters[j].String() {
 			t.Errorf("expected parameter %v, got %v instead",
-				params[i].TokenLiteral(), fDesg.Parameters[j].TokenLiteral())
+				params[i].String(), fDesg.Parameters[j].String())
 			return false
 		}
 	}
@@ -1112,13 +984,13 @@ func testBinaryExpression(t *testing.T, expr ast.Expression, operator token.Toke
 		return false
 	}
 
-	if exp.Left.TokenLiteral() != left {
-		t.Errorf("expected LHS to be %v, got %v instead", left, exp.Left.TokenLiteral())
+	if exp.Left.String() != left {
+		t.Errorf("expected LHS to be %v, got %v instead", left, exp.Left)
 		return false
 	}
 
-	if exp.Right.TokenLiteral() != right {
-		t.Errorf("expected RHS to be %v, got %v instead", right, exp.Right.TokenLiteral())
+	if exp.Right.String() != right {
+		t.Errorf("expected RHS to be %v, got %v instead", right, exp.Right)
 		return false
 	}
 
@@ -1138,18 +1010,18 @@ func testFuncDeclaration(
 		return false
 	}
 
-	if funcDecl.Heading.Token.Kind != token.Function {
-		t.Errorf("function declaration has wrong token type, %v", funcDecl.Heading.Token.Text)
+	if funcDecl.Heading.TokenKind != token.Function {
+		t.Errorf("function declaration has wrong token type, %v", funcDecl.Heading.TokenKind)
 		return false
 	}
 
-	if funcDecl.Heading.Name.TokenLiteral() != funcName {
-		t.Errorf("expected function name to be %v, got %v instead", funcName, funcDecl.Heading.Name.TokenLiteral())
+	if funcDecl.Heading.FName.Name != funcName {
+		t.Errorf("expected function name to be %v, got %v instead", funcName, funcDecl.Heading.FName)
 		return false
 	}
 
-	if funcDecl.Heading.ReturnType.GetName() != retType {
-		t.Errorf("expected return type to be %v, got %v instead", retType, funcDecl.Heading.ReturnType.GetName())
+	if funcDecl.Heading.ReturnType.Name() != retType {
+		t.Errorf("expected return type to be %v, got %v instead", retType, funcDecl.Heading.ReturnType)
 	}
 
 	for i, j := 0, 0; i < len(paramList) && j < len(funcDecl.Heading.Parameters); i, j = i+1, j+1 {
@@ -1190,13 +1062,13 @@ func testIfStatement(
 		return false
 	}
 
-	if ifStmt.TruePath.StatNode() != tPath {
-		t.Errorf("expected true path to be %v, got %v instead", tPath, ifStmt.TruePath.TokenLiteral())
+	if ifStmt.TruePath.String() != tPath {
+		t.Errorf("expected true path to be %v, got %v instead", tPath, ifStmt.TruePath.String())
 		return false
 	}
 
-	if ifStmt.ElsePath.StatNode() != elsePath {
-		t.Errorf("expected else path to be %v, got %v instead", elsePath, ifStmt.ElsePath.TokenLiteral())
+	if ifStmt.ElsePath.String() != elsePath {
+		t.Errorf("expected else path to be %v, got %v instead", elsePath, ifStmt.ElsePath.String())
 	}
 
 	return true
@@ -1222,38 +1094,11 @@ func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token
 	return true
 }
 
-//func testProcedureStatement(t *testing.T, stmt ast.Statement, procName string, args []ast.Expression) bool {
-//	procStat, ok := stmt.(*ast.ProcedureStmt)
-//	if !ok {
-//		t.Errorf("expected statement of type, ast.procedure_stmt; found %v", procStat)
-//	}
-//
-//	if procStat.Name.String() != procName {
-//		t.Errorf("expected procedure name %v, got %v instead", procName, procStat.Name.String())
-//		return false
-//	}
-//
-//	for i, j := 0, 0; i < len(args) && j < len(procStat.ParamList); i, j = i+1, j+1 {
-//		if args[i].TokenLiteral() != procStat.ParamList[j].TokenLiteral() {
-//			t.Errorf("expected parameter %v, got %v instead",
-//				args[i].TokenLiteral(), procStat.ParamList[j].TokenLiteral())
-//			return false
-//		}
-//	}
-//
-//	return true
-//}
-
 func testVarDeclaration(
-	t *testing.T, stmt ast.Statement, tt token.Token, varDeclCount int, varList [][]string, varType []string,
+	t *testing.T, vd *ast.VarDeclaration, tt token.Token, varDeclCount int, varList [][]string, varType []string,
 ) bool {
-	vd, ok := stmt.(*ast.VarDeclaration)
-	if !ok {
-		t.Errorf("expected variable declaration type, got %v instead", vd)
-	}
-
-	if vd.Token.Kind != tt.Kind {
-		t.Errorf("expected token to be %v; got %v instead", tt.Text, vd.Token.Text)
+	if vd.TokenKind != tt.Kind {
+		t.Errorf("expected token to be %v; got %v instead", tt.Text, vd.TokenKind)
 		return false
 	}
 
@@ -1272,8 +1117,8 @@ func testVarDeclaration(
 			}
 		}
 
-		if decl.Type.GetName() != varType[idx] {
-			t.Errorf("expected variable type to be %v, got %v instead", varType[idx], decl.Type.GetName())
+		if decl.Type.Name() != varType[idx] {
+			t.Errorf("expected variable type to be %v, got %v instead", varType[idx], decl.Type)
 			return false
 		}
 	}
@@ -1298,7 +1143,8 @@ func TestParseRepeatStatement(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1372,7 +1218,8 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1406,7 +1253,8 @@ func TestParsingIndexedVariables(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1420,12 +1268,12 @@ func TestParsingIndexedVariables(t *testing.T) {
 		return
 	}
 
-	val := &ast.Identifier{Token: token.NewToken(token.UIntLiteral, "1"), Name: "1"}
+	val := &ast.Identifier{TokenKind: token.UIntLiteral, Name: "1"}
 	if !testAssignmentStatement(t, program.Block.Stats[0], "pc[0]", val) {
 		return
 	}
 
-	val = &ast.Identifier{Token: token.NewToken(token.UIntLiteral, "2"), Name: "2"}
+	val = &ast.Identifier{TokenKind: token.UIntLiteral, Name: "2"}
 	if !testAssignmentStatement(t, program.Block.Stats[2], "pc[5]", val) {
 		return
 	}
@@ -1482,7 +1330,8 @@ func TestParseExpressions(t *testing.T) {
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1520,13 +1369,14 @@ func TestParseFieldDesignator(t *testing.T) {
 
 	begin
 		person.firstname := 1;
-        p2^.mother := 4;
+        p2^.married := true;
 
 		writeln( person.firstname )
 	end.
 `
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1540,10 +1390,7 @@ func TestParseFieldDesignator(t *testing.T) {
 		return
 	}
 
-	val := &ast.Identifier{
-		Token: token.Token{Kind: token.Identifier, Text: "1"},
-		Name:  "1",
-	}
+	val := &ast.Identifier{TokenKind: token.Identifier, Name: "1"}
 	if !testAssignmentStatement(t, program.Block.Stats[0], "person.firstname", val) {
 		return
 	}
@@ -1570,7 +1417,8 @@ func TestParserArrayType(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1599,7 +1447,8 @@ func TestParseLabelDeclaration(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1641,7 +1490,8 @@ func TestParseStatementsWithLabels(t *testing.T) {
 	`
 
 	lex := NewLexer(input)
-	pars, err := NewParser(lex)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
 	}
