@@ -3,32 +3,43 @@ package serializer
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
+
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 	"github.com/anthonyabeo/pasc/pkg/types/structured"
 	"google.golang.org/protobuf/proto"
-	"os"
-	"strconv"
 )
 
 // ProtoSerializer transforms the Go AST into a form that can be
 // serialized into protocol buffers. It then calls the `Serialize`
 // method to perform the actual serialization.
 type ProtoSerializer struct {
-	Ast       *ast.Program
-	Out       string
-	Constants map[string]string
+	ast       *ast.Program
+	out       string
+	symTable  semantics.SymbolTable
+	constants map[string]string
+}
+
+func NewProtoSerialize(ast *ast.Program, out string, symTable semantics.SymbolTable) *ProtoSerializer {
+	return &ProtoSerializer{
+		ast:      ast,
+		out:      out,
+		symTable: symTable,
+	}
 }
 
 func (s *ProtoSerializer) translate() *Program {
-	program := &Program{Kind: TokenKind_PROGRAM, Name: s.Ast.Name.Name}
-	for _, param := range s.Ast.ParamList {
+	program := &Program{Kind: TokenKind_PROGRAM, Name: s.ast.Name.Name}
+	for _, param := range s.ast.ParamList {
 		program.Params = append(program.Params, param.Name)
 	}
 
-	program.Block = s.translateBlock(s.Ast.Block)
+	program.Block = s.translateBlock(s.ast.Block)
 
 	return program
 }
@@ -51,7 +62,7 @@ func (s *ProtoSerializer) translateBlock(blk *ast.Block) *Block {
 
 			block.Consts = append(block.Consts, c)
 
-			s.Constants[constDef.Name.Name] = constDef.Value.String()
+			s.constants[constDef.Name.Name] = constDef.Value.String()
 		}
 	}
 
@@ -73,6 +84,7 @@ func (s *ProtoSerializer) translateBlock(blk *ast.Block) *Block {
 					Name: s.translateExpr(name),
 					Type: s.translateType(decl.Type),
 				}
+
 				block.VarDecl = append(block.VarDecl, v)
 			}
 		}
@@ -121,7 +133,7 @@ func (s *ProtoSerializer) translateBlock(blk *ast.Block) *Block {
 }
 
 func (s *ProtoSerializer) translateFuncHeading(fh *ast.FuncHeading) *FuncHeading {
-	head := &FuncHeading{Name: fh.Name.Name, ReturnType: s.translateType(fh.ReturnType)}
+	head := &FuncHeading{Name: fh.FName.Name, ReturnType: s.translateType(fh.ReturnType)}
 	for _, param := range fh.Parameters {
 		head.Params = append(head.Params, s.translateFormalParam(param))
 	}
@@ -418,7 +430,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 		for _, caseElem := range stmt.List {
 			var constants []*Expression
 			for _, constant := range caseElem.ConstList {
-				val := s.Constants[constant.String()]
+				val := s.constants[constant.String()]
 
 				v, err := strconv.Atoi(val)
 				if err != nil {
@@ -537,9 +549,9 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Expr: &Expression_Ureal{
 				Ureal: &URealLiteral{Value: v}},
 		}
-	case *ast.BooleanExpression:
+	case *ast.BoolLiteral:
 		v := false
-		if expr.Value() == "true" {
+		if expr.Value == "true" {
 			v = true
 		}
 
@@ -600,14 +612,14 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			args = append(args, s.translateExpr(exp))
 		}
 
-		typ := expr.Scope.Resolve(expr.Name.Name).GetType()
+		typ := s.symTable.RetrieveSymbol(expr.Name.Name).Type().(*ast.FuncHeading)
 		e = &Expression{
 			Kind: Expression_FCall,
 			Expr: &Expression_Fc{
 				Fc: &FuncCall{
 					Name:       s.translateExpr(expr.Name),
 					Args:       args,
-					ReturnType: s.translateType(typ),
+					ReturnType: s.translateType(typ.ReturnType),
 				},
 			},
 		}
@@ -634,42 +646,47 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 	case *base.Integer:
 		t = &Type{
 			Tk:   Type_INTEGER,
-			Type: &Type_Int{Int: &Type_Integer{Name: typ.GetName()}},
+			Type: &Type_Int{Int: &Type_Integer{Name: typ.Name()}},
 		}
 	case *base.Real:
 		t = &Type{
 			Tk: Type_REAL,
 			Type: &Type_Real_{Real: &Type_Real{
-				Name: typ.GetName(),
+				Name: typ.Name(),
 			}},
 		}
 	case *base.Boolean:
 		t = &Type{
 			Tk:   Type_BOOLEAN,
-			Type: &Type_Bool{Bool: &Type_Boolean{Name: typ.GetName()}},
+			Type: &Type_Bool{Bool: &Type_Boolean{Name: typ.Name()}},
 		}
 	case *base.Char:
 		t = &Type{
 			Tk:   Type_CHAR,
-			Type: &Type_Char_{Char: &Type_Char{Name: typ.GetName()}},
+			Type: &Type_Char_{Char: &Type_Char{Name: typ.Name()}},
 		}
 	case *base.String:
 		t = &Type{
 			Tk:   Type_STR,
-			Type: &Type_Str{Str: &Type_String{Name: typ.Name}},
+			Type: &Type_Str{Str: &Type_String{Name: typ.Name()}},
 		}
-
 	case *structured.Enumerated:
 		var elems []string
 		for _, elem := range typ.List {
+			sym := s.symTable.RetrieveSymbol(elem.Name)
+			if sym != nil && sym.Kind() == semantics.CONST {
+				cSym := sym.(*semantics.Const)
+				s.constants[elem.Name] = cSym.Value().String()
+			}
+
 			elems = append(elems, elem.Name)
 		}
 
 		t = &Type{
 			Tk:   Type_ENUM,
-			Type: &Type_En{En: &Type_Enum{Name: typ.GetName(), Elems: elems}},
+			Type: &Type_En{En: &Type_Enum{Name: typ.Name(), Elems: elems}},
 		}
-	case *structured.Array:
+	case *types.Array:
 		var indices []*Type
 		for _, idxType := range typ.Indices {
 			indices = append(indices, s.translateType(idxType))
@@ -678,7 +695,7 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 		t = &Type{
 			Tk: Type_ARRAY,
 			Type: &Type_Arr{Arr: &Type_Array{
-				Name:     typ.GetName(),
+				Name:     typ.Name(),
 				Indices:  indices,
 				CompType: s.translateType(typ.ComponentType),
 			}},
@@ -704,10 +721,9 @@ func (s *ProtoSerializer) translateType(typ types.Type) *Type {
 		t = &Type{
 			Tk: Type_SUB_RANGE,
 			Type: &Type_SubR{SubR: &Type_SubRange{
-				Name:     typ.GetName(),
-				Start:    int32(start),
-				End:      int32(end),
-				HostType: s.translateType(typ.HostType),
+				Name:  typ.Name(),
+				Start: int32(start),
+				End:   int32(end),
 			}},
 		}
 	case *structured.Record:
@@ -775,7 +791,7 @@ func (s *ProtoSerializer) Serialize() error {
 		}
 	}
 
-	fileName := fmt.Sprintf("%s/%s.bin", outPath, s.Out)
+	fileName := fmt.Sprintf("%s/%s.bin", outPath, s.out)
 	if err := os.WriteFile(fileName, out, 0644); err != nil {
 		return fmt.Errorf("Write File Error: %s ", err.Error())
 	}
