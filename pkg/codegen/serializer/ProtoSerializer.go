@@ -25,11 +25,12 @@ type ProtoSerializer struct {
 	constants map[string]string
 }
 
-func NewProtoSerialize(ast *ast.Program, out string, symTable semantics.SymbolTable) *ProtoSerializer {
+func NewProtoSerializer(ast *ast.Program, out string, symTable semantics.SymbolTable) *ProtoSerializer {
 	return &ProtoSerializer{
-		ast:      ast,
-		out:      out,
-		symTable: symTable,
+		ast:       ast,
+		out:       out,
+		symTable:  symTable,
+		constants: make(map[string]string),
 	}
 }
 
