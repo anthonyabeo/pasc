@@ -123,9 +123,9 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
 
     return builder->CreateMul(L, R, "mult");
   case Operator::And:
-    return builder->CreateAnd(L, R, "and");
+    // TODO implement logical AND
   case Operator::Or:
-    return builder->CreateOr(L, R, "or");
+    // TODO implement logical OR
   case Operator::Div:
     if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
       auto FL = builder->CreateSIToFP(L, llvm::Type::getDoubleTy(*ctx));
