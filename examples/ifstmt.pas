@@ -14,9 +14,9 @@ begin
 
     b := n > m;
     if (not b) then
-        val := m and n
+        val := sum * n
     else
-        val := m or n;
+        val := sum + m;
 
     writeln('Val: %d', val);
     writeln('Sum: %d', sum)
