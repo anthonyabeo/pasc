@@ -59,5 +59,17 @@ func (l *LValueVisitor) VisitIndexedVariable(iv *ast.IndexedVariable) {
 }
 
 func (l *LValueVisitor) VisitFieldDesignator(f *ast.FieldDesignator) {
+	sym := l.symbolTable.RetrieveSymbol(f.RecordVar.String())
+	if sym == nil {
+		panic(fmt.Sprintf("undefined name %s", f.RecordVar.String()))
+	} else if sym.Type().Name() != "record" {
+		panic(fmt.Sprintf("%s is not a record type", sym.Type().Name()))
+	} else {
+		if !l.symbolTable.DeclaredLocally(f.FieldSpec.String()) {
+			panic(fmt.Sprintf(""))
+		}
 
+		f.FieldSpec.Accept(l)
+		f.EType = f.FieldSpec.Type()
+	}
 }
