@@ -2,7 +2,6 @@ package structured
 
 import (
 	"github.com/anthonyabeo/pasc/pkg/ast"
-	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -11,7 +10,6 @@ import (
 type Record struct {
 	TokenKind token.Kind
 	FieldList []Field
-	Scope     semantics.SymbolTable
 }
 
 // Name ...
