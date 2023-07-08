@@ -89,7 +89,7 @@ struct IndexedVarExpr : public Expr {
 
 struct FieldDesigExpr : public Expr {
   std::string recordName;
-  std::unique_ptr<Expr> fieldSpec;
+  uint64_t fieldSpec;
 
   explicit FieldDesigExpr(const Pasc::FieldDesignator&);
   llvm::Value *codegen(IRVisitor&) override;
@@ -192,7 +192,7 @@ struct IndexedVariable : public Expr {
 ///////////////////////////
 struct FieldDesignator : public Expr {
   std::string recordName;
-  std::unique_ptr<Expr> fieldSpec;
+  uint64_t fieldSpec;
 
   explicit FieldDesignator(const Pasc::FieldDesignator&);
   llvm::Value *codegen(IRVisitor&) override;

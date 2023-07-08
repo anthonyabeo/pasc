@@ -147,7 +147,7 @@ std::string IndexedVariable::get_name() {
 ///////////////////////////
 FieldDesignator::FieldDesignator(const Pasc::FieldDesignator &fd) {
   recordName = fd.recordvar();
-  fieldSpec = deserializeExpr(fd.fieldspec());
+  fieldSpec = fd.fieldspec();
 }
 
 llvm::Value *FieldDesignator::codegen(IRVisitor &v) {
@@ -196,7 +196,7 @@ std::string IndexedVarExpr::get_name() {
 ///////////////////////////
 FieldDesigExpr::FieldDesigExpr(const Pasc::FieldDesignator &fde) {
     recordName = fde.recordvar();
-    fieldSpec = deserializeExpr(fde.fieldspec());
+    fieldSpec = fde.fieldspec();
 }
 
 llvm::Value *FieldDesigExpr::codegen(IRVisitor &v) {
