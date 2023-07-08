@@ -52,7 +52,7 @@ message IndexedVariable {
 
 message FieldDesignator {
   string RecordVar = 1;
-  Expression FieldSpec = 2;
+  uint64 FieldSpec = 2;
 }
 
 message WriteParameter {

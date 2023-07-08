@@ -518,11 +518,13 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			}},
 		}
 	case *ast.FieldDesignator:
+		field := s.symTable.RetrieveSymbol(expr.FieldSpec.String()).(*semantics.Field)
+
 		e = &Expression{
 			Kind: Expression_Field,
 			Expr: &Expression_Fld{Fld: &FieldDesignator{
 				RecordVar: expr.RecordVar.String(),
-				FieldSpec: s.translateExpr(expr.FieldSpec),
+				FieldSpec: field.Offset,
 			}},
 		}
 	case *ast.UIntegerLiteral:
