@@ -2,14 +2,14 @@ package parser
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 	"reflect"
 	"strconv"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"github.com/anthonyabeo/pasc/pkg/token"
-	"github.com/anthonyabeo/pasc/pkg/types"
-	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // Parser performs syntactic analysis to validate the correctness of the input string.
@@ -458,7 +458,7 @@ func (p *Parser) fileType() (*structured.File, error) {
 func (p *Parser) recordType() (*structured.Record, error) {
 	var err error
 
-	record := &structured.Record{TokenKind: p.lAheadKind(1), Scope: semantics.NewWonkySymbolTable()}
+	record := &structured.Record{TokenKind: p.lAheadKind(1)}
 
 	if err = p.match(token.Record); err != nil {
 		return nil, err
@@ -479,12 +479,13 @@ func (p *Parser) recordType() (*structured.Record, error) {
 		case *structured.FixedPart:
 			for _, rs := range f.Entry {
 				for _, entry := range rs.List {
-					if record.Scope.DeclaredLocally(entry.Name) {
+					if p.symTable.DeclaredLocally(entry.Name) {
 						panic(fmt.Sprintf("cannot redeclare field name '%s'", entry.Name))
 					}
 
-					record.Scope.EnterSymbol(
-						entry.Name, semantics.NewField(entry.Name, semantics.FIELD, rs.Type, strconv.Itoa(offset)))
+					p.symTable.EnterSymbol(
+						entry.Name, semantics.NewField(entry.Name, semantics.FIELD, rs.Type, record, uint64(offset)))
+					offset++
 				}
 			}
 		case *structured.VariantPart:
@@ -527,7 +528,6 @@ func (p *Parser) fieldList() ([]structured.Field, error) {
 				if err != nil {
 					return nil, err
 				}
-				//fieldList = append(fieldList, varPart)
 			} else {
 				recordSec, err := p.recordSection()
 				if err != nil {
@@ -2313,9 +2313,9 @@ func (p *Parser) identifiedVariable() (*ast.IdentifiedVariable, error) {
 // field-designator = record-variable '.' field-specifier | field-designator-identifier .
 func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, error) {
 	var (
-		ok     bool
-		err    error
-		record *structured.Record
+		ok  bool
+		err error
+		//record *structured.Record
 	)
 
 	fieldDes := &ast.FieldDesignator{RecordVar: recVar}
@@ -2323,20 +2323,27 @@ func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, e
 		return nil, err
 	}
 
-	record, ok = p.symTable.RetrieveSymbol(recVar.String()).Type().(*structured.Record)
+	record, ok := p.symTable.RetrieveSymbol(recVar.String()).Type().(*structured.Record)
 	if !ok {
 		record, ok = recVar.(*ast.IdentifiedVariable).UnderType.(*structured.Record)
 		if !ok {
-			return nil, fmt.Errorf("expected variable to be record type or pointer to record type")
+			return nil, fmt.Errorf(
+				"expected variable to be record type or pointer to record type. got %s instead",
+				record)
 		}
 	}
 
-	field := record.Scope.RetrieveSymbol(p.lAheadToken(1).Text)
+	field := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if field == nil {
 		return nil, fmt.Errorf("record type '%v' has no field named '%v'", recVar.String(), p.lAheadToken(1).Text)
 	} else if field.Kind() != semantics.FIELD {
 		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recVar)
 	} else {
+		f := field.(*semantics.Field)
+		if f.Rec.Name() != record.Name() {
+			return nil, fmt.Errorf("%s has no field %s", record.Name(), f.Name())
+		}
+
 		fieldDes.FieldSpec = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
