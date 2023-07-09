@@ -28,7 +28,7 @@ llvm::AllocaInst* LLVMSymbolTable::Resolve(std::string n) {
   }
 
   if (!parent) {
-    return parent->Resolve(name);
+    return parent->Resolve(n);
   }
 
   return nullptr;
