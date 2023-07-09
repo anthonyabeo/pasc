@@ -499,10 +499,28 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 
 	switch expr := expr.(type) {
 	case *ast.Identifier:
-		e = &Expression{
-			Kind: Expression_Var,
-			Expr: &Expression_Variable{
-				Variable: &Variable{Name: expr.Name}},
+		sym := s.symTable.RetrieveSymbol(expr.Name)
+		if sym != nil && sym.Kind() == semantics.CONST {
+			val := sym.(*semantics.Const).Value().String()
+			v, err := strconv.Atoi(val)
+			if err != nil {
+				panic(err)
+			}
+
+			e = &Expression{
+				Kind: Expression_UInt,
+				Expr: &Expression_Uint{
+					Uint: &UIntLiteral{
+						Value: uint32(v),
+					},
+				},
+			}
+		} else {
+			e = &Expression{
+				Kind: Expression_Var,
+				Expr: &Expression_Variable{
+					Variable: &Variable{Name: expr.Name}},
+			}
 		}
 	case *ast.IndexedVariable:
 		var indices []*Expression
