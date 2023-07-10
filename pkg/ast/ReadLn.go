@@ -13,8 +13,8 @@ type ReadLn struct {
 
 func (r *ReadLn) stmt() {}
 
-func (r *ReadLn) Accept(v Visitor) {
-	v.VisitReadLn(r)
+func (r *ReadLn) Accept(vst Visitor) error {
+	return vst.VisitReadLn(r)
 }
 
 func (r *ReadLn) String() string {

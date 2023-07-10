@@ -20,8 +20,8 @@ func (u *UnaryExpression) Type() types.Type {
 	return u.EType
 }
 
-func (u *UnaryExpression) Accept(v Visitor) {
-	v.VisitUnaryExpr(u)
+func (u *UnaryExpression) Accept(vst Visitor) error {
+	return vst.VisitUnaryExpr(u)
 }
 
 func (u *UnaryExpression) String() string {

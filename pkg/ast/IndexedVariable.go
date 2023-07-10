@@ -14,8 +14,8 @@ type IndexedVariable struct {
 	EType     types.Type
 }
 
-func (iv *IndexedVariable) Accept(v Visitor) {
-	v.VisitIndexedVariable(iv)
+func (iv *IndexedVariable) Accept(vst Visitor) error {
+	return vst.VisitIndexedVariable(iv)
 }
 func (iv *IndexedVariable) Type() types.Type {
 	return iv.EType

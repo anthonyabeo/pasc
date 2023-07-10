@@ -11,8 +11,8 @@ type IdentifiedVariable struct {
 	EType       types.Type
 }
 
-func (i *IdentifiedVariable) Accept(v Visitor) {
-	v.VisitIdentifiedVariable(i)
+func (i *IdentifiedVariable) Accept(vst Visitor) error {
+	return vst.VisitIdentifiedVariable(i)
 }
 
 func (i *IdentifiedVariable) Type() types.Type {

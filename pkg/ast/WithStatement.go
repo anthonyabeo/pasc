@@ -15,8 +15,8 @@ type WithStatement struct {
 	Label         string
 }
 
-func (w *WithStatement) Accept(v Visitor) {
-	v.VisitWithStatement(w)
+func (w *WithStatement) Accept(vst Visitor) error {
+	return vst.VisitWithStatement(w)
 }
 
 // StatNode ...

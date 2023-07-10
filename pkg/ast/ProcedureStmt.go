@@ -13,8 +13,8 @@ type ProcedureStmt struct {
 
 func (ps *ProcedureStmt) stmt() {}
 
-func (ps *ProcedureStmt) Accept(v Visitor) {
-	v.VisitProcedureStmt(ps)
+func (ps *ProcedureStmt) Accept(vst Visitor) error {
+	return vst.VisitProcedureStmt(ps)
 }
 
 func (ps *ProcedureStmt) String() string {

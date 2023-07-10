@@ -22,8 +22,8 @@ type ValueParam struct {
 
 func (v *ValueParam) formalParam() {}
 
-func (v *ValueParam) Accept(vst Visitor) {
-	vst.VisitValueParam(v)
+func (v *ValueParam) Accept(vst Visitor) error {
+	return vst.VisitValueParam(v)
 }
 
 func (v *ValueParam) String() string {
@@ -44,8 +44,8 @@ type VariableParam struct {
 
 func (v *VariableParam) formalParam() {}
 
-func (v *VariableParam) Accept(vst Visitor) {
-	vst.VisitVariableParam(v)
+func (v *VariableParam) Accept(vst Visitor) error {
+	return vst.VisitVariableParam(v)
 }
 
 func (v *VariableParam) String() string {

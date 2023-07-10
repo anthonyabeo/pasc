@@ -10,8 +10,8 @@ type CompoundStatement struct {
 	Label      string
 }
 
-func (cs *CompoundStatement) Accept(v Visitor) {
-	v.VisitCompoundStatement(cs)
+func (cs *CompoundStatement) Accept(vst Visitor) error {
+	return vst.VisitCompoundStatement(cs)
 }
 
 // StatNode ...

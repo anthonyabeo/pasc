@@ -13,8 +13,8 @@ type WhileStatement struct {
 	Label     string
 }
 
-func (w *WhileStatement) Accept(v Visitor) {
-	v.VisitWhileStatement(w)
+func (w *WhileStatement) Accept(vst Visitor) error {
+	return vst.VisitWhileStatement(w)
 }
 
 // StatNode ...

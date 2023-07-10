@@ -8,7 +8,7 @@ import (
 // Node defines a generic node in the AST
 type Node interface {
 	fmt.Stringer
-	Accept(Visitor)
+	Accept(Visitor) error
 }
 
 // Statement models a generic node for statement types

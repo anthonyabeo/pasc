@@ -13,8 +13,8 @@ type Writeln struct {
 
 func (w *Writeln) stmt() {}
 
-func (w *Writeln) Accept(v Visitor) {
-	v.VisitWriteln(w)
+func (w *Writeln) Accept(vst Visitor) error {
+	return vst.VisitWriteln(w)
 }
 
 func (w *Writeln) String() string {

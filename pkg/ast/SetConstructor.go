@@ -17,8 +17,8 @@ type SetConstructor struct {
 
 func (s *SetConstructor) expr() {}
 
-func (s *SetConstructor) Accept(v Visitor) {
-	v.VisitSetConstructor(s)
+func (s *SetConstructor) Accept(vst Visitor) error {
+	return vst.VisitSetConstructor(s)
 }
 
 func (s *SetConstructor) Type() types.Type {

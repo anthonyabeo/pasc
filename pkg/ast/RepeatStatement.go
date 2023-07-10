@@ -15,8 +15,8 @@ type RepeatStatement struct {
 	Label     string
 }
 
-func (r *RepeatStatement) Accept(v Visitor) {
-	v.VisitRepeatStatement(r)
+func (r *RepeatStatement) Accept(vst Visitor) error {
+	return vst.VisitRepeatStatement(r)
 }
 
 // StatNode ...

@@ -14,8 +14,8 @@ type StrLiteral struct {
 
 func (c *StrLiteral) expr() {}
 
-func (c *StrLiteral) Accept(v Visitor) {
-	v.VisitStrLiteral(c)
+func (c *StrLiteral) Accept(vst Visitor) error {
+	return vst.VisitStrLiteral(c)
 }
 
 func (c *StrLiteral) Type() types.Type {

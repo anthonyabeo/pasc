@@ -12,8 +12,8 @@ type Range struct {
 	EType      types.Type
 }
 
-func (r *Range) Accept(v Visitor) {
-	v.VisitRange(r)
+func (r *Range) Accept(vst Visitor) error {
+	return vst.VisitRange(r)
 }
 
 func (r *Range) Type() types.Type {

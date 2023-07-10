@@ -17,8 +17,8 @@ func (b *BoolLiteral) String() string {
 }
 
 // Accept ...
-func (b *BoolLiteral) Accept(v Visitor) {
-	v.VisitBoolLiteral(b)
+func (b *BoolLiteral) Accept(vst Visitor) error {
+	return vst.VisitBoolLiteral(b)
 }
 
 // Type ...

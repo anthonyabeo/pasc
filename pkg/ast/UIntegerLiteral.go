@@ -18,8 +18,8 @@ func (u *UIntegerLiteral) Type() types.Type {
 	return u.EType
 }
 
-func (u *UIntegerLiteral) Accept(v Visitor) {
-	v.VisitUIntLiteral(u)
+func (u *UIntegerLiteral) Accept(vst Visitor) error {
+	return vst.VisitUIntLiteral(u)
 }
 
 func (u *UIntegerLiteral) String() string {

@@ -14,8 +14,8 @@ type ForStatement struct {
 	Label                 string
 }
 
-func (f *ForStatement) Accept(v Visitor) {
-	v.VisitForStatement(f)
+func (f *ForStatement) Accept(vst Visitor) error {
+	return vst.VisitForStatement(f)
 }
 
 // StatNode ...

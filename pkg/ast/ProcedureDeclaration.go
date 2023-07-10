@@ -15,9 +15,10 @@ type ProcedureDeclaration struct {
 	Label     string
 }
 
-func (p *ProcedureDeclaration) Accept(v Visitor) {
-	v.VisitProcedureDecl(p)
+func (p *ProcedureDeclaration) Accept(vst Visitor) error {
+	return vst.VisitProcedureDecl(p)
 }
+
 func (p *ProcedureDeclaration) stmt() {}
 
 func (p *ProcedureDeclaration) String() string {
@@ -37,8 +38,8 @@ type ProcedureHeading struct {
 
 func (p *ProcedureHeading) formalParam() {}
 
-func (p *ProcedureHeading) Accept(vst Visitor) {
-	vst.VisitProcedureHeading(p)
+func (p *ProcedureHeading) Accept(vst Visitor) error {
+	return vst.VisitProcedureHeading(p)
 }
 
 func (p *ProcedureHeading) String() string {

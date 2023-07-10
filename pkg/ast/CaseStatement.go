@@ -17,8 +17,8 @@ type CaseStatement struct {
 
 func (c *CaseStatement) stmt() {}
 
-func (c *CaseStatement) Accept(v Visitor) {
-	v.VisitCaseStatement(c)
+func (c *CaseStatement) Accept(vst Visitor) error {
+	return vst.VisitCaseStatement(c)
 }
 
 func (c *CaseStatement) String() string {

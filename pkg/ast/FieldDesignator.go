@@ -13,8 +13,8 @@ type FieldDesignator struct {
 	EType     types.Type
 }
 
-func (f *FieldDesignator) Accept(v Visitor) {
-	v.VisitFieldDesignator(f)
+func (f *FieldDesignator) Accept(vst Visitor) error {
+	return vst.VisitFieldDesignator(f)
 }
 
 func (f *FieldDesignator) Type() types.Type {

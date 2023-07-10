@@ -14,8 +14,8 @@ type AssignStatement struct {
 }
 
 // Accept ...
-func (as *AssignStatement) Accept(v Visitor) {
-	v.VisitAssignStmt(as)
+func (as *AssignStatement) Accept(vst Visitor) error {
+	return vst.VisitAssignStmt(as)
 }
 
 func (as *AssignStatement) stmt() {}

@@ -13,8 +13,8 @@ type Read struct {
 
 func (r *Read) stmt() {}
 
-func (r *Read) Accept(v Visitor) {
-	v.VisitRead(r)
+func (r *Read) Accept(vst Visitor) error {
+	return vst.VisitRead(r)
 }
 
 func (r *Read) String() string {

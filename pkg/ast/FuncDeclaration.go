@@ -18,8 +18,8 @@ type FuncDeclaration struct {
 
 func (f *FuncDeclaration) stmt() {}
 
-func (f *FuncDeclaration) Accept(v Visitor) {
-	v.VisitFuncDeclaration(f)
+func (f *FuncDeclaration) Accept(vst Visitor) error {
+	return vst.VisitFuncDeclaration(f)
 }
 
 func (f *FuncDeclaration) String() string {
@@ -45,8 +45,8 @@ func (f *FuncHeading) Name() string {
 
 func (f *FuncHeading) formalParam() {}
 
-func (f *FuncHeading) Accept(vst Visitor) {
-	vst.VisitFuncHeading(f)
+func (f *FuncHeading) Accept(vst Visitor) error {
+	return vst.VisitFuncHeading(f)
 }
 
 func (f *FuncHeading) String() string {

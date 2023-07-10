@@ -18,8 +18,8 @@ func (ur *URealLiteral) String() string {
 	return ur.Value
 }
 
-func (ur *URealLiteral) Accept(v Visitor) {
-	v.VisitURealLiteral(ur)
+func (ur *URealLiteral) Accept(vst Visitor) error {
+	return vst.VisitURealLiteral(ur)
 }
 
 func (ur *URealLiteral) Type() types.Type {

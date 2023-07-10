@@ -12,8 +12,8 @@ type WriteParameter struct {
 
 func (w *WriteParameter) expr() {}
 
-func (w *WriteParameter) Accept(v Visitor) {
-	v.VisitWriteParameter(w)
+func (w *WriteParameter) Accept(vst Visitor) error {
+	return vst.VisitWriteParameter(w)
 }
 
 func (w *WriteParameter) Type() types.Type {

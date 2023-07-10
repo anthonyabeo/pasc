@@ -14,8 +14,8 @@ type Identifier struct {
 
 func (id *Identifier) expr() {}
 
-func (id *Identifier) Accept(v Visitor) {
-	v.VisitIdentifier(id)
+func (id *Identifier) Accept(vst Visitor) error {
+	return vst.VisitIdentifier(id)
 }
 
 func (id *Identifier) Type() types.Type {

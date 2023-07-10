@@ -12,8 +12,8 @@ type GotoStatement struct {
 	Lbl       string
 }
 
-func (g *GotoStatement) Accept(v Visitor) {
-	v.VisitGotoStatement(g)
+func (g *GotoStatement) Accept(vst Visitor) error {
+	return vst.VisitGotoStatement(g)
 }
 
 // StatNode ...

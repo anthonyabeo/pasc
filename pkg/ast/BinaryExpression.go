@@ -20,8 +20,8 @@ func (b *BinaryExpression) Type() types.Type {
 	return b.EType
 }
 
-func (b *BinaryExpression) Accept(v Visitor) {
-	v.VisitBinaryExpr(b)
+func (b *BinaryExpression) Accept(vst Visitor) error {
+	return vst.VisitBinaryExpr(b)
 }
 
 func (b *BinaryExpression) String() string {

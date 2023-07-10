@@ -11,11 +11,10 @@ type ReturnStatement struct {
 	Label     string
 }
 
-func (r *ReturnStatement) Accept(v Visitor) {
-	v.VisitReturnStatement(r)
+func (r *ReturnStatement) Accept(vst Visitor) error {
+	return vst.VisitReturnStatement(r)
 }
 
-// StatNode ...
 func (r *ReturnStatement) stmt() {}
 
 func (r *ReturnStatement) String() string {

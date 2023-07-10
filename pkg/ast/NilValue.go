@@ -11,8 +11,8 @@ type NilValue struct {
 	EType     types.Type
 }
 
-func (n *NilValue) Accept(v Visitor) {
-	v.VisitNil(n)
+func (n *NilValue) Accept(vst Visitor) error {
+	return vst.VisitNil(n)
 }
 
 func (n *NilValue) Type() types.Type {

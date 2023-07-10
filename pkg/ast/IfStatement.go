@@ -14,8 +14,8 @@ type IfStatement struct {
 	Label     string
 }
 
-func (f *IfStatement) Accept(v Visitor) {
-	v.VisitIfStatement(f)
+func (f *IfStatement) Accept(vst Visitor) error {
+	return vst.VisitIfStatement(f)
 }
 
 // StatNode ...

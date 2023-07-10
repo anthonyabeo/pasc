@@ -17,8 +17,8 @@ type FuncDesignator struct {
 func (f *FuncDesignator) Type() types.Type {
 	return f.EType
 }
-func (f *FuncDesignator) Accept(v Visitor) {
-	v.VisitFuncDesignator(f)
+func (f *FuncDesignator) Accept(vst Visitor) error {
+	return vst.VisitFuncDesignator(f)
 }
 
 func (f *FuncDesignator) expr() {}
