@@ -38,7 +38,9 @@ func (l *LValueVisitor) isLValue(sym Symbol) bool {
 // VisitIndexedVariable ...
 func (l *LValueVisitor) VisitIndexedVariable(iv *ast.IndexedVariable) error {
 	for _, idx := range iv.IndexExpr {
-		idx.Accept(l)
+		if err := idx.Accept(l); err != nil {
+			return err
+		}
 
 		if _, ok := idx.Type().(types.Ordinal); !ok {
 			return fmt.Errorf("'%s' (of type '%s') cannot be used as index type in array %s", idx, idx.Type(), iv)
@@ -76,7 +78,10 @@ func (l *LValueVisitor) VisitFieldDesignator(f *ast.FieldDesignator) error {
 			return fmt.Errorf("symbol %s not declared", f.FieldSpec.String())
 		}
 
-		f.FieldSpec.Accept(l)
+		if err := f.FieldSpec.Accept(l); err != nil {
+			return err
+		}
+
 		f.EType = f.FieldSpec.Type()
 	}
 

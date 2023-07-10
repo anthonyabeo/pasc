@@ -290,18 +290,18 @@ func (s *Visitor) VisitForStatement(f *ast.ForStatement) error {
 	}
 
 	if _, ok := f.CtrlID.EType.(types.Ordinal); !ok {
-		return fmt.Errorf("loop control variable %s must be of type, integer, char, Boolean, enum or subrange type,"+
+		return fmt.Errorf("loop control variable '%s' must be of type, integer, char, Boolean, enum or subrange type,"+
 			"currently it is a '%s' type", f.CtrlID, f.CtrlID.EType)
 	}
 
 	// check that ctrlID is compatible to initValue and finalValue
 	if !AreCompatibleTypes(f.InitValue.Type(), f.CtrlID.EType) {
-		return fmt.Errorf("control variable'%s' (of type '%s'), is not compatible with initial value of type '%s'",
+		return fmt.Errorf("control variable '%s' (of type '%s'), is not compatible with initial value of type '%s'",
 			f.CtrlID, f.CtrlID.EType, f.InitValue.Type())
 	}
 
 	if !AreCompatibleTypes(f.FinalValue.Type(), f.CtrlID.EType) {
-		return fmt.Errorf("control variable'%s' (of type '%s'), is not compatible with final value of type '%s'",
+		return fmt.Errorf("control variable '%s' (of type '%s'), is not compatible with final value of type '%s'",
 			f.CtrlID, f.CtrlID.EType, f.FinalValue.Type())
 	}
 
@@ -391,16 +391,16 @@ func (s *Visitor) VisitWhileStatement(whl *ast.WhileStatement) error {
 	return nil
 }
 
-func (s *Visitor) VisitWithStatement(w *ast.WithStatement) error {
+func (s *Visitor) VisitWithStatement(with *ast.WithStatement) error {
 	var err error
 
-	for _, r := range w.RecordVarList {
+	for _, r := range with.RecordVarList {
 		if err = r.Accept(s); err != nil {
 			return err
 		}
 	}
 
-	if err = w.Body.Accept(s); err != nil {
+	if err = with.Body.Accept(s); err != nil {
 		return err
 	}
 
@@ -427,8 +427,8 @@ func (s *Visitor) VisitRepeatStatement(rpt *ast.RepeatStatement) error {
 	return nil
 }
 
-func (s *Visitor) VisitReturnStatement(r *ast.ReturnStatement) error {
-	if err := r.Expr.Accept(s); err != nil {
+func (s *Visitor) VisitReturnStatement(ret *ast.ReturnStatement) error {
+	if err := ret.Expr.Accept(s); err != nil {
 		return err
 	}
 
