@@ -19,11 +19,13 @@ func NewSemaVisitor(program *ast.Program, symTable *WonkySymbolTable) *Visitor {
 	return &Visitor{program: program, symbolTable: symTable}
 }
 
-func (s *Visitor) VisitProgram() {
-	s.VisitBlock(s.program.Block)
+func (s *Visitor) VisitProgram() error {
+	return s.VisitBlock(s.program.Block)
 }
 
-func (s *Visitor) VisitBlock(blk *ast.Block) {
+func (s *Visitor) VisitBlock(blk *ast.Block) error {
+	var err error
+
 	if blk.VarDeclaration != nil {
 		for _, varDecl := range blk.VarDeclaration.Decls {
 			for _, id := range varDecl.Names {
@@ -44,28 +46,36 @@ func (s *Visitor) VisitBlock(blk *ast.Block) {
 	}
 
 	for _, call := range blk.Callables {
-		call.Accept(s)
+		if err = call.Accept(s); err != nil {
+			return err
+		}
 	}
 
 	if blk.Stats != nil {
 		for _, stmt := range blk.Stats {
-			stmt.Accept(s)
+			if err = stmt.Accept(s); err != nil {
+				return err
+			}
 		}
 	}
+
+	return nil
 }
 
 // VisitIdentifier ...
-func (s *Visitor) VisitIdentifier(id *ast.Identifier) {
+func (s *Visitor) VisitIdentifier(id *ast.Identifier) error {
 	sym := s.symbolTable.RetrieveSymbol(id.Name)
 	if sym == nil {
-		panic("not such symbol declared")
+		return fmt.Errorf("%s is not declared", id.Name)
 	}
 
 	if !s.isRValue(sym) {
-		panic(fmt.Sprintf("%s is not an RValue", sym.Name()))
+		return fmt.Errorf("%s is not an RValue", sym.Name())
 	}
 
 	id.EType = sym.Type()
+
+	return nil
 }
 
 func (s *Visitor) isRValue(sym Symbol) bool {
@@ -76,12 +86,15 @@ func (s *Visitor) isRValue(sym Symbol) bool {
 }
 
 // VisitUIntLiteral ...
-func (s *Visitor) VisitUIntLiteral(i *ast.UIntegerLiteral) {
+func (s *Visitor) VisitUIntLiteral(i *ast.UIntegerLiteral) error {
 	i.EType = base.NewInteger()
+	return nil
 }
 
 // VisitAssignStmt ...
-func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) {
+func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) error {
+	var err error
+
 	v := &LValueVisitor{
 		Visitor: Visitor{
 			program:     s.program,
@@ -89,22 +102,64 @@ func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) {
 		},
 	}
 
-	a.Variable.Accept(v)
-	a.Value.Accept(s)
-	if !AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
-		panic(fmt.Sprintf("cannot assign '%s' (of type %s) to '%s' (of type %s)",
-			a.Value, a.Value.Type(), a.Variable, a.Variable.Type()))
+	if err = a.Variable.Accept(v); err != nil {
+		return err
 	}
+
+	if err = a.Value.Accept(s); err != nil {
+		return err
+	}
+
+	if !AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
+		return fmt.Errorf("cannot assign '%s' (of type %s) to '%s' (of type %s)",
+			a.Value, a.Value.Type(), a.Variable, a.Variable.Type())
+	}
+
+	return nil
 }
 
 // VisitIndexedVariable ...
-func (s *Visitor) VisitIndexedVariable(iv *ast.IndexedVariable) {
+func (s *Visitor) VisitIndexedVariable(iv *ast.IndexedVariable) error {
+	var err error
 
+	for _, idx := range iv.IndexExpr {
+		if err = idx.Accept(s); err != nil {
+			return err
+		}
+
+		if _, ok := idx.Type().(types.Ordinal); !ok {
+			return fmt.Errorf(
+				"'%s' (of type '%s') cannot be used as index type in array %s", idx, idx.Type(), iv)
+		}
+	}
+
+	array := s.symbolTable.RetrieveSymbol(iv.ArrayVar.String()).Type()
+	for i := 0; i < len(iv.IndexExpr); i++ {
+		arr := array.(*types.Array)
+		if arr == nil {
+			return fmt.Errorf("%s is undefined", iv.ArrayVar.String())
+		} else if arr.Name() != "array" {
+			return fmt.Errorf("cannot index into non-array type, %s", iv.ArrayVar)
+		} else {
+			array = arr.ComponentType
+		}
+	}
+
+	iv.EType = array
+
+	return nil
 }
 
-func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
-	b.Left.Accept(s)
-	b.Right.Accept(s)
+func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) error {
+	var err error
+
+	if err = b.Left.Accept(s); err != nil {
+		return err
+	}
+
+	if err = b.Right.Accept(s); err != nil {
+		return err
+	}
 
 	lhsType := b.Left.Type().Name()
 	rhsType := b.Right.Type().Name()
@@ -112,11 +167,11 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 	switch b.Operator.Kind {
 	case token.Plus, token.Minus, token.Star:
 		if lhsType != "integer" && lhsType != "real" && lhsType != "set" {
-			panic(fmt.Sprintf("%s must be integer, real or set type", b.Left))
+			return fmt.Errorf("%s must be integer, real or set type", b.Left)
 		}
 
 		if rhsType != "integer" && rhsType != "real" && rhsType != "set" {
-			panic(fmt.Sprintf("%s must be integer, real or set type", b.Right))
+			return fmt.Errorf("%s must be integer, real or set type", b.Right)
 		}
 
 		if lhsType == "set" && rhsType == "set" {
@@ -128,296 +183,433 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) {
 		}
 	case token.FwdSlash:
 		if lhsType != "integer" && lhsType != "real" {
-			panic(fmt.Sprintf("%s must be integer or real type", b.Left))
+			return fmt.Errorf("%s must be integer or real type", b.Left)
 		}
 
 		if rhsType != "integer" && rhsType != "real" {
-			panic(fmt.Sprintf("%s must be integer or real type", b.Right))
+			return fmt.Errorf("%s must be integer or real type", b.Right)
 		}
 
 		b.EType = base.NewReal()
 	case token.Div, token.Mod:
 		if lhsType != "integer" && rhsType != "integer" {
-			panic("both operands must be integer-type for 'mod' or 'div' expression")
+			return fmt.Errorf("both operands must be integer-type for 'mod' or 'div' expression. "+
+				"got %s and %s instead", lhsType, rhsType)
 		}
 
 		b.EType = b.Left.Type()
 	case token.Equal, token.LessThanGreaterThan:
 		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "pointer" && lhsType != "set" {
-			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
+			return fmt.Errorf("%s must be a simple-type, string-type, pointer-type or set", rhsType)
 		}
 
 		if !IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "pointer" && rhsType != "set" {
-			panic(fmt.Sprintf("%s must be a simple-type, string-type, pointer-type or set", rhsType))
+			return fmt.Errorf("%s must be a simple-type, string-type, pointer-type or set", rhsType)
 		}
 
 		b.EType = base.NewBoolean()
 	case token.LessThan, token.GreaterThan:
 		if !IsSimpleType(b.Left.Type()) && lhsType != "string" {
-			panic(fmt.Sprintf("%s must be a simple-type or string-type", lhsType))
+			return fmt.Errorf("%s must be a simple-type or string-type", lhsType)
 		}
 
 		if !IsSimpleType(b.Right.Type()) && rhsType != "string" {
-			panic(fmt.Sprintf("%s must be a simple-type or string-type", rhsType))
+			return fmt.Errorf("%s must be a simple-type or string-type", rhsType)
 		}
 
 		b.EType = base.NewBoolean()
 	case token.LessThanOrEqual, token.GreaterThanOrEqual:
 		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "set" {
-			panic(fmt.Sprintf("%s must be a simple-type, string or set", rhsType))
+			return fmt.Errorf("%s must be a simple-type, string or set", rhsType)
 		}
 
 		if !IsSimpleType(b.Right.Type()) && rhsType != "string" && rhsType != "set" {
-			panic(fmt.Sprintf("%s must be a simple-type, string or set", lhsType))
+			return fmt.Errorf("%s must be a simple-type, string or set", lhsType)
 		}
 
 		b.EType = base.NewBoolean()
 	case token.In:
 		if !IsOrdinalType(b.Left.Type()) {
-			panic(fmt.Sprintf("cannot use %s, a non-ordinal type in an 'in' expression", lhsType))
+			return fmt.Errorf("cannot use %s, a non-ordinal type in an 'in' expression", lhsType)
 		}
 
 		if rhsType != "set" {
-			panic(fmt.Sprintf("%s is not an appropriate RHS of an 'in' expression.", rhsType))
+			return fmt.Errorf("%s is not an appropriate RHS of an 'in' expression", rhsType)
 		}
 
 		b.EType = base.NewBoolean()
 	case token.And, token.Or:
 		if lhsType != "Boolean" && rhsType != "Boolean" {
-			panic(fmt.Sprintf("'%s' and '%s' must evaluate to 'Boolean' type", lhsType, rhsType))
+			return fmt.Errorf("'%s' and '%s' must evaluate to 'Boolean' type", lhsType, rhsType)
 		}
 
 		b.EType = base.NewBoolean()
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitUnaryExpr(u *ast.UnaryExpression) {
-	u.Operand.Accept(s)
+func (s *Visitor) VisitUnaryExpr(u *ast.UnaryExpression) error {
+	if err := u.Operand.Accept(s); err != nil {
+		return err
+	}
+
 	switch u.Operator.Kind {
 	case token.Minus, token.Plus:
 		u.EType = u.Operand.Type()
 	case token.Not:
 		u.EType = base.NewBoolean()
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitBoolLiteral(b *ast.BoolLiteral) {
+func (s *Visitor) VisitBoolLiteral(b *ast.BoolLiteral) error {
 	b.EType = base.NewBoolean()
+	return nil
 }
 
-func (s *Visitor) VisitURealLiteral(ur *ast.URealLiteral) {
+func (s *Visitor) VisitURealLiteral(ur *ast.URealLiteral) error {
 	ur.EType = base.NewReal()
+	return nil
 }
 
-func (s *Visitor) VisitForStatement(f *ast.ForStatement) {
-	f.CtrlID.Accept(s)
-	f.InitValue.Accept(s)
-	f.FinalValue.Accept(s)
+func (s *Visitor) VisitForStatement(f *ast.ForStatement) error {
+	var err error
+
+	if err = f.CtrlID.Accept(s); err != nil {
+		return err
+	}
+
+	if err = f.InitValue.Accept(s); err != nil {
+		return err
+	}
+
+	if err = f.FinalValue.Accept(s); err != nil {
+		return err
+	}
 
 	if _, ok := f.CtrlID.EType.(types.Ordinal); !ok {
-		panic(fmt.Sprintf("loop control variable %s must be of type, integer, char, Boolean, enum or subrange type,"+
-			"currently it is a '%s' type", f.CtrlID, f.CtrlID.EType))
+		return fmt.Errorf("loop control variable %s must be of type, integer, char, Boolean, enum or subrange type,"+
+			"currently it is a '%s' type", f.CtrlID, f.CtrlID.EType)
 	}
 
 	// check that ctrlID is compatible to initValue and finalValue
 	if !AreCompatibleTypes(f.InitValue.Type(), f.CtrlID.EType) {
-		panic(fmt.Sprintf("control variable'%s' (of type '%s'), is not compatible with initial value of type '%s'",
-			f.CtrlID, f.CtrlID.EType, f.InitValue.Type()))
+		return fmt.Errorf("control variable'%s' (of type '%s'), is not compatible with initial value of type '%s'",
+			f.CtrlID, f.CtrlID.EType, f.InitValue.Type())
 	}
 
 	if !AreCompatibleTypes(f.FinalValue.Type(), f.CtrlID.EType) {
-		panic(fmt.Sprintf("control variable'%s' (of type '%s'), is not compatible with final value of type '%s'",
-			f.CtrlID, f.CtrlID.EType, f.FinalValue.Type()))
+		return fmt.Errorf("control variable'%s' (of type '%s'), is not compatible with final value of type '%s'",
+			f.CtrlID, f.CtrlID.EType, f.FinalValue.Type())
 	}
 
 	// check that the right direction is set
 	if f.Direction != token.To && f.Direction != token.DownTo {
-		panic(fmt.Sprintf("invalid loop direction. use 'to'or 'downto'"))
+		return fmt.Errorf("invalid loop direction. use 'to' or 'downto', instead of '%s'", f.Direction)
 	}
 
-	f.Body.Accept(s)
+	if err = f.Body.Accept(s); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (s *Visitor) VisitIfStatement(i *ast.IfStatement) {
-	i.BoolExpr.Accept(s)
-	i.TruePath.Accept(s)
+func (s *Visitor) VisitIfStatement(i *ast.IfStatement) error {
+	var err error
+
+	if err = i.BoolExpr.Accept(s); err != nil {
+		return err
+	}
+
+	if err = i.TruePath.Accept(s); err != nil {
+		return err
+	}
+
 	if i.ElsePath != nil {
-		i.ElsePath.Accept(s)
+		if err = i.ElsePath.Accept(s); err != nil {
+			return err
+		}
 	}
+
+	if i.BoolExpr.Type().Name() != "Boolean" {
+		return fmt.Errorf("if-statement condition must evaluate to a Boolean, %s does not", i.BoolExpr)
+	}
+
+	return nil
 }
 
-func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) {
+func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 	for _, arg := range f.Parameters {
-		arg.Accept(s)
+		if err := arg.Accept(s); err != nil {
+			return err
+		}
 	}
 
 	function := s.symbolTable.RetrieveSymbol(f.Name.Name)
 	if function == nil {
-		panic(fmt.Sprintf("undeclared symbol %v", f.Name.Name))
+		return fmt.Errorf("undeclared symbol %v", f.Name.Name)
 	} else if function.Kind() != FUNCTION {
-		panic(fmt.Sprintf("attempting to call %s, which is not a function", f.Name.Name))
+		return fmt.Errorf("attempting to call %s, which is not a function", f.Name.Name)
 	} else {
 		fHead := function.Type().(*ast.FuncHeading)
 		f.EType = fHead.ReturnType
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) {
-	g.Label.Accept(s)
+func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) error {
+	if err := g.Label.Accept(s); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (s *Visitor) VisitIdentifiedVariable(i *ast.IdentifiedVariable) {
-
+func (s *Visitor) VisitIdentifiedVariable(i *ast.IdentifiedVariable) error {
+	return nil
 }
 
-func (s *Visitor) VisitWhileStatement(w *ast.WhileStatement) {
-	w.BoolExpr.Accept(s)
-	w.Body.Accept(s)
+func (s *Visitor) VisitWhileStatement(whl *ast.WhileStatement) error {
+	var err error
+
+	if err = whl.BoolExpr.Accept(s); err != nil {
+		return err
+	}
+
+	if err = whl.Body.Accept(s); err != nil {
+		return err
+	}
+
+	if whl.BoolExpr.Type().Name() != "Boolean" {
+		return fmt.Errorf("while-statement condition must evaluate to a Boolean, '%s' does not", whl.BoolExpr)
+	}
+
+	return nil
 }
 
-func (s *Visitor) VisitWithStatement(w *ast.WithStatement) {
+func (s *Visitor) VisitWithStatement(w *ast.WithStatement) error {
+	var err error
+
 	for _, r := range w.RecordVarList {
-		r.Accept(s)
+		if err = r.Accept(s); err != nil {
+			return err
+		}
 	}
 
-	w.Body.Accept(s)
-}
-
-func (s *Visitor) VisitRepeatStatement(r *ast.RepeatStatement) {
-	for _, stmt := range r.StmtSeq {
-		stmt.Accept(s)
+	if err = w.Body.Accept(s); err != nil {
+		return err
 	}
 
-	r.BoolExpr.Accept(s)
+	return nil
 }
 
-func (s *Visitor) VisitReturnStatement(r *ast.ReturnStatement) {
-	r.Expr.Accept(s)
+func (s *Visitor) VisitRepeatStatement(rpt *ast.RepeatStatement) error {
+	var err error
+
+	for _, stmt := range rpt.StmtSeq {
+		if err = stmt.Accept(s); err != nil {
+			return err
+		}
+	}
+
+	if err = rpt.BoolExpr.Accept(s); err != nil {
+		return err
+	}
+
+	if rpt.BoolExpr.Type().Name() != "Boolean" {
+		return fmt.Errorf("repeat-statement condition must evaluate to a Boolean, %s does not", rpt.BoolExpr)
+	}
+
+	return nil
 }
 
-func (s *Visitor) VisitFieldDesignator(f *ast.FieldDesignator) {
+func (s *Visitor) VisitReturnStatement(r *ast.ReturnStatement) error {
+	if err := r.Expr.Accept(s); err != nil {
+		return err
+	}
 
+	return nil
 }
 
-func (s *Visitor) VisitRange(r *ast.Range) {
-	r.Start.Accept(s)
-	r.End.Accept(s)
+func (s *Visitor) VisitFieldDesignator(f *ast.FieldDesignator) error {
+	return nil
+}
+
+func (s *Visitor) VisitRange(r *ast.Range) error {
+	var err error
+
+	if err = r.Start.Accept(s); err != nil {
+		return err
+	}
+
+	if err = r.End.Accept(s); err != nil {
+		return err
+	}
 
 	r.EType = r.Start.Type()
+
+	return nil
 }
 
-func (s *Visitor) VisitCompoundStatement(cs *ast.CompoundStatement) {
+func (s *Visitor) VisitCompoundStatement(cs *ast.CompoundStatement) error {
 	for _, stmt := range cs.Statements {
-		stmt.Accept(s)
+		if err := stmt.Accept(s); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitStrLiteral(str *ast.StrLiteral) {
+func (s *Visitor) VisitStrLiteral(str *ast.StrLiteral) error {
 	str.EType = base.NewString()
+	return nil
 }
 
-func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) {
+func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) error {
+	var err error
+
 	s.symbolTable.OpenScope()
 
-	f.Heading.Accept(s)
-	s.VisitBlock(f.Block)
+	if err = f.Heading.Accept(s); err != nil {
+		return err
+	}
+
+	if err = s.VisitBlock(f.Block); err != nil {
+		return err
+	}
 
 	for _, stmt := range f.Block.Stats {
 		if retStmt, ok := stmt.(*ast.ReturnStatement); ok {
 			if retStmt.Expr.Type().Name() != f.Heading.ReturnType.Name() {
-				panic(fmt.Sprintf("declared return type of %s is %s, does not match return value type %s,",
-					f.Heading.FName, f.Heading.ReturnType, retStmt.Expr.Type().Name()))
+				return fmt.Errorf("declared return type of %s is %s, does not match return value type %s",
+					f.Heading.FName, f.Heading.ReturnType, retStmt.Expr.Type().Name())
 			}
 		}
 	}
 
 	s.symbolTable.CloseScope()
+
+	return nil
 }
 
-func (s *Visitor) VisitProcedureDecl(p *ast.ProcedureDeclaration) {
-
+func (s *Visitor) VisitProcedureDecl(p *ast.ProcedureDeclaration) error {
+	return nil
 }
 
-func (s *Visitor) VisitRead(r *ast.Read) {
-
+func (s *Visitor) VisitRead(r *ast.Read) error {
+	return nil
 }
 
-func (s *Visitor) VisitReadLn(r *ast.ReadLn) {
-
+func (s *Visitor) VisitReadLn(r *ast.ReadLn) error {
+	return nil
 }
 
-func (s *Visitor) VisitWrite(w *ast.Write) {
-
+func (s *Visitor) VisitWrite(w *ast.Write) error {
+	return nil
 }
 
-func (s *Visitor) VisitWriteln(w *ast.Writeln) {
-
+func (s *Visitor) VisitWriteln(w *ast.Writeln) error {
+	return nil
 }
 
-func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) {
-	p.Name.Accept(s)
-	for _, param := range p.ParamList {
-		param.Accept(s)
+func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
+	var err error
+
+	if err = p.Name.Accept(s); err != nil {
+		return err
 	}
+
+	for _, param := range p.ParamList {
+		if err = param.Accept(s); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func (s *Visitor) VisitNil(n *ast.NilValue) {
-
+func (s *Visitor) VisitNil(n *ast.NilValue) error {
+	return nil
 }
 
-func (s *Visitor) VisitCaseStatement(c *ast.CaseStatement) {
-
+func (s *Visitor) VisitCaseStatement(c *ast.CaseStatement) error {
+	return nil
 }
 
-func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) {
-
+func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) error {
+	return nil
 }
 
-func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) {
+func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) error {
 	for _, m := range st.Members {
-		m.Accept(s)
+		if err := m.Accept(s); err != nil {
+
+		}
 	}
 
 	if len(st.Members) == 0 {
-		panic("")
+		return fmt.Errorf("set-constructor has no members")
 	}
 
 	st.EType = &types.Set{
 		TokenKind: token.Set,
 		BaseType:  st.Members[0].Type().(types.Ordinal),
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitValueParam(v *ast.ValueParam) {
+func (s *Visitor) VisitValueParam(v *ast.ValueParam) error {
 	for _, param := range v.Names {
 		if s.symbolTable.DeclaredLocally(param.Name) {
-			panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", param.Name, v.Type))
+			return fmt.Errorf("symbol '%v' already defined as type '%v'", param.Name, v.Type)
 		}
 
 		s.symbolTable.EnterSymbol(param.Name, NewVariable(param.Name, VARIABLE, v.Type))
-		param.Accept(s)
+		if err := param.Accept(s); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitVariableParam(v *ast.VariableParam) {
+func (s *Visitor) VisitVariableParam(v *ast.VariableParam) error {
 	for _, param := range v.Names {
 		if s.symbolTable.DeclaredLocally(param.Name) {
-			panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", param.Name, v.Type))
+			return fmt.Errorf("symbol '%v' already defined as type '%v'", param.Name, v.Type)
 		}
 
 		s.symbolTable.EnterSymbol(param.Name, NewVariable(param.Name, VARIABLE, v.Type))
-		param.Accept(s)
+		if err := param.Accept(s); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitFuncHeading(f *ast.FuncHeading) {
+func (s *Visitor) VisitFuncHeading(f *ast.FuncHeading) error {
 	for _, param := range f.Parameters {
-		param.Accept(s)
+		if err := param.Accept(s); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (s *Visitor) VisitProcedureHeading(p *ast.ProcedureHeading) {
+func (s *Visitor) VisitProcedureHeading(p *ast.ProcedureHeading) error {
 	for _, param := range p.Parameters {
-		param.Accept(s)
+		if err := param.Accept(s); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
