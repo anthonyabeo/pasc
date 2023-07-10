@@ -30,7 +30,9 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestStaticTypeCheckBasicArithmetic(t *testing.T) {
@@ -58,7 +60,9 @@ func TestStaticTypeCheckBasicArithmetic(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestTypeCheckWhileStatement(t *testing.T) {
@@ -93,7 +97,9 @@ func TestTypeCheckWhileStatement(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestStaticCheckIfStatement(t *testing.T) {
@@ -124,7 +130,9 @@ func TestStaticCheckIfStatement(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestStaticCheckMaxProgram(t *testing.T) {
@@ -167,7 +175,9 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestStaticTypeCheckExpressions(t *testing.T) {
@@ -231,7 +241,9 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestTypeCheckForStatement(t *testing.T) {
@@ -262,5 +274,49 @@ func TestTypeCheckForStatement(t *testing.T) {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTypeCheckWhileStatementWithInvalidCondition(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b, sum : integer;
+
+	begin
+		sum := 0;
+		a := 5;
+
+		while a + 0 do
+		begin
+			sum := sum + a;
+			a := a - 1
+		end;
+
+		writeln(sum)
+	end.
+`
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil || program == nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	err = sema.VisitProgram()
+	if err == nil {
+		t.Error("should return an error")
+	}
+
+	if err.Error() != "while-statement condition must evaluate to a Boolean, 'a + 0' does not" {
+		t.Error("invalid error message")
+	}
 }
