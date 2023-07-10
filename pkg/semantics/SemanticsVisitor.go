@@ -436,6 +436,23 @@ func (s *Visitor) VisitReturnStatement(ret *ast.ReturnStatement) error {
 }
 
 func (s *Visitor) VisitFieldDesignator(f *ast.FieldDesignator) error {
+	sym := s.symbolTable.RetrieveSymbol(f.RecordVar.String())
+	if sym == nil {
+		return fmt.Errorf("undefined name %s", f.RecordVar.String())
+	} else if sym.Type().Name() != "record" {
+		return fmt.Errorf("%s is not a record type", sym.Type().Name())
+	} else {
+		if !s.symbolTable.DeclaredLocally(f.FieldSpec.String()) {
+			return fmt.Errorf("symbol %s not declared", f.FieldSpec.String())
+		}
+
+		if err := f.FieldSpec.Accept(s); err != nil {
+			return err
+		}
+
+		f.EType = f.FieldSpec.Type()
+	}
+
 	return nil
 }
 
@@ -548,7 +565,7 @@ func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) error {
 func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) error {
 	for _, m := range st.Members {
 		if err := m.Accept(s); err != nil {
-
+			return err
 		}
 	}
 
