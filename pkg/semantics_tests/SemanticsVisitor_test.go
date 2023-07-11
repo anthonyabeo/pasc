@@ -410,3 +410,50 @@ func TestStaticCheckFuncDeclaration(t *testing.T) {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
 }
+
+func TestTypeCheckWithStatement(t *testing.T) {
+	input := `
+		program Record;
+
+		var
+			date : record
+			   year : integer;
+			   month : integer;
+			   day : integer
+			end;
+		
+		begin
+			date.day := 7;
+			date.month := 12;
+			date.year := 1992;
+
+			with date do
+				if month = 12 then
+					begin 
+						month := 1; 
+						year := year + 1
+					end
+				else 
+					month := month+1;
+
+			writeln('%d/%d/%d', date.day, date.month, date.year)
+		end.
+	`
+
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil || program == nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
+}
