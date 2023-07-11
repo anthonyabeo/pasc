@@ -543,6 +543,20 @@ func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) error {
 }
 
 func (s *Visitor) VisitProcedureDecl(p *ast.ProcedureDeclaration) error {
+	var err error
+
+	s.symbolTable.OpenScope()
+
+	if err = p.Heading.Accept(s); err != nil {
+		return err
+	}
+
+	if err = s.VisitBlock(p.Block); err != nil {
+		return err
+	}
+
+	s.symbolTable.CloseScope()
+
 	return nil
 }
 
