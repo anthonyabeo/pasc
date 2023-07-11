@@ -10,7 +10,7 @@ import (
 // BinaryExpression ...
 type BinaryExpression struct {
 	Left, Right Expression
-	Operator    token.Token
+	Operator    token.Kind
 	EType       types.Type
 }
 
@@ -25,5 +25,5 @@ func (b *BinaryExpression) Accept(vst Visitor) error {
 }
 
 func (b *BinaryExpression) String() string {
-	return fmt.Sprintf("%s %s %s", b.Left, b.Operator.Text, b.Right)
+	return fmt.Sprintf("%s %s %s", b.Left, b.Operator, b.Right)
 }

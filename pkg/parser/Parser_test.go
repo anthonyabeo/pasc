@@ -162,7 +162,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 
 	expr := &ast.BinaryExpression{
-		Operator: token.NewToken(token.Plus, "+"),
+		Operator: token.Plus,
 		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "a"},
 		Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "b"},
 	}
@@ -177,7 +177,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 
 	uexpr := &ast.UnaryExpression{
-		Operator: token.NewToken(token.Minus, "-"),
+		Operator: token.Minus,
 		Operand:  &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "5"},
 	}
 	if !testAssignmentStatement(t, program.Block.Stats[3], "a", uexpr) {
@@ -306,7 +306,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 		return
 	}
 	funcDecl := program.Block.Callables[0].(*ast.FuncDeclaration)
-	if !testIfStatement(t, funcDecl.Block.Stats[0], token.NewToken(token.GreaterThan, ">"), "n", "m", "result := n", "result := m") {
+	if !testIfStatement(t, funcDecl.Block.Stats[0], token.GreaterThan, "n", "m", "result := n", "result := m") {
 		return
 	}
 
@@ -476,10 +476,10 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	}
 
 	value := &ast.BinaryExpression{
-		Operator: token.NewToken(token.Star, "*"),
+		Operator: token.Star,
 		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "a"},
 		Right: &ast.BinaryExpression{
-			Operator: token.NewToken(token.Star, "*"),
+			Operator: token.Star,
 			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "b"},
 			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "c"},
 		},
@@ -490,10 +490,10 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	}
 
 	value = &ast.BinaryExpression{
-		Operator: token.NewToken(token.Star, "+"),
+		Operator: token.Plus,
 		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "d"},
 		Right: &ast.BinaryExpression{
-			Operator: token.NewToken(token.Star, "*"),
+			Operator: token.Star,
 			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "e"},
 			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "f"},
 		},
@@ -571,7 +571,7 @@ func TestParseForStatement(t *testing.T) {
 		TokenKind: token.Initialize,
 		Variable:  &ast.Identifier{TokenKind: token.Identifier, Name: "sum"},
 		Value: &ast.BinaryExpression{
-			Operator: token.NewToken(token.Plus, "+"),
+			Operator: token.Plus,
 			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "sum"},
 			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "i"},
 		},
@@ -730,8 +730,7 @@ func testWhileStatement(t *testing.T, stmt ast.Statement) bool {
 		return false
 	}
 
-	testBinaryExpression(
-		t, whileStmt.BoolExpr, token.Token{Kind: token.LessThan, Text: "<"}, "i", "5")
+	testBinaryExpression(t, whileStmt.BoolExpr, token.LessThan, "i", "5")
 
 	return true
 }
@@ -972,15 +971,15 @@ func testFuncDesignator(t *testing.T, funcDesg ast.Expression, funcName string, 
 	return true
 }
 
-func testBinaryExpression(t *testing.T, expr ast.Expression, operator token.Token, left, right string) bool {
+func testBinaryExpression(t *testing.T, expr ast.Expression, operator token.Kind, left, right string) bool {
 	exp, ok := expr.(*ast.BinaryExpression)
 	if !ok {
 		t.Errorf("expected binary expresion, got %v", exp)
 		return false
 	}
 
-	if exp.Operator.Kind != operator.Kind {
-		t.Errorf("expected operator %v, got %v instead", operator.Text, exp.Operator.Text)
+	if exp.Operator != operator {
+		t.Errorf("expected operator %v, got %v instead", operator, exp.Operator)
 		return false
 	}
 
@@ -1043,7 +1042,7 @@ func testFuncDeclaration(
 func testIfStatement(
 	t *testing.T,
 	stmt ast.Statement,
-	bExprOp token.Token,
+	bExprOp token.Kind,
 	left, right string,
 	tPath, elsePath string,
 ) bool {
@@ -1081,8 +1080,8 @@ func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token
 		return false
 	}
 
-	if uexpr.Operator.Kind != operator.Kind {
-		t.Errorf("expected operator %v, got %v instead", operator.Text, uexpr.Operator.Text)
+	if uexpr.Operator != operator.Kind {
+		t.Errorf("expected operator %v, got %v instead", operator.Text, uexpr.Operator)
 		return false
 	}
 
@@ -1170,8 +1169,7 @@ func testRepeatStatement(t *testing.T, stmt ast.Statement) bool {
 		return false
 	}
 
-	testBinaryExpression(
-		t, repeatStmt.BoolExpr, token.NewToken(token.Equal, "="), "j", "0")
+	testBinaryExpression(t, repeatStmt.BoolExpr, token.Equal, "j", "0")
 
 	return true
 }

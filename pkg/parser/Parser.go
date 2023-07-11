@@ -2,14 +2,13 @@ package parser
 
 import (
 	"fmt"
-	"github.com/anthonyabeo/pasc/pkg/types"
-	"github.com/anthonyabeo/pasc/pkg/types/structured"
-	"reflect"
 	"strconv"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"github.com/anthonyabeo/pasc/pkg/token"
+	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // Parser performs syntactic analysis to validate the correctness of the input string.
@@ -90,10 +89,7 @@ func (p *Parser) Program() (*ast.Program, error) {
 		return nil, err
 	}
 
-	program := &ast.Program{
-		Name:      programName,
-		ParamList: programParams,
-		Token:     token.Token{Kind: token.Program, Text: "program"}}
+	program := &ast.Program{Name: programName, ParamList: programParams, TokenKind: token.Program}
 
 	if err = p.match(token.SemiColon); err != nil {
 		return nil, err
@@ -951,7 +947,7 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 func (p *Parser) constant() (ast.Expression, error) {
 	var (
 		err  error
-		sign token.Token
+		sign token.Kind
 		expr ast.Expression
 	)
 
@@ -960,7 +956,7 @@ func (p *Parser) constant() (ast.Expression, error) {
 		expr = &ast.StrLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
 	default:
 		if p.isSign() {
-			sign = p.lAheadToken(1)
+			sign = p.lAheadKind(1)
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
@@ -984,7 +980,7 @@ func (p *Parser) constant() (ast.Expression, error) {
 				"expected unsigned number or constant, got %s instead", p.lAheadToken(1).Text)
 		}
 
-		if !reflect.DeepEqual(sign, token.Token{}) {
+		if sign == token.Minus || sign == token.Plus {
 			expr = &ast.UnaryExpression{Operator: sign, Operand: expr}
 		}
 	}
@@ -2030,7 +2026,7 @@ func (p *Parser) expression() (ast.Expression, error) {
 	}
 
 	if p.isRelationalOp() {
-		relExpr := &ast.BinaryExpression{Operator: p.lAheadToken(1), Left: simpleExpr}
+		relExpr := &ast.BinaryExpression{Operator: p.lAheadKind(1), Left: simpleExpr}
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
@@ -2050,12 +2046,12 @@ func (p *Parser) expression() (ast.Expression, error) {
 func (p *Parser) simpleExpression() (ast.Expression, error) {
 	var (
 		err  error
-		sign token.Token
+		sign token.Kind
 		expr ast.Expression
 	)
 
 	if p.isSign() {
-		sign = p.lAheadToken(1)
+		sign = p.lAheadKind(1)
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2067,7 +2063,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	}
 
 	for p.isAddingOp() {
-		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadToken(1)}
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadKind(1)}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2080,7 +2076,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 		expr = binExpr
 	}
 
-	if !reflect.DeepEqual(sign, token.Token{}) {
+	if sign == token.Minus || sign == token.Plus {
 		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: expr}
 		return unaryExp, nil
 	}
@@ -2101,7 +2097,7 @@ func (p *Parser) term() (ast.Expression, error) {
 	}
 
 	for p.isMultiplyOp() {
-		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadToken(1)}
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadKind(1)}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2185,7 +2181,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 			return nil, err
 		}
 	case token.Not:
-		uExpr := &ast.UnaryExpression{Operator: p.lAheadToken(1)}
+		uExpr := &ast.UnaryExpression{Operator: p.lAheadKind(1)}
 		if err = p.match(token.Not); err != nil {
 			return nil, err
 		}

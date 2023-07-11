@@ -9,7 +9,7 @@ import (
 
 // UnaryExpression ...
 type UnaryExpression struct {
-	Operator token.Token
+	Operator token.Kind
 	Operand  Expression
 	EType    types.Type
 }
@@ -25,5 +25,5 @@ func (u *UnaryExpression) Accept(vst Visitor) error {
 }
 
 func (u *UnaryExpression) String() string {
-	return fmt.Sprintf("%v %v", u.Operator.Text, u.Operand)
+	return fmt.Sprintf("%v %v", u.Operator, u.Operand)
 }

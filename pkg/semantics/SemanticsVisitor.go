@@ -165,7 +165,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) error {
 	lhsType := b.Left.Type().Name()
 	rhsType := b.Right.Type().Name()
 
-	switch b.Operator.Kind {
+	switch b.Operator {
 	case token.Plus, token.Minus, token.Star:
 		if lhsType != "integer" && lhsType != "real" && lhsType != "set" {
 			return fmt.Errorf("%s must be integer, real or set type", b.Left)
@@ -255,7 +255,7 @@ func (s *Visitor) VisitUnaryExpr(u *ast.UnaryExpression) error {
 		return err
 	}
 
-	switch u.Operator.Kind {
+	switch u.Operator {
 	case token.Minus, token.Plus:
 		u.EType = u.Operand.Type()
 	case token.Not:
