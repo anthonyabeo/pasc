@@ -2,7 +2,6 @@ package semantics
 
 import (
 	"github.com/anthonyabeo/pasc/pkg/types"
-	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // Field denotes a record field symbol
@@ -13,13 +12,12 @@ type Field struct {
 
 	depth  int
 	vr     Symbol
-	Rec    *structured.Record
 	Offset uint64
 }
 
 // NewField creates and returns a new field symbol
-func NewField(name string, kind Kind, typ types.Type, rec *structured.Record, offset uint64) *Field {
-	return &Field{name: name, kind: kind, typ: typ, Rec: rec, Offset: offset}
+func NewField(name string, kind Kind, typ types.Type, offset uint64) *Field {
+	return &Field{name: name, kind: kind, typ: typ, Offset: offset}
 }
 
 // Kind returns the kind of this symbol
