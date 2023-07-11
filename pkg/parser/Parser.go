@@ -484,7 +484,7 @@ func (p *Parser) recordType() (*structured.Record, error) {
 					}
 
 					p.symTable.EnterSymbol(
-						entry.Name, semantics.NewField(entry.Name, semantics.FIELD, rs.Type, record, uint64(offset)))
+						entry.Name, semantics.NewField(entry.Name, semantics.FIELD, rs.Type, uint64(offset)))
 					offset++
 				}
 			}
@@ -1716,23 +1716,38 @@ func (p *Parser) withStatement() (*ast.WithStatement, error) {
 func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 	var recVarList []ast.Expression
 
-	variable, err := p.variableAccess()
-	if err != nil {
+	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
+	if sym == nil {
+		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+	} else if sym.Type().Name() != "record" {
+		return nil, fmt.Errorf("expected '%s' to be record-type, got '%s' instead",
+			p.lAheadToken(1).Text, sym.Type().Name())
+	} else {
+		recVarList = append(recVarList, &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text})
+	}
+
+	if err := p.consume(); err != nil {
 		return nil, err
 	}
-	recVarList = append(recVarList, variable)
 
 	for p.lAheadKind(1) == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
 
-		variable, err := p.variableAccess()
-		if err != nil {
-			return nil, err
+		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
+		if sym == nil {
+			return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+		} else if sym.Type().Name() != "record" {
+			return nil, fmt.Errorf("expected '%s' to be record-type, got '%s' instead",
+				p.lAheadToken(1).Text, sym.Type().Name())
+		} else {
+			recVarList = append(recVarList, &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text})
 		}
 
-		recVarList = append(recVarList, variable)
+		if err := p.consume(); err != nil {
+			return nil, err
+		}
 	}
 
 	return recVarList, nil
@@ -2315,7 +2330,6 @@ func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, e
 	var (
 		ok  bool
 		err error
-		//record *structured.Record
 	)
 
 	fieldDes := &ast.FieldDesignator{RecordVar: recVar}
@@ -2339,11 +2353,6 @@ func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, e
 	} else if field.Kind() != semantics.FIELD {
 		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recVar)
 	} else {
-		f := field.(*semantics.Field)
-		if f.Rec.Name() != record.Name() {
-			return nil, fmt.Errorf("%s has no field %s", record.Name(), f.Name())
-		}
-
 		fieldDes.FieldSpec = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
