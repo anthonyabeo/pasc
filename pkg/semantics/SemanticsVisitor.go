@@ -2,12 +2,12 @@ package semantics
 
 import (
 	"fmt"
-	"github.com/anthonyabeo/pasc/pkg/types/structured"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // Visitor ...
@@ -596,7 +596,25 @@ func (s *Visitor) VisitNil(n *ast.NilValue) error {
 	return nil
 }
 
-func (s *Visitor) VisitCaseStatement(c *ast.CaseStatement) error {
+func (s *Visitor) VisitCaseStatement(cse *ast.CaseStatement) error {
+	var err error
+
+	if err = cse.Index.Accept(s); err != nil {
+		return err
+	}
+
+	for _, caseElem := range cse.List {
+		for _, cst := range caseElem.ConstList {
+			if err = cst.Accept(s); err != nil {
+				return err
+			}
+		}
+
+		if err = caseElem.Body.Accept(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

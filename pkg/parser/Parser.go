@@ -1590,7 +1590,7 @@ func (p *Parser) isSimpleStatement() bool {
 func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
 	var err error
 
-	caseStmt := &ast.CaseStatement{Token: p.lAheadToken(1)}
+	caseStmt := &ast.CaseStatement{TokenKind: p.lAheadKind(1)}
 	if err = p.match(token.Case); err != nil {
 		return nil, err
 	}

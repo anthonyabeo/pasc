@@ -9,10 +9,10 @@ import (
 
 // CaseStatement models the AST node of a Case Statement
 type CaseStatement struct {
-	Token token.Token
-	Index Expression
-	List  []*CaseElement
-	Label string
+	TokenKind token.Kind
+	Index     Expression
+	List      []*CaseElement
+	Label     string
 }
 
 func (c *CaseStatement) stmt() {}
