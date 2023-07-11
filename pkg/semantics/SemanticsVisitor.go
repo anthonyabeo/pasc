@@ -2,6 +2,7 @@ package semantics
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -394,15 +395,42 @@ func (s *Visitor) VisitWhileStatement(whl *ast.WhileStatement) error {
 func (s *Visitor) VisitWithStatement(with *ast.WithStatement) error {
 	var err error
 
+	s.symbolTable.OpenScope()
+
 	for _, r := range with.RecordVarList {
-		if err = r.Accept(s); err != nil {
-			return err
+		sym := s.symbolTable.RetrieveSymbol(r.String())
+		if sym == nil {
+			return fmt.Errorf("undefined name %s", r)
+		} else if sym.Type().Name() != "record" {
+			return fmt.Errorf("%s is not a record type", sym.Type().Name())
+		} else {
+			record := sym.Type().(*structured.Record)
+			for _, field := range record.FieldList {
+				switch fld := field.(type) {
+				case *structured.FixedPart:
+					offset := 0
+					for _, recSec := range fld.Entry {
+						for _, id := range recSec.List {
+							if err := id.Accept(s); err != nil {
+								return err
+							}
+
+							s.symbolTable.EnterSymbol(
+								id.Name, NewField(id.Name, FIELD, id.EType, uint64(offset)))
+						}
+						offset++
+					}
+				case *structured.VariantPart:
+				}
+			}
 		}
 	}
 
 	if err = with.Body.Accept(s); err != nil {
 		return err
 	}
+
+	s.symbolTable.CloseScope()
 
 	return nil
 }
