@@ -236,7 +236,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 				{TokenKind: token.Identifier, Name: "n"},
 				{TokenKind: token.Identifier, Name: "m"},
 			},
-			Type: base.NewInteger(),
+			Typ: base.NewInteger(),
 		},
 	}
 	if !testFuncDeclaration(t, program.Block.Callables[0], "foo", "integer", params, 1, 1, 0, 0, 0) {
@@ -299,7 +299,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 				{TokenKind: token.Identifier, Name: "n"},
 				{TokenKind: token.Identifier, Name: "m"},
 			},
-			Type: base.NewInteger(),
+			Typ: base.NewInteger(),
 		},
 	}
 	if !testFuncDeclaration(t, program.Block.Callables[0], "max", "integer", paramList, 2, 1, 0, 0, 0) {
@@ -629,7 +629,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 	procDecl := &ast.ProcedureDeclaration{
 		Heading: &ast.ProcedureHeading{
 			TokenKind: token.Procedure,
-			Name:      &ast.Identifier{TokenKind: token.Identifier, Name: "bisect"},
+			PName:     &ast.Identifier{TokenKind: token.Identifier, Name: "bisect"},
 			Parameters: []ast.FormalParameter{
 				&ast.FuncHeading{
 					TokenKind: token.Function,
@@ -637,7 +637,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 					Parameters: []ast.FormalParameter{
 						&ast.ValueParam{
 							Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "x"}},
-							Type:  base.NewReal(),
+							Typ:   base.NewReal(),
 						},
 					},
 					ReturnType: base.NewReal(),
@@ -647,12 +647,12 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 						{TokenKind: token.Identifier, Name: "a"},
 						{TokenKind: token.Identifier, Name: "b"},
 					},
-					Type: base.NewReal(),
+					Typ: base.NewReal(),
 				},
 				&ast.VariableParam{
 					Token: token.Var,
 					Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "result"}},
-					Type:  base.NewReal(),
+					Typ:   base.NewReal(),
 				},
 			},
 		},
@@ -826,8 +826,8 @@ func testProcedureDeclaration(
 		return false
 	}
 
-	if procDecl.Heading.Name.String() != procedureName {
-		t.Errorf("expected procedure name to be %v, got %v instead", procedureName, procDecl.Heading.Name.String())
+	if procDecl.Heading.PName.Name != procedureName {
+		t.Errorf("expected procedure name to be %v, got %v instead", procedureName, procDecl.Heading.PName)
 		return false
 	}
 

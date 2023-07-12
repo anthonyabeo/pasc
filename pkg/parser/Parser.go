@@ -1030,6 +1030,8 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 // directive := letter { letter | digit } .
 // procedure-block := block .
 func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
+	var typ types.Type
+
 	pHead, err := p.procedureHeading()
 	if err != nil {
 		return nil, err
@@ -1038,6 +1040,61 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 	procedureDecl := &ast.ProcedureDeclaration{Heading: pHead}
 	if err := p.match(token.SemiColon); err != nil {
 		return nil, err
+	}
+
+	p.symTable.EnterSymbol(
+		procedureDecl.Heading.PName.Name,
+		semantics.NewProcedure(procedureDecl.Heading.PName.Name, semantics.PROCEDURE, pHead))
+
+	p.symTable.OpenScope()
+
+	for _, param := range procedureDecl.Heading.Parameters {
+		switch pm := param.(type) {
+		case *ast.ValueParam:
+			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
+			if sym == nil {
+				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
+			} else if sym.Kind() != semantics.TYPE {
+				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
+			} else {
+				typ = sym.Type()
+			}
+
+			for _, name := range pm.Names {
+				p.symTable.EnterSymbol(name.Name, semantics.NewVariable(name.Name, semantics.VARIABLE, typ))
+				if err != nil {
+					return nil, err
+				}
+			}
+		case *ast.VariableParam:
+			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
+			if sym == nil {
+				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
+			} else if sym.Kind() != semantics.TYPE {
+				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
+			} else {
+				typ = sym.Type()
+			}
+
+			for _, name := range pm.Names {
+				p.symTable.EnterSymbol(name.Name, semantics.NewVariable(name.Name, semantics.VARIABLE, typ))
+				if err != nil {
+					return nil, err
+				}
+			}
+		case *ast.FuncHeading:
+			if p.symTable.DeclaredLocally(pm.FName.Name) {
+				return nil, fmt.Errorf("'%s' already declared", pm.FName.Name)
+			}
+
+			p.symTable.EnterSymbol(
+				pm.FName.Name,
+				semantics.NewFunction(pm.FName.Name, semantics.FUNCTION, pm))
+
+		case *ast.ProcedureHeading:
+		default:
+			return nil, fmt.Errorf("%v is not ast.ValueParam or ast.VariableParam type", pm)
+		}
 	}
 
 	switch p.lAheadKind(1) {
@@ -1050,6 +1107,8 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 			return nil, err
 		}
 	}
+
+	p.symTable.CloseScope()
 
 	return procedureDecl, nil
 }
@@ -1068,7 +1127,7 @@ func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 		return nil, err
 	}
 
-	pHead.Name = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+	pHead.PName = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1155,11 +1214,11 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 	for _, param := range funcDecl.Heading.Parameters {
 		switch pm := param.(type) {
 		case *ast.ValueParam:
-			sym := p.symTable.RetrieveSymbol(pm.Type.Name())
+			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
 			if sym == nil {
-				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Type.Name())
+				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
 			} else if sym.Kind() != semantics.TYPE {
-				return nil, fmt.Errorf("'%v' is not a known type", pm.Type.Name())
+				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
 			} else {
 				typ = sym.Type()
 			}
@@ -1171,11 +1230,11 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 				}
 			}
 		case *ast.VariableParam:
-			sym := p.symTable.RetrieveSymbol(pm.Type.Name())
+			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
 			if sym == nil {
-				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Type.Name())
+				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
 			} else if sym.Kind() != semantics.TYPE {
-				return nil, fmt.Errorf("'%v' is not a known type", pm.Type.Name())
+				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
 			} else {
 				typ = sym.Type()
 			}
@@ -1269,7 +1328,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		param = &ast.ValueParam{Names: names, Type: typ}
+		param = &ast.ValueParam{Names: names, Typ: typ}
 	// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
 	case token.Var:
 		if err := p.match(token.Var); err != nil {
@@ -1290,7 +1349,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		param = &ast.VariableParam{Token: token.Var, Names: names, Type: typ}
+		param = &ast.VariableParam{Token: token.Var, Names: names, Typ: typ}
 	// procedural-parameter-specification = procedure-heading .
 	case token.Procedure:
 		pHead, err := p.procedureHeading()
@@ -2548,8 +2607,12 @@ func (p *Parser) actualParameter() (ast.Expression, error) {
 		}
 
 		if sym.Kind() == semantics.FUNCTION || sym.Kind() == semantics.PROCEDURE {
-			return &ast.Identifier{
-				TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}, nil
+			id := &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+			if err = p.consume(); err != nil {
+				return nil, err
+			}
+
+			return id, nil
 		}
 	}
 

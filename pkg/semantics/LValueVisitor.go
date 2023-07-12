@@ -19,8 +19,6 @@ func (l *LValueVisitor) VisitIdentifier(id *ast.Identifier) error {
 	}
 
 	if l.isLValue(sym) {
-		//panic(fmt.Sprintf("cannot assign to '%s' (of type '%s'). It is not an l-value",
-		//	sym.Name(), sym.Type()))
 		return fmt.Errorf("cannot assign to '%s' (of type '%s'). It is not an l-value", sym.Name(), sym.Type())
 	}
 
