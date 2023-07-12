@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/types"
 	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -22,7 +23,7 @@ func (p *ProcedureDeclaration) Accept(vst Visitor) error {
 func (p *ProcedureDeclaration) stmt() {}
 
 func (p *ProcedureDeclaration) String() string {
-	return fmt.Sprintf("%s()", p.Heading.Name)
+	return p.Heading.String()
 }
 
 func (p *ProcedureDeclaration) SetLabel(l string) {
@@ -32,8 +33,23 @@ func (p *ProcedureDeclaration) SetLabel(l string) {
 // ProcedureHeading denotes a procedure's signature.
 type ProcedureHeading struct {
 	TokenKind  token.Kind
-	Name       *Identifier
+	PName      *Identifier
 	Parameters []FormalParameter
+}
+
+func (p *ProcedureHeading) Name() string {
+	var pList []string
+	for _, param := range p.Parameters {
+		pList = append(pList, param.String())
+	}
+
+	return fmt.Sprintf("procedure (%s)", strings.Join(pList, ", "))
+}
+
+func (p *ProcedureHeading) expr() {}
+
+func (p *ProcedureHeading) Type() types.Type {
+	return p
 }
 
 func (p *ProcedureHeading) formalParam() {}
@@ -48,5 +64,5 @@ func (p *ProcedureHeading) String() string {
 		pList = append(pList, param.String())
 	}
 
-	return fmt.Sprintf("function %s(%s)", p.Name.Name, strings.Join(pList, ", "))
+	return fmt.Sprintf("procedure %s(%s)", p.PName.Name, strings.Join(pList, ", "))
 }

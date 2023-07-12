@@ -10,17 +10,32 @@ import (
 
 // FormalParameter denotes a generic formal parameter type
 type FormalParameter interface {
-	Node
+	Expression
 	formalParam()
 }
 
 // ValueParam denoted a value parameter specification
 type ValueParam struct {
 	Names []*Identifier
-	Type  types.Type
+	Typ   types.Type
 }
 
 func (v *ValueParam) formalParam() {}
+
+func (v *ValueParam) expr() {}
+
+func (v *ValueParam) Type() types.Type {
+	return v.Typ
+}
+
+func (v *ValueParam) Name() string {
+	var vList []string
+	for _, id := range v.Names {
+		vList = append(vList, id.Name)
+	}
+
+	return fmt.Sprintf("%v: %v", strings.Join(vList, ", "), v.Typ)
+}
 
 func (v *ValueParam) Accept(vst Visitor) error {
 	return vst.VisitValueParam(v)
@@ -32,17 +47,32 @@ func (v *ValueParam) String() string {
 		vList = append(vList, id.Name)
 	}
 
-	return fmt.Sprintf("%v: %v", strings.Join(vList, ", "), v.Type)
+	return fmt.Sprintf("%v: %v", strings.Join(vList, ", "), v.Typ)
 }
 
 // VariableParam denotes a variable parameter specification
 type VariableParam struct {
 	Token token.Kind
 	Names []*Identifier
-	Type  types.Type
+	Typ   types.Type
 }
 
 func (v *VariableParam) formalParam() {}
+
+func (v *VariableParam) expr() {}
+
+func (v *VariableParam) Type() types.Type {
+	return v.Typ
+}
+
+func (v *VariableParam) Name() string {
+	var vList []string
+	for _, id := range v.Names {
+		vList = append(vList, id.Name)
+	}
+
+	return fmt.Sprintf("var %v: %v", strings.Join(vList, ", "), v.Typ)
+}
 
 func (v *VariableParam) Accept(vst Visitor) error {
 	return vst.VisitVariableParam(v)
@@ -54,5 +84,5 @@ func (v *VariableParam) String() string {
 		vList = append(vList, id.Name)
 	}
 
-	return fmt.Sprintf("var %v: %v", strings.Join(vList, ", "), v.Type)
+	return fmt.Sprintf("var %v: %v", strings.Join(vList, ", "), v.Typ)
 }

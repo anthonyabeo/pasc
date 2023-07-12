@@ -40,10 +40,21 @@ type FuncHeading struct {
 }
 
 func (f *FuncHeading) Name() string {
-	return f.FName.Name
+	var pList []string
+	for _, p := range f.Parameters {
+		pList = append(pList, p.String())
+	}
+
+	return fmt.Sprintf("function (%s):%s", strings.Join(pList, ", "), f.ReturnType)
 }
 
 func (f *FuncHeading) formalParam() {}
+
+func (f *FuncHeading) expr() {}
+
+func (f *FuncHeading) Type() types.Type {
+	return f
+}
 
 func (f *FuncHeading) Accept(vst Visitor) error {
 	return vst.VisitFuncHeading(f)
