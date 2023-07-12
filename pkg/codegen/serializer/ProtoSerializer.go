@@ -143,7 +143,7 @@ func (s *ProtoSerializer) translateFuncHeading(fh *ast.FuncHeading) *FuncHeading
 }
 
 func (s *ProtoSerializer) translateProcHeading(ph *ast.ProcedureHeading) *ProcHeading {
-	head := &ProcHeading{Name: ph.Name.Name}
+	head := &ProcHeading{Name: ph.PName.Name}
 	for _, param := range ph.Parameters {
 		head.Params = append(head.Params, s.translateFormalParam(param))
 	}
@@ -166,7 +166,7 @@ func (s *ProtoSerializer) translateFormalParam(fp ast.FormalParameter) *FormalPa
 			Fp: &FormalParameter_ValParam{
 				ValParam: &ValueParam{
 					Names: names,
-					Type:  s.translateType(fp.Type),
+					Type:  s.translateType(fp.Typ),
 				},
 			},
 		}
@@ -181,7 +181,7 @@ func (s *ProtoSerializer) translateFormalParam(fp ast.FormalParameter) *FormalPa
 			Fp: &FormalParameter_VParam{
 				VParam: &VariableParam{
 					Names: names,
-					Type:  s.translateType(fp.Type),
+					Type:  s.translateType(fp.Typ),
 				},
 			},
 		}
