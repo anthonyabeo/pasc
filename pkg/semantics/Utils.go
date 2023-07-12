@@ -18,6 +18,10 @@ func AreAssignmentCompatible(src types.Type, dest types.Type) bool {
 		return true
 	}
 
+	if dest.Name() == "real" && src.Name() == "integer" {
+		return true
+	}
+
 	return false
 }
 
