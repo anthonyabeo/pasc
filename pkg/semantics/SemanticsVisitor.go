@@ -518,6 +518,9 @@ func (s *Visitor) VisitStrLiteral(str *ast.StrLiteral) error {
 func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) error {
 	var err error
 
+	if !s.symbolTable.DeclaredLocally(f.Heading.FName.Name) {
+		s.symbolTable.EnterSymbol(f.Heading.FName.Name, NewFunction(f.Heading.FName.Name, FUNCTION, f.Heading))
+	}
 	s.symbolTable.OpenScope()
 
 	if err = f.Heading.Accept(s); err != nil {
@@ -545,6 +548,9 @@ func (s *Visitor) VisitFuncDeclaration(f *ast.FuncDeclaration) error {
 func (s *Visitor) VisitProcedureDecl(p *ast.ProcedureDeclaration) error {
 	var err error
 
+	if !s.symbolTable.DeclaredLocally(p.Heading.PName.Name) {
+		s.symbolTable.EnterSymbol(p.Heading.PName.Name, NewProcedure(p.Heading.PName.Name, PROCEDURE, p.Heading))
+	}
 	s.symbolTable.OpenScope()
 
 	if err = p.Heading.Accept(s); err != nil {
@@ -579,13 +585,70 @@ func (s *Visitor) VisitWriteln(w *ast.Writeln) error {
 func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 	var err error
 
-	if err = p.Name.Accept(s); err != nil {
-		return err
-	}
+	sym := s.symbolTable.RetrieveSymbol(p.Name.Name)
+	if sym == nil {
+		return fmt.Errorf("name '%s' is undeclared", p.Name.Name)
+	} else if sym.Kind() != PROCEDURE {
+		return fmt.Errorf("cannot call '%s', it is not a procedure", p.Name.Name)
+	} else {
+		pHead := sym.Type().(*ast.ProcedureHeading)
+		for _, param := range p.ParamList {
+			if err = param.Accept(s); err != nil {
+				return err
+			}
+		}
 
-	for _, param := range p.ParamList {
-		if err = param.Accept(s); err != nil {
-			return err
+		totalParams := 0
+		for _, param := range pHead.Parameters {
+			switch param := param.(type) {
+			case *ast.VariableParam:
+				totalParams += len(param.Names)
+			case *ast.ValueParam:
+				totalParams += len(param.Names)
+			default:
+				totalParams += 1
+			}
+		}
+
+		if totalParams != len(p.ParamList) {
+			return fmt.Errorf("not enough arguments to procedure call '%s'", p)
+		}
+
+		offset := 0
+		for _, param := range pHead.Parameters {
+			switch param := param.(type) {
+			case *ast.VariableParam:
+				for i, name := range param.Names {
+					sym := s.symbolTable.RetrieveSymbol(p.ParamList[offset+i].String())
+					if sym == nil || sym.Kind() != VARIABLE {
+						return fmt.Errorf("argument '%s' used in procedure call '%s' must be a variable", p.ParamList[offset+i].String(), p)
+					} else {
+						if !AreAssignmentCompatible(sym.Type(), name.EType) {
+							return fmt.Errorf(
+								"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
+									"parameter at position '%d' in procedure '%s'", offset+i, p, offset+i, pHead)
+						}
+					}
+				}
+				offset += len(param.Names)
+			case *ast.ValueParam:
+				for j, name := range param.Names {
+					if !AreAssignmentCompatible(p.ParamList[offset+j].Type(), name.EType) {
+						return fmt.Errorf(
+							"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
+								"parameter at position '%d' in procedure '%s'", offset+j, p, offset+j, pHead)
+					}
+				}
+				offset += len(param.Names)
+			default:
+				if !AreAssignmentCompatible(p.ParamList[offset].Type(), param.Type()) {
+					return fmt.Errorf(
+						"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
+							"parameter at position '%d' in procedure '%s'", offset+1, p, offset+1, pHead)
+				}
+
+				offset++
+			}
 		}
 	}
 
@@ -644,10 +707,10 @@ func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) error {
 func (s *Visitor) VisitValueParam(v *ast.ValueParam) error {
 	for _, param := range v.Names {
 		if s.symbolTable.DeclaredLocally(param.Name) {
-			return fmt.Errorf("symbol '%v' already defined as type '%v'", param.Name, v.Type)
+			return fmt.Errorf("symbol '%s' already defined as type '%s'", param.Name, v.Typ)
 		}
 
-		s.symbolTable.EnterSymbol(param.Name, NewVariable(param.Name, VARIABLE, v.Type))
+		s.symbolTable.EnterSymbol(param.Name, NewVariable(param.Name, VARIABLE, v.Typ))
 		if err := param.Accept(s); err != nil {
 			return err
 		}
@@ -659,11 +722,13 @@ func (s *Visitor) VisitValueParam(v *ast.ValueParam) error {
 func (s *Visitor) VisitVariableParam(v *ast.VariableParam) error {
 	for _, param := range v.Names {
 		if s.symbolTable.DeclaredLocally(param.Name) {
-			return fmt.Errorf("symbol '%v' already defined as type '%v'", param.Name, v.Type)
+			return fmt.Errorf("symbol '%s' already defined as type '%s'", param.Name, v.Typ)
 		}
 
-		s.symbolTable.EnterSymbol(param.Name, NewVariable(param.Name, VARIABLE, v.Type))
-		if err := param.Accept(s); err != nil {
+		s.symbolTable.EnterSymbol(param.Name, NewVariable(param.Name, VARIABLE, v.Typ))
+
+		v := &LValueVisitor{Visitor: Visitor{program: s.program, symbolTable: s.symbolTable}}
+		if err := param.Accept(v); err != nil {
 			return err
 		}
 	}
@@ -672,6 +737,10 @@ func (s *Visitor) VisitVariableParam(v *ast.VariableParam) error {
 }
 
 func (s *Visitor) VisitFuncHeading(f *ast.FuncHeading) error {
+	if !s.symbolTable.DeclaredLocally(f.FName.Name) {
+		s.symbolTable.EnterSymbol(f.FName.Name, NewFunction(f.FName.Name, FUNCTION, f))
+	}
+
 	for _, param := range f.Parameters {
 		if err := param.Accept(s); err != nil {
 			return err

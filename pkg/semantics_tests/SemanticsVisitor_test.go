@@ -457,3 +457,108 @@ func TestTypeCheckWithStatement(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestFunctionHeadingParameterWithInvalidArgument(t *testing.T) {
+	input := `
+	program HelloWorld;
+	const
+		eps = 1e-10;
+
+	var
+		midpoint : real;
+		foo : integer;
+
+	function bar(x : real) : real;
+	begin
+		bar := 3.143 + x
+	end;
+
+	procedure 
+		bisect (function f(x : real) : real;
+						a, b         : real;
+                var     result       : real);
+
+	begin
+		midpoint := f(99.9);
+		writeln(midpoint)
+	end;
+
+	begin
+		bisect(bar, 0.12, 4, 32);
+		writeln('Hello, world!')
+	end.
+	`
+
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil || program == nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	err = sema.VisitProgram()
+	if err == nil {
+		t.Error("should return an error")
+	}
+
+	errMsg := "argument '32' used in procedure call 'bisect(bar, 0.12, 4, 32)' must be a variable"
+	if err.Error() != errMsg {
+		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
+	}
+}
+
+func TestFunctionHeadingParameter(t *testing.T) {
+	input := `
+	program HelloWorld;
+	const
+		eps = 1e-10;
+
+	var
+		midpoint, slang : real;
+		foo : integer;
+
+	function bar(x : real) : real;
+	begin
+		bar := 3.143 + x
+	end;
+
+	procedure 
+		bisect (function f(x : real)     : real;
+						a, b             : real;
+                var     result, gh       : real);
+
+	begin
+		midpoint := f(99.9);
+		writeln(midpoint)
+	end;
+
+	begin
+		bisect(bar, 0.12, 4, midpoint, slang);
+		writeln('Hello, world!')
+	end.
+	`
+
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil || program == nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	err = sema.VisitProgram()
+	if err != nil {
+		t.Error(err)
+	}
+}
