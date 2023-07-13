@@ -111,7 +111,7 @@ func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) error {
 		return err
 	}
 
-	if !AreAssignmentCompatible(a.Variable.Type(), a.Value.Type()) {
+	if !AreAssignmentCompatible(a.Value.Type(), a.Variable.Type()) {
 		return fmt.Errorf("cannot assign '%s' (of type %s) to '%s' (of type %s)",
 			a.Value, a.Value.Type(), a.Variable, a.Variable.Type())
 	}
@@ -551,6 +551,21 @@ func (s *Visitor) VisitRange(r *ast.Range) error {
 		return err
 	}
 
+	if _, ok := r.Start.Type().(types.Ordinal); !ok {
+		return fmt.Errorf("start constant of range '%s' must be of type, integer, char, Boolean, enum or subrange type,"+
+			"currently it is a '%s' type", r.Start, r.Start.Type())
+	}
+
+	if _, ok := r.End.Type().(types.Ordinal); !ok {
+		return fmt.Errorf("end constant of range '%s' must be of type, integer, char, Boolean, enum or subrange type,"+
+			"currently it is a '%s' type", r.End, r.End.Type())
+	}
+
+	if r.Start.Type().Name() != r.End.Type().Name() {
+		return fmt.Errorf("start constant (%s) and end constant (%s) in range (%s) are not the same type",
+			r.Start.Type().Name(), r.End.Type().Name(), r)
+	}
+
 	r.EType = r.Start.Type()
 
 	return nil
@@ -747,15 +762,17 @@ func (s *Visitor) VisitSetConstructor(st *ast.SetConstructor) error {
 		if err := m.Accept(s); err != nil {
 			return err
 		}
+
+		if _, ok := m.Type().(types.Ordinal); !ok {
+			return fmt.Errorf("set member '%s' must be of type, integer, char, Boolean, enum or subrange type,"+
+				"currently it is a '%s' type", m, m.Type())
+		}
 	}
 
 	if len(st.Members) == 0 {
-		return fmt.Errorf("set-constructor has no members")
-	}
-
-	st.EType = &types.Set{
-		TokenKind: token.Set,
-		BaseType:  st.Members[0].Type().(types.Ordinal),
+		st.EType = &types.Set{TokenKind: token.Set}
+	} else {
+		st.EType = &types.Set{TokenKind: token.Set, BaseType: st.Members[0].Type().(types.Ordinal)}
 	}
 
 	return nil

@@ -192,7 +192,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 		a, b, c, i, j, k, red, green : integer;
 		x, y, z : real;
 		p, q, r : Boolean;
-		h1, h2: hue;
+		h1, h2, h3: hue;
 		s : string;
 
 	function 
@@ -207,6 +207,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 		z := sin(a + b);
 		h1 := [1, 2, 3, 4, 5];
 		h2 := [1, 5, 10..19, 23];
+		h3 := [];
 		r := not p;
 
 		x := x * y;
