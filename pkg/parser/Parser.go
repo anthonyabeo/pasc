@@ -2548,7 +2548,7 @@ func (p *Parser) functionDesignator() (*ast.FuncDesignator, error) {
 		return nil, err
 	}
 
-	funcCall.Parameters, err = p.actualParameterList()
+	funcCall.Args, err = p.actualParameterList()
 	if err != nil {
 		return nil, err
 	}

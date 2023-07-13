@@ -9,9 +9,9 @@ import (
 
 // FuncDesignator is the node that represents a function call
 type FuncDesignator struct {
-	Name       *Identifier
-	Parameters []Expression
-	EType      types.Type
+	Name  *Identifier
+	Args  []Expression
+	EType types.Type
 }
 
 func (f *FuncDesignator) Type() types.Type {
@@ -25,7 +25,7 @@ func (f *FuncDesignator) expr() {}
 
 func (f *FuncDesignator) String() string {
 	var args []string
-	for _, arg := range f.Parameters {
+	for _, arg := range f.Args {
 		args = append(args, arg.String())
 	}
 

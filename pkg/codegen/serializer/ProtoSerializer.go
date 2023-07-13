@@ -629,7 +629,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 		}
 	case *ast.FuncDesignator:
 		var args []*Expression
-		for _, exp := range expr.Parameters {
+		for _, exp := range expr.Args {
 			args = append(args, s.translateExpr(exp))
 		}
 

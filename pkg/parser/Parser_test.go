@@ -370,7 +370,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 
 	value := &ast.FuncDesignator{
 		Name: &ast.Identifier{TokenKind: token.Identifier, Name: "max"},
-		Parameters: []ast.Expression{
+		Args: []ast.Expression{
 			&ast.Identifier{TokenKind: token.Identifier, Name: "a"},
 			&ast.Identifier{TokenKind: token.Identifier, Name: "b"},
 		},
@@ -380,7 +380,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 		return
 	}
 
-	if !testFuncDesignator(t, program.Block.Stats[2].(*ast.AssignStatement).Value, "max", value.Parameters) {
+	if !testFuncDesignator(t, program.Block.Stats[2].(*ast.AssignStatement).Value, "max", value.Args) {
 		return
 	}
 }
@@ -960,10 +960,10 @@ func testFuncDesignator(t *testing.T, funcDesg ast.Expression, funcName string, 
 		return false
 	}
 
-	for i, j := 0, 0; i < len(params) && j < len(fDesg.Parameters); i, j = i+1, j+1 {
-		if params[i].String() != fDesg.Parameters[j].String() {
+	for i, j := 0, 0; i < len(params) && j < len(fDesg.Args); i, j = i+1, j+1 {
+		if params[i].String() != fDesg.Args[j].String() {
 			t.Errorf("expected parameter %v, got %v instead",
-				params[i].String(), fDesg.Parameters[j].String())
+				params[i].String(), fDesg.Args[j].String())
 			return false
 		}
 	}
