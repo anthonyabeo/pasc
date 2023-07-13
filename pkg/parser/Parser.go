@@ -2192,22 +2192,24 @@ func (p *Parser) factor() (ast.Expression, error) {
 			return nil, err
 		}
 
-		member, err = p.memberDesignator()
-		if err != nil {
-			return nil, err
-		}
-		setConst.Members = append(setConst.Members, member)
-
-		for p.lAheadKind(1) == token.Comma {
-			if err = p.consume(); err != nil {
-				return nil, err
-			}
-
+		if p.lAheadKind(1) != token.RSqBrace {
 			member, err = p.memberDesignator()
 			if err != nil {
 				return nil, err
 			}
 			setConst.Members = append(setConst.Members, member)
+
+			for p.lAheadKind(1) == token.Comma {
+				if err = p.consume(); err != nil {
+					return nil, err
+				}
+
+				member, err = p.memberDesignator()
+				if err != nil {
+					return nil, err
+				}
+				setConst.Members = append(setConst.Members, member)
+			}
 		}
 
 		if err = p.match(token.RSqBrace); err != nil {
