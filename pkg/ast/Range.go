@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"fmt"
+
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -23,5 +25,5 @@ func (r *Range) Type() types.Type {
 func (r *Range) expr() {}
 
 func (r *Range) String() string {
-	return "range"
+	return fmt.Sprintf("%s..%s", r.Start, r.End)
 }
