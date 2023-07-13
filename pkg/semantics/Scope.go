@@ -3,6 +3,7 @@ package semantics
 import (
 	"fmt"
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
@@ -43,6 +44,11 @@ func (w *WonkySymbolTable) initSymbolTable() {
 
 	w.EnterSymbol("true", NewConst("true", CONST, base.NewBoolean(), &ast.BoolLiteral{Value: "true"}))
 	w.EnterSymbol("false", NewConst("false", CONST, base.NewBoolean(), &ast.BoolLiteral{Value: "false"}))
+	w.EnterSymbol("maxint", NewConst("maxint", CONST, base.NewInteger(), &ast.UIntegerLiteral{
+		TokenKind: token.UIntLiteral,
+		Value:     "9223372036854775807",
+		EType:     base.NewInteger(),
+	}))
 }
 
 // OpenScope ...
