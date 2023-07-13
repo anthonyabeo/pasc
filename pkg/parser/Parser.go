@@ -2477,7 +2477,7 @@ func (p *Parser) isAddingOp() bool {
 
 func (p *Parser) isRelationalOp() bool {
 	return p.lAheadKind(1) == token.Equal ||
-		p.lAheadKind(1) == token.LessThanGreaterThan ||
+		p.lAheadKind(1) == token.NotEqual ||
 		p.lAheadKind(1) == token.LessThan ||
 		p.lAheadKind(1) == token.GreaterThan ||
 		p.lAheadKind(1) == token.LessThanOrEqual ||

@@ -90,7 +90,7 @@ func (lex *Lexer) NextToken() (token.Token, error) {
 			lex.consume()
 			if lex.curChar == '>' {
 				lex.consume()
-				return token.Token{Kind: token.LessThanGreaterThan, Text: "<>"}, nil
+				return token.Token{Kind: token.NotEqual, Text: "<>"}, nil
 			}
 
 			if lex.curChar == '=' {

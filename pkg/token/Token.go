@@ -71,7 +71,7 @@ const (
 	Minus
 	Equal
 	LessThan
-	LessThanGreaterThan
+	NotEqual
 	LessThanOrEqual
 	GreaterThan
 	GreaterThanOrEqual
@@ -143,30 +143,30 @@ var tokenKindStrings = [...]string{
 	Input:     "input",
 	Output:    "output",
 
-	Identifier:          "identifier",
-	SemiColon:           ";",
-	StrLiteral:          "str-literal",
-	Period:              ".",
-	LParen:              "(",
-	RParen:              ")",
-	Initialize:          ":=",
-	Plus:                "+",
-	Colon:               ":",
-	UIntLiteral:         "uint-literal",
-	Comma:               ",",
-	Star:                "*",
-	FwdSlash:            "/",
-	Minus:               "-",
-	Equal:               "=",
-	LessThan:            "<",
-	LessThanGreaterThan: "<>",
-	LessThanOrEqual:     "<=",
-	GreaterThan:         ">",
-	GreaterThanOrEqual:  ">=",
-	Range:               "..",
-	LSqBrace:            "[",
-	RSqBrace:            "]",
-	Caret:               "^",
+	Identifier:         "identifier",
+	SemiColon:          ";",
+	StrLiteral:         "str-literal",
+	Period:             ".",
+	LParen:             "(",
+	RParen:             ")",
+	Initialize:         ":=",
+	Plus:               "+",
+	Colon:              ":",
+	UIntLiteral:        "uint-literal",
+	Comma:              ",",
+	Star:               "*",
+	FwdSlash:           "/",
+	Minus:              "-",
+	Equal:              "=",
+	LessThan:           "<",
+	NotEqual:           "<>",
+	LessThanOrEqual:    "<=",
+	GreaterThan:        ">",
+	GreaterThanOrEqual: ">=",
+	Range:              "..",
+	LSqBrace:           "[",
+	RSqBrace:           "]",
+	Caret:              "^",
 }
 
 func (t *Token) String() string {

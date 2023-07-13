@@ -798,8 +798,8 @@ func (s *ProtoSerializer) translateOp(op token.Kind) *Operator {
 		return &Operator{Op: Operator_Minus}
 	case token.LessThanOrEqual:
 		return &Operator{Op: Operator_LessEqual}
-	case token.LessThanGreaterThan:
-		return &Operator{Op: Operator_LessGreat}
+	case token.NotEqual:
+		return &Operator{Op: Operator_NotEqual}
 	case token.Mod:
 		return &Operator{Op: Operator_Mod}
 	case token.And:

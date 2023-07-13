@@ -150,7 +150,7 @@ func TestOperators(t *testing.T) {
 		expKind token.Kind
 		expText string
 	}{
-		{token.LessThanGreaterThan, "<>"},
+		{token.NotEqual, "<>"},
 		{token.LessThanOrEqual, "<="},
 		{token.GreaterThanOrEqual, ">="},
 	}

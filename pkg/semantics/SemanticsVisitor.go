@@ -199,7 +199,7 @@ func (s *Visitor) VisitBinaryExpr(b *ast.BinaryExpression) error {
 		}
 
 		b.EType = b.Left.Type()
-	case token.Equal, token.LessThanGreaterThan:
+	case token.Equal, token.NotEqual:
 		if !IsSimpleType(b.Left.Type()) && lhsType != "string" && lhsType != "pointer" && lhsType != "set" {
 			return fmt.Errorf("%s must be a simple-type, string-type, pointer-type or set", rhsType)
 		}
