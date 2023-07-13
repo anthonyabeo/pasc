@@ -7,9 +7,9 @@ import (
 
 // ProcedureStmt models a procedure statement node
 type ProcedureStmt struct {
-	Name      *Identifier
-	ParamList []Expression
-	Label     string
+	Name  *Identifier
+	Args  []Expression
+	Label string
 }
 
 func (ps *ProcedureStmt) stmt() {}
@@ -20,7 +20,7 @@ func (ps *ProcedureStmt) Accept(vst Visitor) error {
 
 func (ps *ProcedureStmt) String() string {
 	var params []string
-	for _, param := range ps.ParamList {
+	for _, param := range ps.Args {
 		params = append(params, param.String())
 	}
 
@@ -32,7 +32,7 @@ func (ps *ProcedureStmt) GetName() string {
 }
 
 func (ps *ProcedureStmt) GetParamList() []Expression {
-	return ps.ParamList
+	return ps.Args
 }
 
 func (ps *ProcedureStmt) SetLabel(l string) {

@@ -2022,7 +2022,7 @@ func (p *Parser) procedureStatement() (ast.ProcedureStatement, error) {
 			return nil, err
 		}
 
-		stmt.ParamList, err = p.actualParameterList()
+		stmt.Args, err = p.actualParameterList()
 		if err != nil {
 			return nil, err
 		}

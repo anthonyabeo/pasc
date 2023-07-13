@@ -223,7 +223,7 @@ func (s *ProtoSerializer) translateStmt(stmt ast.Statement) *Statement {
 		}
 	case *ast.ProcedureStmt:
 		var args []*Expression
-		for _, e := range stmt.ParamList {
+		for _, e := range stmt.Args {
 			args = append(args, s.translateExpr(e))
 		}
 
