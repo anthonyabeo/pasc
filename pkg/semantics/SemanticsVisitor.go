@@ -343,7 +343,7 @@ func (s *Visitor) VisitIfStatement(i *ast.IfStatement) error {
 }
 
 func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
-	for _, arg := range f.Parameters {
+	for _, arg := range f.Args {
 		if err := arg.Accept(s); err != nil {
 			return err
 		}
@@ -356,6 +356,62 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 		return fmt.Errorf("attempting to call %s, which is not a function", f.Name.Name)
 	} else {
 		fHead := function.Type().(*ast.FuncHeading)
+
+		numParams := 0
+		for _, param := range fHead.Parameters {
+			switch param := param.(type) {
+			case *ast.VariableParam:
+				numParams += len(param.Names)
+			case *ast.ValueParam:
+				numParams += len(param.Names)
+			default:
+				numParams += 1
+			}
+		}
+
+		if numParams != len(f.Args) {
+			return fmt.Errorf("not enough arguments to function call '%s'", f)
+		}
+
+		offset := 0
+		for _, param := range fHead.Parameters {
+			switch param := param.(type) {
+			case *ast.VariableParam:
+				for i, name := range param.Names {
+					sym := s.symbolTable.RetrieveSymbol(f.Args[offset+i].String())
+					if sym == nil || sym.Kind() != VARIABLE {
+						return fmt.Errorf("argument '%s' used in funcion call '%s' must be a variable", f.Args[offset+i].String(), f)
+					} else {
+						if !AreAssignmentCompatible(sym.Type(), name.EType) {
+							return fmt.Errorf(
+								"mismatched parameters: argument at position '%d' in function call (%s) does not match "+
+									"parameter at position '%d' in function '%s'", offset+i, f, offset+i, fHead)
+						}
+					}
+				}
+
+				offset += len(param.Names)
+			case *ast.ValueParam:
+				for j, name := range param.Names {
+					if !AreAssignmentCompatible(f.Args[offset+j].Type(), name.EType) {
+						return fmt.Errorf(
+							"mismatched parameters: argument at position '%d' in function call (%s) does not match "+
+								"parameter at position '%d' in function '%s'", offset+j, f, offset+j, fHead)
+					}
+				}
+
+				offset += len(param.Names)
+			default:
+				if !AreAssignmentCompatible(f.Args[offset].Type(), param.Type()) {
+					return fmt.Errorf(
+						"mismatched parameters: argument at position '%d' in function call (%s) does not match "+
+							"parameter at position '%d' in function '%s'", offset+1, f, offset+1, fHead)
+				}
+
+				offset++
+			}
+		}
+
 		f.EType = fHead.ReturnType
 	}
 
@@ -583,7 +639,11 @@ func (s *Visitor) VisitWriteln(w *ast.Writeln) error {
 }
 
 func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
-	var err error
+	for _, param := range p.Args {
+		if err := param.Accept(s); err != nil {
+			return err
+		}
+	}
 
 	sym := s.symbolTable.RetrieveSymbol(p.Name.Name)
 	if sym == nil {
@@ -592,25 +652,20 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 		return fmt.Errorf("cannot call '%s', it is not a procedure", p.Name.Name)
 	} else {
 		pHead := sym.Type().(*ast.ProcedureHeading)
-		for _, param := range p.ParamList {
-			if err = param.Accept(s); err != nil {
-				return err
-			}
-		}
 
-		totalParams := 0
+		numParams := 0
 		for _, param := range pHead.Parameters {
 			switch param := param.(type) {
 			case *ast.VariableParam:
-				totalParams += len(param.Names)
+				numParams += len(param.Names)
 			case *ast.ValueParam:
-				totalParams += len(param.Names)
+				numParams += len(param.Names)
 			default:
-				totalParams += 1
+				numParams += 1
 			}
 		}
 
-		if totalParams != len(p.ParamList) {
+		if numParams != len(p.Args) {
 			return fmt.Errorf("not enough arguments to procedure call '%s'", p)
 		}
 
@@ -619,9 +674,9 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 			switch param := param.(type) {
 			case *ast.VariableParam:
 				for i, name := range param.Names {
-					sym := s.symbolTable.RetrieveSymbol(p.ParamList[offset+i].String())
+					sym := s.symbolTable.RetrieveSymbol(p.Args[offset+i].String())
 					if sym == nil || sym.Kind() != VARIABLE {
-						return fmt.Errorf("argument '%s' used in procedure call '%s' must be a variable", p.ParamList[offset+i].String(), p)
+						return fmt.Errorf("argument '%s' used in procedure call '%s' must be a variable", p.Args[offset+i].String(), p)
 					} else {
 						if !AreAssignmentCompatible(sym.Type(), name.EType) {
 							return fmt.Errorf(
@@ -630,18 +685,20 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 						}
 					}
 				}
+
 				offset += len(param.Names)
 			case *ast.ValueParam:
 				for j, name := range param.Names {
-					if !AreAssignmentCompatible(p.ParamList[offset+j].Type(), name.EType) {
+					if !AreAssignmentCompatible(p.Args[offset+j].Type(), name.EType) {
 						return fmt.Errorf(
 							"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
 								"parameter at position '%d' in procedure '%s'", offset+j, p, offset+j, pHead)
 					}
 				}
+
 				offset += len(param.Names)
 			default:
-				if !AreAssignmentCompatible(p.ParamList[offset].Type(), param.Type()) {
+				if !AreAssignmentCompatible(p.Args[offset].Type(), param.Type()) {
 					return fmt.Errorf(
 						"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
 							"parameter at position '%d' in procedure '%s'", offset+1, p, offset+1, pHead)

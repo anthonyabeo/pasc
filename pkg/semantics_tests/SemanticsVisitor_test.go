@@ -204,7 +204,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 	begin
 		a := 15;
 		x := (x + y + z);
-		z := sin(x + y);
+		z := sin(a + b);
 		h1 := [1, 2, 3, 4, 5];
 		h2 := [1, 5, 10..19, 23];
 		r := not p;
