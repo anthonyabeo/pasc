@@ -25,5 +25,11 @@ func (u *UnaryExpression) Accept(vst Visitor) error {
 }
 
 func (u *UnaryExpression) String() string {
-	return fmt.Sprintf("%v %v", u.Operator, u.Operand)
+	switch u.Operator {
+	case token.Not:
+		return fmt.Sprintf("%v %v", u.Operator, u.Operand)
+	default:
+		return fmt.Sprintf("%v%v", u.Operator, u.Operand)
+	}
+
 }
