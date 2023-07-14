@@ -257,8 +257,18 @@ func (s *Visitor) VisitUnaryExpr(u *ast.UnaryExpression) error {
 
 	switch u.Operator {
 	case token.Minus, token.Plus:
+		if u.Operand.Type().Name() != "integer" && u.Operand.Type().Name() != "real" {
+			return fmt.Errorf("operand, '%s' in expression, '%s', must be real or integer type. it is a '%s' type",
+				u.Operand, u, u.Operand.Type())
+		}
+
 		u.EType = u.Operand.Type()
 	case token.Not:
+		if u.Operand.Type().Name() != "Boolean" {
+			return fmt.Errorf("not-expression, '%s' operand must evaluate to a Boolean type, "+
+				"it evaluates to '%s'", u, u.Operand.Type())
+		}
+
 		u.EType = base.NewBoolean()
 	}
 
