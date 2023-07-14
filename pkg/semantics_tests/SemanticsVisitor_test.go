@@ -563,3 +563,95 @@ func TestFunctionHeadingParameter(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestTypeCheckNotUnaryExpression(t *testing.T) {
+	input := `
+	program HelloWorld;
+	var
+		a, b : integer;
+		p, q, r : Boolean;
+
+	function 
+		sin(n: integer): real;
+		begin
+			sin := 0.01
+		end;
+
+	begin
+		r := not sin(a + b);
+
+		writeln('Hello, world!')
+	end.
+`
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	err = sema.VisitProgram()
+	if err == nil {
+		t.Error("should return an error")
+	}
+
+	errMsg := "not-expression, 'not sin(a + b)' operand must evaluate to a Boolean type, it evaluates to 'real'"
+	if err.Error() != errMsg {
+		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
+	}
+}
+
+func TestTypeCheckMinusUnaryExpression(t *testing.T) {
+	input := `
+	program HelloWorld;
+	type
+		hue = set of integer;
+		string = set of char;
+
+	var
+		a, b : integer;
+		p, q, r : Boolean;
+		h1, h2, h3: hue;
+
+	function 
+		sin(n: integer): real;
+		begin
+			sin := 0.01
+		end;
+
+	begin
+		h1 := [1, 2, 3, 4, 5];
+		h3 := -[1, 5, 10..19, 23];
+
+		writeln('Hello, world!')
+	end.
+`
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	err = sema.VisitProgram()
+	if err == nil {
+		t.Error("should return an error")
+	}
+
+	errMsg := "operand, '[1, 5, 10..19, 23]' in expression, '-[1, 5, 10..19, 23]', must be real or integer type. it is a 'set of integer' type"
+	if err.Error() != errMsg {
+		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
+	}
+}
