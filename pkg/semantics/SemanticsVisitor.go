@@ -648,18 +648,42 @@ func (s *Visitor) VisitProcedureDecl(p *ast.ProcedureDeclaration) error {
 }
 
 func (s *Visitor) VisitRead(r *ast.Read) error {
+	for _, param := range r.VarAccess {
+		if err := param.Accept(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func (s *Visitor) VisitReadLn(r *ast.ReadLn) error {
+	for _, param := range r.VarAccess {
+		if err := param.Accept(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func (s *Visitor) VisitWrite(w *ast.Write) error {
+	for _, param := range w.ParamList {
+		if err := param.Accept(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func (s *Visitor) VisitWriteln(w *ast.Writeln) error {
+	for _, param := range w.ParamList {
+		if err := param.Accept(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -764,6 +788,24 @@ func (s *Visitor) VisitCaseStatement(cse *ast.CaseStatement) error {
 }
 
 func (s *Visitor) VisitWriteParameter(w *ast.WriteParameter) error {
+	var err error
+
+	if err = w.E.Accept(s); err != nil {
+		return err
+	}
+
+	if w.TotalWidth != nil {
+		if err = w.TotalWidth.Accept(s); err != nil {
+			return err
+		}
+	}
+
+	if w.FracDigits != nil {
+		if err = w.FracDigits.Accept(s); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

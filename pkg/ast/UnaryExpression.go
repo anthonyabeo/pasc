@@ -31,5 +31,4 @@ func (u *UnaryExpression) String() string {
 	default:
 		return fmt.Sprintf("%v%v", u.Operator, u.Operand)
 	}
-
 }
