@@ -2,6 +2,8 @@ package semantics
 
 import (
 	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/base"
+	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
 // AreAssignmentCompatible checks whether the provided types are 'assignment-compatible'. Any types T1 is said to be
@@ -25,20 +27,39 @@ func AreAssignmentCompatible(src types.Type, dest types.Type) bool {
 	return false
 }
 
-// AreCompatibleTypes checks whether type provided types are 'compatible'. Two types T1 and T2 are 'compatible' if
-// any of the follow conditions are satisfied:
-//
-// a) T1 and T2 are the same type.
-// b) T1 is a subrange of T2, or T2 is a subrange of T1, or both T1 and T2 are subranges of the same host-type.
-// c) T1 and T2 are set-types of compatible base-types, and either both T1 and T2 are designated packed or neither T1 nor T2 is designated packed.
-// d) T1 and T2 are string-types with the same number of components.
-// TODO complete implementation
+// AreCompatibleTypes checks whether type provided types are 'compatible'.
 func AreCompatibleTypes(a, b types.Type) bool {
-	if a.Name() == b.Name() {
-		return true
+	if a.Name() == "string" && b.Name() == "string" {
+		aStr := a.(*base.String)
+		bStr := b.(*base.String)
+
+		return len(aStr.String()) == len(bStr.String())
 	}
 
-	return false
+	if a.Name() == "set" && b.Name() == "set" {
+		aSet := a.(*types.Set)
+		bSet := b.(*types.Set)
+
+		return AreCompatibleTypes(aSet.BaseType, bSet.BaseType)
+		//&& ((aSet.IsPacked && bSet.IsPacked) || (!aSet.IsPacked && !bSet.IsPacked))
+	}
+
+	if a.Name() == "subrange" {
+		aSubR := a.(*structured.SubRange)
+
+		return aSubR.HostType.Name() == b.Name()
+	} else if b.Name() == "subrange" {
+		bSubR := b.(*structured.SubRange)
+
+		return bSubR.HostType.Name() == a.Name()
+	} else if a.Name() == "subrange" && b.Name() == "subrange" {
+		aSubR := a.(*structured.SubRange)
+		bSubR := b.(*structured.SubRange)
+
+		return aSubR.HostType.Name() == bSubR.HostType.Name()
+	}
+
+	return a.Name() == b.Name()
 }
 
 func IsSimpleType(t types.Type) bool {
