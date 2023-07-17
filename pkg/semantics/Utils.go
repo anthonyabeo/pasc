@@ -33,7 +33,7 @@ func AreCompatibleTypes(a, b types.Type) bool {
 		aStr := a.(*base.String)
 		bStr := b.(*base.String)
 
-		return len(aStr.String()) == len(bStr.String())
+		return aStr.NumComponents == bStr.NumComponents
 	}
 
 	if a.Name() == "set" && b.Name() == "set" {
