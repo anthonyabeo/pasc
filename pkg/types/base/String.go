@@ -1,11 +1,12 @@
 package base
 
 type String struct {
-	name string
+	name          string
+	NumComponents int
 }
 
-func NewString() *String {
-	return &String{name: "string"}
+func NewString(numComp int) *String {
+	return &String{name: "string", NumComponents: numComp}
 }
 
 // Name returns the character
