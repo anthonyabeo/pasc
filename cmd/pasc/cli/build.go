@@ -63,7 +63,9 @@ func runBuild(ctx context.Context, args []string) error {
 	}
 
 	sema := semantics.NewSemaVisitor(program, symTable)
-	sema.VisitProgram()
+	if err = sema.VisitProgram(); err != nil {
+		return err
+	}
 
 	serializer := serde.NewProtoSerializer(program, buildArgs.out, symTable)
 	err = serializer.Serialize()
