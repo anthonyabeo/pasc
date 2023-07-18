@@ -187,6 +187,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 	type
 		hue = set of integer;
 		string = set of char;
+		operator = (plus, minus, times, divide);
 
 	var
 		a, b, c, i, j, k, red, green : integer;
@@ -194,6 +195,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 		p, q, r : Boolean;
 		h1, h2, h3: hue;
 		s : string;
+		op    : operator;
 
 	function 
 		sin(n: integer): real;
@@ -225,6 +227,8 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 		r := p = q and r;
 		r := (i < j) or (j < k);
 		r := c in h1;
+
+		op := times;
 
 		writeln('Hello, world!')
 	end.

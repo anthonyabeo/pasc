@@ -111,7 +111,7 @@ func (s *Visitor) VisitAssignStmt(a *ast.AssignStatement) error {
 		return err
 	}
 
-	if !AreAssignmentCompatible(a.Value.Type(), a.Variable.Type()) {
+	if !s.AreAssignmentCompatible(a.Value, a.Variable) {
 		return fmt.Errorf("cannot assign '%s' (of type %s) to '%s' (of type %s)",
 			a.Value, a.Value.Type(), a.Variable, a.Variable.Type())
 	}
@@ -392,7 +392,7 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 					if sym == nil || sym.Kind() != VARIABLE {
 						return fmt.Errorf("argument '%s' used in funcion call '%s' must be a variable", f.Args[offset+i].String(), f)
 					} else {
-						if !AreAssignmentCompatible(sym.Type(), name.EType) {
+						if !s.AreAssignmentCompatible(f.Args[offset+i], name) {
 							return fmt.Errorf(
 								"mismatched parameters: argument at position '%d' in function call (%s) does not match "+
 									"parameter at position '%d' in function '%s'", offset+i, f, offset+i, fHead)
@@ -403,7 +403,7 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 				offset += len(param.Names)
 			case *ast.ValueParam:
 				for j, name := range param.Names {
-					if !AreAssignmentCompatible(f.Args[offset+j].Type(), name.EType) {
+					if !s.AreAssignmentCompatible(f.Args[offset+j], name) {
 						return fmt.Errorf(
 							"mismatched parameters: argument at position '%d' in function call (%s) does not match "+
 								"parameter at position '%d' in function '%s'", offset+j, f, offset+j, fHead)
@@ -412,7 +412,7 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 
 				offset += len(param.Names)
 			default:
-				if !AreAssignmentCompatible(f.Args[offset].Type(), param.Type()) {
+				if !s.AreAssignmentCompatible(f.Args[offset], param) {
 					return fmt.Errorf(
 						"mismatched parameters: argument at position '%d' in function call (%s) does not match "+
 							"parameter at position '%d' in function '%s'", offset+1, f, offset+1, fHead)
@@ -592,7 +592,7 @@ func (s *Visitor) VisitCompoundStatement(cs *ast.CompoundStatement) error {
 }
 
 func (s *Visitor) VisitStrLiteral(str *ast.StrLiteral) error {
-	str.EType = base.NewString()
+	str.EType = base.NewString(len(str.Value))
 	return nil
 }
 
@@ -727,7 +727,7 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 					if sym == nil || sym.Kind() != VARIABLE {
 						return fmt.Errorf("argument '%s' used in procedure call '%s' must be a variable", p.Args[offset+i].String(), p)
 					} else {
-						if !AreAssignmentCompatible(sym.Type(), name.EType) {
+						if !s.AreAssignmentCompatible(p.Args[offset+i], name) {
 							return fmt.Errorf(
 								"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
 									"parameter at position '%d' in procedure '%s'", offset+i, p, offset+i, pHead)
@@ -738,7 +738,7 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 				offset += len(param.Names)
 			case *ast.ValueParam:
 				for j, name := range param.Names {
-					if !AreAssignmentCompatible(p.Args[offset+j].Type(), name.EType) {
+					if !s.AreAssignmentCompatible(p.Args[offset+j], name) {
 						return fmt.Errorf(
 							"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
 								"parameter at position '%d' in procedure '%s'", offset+j, p, offset+j, pHead)
@@ -747,7 +747,7 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 
 				offset += len(param.Names)
 			default:
-				if !AreAssignmentCompatible(p.Args[offset].Type(), param.Type()) {
+				if !s.AreAssignmentCompatible(p.Args[offset], param) {
 					return fmt.Errorf(
 						"mismatched parameters: argument at position '%d' in procedure call (%s) does not match "+
 							"parameter at position '%d' in procedure '%s'", offset+1, p, offset+1, pHead)
