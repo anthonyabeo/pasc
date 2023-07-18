@@ -8,18 +8,6 @@ type Type interface {
 	Name() string
 }
 
-// BuiltIn represents a generic non-user-defined data type
-type BuiltIn interface {
-	Type
-	isBuiltIn() bool
-}
-
-// UserDefined represents a generic user-defined type
-type UserDefined interface {
-	Type
-	isUserDefined() bool
-}
-
 // Ordinal is the generic parent of ordinal types
 type Ordinal interface {
 	Type
