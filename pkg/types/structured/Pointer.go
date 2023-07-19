@@ -11,6 +11,10 @@ type Pointer struct {
 	DomainType types.Type
 }
 
+func NewPointer() *Pointer {
+	return &Pointer{TokenKind: token.Caret}
+}
+
 // Name ...
 func (p *Pointer) Name() string {
 	return "pointer"
