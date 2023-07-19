@@ -1,11 +1,12 @@
 package semantics
 
 import (
+	"strconv"
+
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/types"
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 	"github.com/anthonyabeo/pasc/pkg/types/structured"
-	"strconv"
 )
 
 // AreAssignmentCompatible checks whether the provided types are 'assignment-compatible'. Any types T1 is said to be
@@ -132,7 +133,7 @@ func (s *Visitor) AreAssignmentCompatible(src ast.Expression, dest ast.Expressio
 			return srcSet.BaseType.String() == dstSet.BaseType.String()
 		}
 
-		if src.Type().Name() == "string" && dest.Type().Name() == "string" {
+		if src.Type().Name() == dest.Type().Name() {
 			return true
 		}
 	}
