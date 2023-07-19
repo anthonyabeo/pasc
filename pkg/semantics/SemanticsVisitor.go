@@ -437,6 +437,23 @@ func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) error {
 }
 
 func (s *Visitor) VisitIdentifiedVariable(i *ast.IdentifiedVariable) error {
+	sym := s.symbolTable.RetrieveSymbol(i.PointerName.Name)
+	if sym == nil {
+		return fmt.Errorf("the name '%s' is not declared", i.PointerName.Name)
+	} else if sym.Kind() != VARIABLE {
+		return fmt.Errorf("the name '%s' is not a variable", i.PointerName.Name)
+	} else if sym.Type().Name() != "pointer" {
+		return fmt.Errorf("the name '%s' is not a pointer type", i.PointerName.Name)
+	} else {
+		ptr := sym.Type().(*structured.Pointer)
+		if ptr.DomainType.String() != i.UnderType.String() {
+			return fmt.Errorf("name '%s', is declared as a pointer to '%s', but it points to '%s' instead",
+				i.PointerName.Name, ptr.DomainType.String(), i.UnderType.String())
+		}
+
+		i.EType = ptr
+	}
+
 	return nil
 }
 
@@ -762,6 +779,7 @@ func (s *Visitor) VisitProcedureStmt(p *ast.ProcedureStmt) error {
 }
 
 func (s *Visitor) VisitNil(n *ast.NilValue) error {
+	n.EType = structured.NewPointer()
 	return nil
 }
 
