@@ -659,3 +659,40 @@ func TestTypeCheckMinusUnaryExpression(t *testing.T) {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
 }
+
+func TestTypeCheckIdentifiedVariable(t *testing.T) {
+	input := `
+	program HelloWorld;
+	
+	type
+		persondetails = record
+			name, firstname : integer;
+			age : integer;
+			married : Boolean
+		end;
+
+	var
+		person : ^persondetails;
+
+	begin
+		person^ := nil;
+		writeln('Hello, world!')
+	end.
+`
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	if err := sema.VisitProgram(); err != nil {
+		t.Error(err)
+	}
+}
