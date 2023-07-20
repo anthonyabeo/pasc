@@ -17,7 +17,7 @@ enum Operator deserializeOp(const Pasc::Operator& opt) {
     return Operator::GreatEqual;
   case Pasc::Operator_OpKind_LessEqual:
     return Operator::LessEqual;
-  case Pasc::Operator_OpKind_LessGreat:
+  case Pasc::Operator_OpKind_NotEqual:
     return Operator::LessGreat;
   case Pasc::Operator_OpKind_Plus:
     return Operator::Plus;
