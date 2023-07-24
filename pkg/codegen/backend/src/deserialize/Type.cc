@@ -26,6 +26,8 @@ std::unique_ptr<Type> deserializeType(const Pasc::Type &t) {
     return std::make_unique<ArrayType>(t.arr());
   case Pasc::Type_TypeKind_RECORD:
     return std::make_unique<RecordType>(t.rec());
+  case Pasc::Type_TypeKind_CHAR:
+    return std::make_unique<CharType>(t.char_());
   default:
     throw DeserializeProtobufException("invalid case");
   }
