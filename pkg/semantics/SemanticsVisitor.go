@@ -27,6 +27,22 @@ func (s *Visitor) VisitProgram() error {
 func (s *Visitor) VisitBlock(blk *ast.Block) error {
 	var err error
 
+	if blk.Labels != nil {
+		for _, lbl := range blk.Labels.Labels {
+			if !s.symbolTable.DeclaredLocally(lbl.Value) {
+				s.symbolTable.EnterSymbol(lbl.Value, NewLabel(lbl.Value, LABEL, base.NewInteger()))
+			}
+		}
+	}
+
+	if blk.Types != nil {
+		for _, typeDef := range blk.Types.Types {
+			if !s.symbolTable.DeclaredLocally(typeDef.Name.Name) {
+				s.symbolTable.EnterSymbol(typeDef.Name.Name, NewTypeDef(typeDef.Name.Name, TYPE, typeDef.TypeDenoter))
+			}
+		}
+	}
+
 	if blk.VarDeclaration != nil {
 		for _, varDecl := range blk.VarDeclaration.Decls {
 			for _, id := range varDecl.Names {
