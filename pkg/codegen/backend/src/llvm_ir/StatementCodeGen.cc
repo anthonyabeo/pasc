@@ -124,12 +124,11 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
 
   auto *ThenV = is.true_path->codegen(*this);
   if (!ThenV)
-    return nullptr;
-
-  builder->CreateBr(MergeBB);
+    throw IRCodegenException("then-path codegen error");
 
   // Codegen of 'Then' can change the current block, update ThenBB for the PHI.
   ThenBB = builder->GetInsertBlock();
+  builder->CreateBr(MergeBB);
 
   // Emit else block.
   llvm::Value* ElseV = nullptr;
@@ -139,11 +138,11 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
 
     ElseV = is.else_path->codegen(*this);
     if (!ElseV)
-      return nullptr;
+      throw IRCodegenException("else-path codegen error");
 
-    builder->CreateBr(MergeBB);
     // Codegen of 'Else' can change the current block, update ElseBB for the PHI.
     ElseBB = builder->GetInsertBlock();
+    builder->CreateBr(MergeBB);
   }
 
   // Emit merge block.
@@ -158,8 +157,7 @@ llvm::Value *IRCodegenVisitor::codegen(const IfStatement& is) {
 
   llvm::PHINode *PN = builder->CreatePHI(ThenV->getType(), 2, "iftmp");
   PN->addIncoming(ThenV, ThenBB);
-  if(is.else_path)
-    PN->addIncoming(ElseV, ElseBB);
+  PN->addIncoming(ElseV, ElseBB);
 
   return PN;
 }
@@ -260,7 +258,9 @@ llvm::Value *IRCodegenVisitor::codegen(const ReturnStatement& rs) {
   }
 
   auto ret = rs.value->codegen(*this);
-  return builder->CreateRet(ret);
+  builder->CreateRet(ret);
+
+  return ret;
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const WhileStatement &ws) {
