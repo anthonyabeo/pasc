@@ -197,12 +197,6 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 		s : string;
 		op    : operator;
 
-	function 
-		sin(n: integer): real;
-		begin
-			sin := 0.01
-		end;
-
 	begin
 		a := 15;
 		x := (x + y + z);
@@ -575,12 +569,6 @@ func TestTypeCheckNotUnaryExpression(t *testing.T) {
 		a, b : integer;
 		p, q, r : Boolean;
 
-	function 
-		sin(n: integer): real;
-		begin
-			sin := 0.01
-		end;
-
 	begin
 		r := not sin(a + b);
 
@@ -622,12 +610,6 @@ func TestTypeCheckMinusUnaryExpression(t *testing.T) {
 		a, b : integer;
 		p, q, r : Boolean;
 		h1, h2, h3: hue;
-
-	function 
-		sin(n: integer): real;
-		begin
-			sin := 0.01
-		end;
 
 	begin
 		h1 := [1, 2, 3, 4, 5];

@@ -1294,12 +1294,6 @@ func TestParseExpressions(t *testing.T) {
 		x, y, z : real;
 		p, q, r : Boolean;
 
-	function 
-		sin(n: integer): real;
-		begin
-			
-		end;
-
 	begin
 		a := 15;
 		a := (x + y + z);
