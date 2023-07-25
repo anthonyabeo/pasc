@@ -16,7 +16,7 @@ llvm::Value* IRCodegenVisitor::codegen(const IdentifierExpr &expr) {
         std::string("Identifier not found: " + expr.identifier->get_name()));
   }
 
-  llvm::Value *idVal = builder->CreateLoad(id->getAllocatedType(), id, "ld");
+  llvm::Value *idVal = builder->CreateLoad(id->getAllocatedType(), id);
   if (!idVal) {
     throw IRCodegenException(
         std::string("cannot read value of: " + expr.identifier->get_name()));
