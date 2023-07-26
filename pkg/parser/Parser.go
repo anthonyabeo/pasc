@@ -222,7 +222,7 @@ func (p *Parser) labelDeclarationPart() (*ast.LabelDefinition, error) {
 	labelDefinition.Labels = append(labelDefinition.Labels, label)
 
 	if p.symTable.DeclaredLocally(label.Value) {
-		panic(fmt.Sprintf("%s already declared in this scope", label.Value))
+		return nil, fmt.Errorf("%s already declared in this scope", label.Value)
 	}
 
 	p.symTable.EnterSymbol(label.Value, semantics.NewLabel(label.Value, semantics.LABEL, nil))
@@ -239,7 +239,7 @@ func (p *Parser) labelDeclarationPart() (*ast.LabelDefinition, error) {
 		labelDefinition.Labels = append(labelDefinition.Labels, label)
 
 		if p.symTable.DeclaredLocally(label.Value) {
-			panic(fmt.Sprintf("%s already declared in this scope", label.Value))
+			return nil, fmt.Errorf("%s already declared in this scope", label.Value)
 		}
 
 		p.symTable.EnterSymbol(label.Value, semantics.NewLabel(label.Value, semantics.LABEL, nil))
@@ -311,7 +311,7 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 	}
 
 	if p.symTable.DeclaredLocally(typeDef.Name.Name) {
-		panic(fmt.Sprintf("%s already declared in this scope", typeDef.Name.Name))
+		return nil, fmt.Errorf("%s already declared in this scope", typeDef.Name.Name)
 	}
 
 	p.symTable.EnterSymbol(typeDef.Name.Name, semantics.NewTypeDef(typeDef.Name.Name, semantics.TYPE, typeDef.TypeDenoter))
@@ -372,7 +372,7 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 
 				for index, enum := range enumTyp.List {
 					if p.symTable.DeclaredLocally(enum.Name) {
-						panic(fmt.Sprintf("%s already declared in this scope", enum.Name))
+						return nil, fmt.Errorf("%s already declared in this scope", enum.Name)
 					}
 
 					p.symTable.EnterSymbol(
@@ -476,7 +476,7 @@ func (p *Parser) recordType() (*structured.Record, error) {
 			for _, rs := range f.Entry {
 				for _, entry := range rs.List {
 					if p.symTable.DeclaredLocally(entry.Name) {
-						panic(fmt.Sprintf("cannot redeclare field name '%s'", entry.Name))
+						return nil, fmt.Errorf("cannot redeclare field name '%s'", entry.Name)
 					}
 
 					p.symTable.EnterSymbol(
@@ -933,7 +933,7 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	}
 
 	if p.symTable.DeclaredLocally(constDef.Name.Name) {
-		panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", constDef.Name.Name, constDef.Value.Type()))
+		return nil, fmt.Errorf("symbol '%v' already defined as type '%v'", constDef.Name.Name, constDef.Value.Type())
 	}
 
 	p.symTable.EnterSymbol(
@@ -1438,7 +1438,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	// add variables to symbol table
 	for _, n := range names {
 		if p.symTable.DeclaredLocally(n.Name) {
-			panic(fmt.Sprintf("symbol '%v' already defined as type '%v'", n.Name, varDecl.Type))
+			return nil, fmt.Errorf("symbol '%v' already defined as type '%v'", n.Name, varDecl.Type)
 		}
 
 		p.symTable.EnterSymbol(n.Name, semantics.NewVariable(n.Name, semantics.VARIABLE, varDecl.Type))
