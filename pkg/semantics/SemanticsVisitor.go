@@ -2,6 +2,7 @@ package semantics
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -447,6 +448,17 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) error {
 	if err := g.Label.Accept(s); err != nil {
 		return err
+	}
+
+	if g.Label.EType.Name() != "integer" {
+		return fmt.Errorf(
+			"label must be integer-type, got '%s'-type instead", g.Label.EType.Name())
+	}
+
+	val, err := strconv.Atoi(g.Label.Value)
+	if err != nil && (val < 0 || val > 9999) {
+		return fmt.Errorf(
+			"label value, '%s' cannot be outside the range [0, 9999]", g.Label.Value)
 	}
 
 	return nil
