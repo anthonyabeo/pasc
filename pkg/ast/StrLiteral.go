@@ -12,16 +12,16 @@ type StrLiteral struct {
 	EType     types.Type
 }
 
-func (c *StrLiteral) expr() {}
+func (str *StrLiteral) expr() {}
 
-func (c *StrLiteral) Accept(vst Visitor) error {
-	return vst.VisitStrLiteral(c)
+func (str *StrLiteral) Accept(vst Visitor) error {
+	return vst.VisitStrLiteral(str)
 }
 
-func (c *StrLiteral) Type() types.Type {
-	return c.EType
+func (str *StrLiteral) Type() types.Type {
+	return str.EType
 }
 
-func (c *StrLiteral) String() string {
-	return c.Value
+func (str *StrLiteral) String() string {
+	return str.Value
 }
