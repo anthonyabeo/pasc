@@ -712,7 +712,7 @@ func TestTypeCheckGotoLabelsOutOfRange(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "label value, '10294' cannot be outside the range [0, 9999]"
+	errMsg := "label value, '10294' fall outside the required range [0, 9999]"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
