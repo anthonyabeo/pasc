@@ -452,13 +452,13 @@ func (s *Visitor) VisitGotoStatement(g *ast.GotoStatement) error {
 
 	if g.Label.EType.Name() != "integer" {
 		return fmt.Errorf(
-			"label must be integer-type, got '%s'-type instead", g.Label.EType.Name())
+			"label must be integer-type, got '%s' instead", g.Label.EType.Name())
 	}
 
 	val, err := strconv.Atoi(g.Label.Value)
-	if err != nil && (val < 0 || val > 9999) {
+	if err != nil || (val < 0 || val > 9999) {
 		return fmt.Errorf(
-			"label value, '%s' cannot be outside the range [0, 9999]", g.Label.Value)
+			"label value, '%s' fall outside the required range [0, 9999]", g.Label.Value)
 	}
 
 	return nil
