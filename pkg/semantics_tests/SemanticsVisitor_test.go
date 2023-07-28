@@ -678,3 +678,42 @@ func TestTypeCheckIdentifiedVariable(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestTypeCheckGotoLabelsOutOfRange(t *testing.T) {
+	input := `
+	program HelloWorld;
+	label 10294;
+
+	begin
+		goto 10294;
+
+		10294:
+			writeln('at label %d', 10294);
+
+		writeln('Hello, world!')
+	end.
+`
+
+	lex := parser.NewLexer(input)
+	symTable := semantics.NewWonkySymbolTable()
+	pars, err := parser.NewParser(lex, symTable)
+	if err != nil {
+		t.Error(err)
+	}
+
+	program, err := pars.Program()
+	if err != nil {
+		t.Error(err)
+	}
+
+	sema := semantics.NewSemaVisitor(program, symTable)
+	err = sema.VisitProgram()
+	if err == nil {
+		t.Error("should return an error")
+	}
+
+	errMsg := "label value, '10294' cannot be outside the range [0, 9999]"
+	if err.Error() != errMsg {
+		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
+	}
+}
