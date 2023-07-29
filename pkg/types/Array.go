@@ -12,6 +12,7 @@ type Array struct {
 	TokenKind     token.Kind
 	Indices       []Ordinal
 	ComponentType Type
+	Packed        bool
 }
 
 // Name ...

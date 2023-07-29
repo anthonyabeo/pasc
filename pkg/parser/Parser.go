@@ -358,12 +358,22 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 		}
 	} else {
 		if p.isNewType() {
+			var isPacked bool
+			if p.lAheadKind(1) == token.Packed {
+				isPacked = true
+			}
+
 			switch p.lAheadKind(1) {
 			case token.Array:
-				typ, err = p.arrayType()
+				arrType, err := p.arrayType()
 				if err != nil {
 					return nil, err
 				}
+				if isPacked {
+					arrType.Packed = isPacked
+				}
+
+				typ = arrType
 			case token.LParen:
 				enumTyp, err := p.enumType()
 				if err != nil {
