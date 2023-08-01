@@ -1,7 +1,5 @@
 package token
 
-import "fmt"
-
 // Kind defines the category of a token. E.g. Keyword, Identifier etc
 type Kind byte
 
@@ -10,7 +8,8 @@ func (k Kind) String() string {
 }
 
 const (
-	EOF Kind = iota
+	Illegal Kind = iota
+	EOF
 
 	// Keywords
 	Program
@@ -89,11 +88,16 @@ const (
 type Token struct {
 	Text string
 	Kind Kind
+	Pos  *Position
 }
 
 // NewToken constructs and returns a new token
-func NewToken(kind Kind, text string) Token {
-	return Token{Kind: kind, Text: text}
+func NewToken(kind Kind, text string, pos *Position) Token {
+	return Token{Kind: kind, Text: text, Pos: pos}
+}
+
+func (t *Token) String() string {
+	return t.Text
 }
 
 var tokenKindStrings = [...]string{
@@ -169,15 +173,11 @@ var tokenKindStrings = [...]string{
 	Caret:              "^",
 }
 
-func (t *Token) String() string {
-	return fmt.Sprintf("<%s>", t.Text)
-}
-
 // Keywords define the reserved words of the language
-var Keywords map[string]Kind
+var keywords map[string]Kind
 
 func init() {
-	Keywords = map[string]Kind{
+	keywords = map[string]Kind{
 		"program":   Program,
 		"begin":     Begin,
 		"end":       End,
@@ -220,4 +220,13 @@ func init() {
 		"false":     False,
 		"goto":      Goto,
 	}
+}
+
+// Lookup maps an identifier to its keyword token or IDENT (if not a keyword).
+func Lookup(ident string) Kind {
+	if tok, isKeyword := keywords[ident]; isKeyword {
+		return tok
+	}
+
+	return Identifier
 }
