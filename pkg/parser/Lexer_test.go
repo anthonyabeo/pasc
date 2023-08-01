@@ -8,9 +8,14 @@ import (
 )
 
 func TestLexingEmptyString(t *testing.T) {
-	input := ""
+	input := []byte("")
 
-	lex := Lexer{input: input}
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	tok, err := lex.NextToken()
 	if err != nil {
 		t.Errorf(fmt.Sprintf("lex.NextToken. %s", err.Error()))
@@ -26,31 +31,36 @@ func TestLexingEmptyString(t *testing.T) {
 }
 
 func TestLexingHelloWorldProgram(t *testing.T) {
-	input := `
-		program HelloWorld;
-		begin
-			writeln('Hello, World!');
-		end.
-	`
+	input := []byte(`program HelloWorld;
+begin
+    writeln('Hello, World!');
+end.
+`)
 
 	tests := []struct {
 		expType token.Kind
 		expText string
+		expCol  int
+		expLine int
 	}{
-		{token.Program, "program"},
-		{token.Identifier, "HelloWorld"},
-		{token.SemiColon, ";"},
-		{token.Begin, "begin"},
-		{token.Identifier, "writeln"},
-		{token.LParen, "("},
-		{token.StrLiteral, "Hello, World!"},
-		{token.RParen, ")"},
-		{token.SemiColon, ";"},
-		{token.End, "end"},
-		{token.Period, "."},
+		{token.Program, "program", 1, 1},
+		{token.Identifier, "HelloWorld", 9, 1},
+		{token.SemiColon, ";", 19, 1},
+		{token.Begin, "begin", 1, 2},
+		{token.Identifier, "writeln", 5, 3},
+		{token.LParen, "(", 12, 3},
+		{token.StrLiteral, "Hello, World!", 13, 3},
+		{token.RParen, ")", 28, 3},
+		{token.SemiColon, ";", 29, 3},
+		{token.End, "end", 1, 4},
+		{token.Period, ".", 4, 4},
 	}
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
 
 	for _, test := range tests {
 		tok, err := lex.NextToken()
@@ -66,64 +76,79 @@ func TestLexingHelloWorldProgram(t *testing.T) {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
 				test.expText, tok.Kind)
 		}
+
+		if tok.Pos.Line != test.expLine {
+			t.Errorf("lex.NextToken. Expected line number (of token %s) to be %d, Got %d instead",
+				tok.Text, test.expLine, tok.Pos.Line)
+		}
+
+		if tok.Pos.Column != test.expCol {
+			t.Errorf("lex.NextToken. Expected column number (of token %s) to be %d, Got %d instead",
+				tok.Text, test.expCol, tok.Pos.Column)
+		}
 	}
 }
 
 func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
-	input := `
-	program HelloWorld;
-	var 
-		a, b, sum : integer;
+	input := []byte(`program HelloWorld;
+var
+	a, b, sum : integer;
 
-	begin
-		(* this is a comment *)
-		a := 1;
-		b := 2;
-		sum := a + b;
-		
-		writeln(sum);
-	end.
-`
-	lex := NewLexer(input)
+begin
+	(* this is a comment *)
+	a := 1;
+	b := 2;
+	sum := a + b;
+
+	writeln(sum);
+end.
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
 
 	tests := []struct {
 		expKind token.Kind
 		expText string
+		expCol  int
+		expLine int
 	}{
-		{token.Program, "program"},
-		{token.Identifier, "HelloWorld"},
-		{token.SemiColon, ";"},
-		{token.Var, "var"},
-		{token.Identifier, "a"},
-		{token.Comma, ","},
-		{token.Identifier, "b"},
-		{token.Comma, ","},
-		{token.Identifier, "sum"},
-		{token.Colon, ":"},
-		{token.Integer, "integer"},
-		{token.SemiColon, ";"},
-		{token.Begin, "begin"},
-		{token.Identifier, "a"},
-		{token.Initialize, ":="},
-		{token.UIntLiteral, "1"},
-		{token.SemiColon, ";"},
-		{token.Identifier, "b"},
-		{token.Initialize, ":="},
-		{token.UIntLiteral, "2"},
-		{token.SemiColon, ";"},
-		{token.Identifier, "sum"},
-		{token.Initialize, ":="},
-		{token.Identifier, "a"},
-		{token.Plus, "+"},
-		{token.Identifier, "b"},
-		{token.SemiColon, ";"},
-		{token.Identifier, "writeln"},
-		{token.LParen, "("},
-		{token.Identifier, "sum"},
-		{token.RParen, ")"},
-		{token.SemiColon, ";"},
-		{token.End, "end"},
-		{token.Period, "."},
+		{token.Program, "program", 1, 1},
+		{token.Identifier, "HelloWorld", 9, 1},
+		{token.SemiColon, ";", 19, 1},
+		{token.Var, "var", 2, 1},
+		{token.Identifier, "a", 2, 3},
+		{token.Comma, ",", 3, 3},
+		{token.Identifier, "b", 5, 3},
+		{token.Comma, ",", 6, 3},
+		{token.Identifier, "sum", 8, 3},
+		{token.Colon, ":", 10, 3},
+		{token.Integer, "integer", 12, 3},
+		{token.SemiColon, ";", 19, 1},
+		{token.Begin, "begin", 1, 5},
+		{token.Identifier, "a", 2, 7},
+		{token.Initialize, ":=", 4, 7},
+		{token.UIntLiteral, "1", 6, 7},
+		{token.SemiColon, ";", 7, 7},
+		{token.Identifier, "b", 2, 8},
+		{token.Initialize, ":=", 4, 8},
+		{token.UIntLiteral, "2", 6, 8},
+		{token.SemiColon, ";", 7, 8},
+		{token.Identifier, "sum", 2, 9},
+		{token.Initialize, ":=", 6, 9},
+		{token.Identifier, "a", 8, 9},
+		{token.Plus, "+", 10, 9},
+		{token.Identifier, "b", 12, 9},
+		{token.SemiColon, ";", 13, 9},
+		{token.Identifier, "writeln", 2, 11},
+		{token.LParen, "(", 9, 11},
+		{token.Identifier, "sum", 10, 11},
+		{token.RParen, ")", 13, 11},
+		{token.SemiColon, ";", 14, 11},
+		{token.End, "end", 1, 12},
+		{token.Period, ".", 4, 12},
 	}
 
 	for _, tt := range tests {
@@ -144,7 +169,7 @@ func TestTokenizeProgramWithSimpleArithmeticStatements(t *testing.T) {
 }
 
 func TestOperators(t *testing.T) {
-	input := `<> <= >=`
+	input := []byte(`<> <= >=`)
 
 	tests := []struct {
 		expKind token.Kind
@@ -155,7 +180,11 @@ func TestOperators(t *testing.T) {
 		{token.GreaterThanOrEqual, ">="},
 	}
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
 
 	for _, tt := range tests {
 		tok, err := lex.NextToken()
@@ -175,7 +204,7 @@ func TestOperators(t *testing.T) {
 }
 
 func TestTokenizingUnsignedReal(t *testing.T) {
-	input := `
+	input := []byte(`
 		854.32
 		6.023e-23
 		123e+4
@@ -185,7 +214,7 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 		0.000232e-4837294
 		3.142
 		1.2e4938
-	`
+	`)
 
 	tests := []struct {
 		expKind token.Kind
@@ -201,7 +230,11 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 		{token.URealLiteral, "1.2e4938"},
 	}
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
 
 	for _, tt := range tests {
 		tok, err := lex.NextToken()
@@ -221,14 +254,14 @@ func TestTokenizingUnsignedReal(t *testing.T) {
 }
 
 func TestTokenizeSubRangeType(t *testing.T) {
-	input := `
+	input := []byte(`
 		(* this is a comment *)
 		1900..1999
 		red..green
 		'0'..'9'
 		-10..+10
 		{ this is a comment }
-	`
+	`)
 
 	tests := []struct {
 		expKind token.Kind
@@ -250,7 +283,11 @@ func TestTokenizeSubRangeType(t *testing.T) {
 		{token.UIntLiteral, "10"},
 	}
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
 
 	for _, tt := range tests {
 		tok, err := lex.NextToken()
@@ -270,11 +307,11 @@ func TestTokenizeSubRangeType(t *testing.T) {
 }
 
 func TestTokenizePointer(t *testing.T) {
-	input := `
+	input := []byte(`
 		p1^.mother := true
 		{ this is a comment }
 		p1^.sibling^.father^
-	`
+	`)
 
 	tests := []struct {
 		expKind token.Kind
@@ -297,7 +334,11 @@ func TestTokenizePointer(t *testing.T) {
 		{token.Caret, "^"},
 	}
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
 
 	for _, tt := range tests {
 		tok, err := lex.NextToken()
@@ -311,7 +352,7 @@ func TestTokenizePointer(t *testing.T) {
 
 		if tok.Kind != tt.expKind {
 			t.Errorf("lex.NextToken. Expected token type = %v, Got %v",
-				tt.expText, tok.Kind)
+				tt.expText, tok)
 		}
 	}
 }
