@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/token"
@@ -11,185 +12,212 @@ import (
 //
 // It is an implementation of an LL(1) Recursive Descent Lexer.
 type Lexer struct {
-	input                  string
-	curChar                byte
-	curCharPos, curReadPos int
+	// immutable state
+	file *token.SourceFile // source file handle
+	dir  string            // directory portion of file.Name()
+	src  []byte            // source
+
+	// scanning state
+	ch         rune // current character
+	offset     int  // character offset
+	rdOffset   int  // reading offset (position after current character)
+	lineOffset int  // current line offset
 }
 
-// NewLexer create, initializes and returns a new lexer entity
-func NewLexer(input string) Lexer {
-	lex := Lexer{input: input}
-	lex.consume()
-
-	return lex
-}
-
-// Consume read the current byte in the input and advances the pointer to the next byte
-func (lex *Lexer) consume() {
-	if lex.curReadPos >= len(lex.input) {
-		lex.curChar = byte(token.EOF)
-	} else {
-		lex.curChar = lex.input[lex.curReadPos]
+func (lex *Lexer) Init(file *token.SourceFile, src []byte /*mode Mode*/) {
+	// Explicitly initialize all fields since a scanner may be reused.
+	if file.Size() != len(src) {
+		panic(fmt.Sprintf("file size (%d) does not match src len (%d)", file.Size(), len(src)))
 	}
+	lex.file = file
+	lex.dir, _ = filepath.Split(file.Name())
+	lex.src = src
 
-	lex.curCharPos = lex.curReadPos
-	lex.curReadPos++
+	lex.ch = ' '
+	lex.offset = 0
+	lex.rdOffset = 0
+	lex.lineOffset = 0
+
+	lex.consume()
+}
+
+const eof = -1 // end of file
+
+func (lex *Lexer) consume() {
+	if lex.rdOffset < len(lex.src) {
+		lex.offset = lex.rdOffset
+		if lex.ch == '\n' {
+			lex.lineOffset = lex.offset
+			lex.file.AddLine(lex.offset)
+		}
+		r, w := rune(lex.src[lex.rdOffset]), 1
+		if r == 0 {
+			panic(fmt.Sprintf("%s\n\tillegal character NUL",
+				lex.file.Position(token.Pos(lex.offset))))
+		}
+
+		lex.rdOffset += w
+		lex.ch = r
+	} else {
+		lex.offset = len(lex.src)
+		if lex.ch == '\n' {
+			lex.lineOffset = lex.offset
+			lex.file.AddLine(lex.offset)
+		}
+		lex.ch = eof
+	}
 }
 
 // NextToken constructs and returns the next token in the input stream
 func (lex *Lexer) NextToken() (token.Token, error) {
 	lex.consumeWhiteSpace()
 
-	for lex.curChar != byte(token.EOF) {
-		switch lex.curChar {
+	// current token start
+	pos := lex.file.Position(lex.file.Pos(lex.offset))
+
+	for lex.ch != eof {
+		switch lex.ch {
 		case '(':
 			lex.consume()
-			return token.Token{Kind: token.LParen, Text: "("}, nil
+			return token.Token{Kind: token.LParen, Text: "(", Pos: &pos}, nil
 		case ')':
 			lex.consume()
-			return token.Token{Kind: token.RParen, Text: ")"}, nil
+			return token.Token{Kind: token.RParen, Text: ")", Pos: &pos}, nil
 		case ';':
 			lex.consume()
-			return token.Token{Kind: token.SemiColon, Text: ";"}, nil
+			return token.Token{Kind: token.SemiColon, Text: ";", Pos: &pos}, nil
 		case '\'':
 			lex.consume()
-			tok := token.Token{Kind: token.StrLiteral, Text: lex.readStringLiteral()}
+			tok := token.NewToken(token.StrLiteral, lex.readStringLiteral(), &pos)
 			lex.consume()
 
 			return tok, nil
 		case '.':
 			lex.consume()
-			if lex.curChar == '.' {
+			if lex.ch == '.' {
 				lex.consume()
-				return token.Token{Kind: token.Range, Text: ".."}, nil
+				return token.Token{Kind: token.Range, Text: "..", Pos: &pos}, nil
 			}
 
-			return token.Token{Kind: token.Period, Text: "."}, nil
+			return token.Token{Kind: token.Period, Text: ".", Pos: &pos}, nil
 		case '[':
 			lex.consume()
-			return token.Token{Kind: token.LSqBrace, Text: "["}, nil
+			return token.Token{Kind: token.LSqBrace, Text: "[", Pos: &pos}, nil
 		case ']':
 			lex.consume()
-			return token.Token{Kind: token.RSqBrace, Text: "]"}, nil
+			return token.Token{Kind: token.RSqBrace, Text: "]", Pos: &pos}, nil
 		case '+':
 			lex.consume()
-			return token.Token{Kind: token.Plus, Text: "+"}, nil
+			return token.Token{Kind: token.Plus, Text: "+", Pos: &pos}, nil
 		case '-':
 			lex.consume()
-			return token.Token{Kind: token.Minus, Text: "-"}, nil
+			return token.Token{Kind: token.Minus, Text: "-", Pos: &pos}, nil
 		case '*':
 			lex.consume()
-			return token.Token{Kind: token.Star, Text: "*"}, nil
+			return token.Token{Kind: token.Star, Text: "*", Pos: &pos}, nil
 		case '/':
 			lex.consume()
-			return token.Token{Kind: token.FwdSlash, Text: "/"}, nil
+			return token.Token{Kind: token.FwdSlash, Text: "/", Pos: &pos}, nil
 		case '=':
 			lex.consume()
-			return token.Token{Kind: token.Equal, Text: "="}, nil
+			return token.Token{Kind: token.Equal, Text: "=", Pos: &pos}, nil
 		case '<':
 			lex.consume()
-			if lex.curChar == '>' {
+			if lex.ch == '>' {
 				lex.consume()
-				return token.Token{Kind: token.NotEqual, Text: "<>"}, nil
+				return token.Token{Kind: token.NotEqual, Text: "<>", Pos: &pos}, nil
 			}
 
-			if lex.curChar == '=' {
+			if lex.ch == '=' {
 				lex.consume()
-				return token.Token{Kind: token.LessThanOrEqual, Text: "<="}, nil
+				return token.Token{Kind: token.LessThanOrEqual, Text: "<=", Pos: &pos}, nil
 			}
 
-			return token.Token{Kind: token.LessThan, Text: "<"}, nil
+			return token.Token{Kind: token.LessThan, Text: "<", Pos: &pos}, nil
 		case '>':
 			lex.consume()
-			if lex.curChar == '=' {
+			if lex.ch == '=' {
 				lex.consume()
-				return token.Token{Kind: token.GreaterThanOrEqual, Text: ">="}, nil
+				return token.Token{Kind: token.GreaterThanOrEqual, Text: ">=", Pos: &pos}, nil
 			}
 
-			return token.Token{Kind: token.GreaterThan, Text: ">"}, nil
+			return token.Token{Kind: token.GreaterThan, Text: ">", Pos: &pos}, nil
 		case ',':
 			lex.consume()
-			return token.Token{Kind: token.Comma, Text: ","}, nil
+			return token.Token{Kind: token.Comma, Text: ",", Pos: &pos}, nil
 		case '^':
 			lex.consume()
-			return token.Token{Kind: token.Caret, Text: "^"}, nil
+			return token.Token{Kind: token.Caret, Text: "^", Pos: &pos}, nil
 		case ':':
 			lex.consume()
-			if lex.curChar == '=' {
+			if lex.ch == '=' {
 				lex.consume()
-				return token.Token{Kind: token.Initialize, Text: ":="}, nil
+				return token.Token{Kind: token.Initialize, Text: ":=", Pos: &pos}, nil
 			}
 
-			return token.Token{Kind: token.Colon, Text: ":"}, nil
+			return token.Token{Kind: token.Colon, Text: ":", Pos: &pos}, nil
 		default:
 			if lex.isLetter() {
 				name := lex.readName()
-				return token.Token{Kind: lex.getTypeOfName(name), Text: name}, nil
+				return token.Token{Kind: token.Lookup(name), Text: name, Pos: &pos}, nil
 			}
 
 			if lex.isDigit() {
 				uNum := lex.readUnsignedNumber()
 				if strings.Contains(uNum, "e") || strings.Contains(uNum, ".") {
-					return token.Token{Kind: token.URealLiteral, Text: uNum}, nil
+					return token.Token{Kind: token.URealLiteral, Text: uNum, Pos: &pos}, nil
 				}
 
-				return token.Token{Kind: token.UIntLiteral, Text: uNum}, nil
+				return token.Token{Kind: token.UIntLiteral, Text: uNum, Pos: &pos}, nil
 			}
 
-			return token.Token{}, fmt.Errorf("invalid character: %v", string(lex.curChar))
+			return token.Token{Kind: token.Illegal, Text: string(lex.ch)},
+				fmt.Errorf("invalid character: %v at %v", string(lex.ch), pos)
 		}
 	}
 
 	return token.Token{Text: "<EOF>", Kind: token.EOF}, nil
 }
 
-func (lex *Lexer) getTypeOfName(name string) token.Kind {
-	if val, ok := token.Keywords[name]; ok {
-		return val
-	}
-
-	return token.Identifier
-}
-
 func (lex *Lexer) readName() string {
-	pos := lex.curCharPos
+	pos := lex.offset
 	for lex.isLetter() || lex.isDigit() {
 		lex.consume()
 	}
 
-	return lex.input[pos:lex.curCharPos]
+	return string(lex.src[pos:lex.offset])
 }
 
 func (lex *Lexer) readStringLiteral() string {
-	pos := lex.curCharPos
-	for lex.curChar != '\'' {
+	pos := lex.offset
+	for lex.ch != '\'' {
 		lex.consume()
 	}
 
-	return lex.input[pos:lex.curCharPos]
+	return string(lex.src[pos:lex.offset])
 }
 
 func (lex *Lexer) readIntLiteral() string {
-	pos := lex.curCharPos
+	pos := lex.offset
 	for lex.isDigit() {
 		lex.consume()
 	}
 
-	return lex.input[pos:lex.curCharPos]
+	return string(lex.src[pos:lex.offset])
 }
 
 func (lex *Lexer) readUnsignedNumber() string {
-	pos := lex.curCharPos
+	pos := lex.offset
 	for lex.isDigit() {
 		lex.consume()
 	}
 
-	if lex.input[lex.curCharPos] == '.' && lex.input[lex.curReadPos] == '.' {
-		return lex.input[pos:lex.curCharPos]
+	if lex.src[lex.offset] == '.' && lex.src[lex.rdOffset] == '.' {
+		return string(lex.src[pos:lex.offset])
 	}
 
 	// Unsigned real
-	if lex.curChar == '.' {
+	if lex.ch == '.' {
 		lex.consume()
 
 		// fractional-part
@@ -197,11 +225,11 @@ func (lex *Lexer) readUnsignedNumber() string {
 			lex.consume()
 		}
 
-		if lex.curChar == 'e' {
+		if lex.ch == 'e' {
 			lex.consume()
 		}
 
-		if lex.curChar == '+' || lex.curChar == '-' {
+		if lex.ch == '+' || lex.ch == '-' {
 			lex.consume()
 		}
 
@@ -210,11 +238,11 @@ func (lex *Lexer) readUnsignedNumber() string {
 		}
 	}
 
-	if lex.curChar == 'e' {
+	if lex.ch == 'e' {
 		lex.consume()
 	}
 
-	if lex.curChar == '+' || lex.curChar == '-' {
+	if lex.ch == '+' || lex.ch == '-' {
 		lex.consume()
 	}
 
@@ -222,31 +250,31 @@ func (lex *Lexer) readUnsignedNumber() string {
 		lex.consume()
 	}
 
-	return lex.input[pos:lex.curCharPos]
+	return string(lex.src[pos:lex.offset])
 }
 
 func (lex *Lexer) isDigit() bool {
-	return '0' <= lex.curChar && lex.curChar <= '9'
+	return '0' <= lex.ch && lex.ch <= '9'
 }
 
 func (lex *Lexer) isLetter() bool {
-	return 'a' <= lex.curChar && lex.curChar <= 'z' ||
-		'A' <= lex.curChar && lex.curChar <= 'Z'
+	return 'a' <= lex.ch && lex.ch <= 'z' ||
+		'A' <= lex.ch && lex.ch <= 'Z'
 }
 
 func (lex *Lexer) consumeWhiteSpace() {
-	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\n' || lex.curChar == '\r' ||
-		(lex.curChar == '(' && lex.input[lex.curReadPos] == '*') || lex.curChar == '{' {
+	for lex.ch == ' ' || lex.ch == '\t' || lex.ch == '\n' || lex.ch == '\r' ||
+		(lex.ch == '(' && lex.src[lex.rdOffset] == '*') || lex.ch == '{' {
 
-		if (lex.curChar == '(' && lex.input[lex.curReadPos] == '*') || lex.curChar == '{' {
+		if (lex.ch == '(' && lex.src[lex.rdOffset] == '*') || lex.ch == '{' {
 			for {
-				if lex.curChar == '*' && lex.input[lex.curReadPos] == ')' {
+				if lex.ch == '*' && lex.src[lex.rdOffset] == ')' {
 					lex.consume()
 					lex.consume()
 					break
 				}
 
-				if lex.curChar == '}' {
+				if lex.ch == '}' {
 					lex.consume()
 					break
 				}
