@@ -10,14 +10,19 @@ import (
 )
 
 func TestParseBasicProgram(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	begin
 		writeln('Hello, World!')
 	end.
-`
+`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -34,7 +39,7 @@ func TestParseBasicProgram(t *testing.T) {
 	}
 
 	args := []ast.Expression{
-		&ast.StrLiteral{TokenKind: token.StrLiteral, Value: "Hello, World!"},
+		&ast.StrLiteral{Token: token.NewToken(token.StrLiteral, "Hello, World!", nil), Value: "Hello, World!"},
 	}
 	if !testWriteln(t, program.Block.Stats[0], "writeln", args) {
 		return
@@ -42,7 +47,7 @@ func TestParseBasicProgram(t *testing.T) {
 }
 
 func TestParseProgramWithVarDeclarations(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var 
 		a, b, sum : integer;
@@ -50,8 +55,14 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	begin
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -68,14 +79,14 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	}
 
 	if !testVarDeclaration(
-		t, program.Block.VarDeclaration, token.NewToken(token.Var, "var"), 1,
+		t, program.Block.VarDeclaration, token.NewToken(token.Var, "var", nil), 1,
 		[][]string{{"a", "b", "sum"}}, []string{"integer"}) {
 		return
 	}
 }
 
 func TestParsingProgramWithAssignmentStatements(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, sum : integer;
@@ -86,8 +97,13 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -104,20 +120,20 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	}
 
 	// first statement
-	value := &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "1"}
+	value := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "1", nil), Value: "1"}
 	if !testAssignmentStatement(t, program.Block.Stats[0], "a", value) {
 		return
 	}
 
 	// second statement
-	value = &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "2"}
+	value = &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "2", nil), Value: "2"}
 	if !testAssignmentStatement(t, program.Block.Stats[1], "b", value) {
 		return
 	}
 
 	// third statement
 	args := []ast.Expression{
-		&ast.StrLiteral{TokenKind: token.StrLiteral, Value: "Hello, world!"},
+		&ast.StrLiteral{Token: token.NewToken(token.StrLiteral, "Hello, world!", nil), Value: "Hello, world!"},
 	}
 
 	if !testWriteln(t, program.Block.Stats[2], "writeln", args) {
@@ -130,7 +146,7 @@ func testWriteln(t *testing.T, stmt ast.Statement, procName string, args []ast.E
 }
 
 func TestParseBasicArithmeticOperation(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, sum : integer;
@@ -143,9 +159,14 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
+`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -162,9 +183,9 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 
 	expr := &ast.BinaryExpression{
-		Operator: token.Plus,
-		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "a"},
-		Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "b"},
+		Operator: token.NewToken(token.Plus, "+", nil),
+		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "a", nil), Name: "a"},
+		Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "b", nil), Name: "b"},
 	}
 
 	if !testAssignmentStatement(t, program.Block.Stats[2], "sum", expr) {
@@ -172,26 +193,26 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	}
 
 	stmt := program.Block.Stats[2].(*ast.AssignStatement)
-	if !testBinaryExpression(t, stmt.Value, expr.Operator, "a", "b") {
+	if !testBinaryExpression(t, stmt.Value, expr.Operator.Kind, "a", "b") {
 		return
 	}
 
 	uexpr := &ast.UnaryExpression{
-		Operator: token.Minus,
-		Operand:  &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "5"},
+		Operator: token.NewToken(token.Minus, "-", nil),
+		Operand:  &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5", nil), Value: "5"},
 	}
 	if !testAssignmentStatement(t, program.Block.Stats[3], "a", uexpr) {
 		return
 	}
 
 	stmt = program.Block.Stats[3].(*ast.AssignStatement)
-	if !testUnaryExpression(t, stmt.Value, token.NewToken(token.Minus, "-"), "5") {
+	if !testUnaryExpression(t, stmt.Value, token.NewToken(token.Minus, "-", nil), "5") {
 		return
 	}
 }
 
 func TestParseProgramWithFunctionDeclaration(t *testing.T) {
-	input := `
+	input := []byte(`
 	program MaxProgram;
 
 	var 
@@ -212,9 +233,14 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -233,8 +259,8 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	params := []ast.FormalParameter{
 		&ast.ValueParam{
 			Names: []*ast.Identifier{
-				{TokenKind: token.Identifier, Name: "n"},
-				{TokenKind: token.Identifier, Name: "m"},
+				{Token: token.NewToken(token.Identifier, "n", nil), Name: "n"},
+				{Token: token.NewToken(token.Identifier, "m", nil), Name: "m"},
 			},
 			Typ: base.NewInteger(),
 		},
@@ -250,7 +276,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 }
 
 func TestParseProgramWithIfStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program MaxProgram;
 	var 
 		a, b, sum : integer;
@@ -275,9 +301,14 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -296,8 +327,8 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	paramList := []ast.FormalParameter{
 		&ast.ValueParam{
 			Names: []*ast.Identifier{
-				{TokenKind: token.Identifier, Name: "n"},
-				{TokenKind: token.Identifier, Name: "m"},
+				{Token: token.NewToken(token.Identifier, "n", nil), Name: "n"},
+				{Token: token.NewToken(token.Identifier, "m", nil), Name: "m"},
 			},
 			Typ: base.NewInteger(),
 		},
@@ -312,7 +343,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 
 	ifStmt := funcDecl.Block.Stats[0].(*ast.IfStatement)
 
-	value := &ast.Identifier{TokenKind: token.Identifier, Name: "n"}
+	value := &ast.Identifier{Token: token.NewToken(token.Identifier, "n", nil), Name: "n"}
 	if !testAssignmentStatement(t, ifStmt.TruePath, "result", value) {
 		return
 	}
@@ -324,7 +355,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 }
 
 func TestParseProgramWithFunctionCall(t *testing.T) {
-	input := `
+	input := []byte(`
 	program MaxProgram;
 	var
 		a, b, result : integer;
@@ -350,9 +381,14 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 
 		writeln(result)
 	end.
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -369,10 +405,10 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 	}
 
 	value := &ast.FuncDesignator{
-		Name: &ast.Identifier{TokenKind: token.Identifier, Name: "max"},
+		Name: &ast.Identifier{Token: token.NewToken(token.Identifier, "max", nil), Name: "max"},
 		Args: []ast.Expression{
-			&ast.Identifier{TokenKind: token.Identifier, Name: "a"},
-			&ast.Identifier{TokenKind: token.Identifier, Name: "b"},
+			&ast.Identifier{Token: token.NewToken(token.Identifier, "a", nil), Name: "a"},
+			&ast.Identifier{Token: token.NewToken(token.Identifier, "b", nil), Name: "b"},
 		},
 	}
 
@@ -386,7 +422,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 }
 
 func TestMultipleVariableDeclarations(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var 
 		a, b, sum : integer;
@@ -405,8 +441,13 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	begin
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -436,7 +477,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	if !testVarDeclaration(
 		t,
 		program.Block.VarDeclaration,
-		token.NewToken(token.Var, "var"),
+		token.NewToken(token.Var, "var", nil),
 		9,
 		names,
 		[]string{"integer", "integer", "real", "integer", "subrange", "Boolean", "enum", "array", "record"},
@@ -446,7 +487,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 }
 
 func TestParsingMultiplicationOperator(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, c, d, e, f, sum, foo : integer;
@@ -457,9 +498,14 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
+`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -476,12 +522,12 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	}
 
 	value := &ast.BinaryExpression{
-		Operator: token.Star,
-		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "a"},
+		Operator: token.NewToken(token.Star, "*", nil),
+		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "a", nil), Name: "a"},
 		Right: &ast.BinaryExpression{
-			Operator: token.Star,
-			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "b"},
-			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "c"},
+			Operator: token.NewToken(token.Star, "*", nil),
+			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "b", nil), Name: "b"},
+			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "c", nil), Name: "c"},
 		},
 	}
 
@@ -490,12 +536,12 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	}
 
 	value = &ast.BinaryExpression{
-		Operator: token.Plus,
-		Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "d"},
+		Operator: token.NewToken(token.Plus, "+", nil),
+		Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "d", nil), Name: "d"},
 		Right: &ast.BinaryExpression{
-			Operator: token.Star,
-			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "e"},
-			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "f"},
+			Operator: token.NewToken(token.Star, "*", nil),
+			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "e", nil), Name: "e"},
+			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "f", nil), Name: "f"},
 		},
 	}
 
@@ -505,7 +551,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 }
 
 func TestParsingConstantDefinition(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	
 	const 
@@ -518,8 +564,13 @@ func TestParsingConstantDefinition(t *testing.T) {
 	begin
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -537,7 +588,7 @@ func TestParsingConstantDefinition(t *testing.T) {
 }
 
 func TestParseForStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		i, sum : integer;
@@ -548,8 +599,13 @@ func TestParseForStatement(t *testing.T) {
 
 		writeln( sum )
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -565,21 +621,21 @@ func TestParseForStatement(t *testing.T) {
 		return
 	}
 
-	initVal := &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "1"}
-	finalVal := &ast.UIntegerLiteral{TokenKind: token.UIntLiteral, Value: "5"}
+	initVal := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "1", nil), Value: "1"}
+	finalVal := &ast.UIntegerLiteral{Token: token.NewToken(token.UIntLiteral, "5", nil), Value: "5"}
 	body := &ast.AssignStatement{
-		TokenKind: token.Initialize,
-		Variable:  &ast.Identifier{TokenKind: token.Identifier, Name: "sum"},
+		Token:    token.NewToken(token.Initialize, ":=", nil),
+		Variable: &ast.Identifier{Token: token.NewToken(token.Identifier, "sum", nil), Name: "sum"},
 		Value: &ast.BinaryExpression{
-			Operator: token.Plus,
-			Left:     &ast.Identifier{TokenKind: token.Identifier, Name: "sum"},
-			Right:    &ast.Identifier{TokenKind: token.Identifier, Name: "i"},
+			Operator: token.NewToken(token.Plus, "+", nil),
+			Left:     &ast.Identifier{Token: token.NewToken(token.Identifier, "sum", nil), Name: "sum"},
+			Right:    &ast.Identifier{Token: token.NewToken(token.Identifier, "i", nil), Name: "i"},
 		},
 	}
 
 	stmt := &ast.ForStatement{
-		TokenKind:  token.For,
-		CtrlID:     &ast.Identifier{TokenKind: token.Identifier, Name: "i"},
+		Token:      token.NewToken(token.For, "for", nil),
+		CtrlID:     &ast.Identifier{Token: token.NewToken(token.Identifier, "i", nil), Name: "i"},
 		InitValue:  initVal,
 		FinalValue: finalVal,
 		Body:       body,
@@ -592,7 +648,7 @@ func TestParseForStatement(t *testing.T) {
 }
 
 func TestParsingProcedureDeclaration(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	procedure bisect (function f(x : real) : real;
 						      a, b         : real;
@@ -609,8 +665,14 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 	begin
 		writeln('Hello, world!')
 	end.
-	`
-	lex := NewLexer(input)
+`)
+
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -628,15 +690,15 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 
 	procDecl := &ast.ProcedureDeclaration{
 		Heading: &ast.ProcedureHeading{
-			TokenKind: token.Procedure,
-			PName:     &ast.Identifier{TokenKind: token.Identifier, Name: "bisect"},
+			Token: token.NewToken(token.Procedure, "procedure", nil),
+			PName: &ast.Identifier{Token: token.NewToken(token.Identifier, "bisect", nil), Name: "bisect"},
 			Parameters: []ast.FormalParameter{
 				&ast.FuncHeading{
-					TokenKind: token.Function,
-					FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "f"},
+					Token: token.NewToken(token.Function, "function", nil),
+					FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "f", nil), Name: "f"},
 					Parameters: []ast.FormalParameter{
 						&ast.ValueParam{
-							Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "x"}},
+							Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "x", nil), Name: "x"}},
 							Typ:   base.NewReal(),
 						},
 					},
@@ -644,25 +706,25 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 				},
 				&ast.ValueParam{
 					Names: []*ast.Identifier{
-						{TokenKind: token.Identifier, Name: "a"},
-						{TokenKind: token.Identifier, Name: "b"},
+						{Token: token.NewToken(token.Identifier, "a", nil), Name: "a"},
+						{Token: token.NewToken(token.Identifier, "b", nil), Name: "b"},
 					},
 					Typ: base.NewReal(),
 				},
 				&ast.VariableParam{
-					Token: token.Var,
-					Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "result"}},
+					Token: token.NewToken(token.Var, "var", nil),
+					Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "result", nil), Name: "result"}},
 					Typ:   base.NewReal(),
 				},
 			},
 		},
 		Block: &ast.Block{
 			Consts: &ast.ConstDefinition{
-				Token: token.NewToken(token.Const, "const"),
+				Token: token.NewToken(token.Const, "const", nil),
 				Consts: []*ast.ConstDef{
 					{
-						Name:  &ast.Identifier{TokenKind: token.Identifier, Name: "eps"},
-						Value: &ast.URealLiteral{TokenKind: token.URealLiteral, Value: "1e-10"},
+						Name:  &ast.Identifier{Token: token.NewToken(token.Identifier, "eps", nil), Name: "eps"},
+						Value: &ast.URealLiteral{Token: token.NewToken(token.URealLiteral, "1e-10", nil), Value: "1e-10"},
 					},
 				},
 			},
@@ -670,7 +732,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 				TokenKind: token.Var,
 				Decls: []*ast.VarDecl{
 					{
-						Names: []*ast.Identifier{{TokenKind: token.Identifier, Name: "midpoint"}},
+						Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "midpoint", nil), Name: "midpoint"}},
 						Type:  base.NewReal(),
 					},
 				},
@@ -684,7 +746,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 }
 
 func TestParseWhileStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		i, sum : integer;
@@ -695,9 +757,14 @@ func TestParseWhileStatement(t *testing.T) {
 
 		writeln( sum )
 	end.
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -725,8 +792,8 @@ func testWhileStatement(t *testing.T, stmt ast.Statement) bool {
 		return false
 	}
 
-	if whileStmt.TokenKind != token.While {
-		t.Errorf("expected token to kind 'while', got '%v' instead.", whileStmt.TokenKind)
+	if whileStmt.Token.Kind != token.While {
+		t.Errorf("expected token to kind 'while', got '%v' instead.", whileStmt.Token.Kind)
 		return false
 	}
 
@@ -742,8 +809,8 @@ func testReturnStatement(t *testing.T, stmt ast.Statement, expr string) bool {
 		return false
 	}
 
-	if retStmt.TokenKind != token.Return {
-		t.Errorf("expected token to be of kind %v, got %v", token.Return, retStmt.TokenKind)
+	if retStmt.Token.Kind != token.Return {
+		t.Errorf("expected token to be of kind %v, got %v", token.Return, retStmt.Token.Kind)
 		return false
 	}
 
@@ -769,9 +836,9 @@ func testForStatement(
 		return false
 	}
 
-	if forStmt.CtrlID.TokenKind != token.Identifier {
+	if forStmt.CtrlID.Token.Kind != token.Identifier {
 		t.Errorf("expected variable to be of kind %v, got %v",
-			token.Identifier, forStmt.CtrlID.TokenKind)
+			token.Identifier, forStmt.CtrlID.Token.Kind)
 		return false
 	}
 
@@ -821,8 +888,8 @@ func testProcedureDeclaration(
 		return false
 	}
 
-	if procDecl.Heading.TokenKind != token.Procedure {
-		t.Errorf("procedure declaration has wrong token type, %v", procDecl.Heading.TokenKind)
+	if procDecl.Heading.Token.Kind != token.Procedure {
+		t.Errorf("procedure declaration has wrong token type, %v", procDecl.Heading.Token)
 		return false
 	}
 
@@ -978,7 +1045,7 @@ func testBinaryExpression(t *testing.T, expr ast.Expression, operator token.Kind
 		return false
 	}
 
-	if exp.Operator != operator {
+	if exp.Operator.Kind != operator {
 		t.Errorf("expected operator %v, got %v instead", operator, exp.Operator)
 		return false
 	}
@@ -1009,8 +1076,8 @@ func testFuncDeclaration(
 		return false
 	}
 
-	if funcDecl.Heading.TokenKind != token.Function {
-		t.Errorf("function declaration has wrong token type, %v", funcDecl.Heading.TokenKind)
+	if funcDecl.Heading.Token.Kind != token.Function {
+		t.Errorf("function declaration has wrong token type, %v", funcDecl.Heading.Token.Kind)
 		return false
 	}
 
@@ -1052,8 +1119,8 @@ func testIfStatement(
 		return false
 	}
 
-	if ifStmt.TokenKind != token.If {
-		t.Errorf("expected token type to be %v, got %v", token.If, ifStmt.TokenKind)
+	if ifStmt.Token.Kind != token.If {
+		t.Errorf("expected token type to be %v, got %v", token.If, ifStmt.Token.Kind)
 		return false
 	}
 
@@ -1080,7 +1147,7 @@ func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token
 		return false
 	}
 
-	if uexpr.Operator != operator.Kind {
+	if uexpr.Operator.Kind != operator.Kind {
 		t.Errorf("expected operator %v, got %v instead", operator.Text, uexpr.Operator)
 		return false
 	}
@@ -1126,7 +1193,7 @@ func testVarDeclaration(
 }
 
 func TestParseRepeatStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		i, j, k, sum : integer;
@@ -1140,8 +1207,13 @@ func TestParseRepeatStatement(t *testing.T) {
 
 		writeln( sum )
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1175,7 +1247,7 @@ func testRepeatStatement(t *testing.T, stmt ast.Statement) bool {
 }
 
 func TestParseTypeDefinitionPart(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 
 	type
@@ -1214,8 +1286,13 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 	begin
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1233,7 +1310,7 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 }
 
 func TestParsingIndexedVariables(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	type
 		pc = array [1..80] of char;
@@ -1249,8 +1326,13 @@ func TestParsingIndexedVariables(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1266,12 +1348,12 @@ func TestParsingIndexedVariables(t *testing.T) {
 		return
 	}
 
-	val := &ast.Identifier{TokenKind: token.UIntLiteral, Name: "1"}
+	val := &ast.Identifier{Token: token.NewToken(token.UIntLiteral, "1", nil), Name: "1"}
 	if !testAssignmentStatement(t, program.Block.Stats[0], "pc[0]", val) {
 		return
 	}
 
-	val = &ast.Identifier{TokenKind: token.UIntLiteral, Name: "2"}
+	val = &ast.Identifier{Token: token.NewToken(token.UIntLiteral, "2", nil), Name: "2"}
 	if !testAssignmentStatement(t, program.Block.Stats[2], "pc[5]", val) {
 		return
 	}
@@ -1282,7 +1364,7 @@ func TestParsingIndexedVariables(t *testing.T) {
 }
 
 func TestParseExpressions(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	
 	type
@@ -1320,8 +1402,13 @@ func TestParseExpressions(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1339,7 +1426,7 @@ func TestParseExpressions(t *testing.T) {
 }
 
 func TestParseFieldDesignator(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 
 	type
@@ -1365,8 +1452,13 @@ func TestParseFieldDesignator(t *testing.T) {
 
 		writeln( person.firstname )
 	end.
-`
-	lex := NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1382,14 +1474,14 @@ func TestParseFieldDesignator(t *testing.T) {
 		return
 	}
 
-	val := &ast.Identifier{TokenKind: token.Identifier, Name: "1"}
+	val := &ast.Identifier{Token: token.NewToken(token.Identifier, "1", nil), Name: "1"}
 	if !testAssignmentStatement(t, program.Block.Stats[0], "person.firstname", val) {
 		return
 	}
 }
 
 func TestParserArrayType(t *testing.T) {
-	input := `
+	input := []byte(`
 		program HelloWorld;
 		
 		type
@@ -1406,9 +1498,14 @@ func TestParserArrayType(t *testing.T) {
 		begin
 			writeln('Hello, world!')
 		end.
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1426,7 +1523,7 @@ func TestParserArrayType(t *testing.T) {
 }
 
 func TestParseLabelDeclaration(t *testing.T) {
-	input := `
+	input := []byte(`
 		program LabelProgram;
 
 		label
@@ -1436,9 +1533,14 @@ func TestParseLabelDeclaration(t *testing.T) {
 			writeln('Hello, world!')
 		end.
 	
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
@@ -1456,7 +1558,7 @@ func TestParseLabelDeclaration(t *testing.T) {
 }
 
 func TestParseStatementsWithLabels(t *testing.T) {
-	input := `
+	input := []byte(`
 		program LabelProgram;
 
 		label
@@ -1479,9 +1581,14 @@ func TestParseStatementsWithLabels(t *testing.T) {
 			writeln('Hello, world!')
 		end.
 	
-	`
+	`)
 
-	lex := NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {

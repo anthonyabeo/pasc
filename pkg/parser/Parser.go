@@ -8,6 +8,7 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/semantics"
 	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
+	"github.com/anthonyabeo/pasc/pkg/types/base"
 	"github.com/anthonyabeo/pasc/pkg/types/structured"
 )
 
@@ -68,7 +69,8 @@ func (p *Parser) match(t token.Kind) error {
 		return nil
 	}
 
-	return fmt.Errorf("expecting %v; found %v", t, p.lAheadToken(1).Text)
+	return fmt.Errorf("[Syntax Error at '%s']\n\t expecting '%v', found '%v' instead",
+		p.lAheadToken(1).Pos, t, p.lAheadToken(1).Text)
 }
 
 // Program represents the start symbol production rule in the grammar.
@@ -119,7 +121,7 @@ func (p *Parser) programHeading() (*ast.Identifier, []*ast.Identifier, error) {
 		return nil, nil, err
 	}
 
-	programName = &ast.Identifier{TokenKind: token.Identifier, Name: p.lAheadToken(1).Text}
+	programName = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 
 	if err = p.match(token.Identifier); err != nil {
 		return nil, nil, err
@@ -215,31 +217,33 @@ func (p *Parser) labelDeclarationPart() (*ast.LabelDefinition, error) {
 		return nil, err
 	}
 
-	label := &ast.UIntegerLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+	label := &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	if err := p.match(token.UIntLiteral); err != nil {
 		return nil, err
 	}
 	labelDefinition.Labels = append(labelDefinition.Labels, label)
 
 	if p.symTable.DeclaredLocally(label.Value) {
-		return nil, fmt.Errorf("%s already declared in this scope", label.Value)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t %s already declared in this scope",
+			p.lAheadToken(1).Pos, label.Value)
 	}
 
-	p.symTable.EnterSymbol(label.Value, semantics.NewLabel(label.Value, semantics.LABEL, nil))
+	p.symTable.EnterSymbol(label.Value, semantics.NewLabel(label.Value, semantics.LABEL, base.NewInteger()))
 
 	for p.lAheadKind(1) == token.Comma {
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
 
-		label := &ast.UIntegerLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+		label := &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 		if err := p.match(token.UIntLiteral); err != nil {
 			return nil, err
 		}
 		labelDefinition.Labels = append(labelDefinition.Labels, label)
 
 		if p.symTable.DeclaredLocally(label.Value) {
-			return nil, fmt.Errorf("%s already declared in this scope", label.Value)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t %s already declared in this scope",
+				p.lAheadToken(1).Pos, label.Value)
 		}
 
 		p.symTable.EnterSymbol(label.Value, semantics.NewLabel(label.Value, semantics.LABEL, nil))
@@ -296,7 +300,7 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 		typeDef *ast.TypeDef
 	)
 
-	typeDef = &ast.TypeDef{Name: &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}}
+	typeDef = &ast.TypeDef{Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -311,7 +315,8 @@ func (p *Parser) typeDefinition() (*ast.TypeDef, error) {
 	}
 
 	if p.symTable.DeclaredLocally(typeDef.Name.Name) {
-		return nil, fmt.Errorf("%s already declared in this scope", typeDef.Name.Name)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t %s already declared in this scope",
+			p.lAheadToken(1).Pos, typeDef.Name.Name)
 	}
 
 	p.symTable.EnterSymbol(typeDef.Name.Name, semantics.NewTypeDef(typeDef.Name.Name, semantics.TYPE, typeDef.TypeDenoter))
@@ -327,9 +332,11 @@ func (p *Parser) typeIdentifier() (types.Type, error) {
 
 	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t  undefined symbol %v",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else if sym.Kind() != semantics.TYPE {
-		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol %v is not an appropriate data type",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else {
 		if err = p.consume(); err != nil {
 			return nil, err
@@ -382,7 +389,8 @@ func (p *Parser) typeDenoter() (types.Type, error) {
 
 				for index, enum := range enumTyp.List {
 					if p.symTable.DeclaredLocally(enum.Name) {
-						return nil, fmt.Errorf("%s already declared in this scope", enum.Name)
+						return nil, fmt.Errorf("[Syntax Error at '%s']\n\t %s already declared in this scope",
+							p.lAheadToken(1).Pos, enum.Name)
 					}
 
 					p.symTable.EnterSymbol(
@@ -486,7 +494,8 @@ func (p *Parser) recordType() (*structured.Record, error) {
 			for _, rs := range f.Entry {
 				for _, entry := range rs.List {
 					if p.symTable.DeclaredLocally(entry.Name) {
-						return nil, fmt.Errorf("cannot redeclare field name '%s'", entry.Name)
+						return nil, fmt.Errorf("[Syntax Error at '%s']\n\t cannot redeclare field name '%s'",
+							p.lAheadToken(1).Pos, entry.Name)
 					}
 
 					p.symTable.EnterSymbol(
@@ -624,7 +633,7 @@ func (p *Parser) variantSelector() (*structured.VariantSelector, error) {
 
 	selector := &structured.VariantSelector{}
 	if p.lAheadKind(1) == token.Identifier {
-		selector.TagField = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+		selector.TagField = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -636,15 +645,17 @@ func (p *Parser) variantSelector() (*structured.VariantSelector, error) {
 
 	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol %v",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else if sym.Kind() != semantics.TYPE {
-		return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol %v is not an appropriate data type",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else {
 		typ, ok := sym.Type().(types.Ordinal)
 		if !ok {
 			return nil, fmt.Errorf(
-				"%v is not an ordinal type. Must be one of integer, Boolean, char, enum, subrange",
-				p.lAheadToken(1).Text)
+				"[Syntax Error at '%s']\n\t %v is not an ordinal type. Must be one of integer, Boolean, char, enum, subrange",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		}
 
 		selector.TagType = typ
@@ -844,15 +855,17 @@ func (p *Parser) ordinalType() (types.Ordinal, error) {
 	default:
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym == nil {
-			return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol %v",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		} else if sym.Kind() != semantics.TYPE {
-			return nil, fmt.Errorf("symbol %v is not an appropriate data type", p.lAheadToken(1).Text)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol %v is not an appropriate data type",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		} else {
 			typ, ok := sym.Type().(types.Ordinal)
 			if !ok {
 				return nil, fmt.Errorf(
-					"%v cannot be used as array index type. Array index type must be one of integer, Boolean, char, enum, subrange",
-					p.lAheadToken(1).Text)
+					"[Syntax Error at '%s']\n\t %v cannot be used as array index type. Array index type must be one of integer, Boolean, char, enum, subrange",
+					p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 			}
 
 			idxType = typ
@@ -928,7 +941,7 @@ func (p *Parser) constDefinitionPart() (*ast.ConstDefinition, error) {
 func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	var err error
 
-	constDef := &ast.ConstDef{Name: &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}}
+	constDef := &ast.ConstDef{Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -943,7 +956,8 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 	}
 
 	if p.symTable.DeclaredLocally(constDef.Name.Name) {
-		return nil, fmt.Errorf("symbol '%v' already defined as type '%v'", constDef.Name.Name, constDef.Value.Type())
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol '%v' already defined as type '%v'",
+			p.lAheadToken(1).Pos, constDef.Name.Name, constDef.Value.Type())
 	}
 
 	p.symTable.EnterSymbol(
@@ -957,40 +971,43 @@ func (p *Parser) constDefinition() (*ast.ConstDef, error) {
 func (p *Parser) constant() (ast.Expression, error) {
 	var (
 		err  error
-		sign token.Kind
+		sign token.Token
 		expr ast.Expression
 	)
 
 	switch p.lAheadKind(1) {
 	case token.StrLiteral:
-		expr = &ast.StrLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+		expr = &ast.StrLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	default:
 		if p.isSign() {
-			sign = p.lAheadKind(1)
+			sign = p.lAheadToken(1)
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
 		}
 
 		if p.lAheadKind(1) == token.UIntLiteral {
-			expr = &ast.UIntegerLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+			expr = &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 		} else if p.lAheadKind(1) == token.URealLiteral {
-			expr = &ast.URealLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+			expr = &ast.URealLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 		} else if p.lAheadKind(1) == token.Identifier {
 			sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 			if sym == nil {
-				return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol %v",
+					p.lAheadToken(1), p.lAheadToken(1).Text)
 			} else if sym.Kind() != semantics.CONST {
-				return nil, fmt.Errorf("symbol %v, is not a constant", p.lAheadToken(1).Text)
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol %v, is not a constant",
+					p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 			} else {
-				expr = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+				expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 			}
 		} else {
 			return nil, fmt.Errorf(
-				"expected unsigned number or constant, got %s instead", p.lAheadToken(1).Text)
+				"[Syntax Error at '%s']\n\t expected unsigned number or constant, got %s instead",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		}
 
-		if sign == token.Minus || sign == token.Plus {
+		if sign.Kind == token.Minus || sign.Kind == token.Plus {
 			expr = &ast.UnaryExpression{Operator: sign, Operand: expr}
 		}
 	}
@@ -1024,8 +1041,8 @@ func (p *Parser) procedureAndFunctionDeclarationPart() ([]ast.Statement, error) 
 			callables = append(callables, procedureDecl)
 		default:
 			return nil, fmt.Errorf(
-				"parse Error: expected 'procedure' or 'function', got %v instead",
-				p.lAheadToken(1).Text)
+				"[Syntax Error at '%s']\n\t parse Error: expected 'procedure' or 'function', got %v instead",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		}
 
 		if err := p.match(token.SemiColon); err != nil {
@@ -1063,9 +1080,11 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 		case *ast.ValueParam:
 			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
 			if sym == nil {
-				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol '%v' is not defined",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else if sym.Kind() != semantics.TYPE {
-				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not a known type",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else {
 				typ = sym.Type()
 			}
@@ -1079,9 +1098,11 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 		case *ast.VariableParam:
 			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
 			if sym == nil {
-				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol '%v' is not defined",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else if sym.Kind() != semantics.TYPE {
-				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not a known type",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else {
 				typ = sym.Type()
 			}
@@ -1094,7 +1115,8 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 			}
 		case *ast.FuncHeading:
 			if p.symTable.DeclaredLocally(pm.FName.Name) {
-				return nil, fmt.Errorf("'%s' already declared", pm.FName.Name)
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%s' already declared",
+					p.lAheadToken(1).Pos, pm.FName.Name)
 			}
 
 			p.symTable.EnterSymbol(
@@ -1103,14 +1125,15 @@ func (p *Parser) procedureDeclaration() (*ast.ProcedureDeclaration, error) {
 
 		case *ast.ProcedureHeading:
 		default:
-			return nil, fmt.Errorf("%v is not ast.ValueParam or ast.VariableParam type", pm)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not ast.ValueParam or ast.VariableParam type",
+				p.lAheadToken(1).Pos, pm)
 		}
 	}
 
 	switch p.lAheadKind(1) {
 	case token.Identifier:
 		procedureDecl.Directive = &ast.Identifier{
-			TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+			Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 	default:
 		procedureDecl.Block, err = p.block()
 		if err != nil {
@@ -1132,12 +1155,12 @@ func (p *Parser) procedureHeading() (*ast.ProcedureHeading, error) {
 		paramList []ast.FormalParameter
 	)
 
-	pHead := &ast.ProcedureHeading{TokenKind: p.lAheadKind(1)}
+	pHead := &ast.ProcedureHeading{Token: p.lAheadToken(1)}
 	if err = p.match(token.Procedure); err != nil {
 		return nil, err
 	}
 
-	pHead.PName = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+	pHead.PName = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1164,12 +1187,12 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 		paramList []ast.FormalParameter
 	)
 
-	fHead := &ast.FuncHeading{TokenKind: p.lAheadKind(1)}
+	fHead := &ast.FuncHeading{Token: p.lAheadToken(1)}
 	if err = p.match(token.Function); err != nil {
 		return nil, err
 	}
 
-	fHead.FName = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+	fHead.FName = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1186,9 +1209,11 @@ func (p *Parser) functionHeading() (*ast.FuncHeading, error) {
 
 	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("parse Error: symbol %v not found", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t parse Error: symbol %v not found",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else if sym.Kind() != semantics.TYPE {
-		return nil, fmt.Errorf("expected %v to be a type", sym.Name())
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected %v to be a type",
+			p.lAheadToken(1).Pos, sym.Name())
 	} else {
 		typ = sym.Type()
 	}
@@ -1226,9 +1251,11 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 		case *ast.ValueParam:
 			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
 			if sym == nil {
-				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol '%v' is not defined",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else if sym.Kind() != semantics.TYPE {
-				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not a known type",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else {
 				typ = sym.Type()
 			}
@@ -1242,9 +1269,11 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 		case *ast.VariableParam:
 			sym := p.symTable.RetrieveSymbol(pm.Typ.Name())
 			if sym == nil {
-				return nil, fmt.Errorf("symbol '%v' is not defined", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol '%v' is not defined",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else if sym.Kind() != semantics.TYPE {
-				return nil, fmt.Errorf("'%v' is not a known type", pm.Typ.Name())
+				return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not a known type",
+					p.lAheadToken(1).Pos, pm.Typ.Name())
 			} else {
 				typ = sym.Type()
 			}
@@ -1256,13 +1285,14 @@ func (p *Parser) functionDeclaration() (*ast.FuncDeclaration, error) {
 				}
 			}
 		default:
-			return nil, fmt.Errorf("%v is not ast.ValueParam or ast.VariableParam type", pm)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not ast.ValueParam or ast.VariableParam type",
+				p.lAheadToken(1).Pos, pm)
 		}
 	}
 
 	switch p.lAheadKind(1) {
 	case token.Identifier:
-		funcDecl.Directive = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+		funcDecl.Directive = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 	default:
 		funcDecl.Block, err = p.block()
 		if err != nil {
@@ -1341,6 +1371,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 		param = &ast.ValueParam{Names: names, Typ: typ}
 	// variable-parameter-specification = 'var' identifier-list ':' type-identifier .
 	case token.Var:
+		tok := p.lAheadToken(1)
 		if err := p.match(token.Var); err != nil {
 			return nil, err
 		}
@@ -1359,7 +1390,7 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 			return nil, err
 		}
 
-		param = &ast.VariableParam{Token: token.Var, Names: names, Typ: typ}
+		param = &ast.VariableParam{Token: tok, Names: names, Typ: typ}
 	// procedural-parameter-specification = procedure-heading .
 	case token.Procedure:
 		pHead, err := p.procedureHeading()
@@ -1377,7 +1408,8 @@ func (p *Parser) formalParameterSection() (ast.FormalParameter, error) {
 
 		param = fHead
 	default:
-		return nil, fmt.Errorf("parse Error: unexpected token %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t  unexpected token %v",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	}
 
 	return param, nil
@@ -1448,7 +1480,8 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 	// add variables to symbol table
 	for _, n := range names {
 		if p.symTable.DeclaredLocally(n.Name) {
-			return nil, fmt.Errorf("symbol '%v' already defined as type '%v'", n.Name, varDecl.Type)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t symbol '%v' already defined as type '%v'",
+				p.lAheadToken(1).Pos, n.Name, varDecl.Type)
 		}
 
 		p.symTable.EnterSymbol(n.Name, semantics.NewVariable(n.Name, semantics.VARIABLE, varDecl.Type))
@@ -1463,7 +1496,7 @@ func (p *Parser) variableDeclaration() (*ast.VarDecl, error) {
 func (p *Parser) indexedVariable() (*ast.IndexedVariable, error) {
 	var err error
 
-	arrayVar := &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+	arrayVar := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 	if err = p.consume(); err != nil {
 		return nil, err
 	}
@@ -1506,8 +1539,8 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 	)
 
 	names = append(names, &ast.Identifier{
-		TokenKind: p.lAheadKind(1),
-		Name:      p.lAheadToken(1).Text})
+		Token: p.lAheadToken(1),
+		Name:  p.lAheadToken(1).Text})
 
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
@@ -1519,8 +1552,8 @@ func (p *Parser) identifierList() ([]*ast.Identifier, error) {
 		}
 
 		names = append(names, &ast.Identifier{
-			TokenKind: p.lAheadKind(1),
-			Name:      p.lAheadToken(1).Text,
+			Token: p.lAheadToken(1),
+			Name:  p.lAheadToken(1).Text,
 		})
 
 		if err = p.match(token.Identifier); err != nil {
@@ -1623,7 +1656,8 @@ func (p *Parser) statement() (ast.Statement, error) {
 	} else if p.isSimpleStatement() {
 		stmt, err = p.simpleStatement()
 	} else {
-		stmt, err = nil, fmt.Errorf("parser Error: unexpected token %v", p.lAheadToken(1).Text)
+		stmt, err = nil, fmt.Errorf("[Syntax Error at '%s']\n\t  unexpected token %v",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	}
 
 	if label != "" {
@@ -1655,7 +1689,7 @@ func (p *Parser) isSimpleStatement() bool {
 func (p *Parser) caseStatement() (*ast.CaseStatement, error) {
 	var err error
 
-	caseStmt := &ast.CaseStatement{TokenKind: p.lAheadKind(1)}
+	caseStmt := &ast.CaseStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.Case); err != nil {
 		return nil, err
 	}
@@ -1754,7 +1788,7 @@ func (p *Parser) caseConstantList() ([]ast.Expression, error) {
 func (p *Parser) withStatement() (*ast.WithStatement, error) {
 	var err error
 
-	withStmt := &ast.WithStatement{TokenKind: p.lAheadKind(1)}
+	withStmt := &ast.WithStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.With); err != nil {
 		return nil, err
 	}
@@ -1783,12 +1817,13 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 
 	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol %v",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else if sym.Type().Name() != "record" {
-		return nil, fmt.Errorf("expected '%s' to be record-type, got '%s' instead",
-			p.lAheadToken(1).Text, sym.Type().Name())
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected '%s' to be record-type, got '%s' instead",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text, sym.Type().Name())
 	} else {
-		recVarList = append(recVarList, &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text})
+		recVarList = append(recVarList, &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text})
 	}
 
 	if err := p.consume(); err != nil {
@@ -1802,12 +1837,13 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym == nil {
-			return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol %v",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		} else if sym.Type().Name() != "record" {
-			return nil, fmt.Errorf("expected '%s' to be record-type, got '%s' instead",
-				p.lAheadToken(1).Text, sym.Type().Name())
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected '%s' to be record-type, got '%s' instead",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text, sym.Type().Name())
 		} else {
-			recVarList = append(recVarList, &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text})
+			recVarList = append(recVarList, &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text})
 		}
 
 		if err := p.consume(); err != nil {
@@ -1822,7 +1858,7 @@ func (p *Parser) recordVariableList() ([]ast.Expression, error) {
 func (p *Parser) repeatStatement() (*ast.RepeatStatement, error) {
 	var err error
 
-	repeatStmt := &ast.RepeatStatement{TokenKind: p.lAheadKind(1)}
+	repeatStmt := &ast.RepeatStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.Repeat); err != nil {
 		return nil, err
 	}
@@ -1848,7 +1884,7 @@ func (p *Parser) repeatStatement() (*ast.RepeatStatement, error) {
 func (p *Parser) whileStatement() (*ast.WhileStatement, error) {
 	var err error
 
-	whileStmt := &ast.WhileStatement{TokenKind: p.lAheadKind(1)}
+	whileStmt := &ast.WhileStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.While); err != nil {
 		return nil, err
 	}
@@ -1880,12 +1916,12 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 		initVal, finalVal ast.Expression
 	)
 
-	forStmt := &ast.ForStatement{TokenKind: p.lAheadKind(1)}
+	forStmt := &ast.ForStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.For); err != nil {
 		return nil, err
 	}
 
-	forStmt.CtrlID = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+	forStmt.CtrlID = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 	if err = p.match(token.Identifier); err != nil {
 		return nil, err
 	}
@@ -1901,9 +1937,10 @@ func (p *Parser) forStatement() (*ast.ForStatement, error) {
 	forStmt.InitValue = initVal
 
 	if p.lAheadKind(1) != token.To && p.lAheadKind(1) != token.DownTo {
-		return nil, fmt.Errorf("expecting %v or %v; found %v",
-			token.To, token.DownTo, p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expecting '%v' or '%v'; found '%v'",
+			p.lAheadToken(1).Pos, token.To, token.DownTo, p.lAheadToken(1).Text)
 	}
+
 	forStmt.Direction = p.lAheadKind(1)
 	if err := p.consume(); err != nil {
 		return nil, err
@@ -1947,19 +1984,20 @@ func (p *Parser) simpleStatement() (ast.Statement, error) {
 			return nil, err
 		}
 	case token.Goto:
-		gotoStmt := &ast.GotoStatement{TokenKind: p.lAheadKind(1)}
+		gotoStmt := &ast.GotoStatement{Token: p.lAheadToken(1)}
 		if err = p.match(token.Goto); err != nil {
 			return nil, err
 		}
 
-		gotoStmt.Label = &ast.UIntegerLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+		gotoStmt.Label = &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 		if err = p.match(token.UIntLiteral); err != nil {
 			return nil, err
 		}
 
 		stmt = gotoStmt
 	default:
-		return nil, fmt.Errorf("expecting procedure_name, goto or assignment; found %v", p.lAheadToken(1))
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expecting procedure_name, goto or assignment; found '%v'",
+			p.lAheadToken(1).Pos, p.lAheadToken(1))
 	}
 
 	return stmt, nil
@@ -1974,7 +2012,7 @@ func (p *Parser) procedureStatement() (ast.ProcedureStatement, error) {
 
 	switch p.lAheadToken(1).Text {
 	case "writeln":
-		wln := &ast.Writeln{Name: p.lAheadToken(1).Text}
+		wln := &ast.Writeln{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}
@@ -2024,8 +2062,8 @@ func (p *Parser) procedureStatement() (ast.ProcedureStatement, error) {
 	default:
 		stmt := &ast.ProcedureStmt{
 			Name: &ast.Identifier{
-				TokenKind: p.lAheadKind(1),
-				Name:      p.lAheadToken(1).Text,
+				Token: p.lAheadToken(1),
+				Name:  p.lAheadToken(1).Text,
 			},
 		}
 		if err = p.match(token.Identifier); err != nil {
@@ -2052,11 +2090,11 @@ func (p *Parser) assignmentStatement() (ast.Statement, error) {
 
 	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if sym != nil && sym.Kind() == semantics.FUNCTION {
+		ret := &ast.ReturnStatement{Token: token.NewToken(token.Return, "return", p.lAheadToken(1).Pos)}
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}
 
-		ret := &ast.ReturnStatement{TokenKind: token.Return}
 		if err = p.match(token.Initialize); err != nil {
 			return nil, err
 		}
@@ -2074,7 +2112,7 @@ func (p *Parser) assignmentStatement() (ast.Statement, error) {
 		return nil, err
 	}
 
-	as := &ast.AssignStatement{TokenKind: p.lAheadKind(1), Variable: lhs}
+	as := &ast.AssignStatement{Token: p.lAheadToken(1), Variable: lhs}
 	if err = p.match(token.Initialize); err != nil {
 		return nil, err
 	}
@@ -2095,7 +2133,7 @@ func (p *Parser) expression() (ast.Expression, error) {
 	}
 
 	if p.isRelationalOp() {
-		relExpr := &ast.BinaryExpression{Operator: p.lAheadKind(1), Left: simpleExpr}
+		relExpr := &ast.BinaryExpression{Operator: p.lAheadToken(1), Left: simpleExpr}
 		if err := p.consume(); err != nil {
 			return nil, err
 		}
@@ -2115,12 +2153,12 @@ func (p *Parser) expression() (ast.Expression, error) {
 func (p *Parser) simpleExpression() (ast.Expression, error) {
 	var (
 		err  error
-		sign token.Kind
+		sign token.Token
 		expr ast.Expression
 	)
 
 	if p.isSign() {
-		sign = p.lAheadKind(1)
+		sign = p.lAheadToken(1)
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2132,7 +2170,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 	}
 
 	for p.isAddingOp() {
-		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadKind(1)}
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadToken(1)}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2145,7 +2183,7 @@ func (p *Parser) simpleExpression() (ast.Expression, error) {
 		expr = binExpr
 	}
 
-	if sign == token.Minus || sign == token.Plus {
+	if sign.Kind == token.Minus || sign.Kind == token.Plus {
 		unaryExp := &ast.UnaryExpression{Operator: sign, Operand: expr}
 		return unaryExp, nil
 	}
@@ -2166,7 +2204,7 @@ func (p *Parser) term() (ast.Expression, error) {
 	}
 
 	for p.isMultiplyOp() {
-		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadKind(1)}
+		binExpr := &ast.BinaryExpression{Left: expr, Operator: p.lAheadToken(1)}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2197,7 +2235,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 			member ast.Expression
 		)
 
-		setConst := &ast.SetConstructor{TokenKind: token.Set}
+		setConst := &ast.SetConstructor{Token: p.lAheadToken(1)}
 		if err = p.match(token.LSqBrace); err != nil {
 			return nil, err
 		}
@@ -2252,7 +2290,7 @@ func (p *Parser) factor() (ast.Expression, error) {
 			return nil, err
 		}
 	case token.Not:
-		uExpr := &ast.UnaryExpression{Operator: p.lAheadKind(1)}
+		uExpr := &ast.UnaryExpression{Operator: p.lAheadToken(1)}
 		if err = p.match(token.Not); err != nil {
 			return nil, err
 		}
@@ -2264,7 +2302,8 @@ func (p *Parser) factor() (ast.Expression, error) {
 
 		expr = uExpr
 	default:
-		return nil, fmt.Errorf("expected identifier or integer, got %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected identifier or integer, got '%v'",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	}
 
 	return expr, nil
@@ -2309,7 +2348,8 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 
 	sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if sym == nil {
-		return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol %v",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	} else if sym.Type().Name() == "array" {
 		iExpr, err := p.indexedVariable()
 		if err != nil {
@@ -2335,7 +2375,7 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 
 		expr = iExpr
 	} else if sym.Type().Name() == "record" {
-		recVar := &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+		recVar := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2359,7 +2399,7 @@ func (p *Parser) variableAccess() (ast.Expression, error) {
 			}
 		}
 	} else {
-		expr = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.consume(); err != nil {
 			return nil, err
 		}
@@ -2378,7 +2418,7 @@ func (p *Parser) identifiedVariable() (*ast.IdentifiedVariable, error) {
 	ptr := sym.Type().(*structured.Pointer)
 
 	idVar = &ast.IdentifiedVariable{
-		PointerName: &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text},
+		PointerName: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text},
 		UnderType:   ptr.DomainType,
 	}
 	if err = p.consume(); err != nil {
@@ -2409,18 +2449,20 @@ func (p *Parser) fieldDesignator(recVar ast.Expression) (*ast.FieldDesignator, e
 		record, ok = recVar.(*ast.IdentifiedVariable).UnderType.(*structured.Record)
 		if !ok {
 			return nil, fmt.Errorf(
-				"expected variable to be record type or pointer to record type. got %s instead",
-				record)
+				"[Syntax Error at '%s']\n\t expected variable to be record type or pointer to record type. got '%s' instead",
+				p.lAheadToken(1).Pos, record)
 		}
 	}
 
 	field := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 	if field == nil {
-		return nil, fmt.Errorf("record type '%v' has no field named '%v'", recVar.String(), p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t record type '%v' has no field named '%v'",
+			p.lAheadToken(1).Pos, recVar.String(), p.lAheadToken(1).Text)
 	} else if field.Kind() != semantics.FIELD {
-		return nil, fmt.Errorf("%v is not a field of record type %v", p.lAheadToken(1).Text, recVar)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t '%v' is not a field of record type '%v'",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text, recVar)
 	} else {
-		fieldDes.FieldSpec = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+		fieldDes.FieldSpec = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 		if err = p.match(token.Identifier); err != nil {
 			return nil, err
 		}
@@ -2441,15 +2483,16 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 	case token.UIntLiteral, token.URealLiteral:
 		expr, err = p.unsignedNumber()
 	case token.StrLiteral:
-		expr = &ast.StrLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+		expr = &ast.StrLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	case token.Identifier:
-		expr = &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text /*Scope: p.curScope*/}
+		expr = &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text /*Scope: p.curScope*/}
 	case token.Nil:
-		expr = &ast.NilValue{TokenKind: p.lAheadKind(1)}
+		expr = &ast.NilValue{Token: p.lAheadToken(1)}
 	case token.True, token.False:
-		expr = &ast.BoolLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}
+		expr = &ast.BoolLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}
 	default:
-		return nil, fmt.Errorf("expected unsigned constant type, instead got, %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected unsigned constant type, instead got, '%v'",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	}
 
 	if err = p.consume(); err != nil {
@@ -2463,11 +2506,12 @@ func (p *Parser) unsignedConstant() (ast.Expression, error) {
 func (p *Parser) unsignedNumber() (ast.Expression, error) {
 	switch p.lAheadKind(1) {
 	case token.UIntLiteral:
-		return &ast.UIntegerLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}, nil
+		return &ast.UIntegerLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}, nil
 	case token.URealLiteral:
-		return &ast.URealLiteral{TokenKind: p.lAheadKind(1), Value: p.lAheadToken(1).Text}, nil
+		return &ast.URealLiteral{Token: p.lAheadToken(1), Value: p.lAheadToken(1).Text}, nil
 	default:
-		return nil, fmt.Errorf("expected unsigned real or integer, instead got, %v", p.lAheadToken(1).Text)
+		return nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected unsigned real or integer, instead got, '%v'",
+			p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 	}
 }
 
@@ -2505,7 +2549,7 @@ func (p *Parser) isSign() bool {
 func (p *Parser) ifStatement() (*ast.IfStatement, error) {
 	var err error
 
-	ifStmt := &ast.IfStatement{TokenKind: p.lAheadKind(1)}
+	ifStmt := &ast.IfStatement{Token: p.lAheadToken(1)}
 	if err = p.match(token.If); err != nil {
 		return nil, err
 	}
@@ -2554,7 +2598,7 @@ func (p *Parser) functionDesignator() (*ast.FuncDesignator, error) {
 	var err error
 
 	funcCall := &ast.FuncDesignator{
-		Name: &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}}
+		Name: &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}}
 
 	if err = p.consume(); err != nil {
 		return nil, err
@@ -2615,11 +2659,12 @@ func (p *Parser) actualParameter() (ast.Expression, error) {
 	if p.lAheadKind(1) == token.Identifier {
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym == nil {
-			return nil, fmt.Errorf("undefined symbol %v", p.lAheadToken(1).Text)
+			return nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol '%v'",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		}
 
 		if sym.Kind() == semantics.FUNCTION || sym.Kind() == semantics.PROCEDURE {
-			id := &ast.Identifier{TokenKind: p.lAheadKind(1), Name: p.lAheadToken(1).Text}
+			id := &ast.Identifier{Token: p.lAheadToken(1), Name: p.lAheadToken(1).Text}
 			if err = p.consume(); err != nil {
 				return nil, err
 			}
@@ -2652,7 +2697,7 @@ func (p *Parser) writelnParameterList() (*ast.Identifier, []ast.Expression, erro
 
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym != nil && sym.Type().Name() == "file" {
-			file = &ast.Identifier{TokenKind: token.File, Name: sym.Name()}
+			file = &ast.Identifier{Token: p.lAheadToken(1), Name: sym.Name()}
 		} else {
 			writeParam, err = p.writeParameter()
 			if err != nil {
@@ -2678,7 +2723,7 @@ func (p *Parser) writelnParameterList() (*ast.Identifier, []ast.Expression, erro
 		}
 	}
 
-	file = &ast.Identifier{TokenKind: token.Output, Name: "output"}
+	file = &ast.Identifier{Token: p.lAheadToken(1), Name: "output"}
 
 	return file, writelnParamList, nil
 }
@@ -2738,12 +2783,13 @@ func (p *Parser) writeParameterList() (*ast.Identifier, []ast.Expression, error)
 	if p.lAheadKind(1) == token.Identifier {
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym != nil {
-			return nil, nil, fmt.Errorf("undefined symbol %s", p.lAheadToken(1).Text)
+			return nil, nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol '%s'",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		} else if sym.Type().Name() != "file" {
-			return nil, nil, fmt.Errorf("expected %s to be file-type, it is of a '%s' type",
-				p.lAheadToken(1).Text, sym.Type())
+			return nil, nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected '%s' to be file-type, it is of a '%s' type",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text, sym.Type())
 		} else {
-			file = &ast.Identifier{TokenKind: token.File, Name: sym.Name()}
+			file = &ast.Identifier{Token: p.lAheadToken(1), Name: sym.Name()}
 		}
 	}
 
@@ -2788,12 +2834,13 @@ func (p *Parser) readParameterList() (*ast.Identifier, []ast.Expression, error) 
 	if p.lAheadKind(1) == token.Identifier {
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym != nil {
-			return nil, nil, fmt.Errorf("undefined symbol %s", p.lAheadToken(1).Text)
+			return nil, nil, fmt.Errorf("[Syntax Error at '%s']\n\t undefined symbol '%s'",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text)
 		} else if sym.Type().Name() != "file" {
-			return nil, nil, fmt.Errorf("expected %s to be file-type, it is of a '%s' type",
-				p.lAheadToken(1).Text, sym.Type())
+			return nil, nil, fmt.Errorf("[Syntax Error at '%s']\n\t expected %s to be file-type, it is of a '%s' type",
+				p.lAheadToken(1).Pos, p.lAheadToken(1).Text, sym.Type())
 		} else {
-			file = &ast.Identifier{TokenKind: token.File, Name: sym.Name()}
+			file = &ast.Identifier{Token: p.lAheadToken(1), Name: sym.Name()}
 		}
 	}
 
@@ -2838,7 +2885,7 @@ func (p *Parser) readLnParameterList() (*ast.Identifier, []ast.Expression, error
 
 		sym := p.symTable.RetrieveSymbol(p.lAheadToken(1).Text)
 		if sym != nil && sym.Type().Name() == "file" {
-			file = &ast.Identifier{TokenKind: token.File, Name: sym.Name()}
+			file = &ast.Identifier{Token: p.lAheadToken(1), Name: sym.Name()}
 		} else {
 			varAccess, err = p.variableAccess()
 			if err != nil {
@@ -2864,7 +2911,7 @@ func (p *Parser) readLnParameterList() (*ast.Identifier, []ast.Expression, error
 		}
 	}
 
-	file = &ast.Identifier{TokenKind: token.Output, Name: "output"}
+	file = &ast.Identifier{Token: p.lAheadToken(1), Name: "output"}
 
 	return file, readlnParamList, nil
 }
