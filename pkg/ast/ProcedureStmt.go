@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"strings"
 )
 
@@ -16,6 +17,10 @@ func (ps *ProcedureStmt) stmt() {}
 
 func (ps *ProcedureStmt) Accept(vst Visitor) error {
 	return vst.VisitProcedureStmt(ps)
+}
+
+func (ps *ProcedureStmt) Pos() *token.Position {
+	return ps.Name.Pos()
 }
 
 func (ps *ProcedureStmt) String() string {

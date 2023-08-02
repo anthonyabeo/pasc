@@ -7,12 +7,16 @@ import (
 
 // NilValue represents node for nil values.
 type NilValue struct {
-	TokenKind token.Kind
-	EType     types.Type
+	Token token.Token
+	EType types.Type
 }
 
 func (n *NilValue) Accept(vst Visitor) error {
 	return vst.VisitNil(n)
+}
+
+func (n *NilValue) Pos() *token.Position {
+	return n.Token.Pos
 }
 
 func (n *NilValue) Type() types.Type {

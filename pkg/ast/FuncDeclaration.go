@@ -22,6 +22,10 @@ func (f *FuncDeclaration) Accept(vst Visitor) error {
 	return vst.VisitFuncDeclaration(f)
 }
 
+func (f *FuncDeclaration) Pos() *token.Position {
+	return f.Heading.Pos()
+}
+
 func (f *FuncDeclaration) String() string {
 	return fmt.Sprintf("function(%v):%v", f.Heading.Parameters, f.Heading.ReturnType)
 }
@@ -32,7 +36,7 @@ func (f *FuncDeclaration) SetLabel(l string) {
 
 // FuncHeading denotes a function's signature.
 type FuncHeading struct {
-	TokenKind  token.Kind
+	Token      token.Token
 	FName      *Identifier
 	Parameters []FormalParameter
 	ReturnType types.Type
@@ -54,6 +58,10 @@ func (f *FuncHeading) expr() {}
 
 func (f *FuncHeading) Type() types.Type {
 	return f
+}
+
+func (f *FuncHeading) Pos() *token.Position {
+	return f.Token.Pos
 }
 
 func (f *FuncHeading) Accept(vst Visitor) error {

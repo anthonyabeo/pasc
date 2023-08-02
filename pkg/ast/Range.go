@@ -18,6 +18,10 @@ func (r *Range) Accept(vst Visitor) error {
 	return vst.VisitRange(r)
 }
 
+func (r *Range) Pos() *token.Position {
+	return r.Token.Pos
+}
+
 func (r *Range) Type() types.Type {
 	return r.EType
 }

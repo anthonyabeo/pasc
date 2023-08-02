@@ -9,16 +9,20 @@ import (
 
 // CaseStatement models the AST node of a Case Statement
 type CaseStatement struct {
-	TokenKind token.Kind
-	Index     Expression
-	List      []*CaseElement
-	Label     string
+	Token token.Token
+	Index Expression
+	List  []*CaseElement
+	Label string
 }
 
 func (c *CaseStatement) stmt() {}
 
 func (c *CaseStatement) Accept(vst Visitor) error {
 	return vst.VisitCaseStatement(c)
+}
+
+func (c *CaseStatement) Pos() *token.Position {
+	return c.Token.Pos
 }
 
 func (c *CaseStatement) String() string {

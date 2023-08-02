@@ -9,14 +9,18 @@ import (
 
 // RepeatStatement models the AST node of a Repeat Statement
 type RepeatStatement struct {
-	TokenKind token.Kind
-	StmtSeq   []Statement
-	BoolExpr  Expression
-	Label     string
+	Token    token.Token
+	StmtSeq  []Statement
+	BoolExpr Expression
+	Label    string
 }
 
 func (r *RepeatStatement) Accept(vst Visitor) error {
 	return vst.VisitRepeatStatement(r)
+}
+
+func (r *RepeatStatement) Pos() *token.Position {
+	return r.Token.Pos
 }
 
 // StatNode ...

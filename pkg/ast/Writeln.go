@@ -2,9 +2,11 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 type Writeln struct {
+	Token     token.Token
 	Name      string
 	File      *Identifier
 	ParamList []Expression
@@ -15,6 +17,10 @@ func (w *Writeln) stmt() {}
 
 func (w *Writeln) Accept(vst Visitor) error {
 	return vst.VisitWriteln(w)
+}
+
+func (w *Writeln) Pos() *token.Position {
+	return w.Token.Pos
 }
 
 func (w *Writeln) String() string {

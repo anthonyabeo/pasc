@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
@@ -9,6 +10,7 @@ import (
 type Node interface {
 	fmt.Stringer
 	Accept(Visitor) error
+	Pos() *token.Position
 }
 
 // Statement models a generic node for statement types

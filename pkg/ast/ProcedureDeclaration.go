@@ -20,6 +20,10 @@ func (p *ProcedureDeclaration) Accept(vst Visitor) error {
 	return vst.VisitProcedureDecl(p)
 }
 
+func (p *ProcedureDeclaration) Pos() *token.Position {
+	return p.Heading.Pos()
+}
+
 func (p *ProcedureDeclaration) stmt() {}
 
 func (p *ProcedureDeclaration) String() string {
@@ -32,7 +36,7 @@ func (p *ProcedureDeclaration) SetLabel(l string) {
 
 // ProcedureHeading denotes a procedure's signature.
 type ProcedureHeading struct {
-	TokenKind  token.Kind
+	Token      token.Token
 	PName      *Identifier
 	Parameters []FormalParameter
 }
@@ -50,6 +54,10 @@ func (p *ProcedureHeading) expr() {}
 
 func (p *ProcedureHeading) Type() types.Type {
 	return p
+}
+
+func (p *ProcedureHeading) Pos() *token.Position {
+	return p.Token.Pos
 }
 
 func (p *ProcedureHeading) formalParam() {}

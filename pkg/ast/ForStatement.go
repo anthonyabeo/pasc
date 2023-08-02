@@ -6,7 +6,7 @@ import (
 
 // ForStatement ...
 type ForStatement struct {
-	TokenKind             token.Kind
+	Token                 token.Token
 	CtrlID                *Identifier
 	InitValue, FinalValue Expression
 	Body                  Statement
@@ -16,6 +16,10 @@ type ForStatement struct {
 
 func (f *ForStatement) Accept(vst Visitor) error {
 	return vst.VisitForStatement(f)
+}
+
+func (f *ForStatement) Pos() *token.Position {
+	return f.Token.Pos
 }
 
 // StatNode ...

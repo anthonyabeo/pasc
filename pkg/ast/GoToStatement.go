@@ -7,13 +7,17 @@ import (
 
 // GotoStatement ...
 type GotoStatement struct {
-	TokenKind token.Kind
-	Label     *UIntegerLiteral
-	Lbl       string
+	Token token.Token
+	Label *UIntegerLiteral
+	Lbl   string
 }
 
 func (g *GotoStatement) Accept(vst Visitor) error {
 	return vst.VisitGotoStatement(g)
+}
+
+func (g *GotoStatement) Pos() *token.Position {
+	return g.Token.Pos
 }
 
 // StatNode ...

@@ -22,6 +22,10 @@ type ValueParam struct {
 
 func (v *ValueParam) formalParam() {}
 
+func (v *ValueParam) Pos() *token.Position {
+	return v.Names[0].Pos()
+}
+
 func (v *ValueParam) expr() {}
 
 func (v *ValueParam) Type() types.Type {
@@ -52,12 +56,16 @@ func (v *ValueParam) String() string {
 
 // VariableParam denotes a variable parameter specification
 type VariableParam struct {
-	Token token.Kind
+	Token token.Token
 	Names []*Identifier
 	Typ   types.Type
 }
 
 func (v *VariableParam) formalParam() {}
+
+func (v *VariableParam) Pos() *token.Position {
+	return v.Token.Pos
+}
 
 func (v *VariableParam) expr() {}
 

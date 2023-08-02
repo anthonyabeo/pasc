@@ -2,9 +2,11 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 type Read struct {
+	Token     token.Token
 	Name      string
 	File      *Identifier
 	VarAccess []Expression
@@ -15,6 +17,10 @@ func (r *Read) stmt() {}
 
 func (r *Read) Accept(vst Visitor) error {
 	return vst.VisitRead(r)
+}
+
+func (r *Read) Pos() *token.Position {
+	return r.Token.Pos
 }
 
 func (r *Read) String() string {

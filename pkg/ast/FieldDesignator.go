@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/token"
 
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
@@ -15,6 +16,10 @@ type FieldDesignator struct {
 
 func (f *FieldDesignator) Accept(vst Visitor) error {
 	return vst.VisitFieldDesignator(f)
+}
+
+func (f *FieldDesignator) Pos() *token.Position {
+	return f.RecordVar.Pos()
 }
 
 func (f *FieldDesignator) Type() types.Type {

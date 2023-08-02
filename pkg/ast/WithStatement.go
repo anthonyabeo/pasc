@@ -9,7 +9,7 @@ import (
 
 // WithStatement models the AST node of a With Statement
 type WithStatement struct {
-	TokenKind     token.Kind
+	Token         token.Token
 	RecordVarList []Expression
 	Body          Statement
 	Label         string
@@ -17,6 +17,10 @@ type WithStatement struct {
 
 func (w *WithStatement) Accept(vst Visitor) error {
 	return vst.VisitWithStatement(w)
+}
+
+func (w *WithStatement) Pos() *token.Position {
+	return w.Token.Pos
 }
 
 // StatNode ...

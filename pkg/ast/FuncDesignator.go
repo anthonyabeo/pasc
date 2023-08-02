@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
@@ -17,8 +18,13 @@ type FuncDesignator struct {
 func (f *FuncDesignator) Type() types.Type {
 	return f.EType
 }
+
 func (f *FuncDesignator) Accept(vst Visitor) error {
 	return vst.VisitFuncDesignator(f)
+}
+
+func (f *FuncDesignator) Pos() *token.Position {
+	return f.Name.Pos()
 }
 
 func (f *FuncDesignator) expr() {}

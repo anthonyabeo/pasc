@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"github.com/anthonyabeo/pasc/pkg/token"
 	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/types"
@@ -17,6 +18,11 @@ type IndexedVariable struct {
 func (iv *IndexedVariable) Accept(vst Visitor) error {
 	return vst.VisitIndexedVariable(iv)
 }
+
+func (iv *IndexedVariable) Pos() *token.Position {
+	return iv.ArrayVar.Pos()
+}
+
 func (iv *IndexedVariable) Type() types.Type {
 	return iv.EType
 }

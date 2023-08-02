@@ -10,7 +10,7 @@ import (
 // BinaryExpression ...
 type BinaryExpression struct {
 	Left, Right Expression
-	Operator    token.Kind
+	Operator    token.Token
 	EType       types.Type
 }
 
@@ -18,6 +18,10 @@ func (b *BinaryExpression) expr() {}
 
 func (b *BinaryExpression) Type() types.Type {
 	return b.EType
+}
+
+func (b *BinaryExpression) Pos() *token.Position {
+	return b.Operator.Pos
 }
 
 func (b *BinaryExpression) Accept(vst Visitor) error {

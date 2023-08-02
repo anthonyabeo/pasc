@@ -7,9 +7,9 @@ import (
 
 // BoolLiteral defines a boolean literal value node in the AST
 type BoolLiteral struct {
-	TokenKind token.Kind
-	Value     string
-	EType     types.Type
+	Token token.Token
+	Value string
+	EType types.Type
 }
 
 func (b *BoolLiteral) String() string {
@@ -19,6 +19,10 @@ func (b *BoolLiteral) String() string {
 // Accept ...
 func (b *BoolLiteral) Accept(vst Visitor) error {
 	return vst.VisitBoolLiteral(b)
+}
+
+func (b *BoolLiteral) Pos() *token.Position {
+	return b.Token.Pos
 }
 
 // Type ...

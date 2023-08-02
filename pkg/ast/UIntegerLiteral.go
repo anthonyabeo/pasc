@@ -7,9 +7,9 @@ import (
 
 // UIntegerLiteral is the node for an unsigned integer node in the AST
 type UIntegerLiteral struct {
-	TokenKind token.Kind
-	Value     string
-	EType     types.Type
+	Token token.Token
+	Value string
+	EType types.Type
 }
 
 func (u *UIntegerLiteral) expr() {}
@@ -20,6 +20,10 @@ func (u *UIntegerLiteral) Type() types.Type {
 
 func (u *UIntegerLiteral) Accept(vst Visitor) error {
 	return vst.VisitUIntLiteral(u)
+}
+
+func (u *UIntegerLiteral) Pos() *token.Position {
+	return u.Token.Pos
 }
 
 func (u *UIntegerLiteral) String() string {

@@ -10,15 +10,19 @@ import (
 
 // SetConstructor ...
 type SetConstructor struct {
-	TokenKind token.Kind
-	Members   []Expression
-	EType     types.Type
+	Token   token.Token
+	Members []Expression
+	EType   types.Type
 }
 
 func (s *SetConstructor) expr() {}
 
 func (s *SetConstructor) Accept(vst Visitor) error {
 	return vst.VisitSetConstructor(s)
+}
+
+func (s *SetConstructor) Pos() *token.Position {
+	return s.Token.Pos
 }
 
 func (s *SetConstructor) Type() types.Type {
