@@ -29,5 +29,5 @@ func (b *BinaryExpression) Accept(vst Visitor) error {
 }
 
 func (b *BinaryExpression) String() string {
-	return fmt.Sprintf("%s %s %s", b.Left, b.Operator, b.Right)
+	return fmt.Sprintf("%s %s %s", b.Left, b.Operator.Kind, b.Right)
 }

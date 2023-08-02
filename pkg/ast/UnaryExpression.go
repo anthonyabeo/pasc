@@ -31,8 +31,8 @@ func (u *UnaryExpression) Pos() *token.Position {
 func (u *UnaryExpression) String() string {
 	switch u.Operator.Kind {
 	case token.Not:
-		return fmt.Sprintf("%v %v", u.Operator, u.Operand)
+		return fmt.Sprintf("%v %v", u.Operator.Kind, u.Operand)
 	default:
-		return fmt.Sprintf("%v%v", u.Operator, u.Operand)
+		return fmt.Sprintf("%v%v", u.Operator.Kind, u.Operand)
 	}
 }
