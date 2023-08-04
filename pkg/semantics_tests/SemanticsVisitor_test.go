@@ -356,7 +356,7 @@ func TestTypeCheckWhileStatementWithInvalidCondition(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	if err.Error() != "while-statement condition must evaluate to a Boolean, 'a + 0' does not" {
+	if err.Error() != "[Semantic Error at 'test.go:10:11']\n\t while-statement condition must evaluate to a Boolean, 'a + 0' does not" {
 		t.Error("invalid error message")
 	}
 }
@@ -399,7 +399,7 @@ func TestTypeCheckForStatementWithInvalidCtrlID(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "control variable 'i' (of type 'integer'), is not compatible with initial value of type 'real'"
+	errMsg := "[Semantic Error at 'test.go:8:7']\n\t control variable 'i' (of type 'integer'), is not compatible with initial value of type 'real'"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
@@ -455,7 +455,7 @@ func TestStaticCheckFuncDeclaration(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "declared return type of max is real, does not match return value type integer"
+	errMsg := "[Semantic Error at 'test.go:6:2']\n\t declared return type of max is real, does not match return value type integer"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
@@ -567,7 +567,7 @@ func TestFunctionHeadingParameterWithInvalidArgument(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "argument '32' used in procedure call 'bisect(bar, 0.12, 4, 32)' must be a variable"
+	errMsg := "[Semantic Error at 'test.go:26:24']\n\t argument '32' used in procedure call 'bisect(bar, 0.12, 4, 32)' must be a variable"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
@@ -664,7 +664,7 @@ func TestTypeCheckNotUnaryExpression(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "not-expression, 'not sin(a + b)' operand must evaluate to a Boolean type, it evaluates to 'real'"
+	errMsg := "[Semantic Error at 'test.go:8:8']\n\t not-expression, 'not sin(a + b)' operand must evaluate to a Boolean type, it evaluates to 'real'"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
@@ -712,7 +712,7 @@ func TestTypeCheckMinusUnaryExpression(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "operand, '[1, 5, 10..19, 23]' in expression, '-[1, 5, 10..19, 23]', must be real or integer type. it is a 'set of integer' type"
+	errMsg := "[Semantic Error at 'test.go:14:9']\n\t operand, '[1, 5, 10..19, 23]' in expression, '-[1, 5, 10..19, 23]', must be real or integer type. it is a 'set of integer' type"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
@@ -799,7 +799,7 @@ func TestTypeCheckGotoLabelsOutOfRange(t *testing.T) {
 		t.Error("should return an error")
 	}
 
-	errMsg := "label value, '10294' fall outside the required range [0, 9999]"
+	errMsg := "[Semantic Error at 'test.go:6:8']\n\t label value, '10294' fall outside the required range [0, 9999]"
 	if err.Error() != errMsg {
 		t.Errorf("expected error message \n\t'%s', got \n\t'%s' instead", errMsg, err.Error())
 	}
