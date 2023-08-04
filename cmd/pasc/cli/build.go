@@ -9,10 +9,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	serde "github.com/anthonyabeo/pasc/pkg/codegen/serializer"
+	"github.com/peterbourgon/ff/v3/ffcli"
+
+	"github.com/anthonyabeo/pasc/pkg/codegen/serializer"
 	"github.com/anthonyabeo/pasc/pkg/parser"
 	"github.com/anthonyabeo/pasc/pkg/semantics"
-	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 var buildArgs struct {
@@ -51,7 +53,13 @@ func runBuild(ctx context.Context, args []string) error {
 	}
 
 	symTable := semantics.NewWonkySymbolTable()
-	lex := parser.NewLexer(string(input))
+
+	fs := token.NewFileSet()
+	file := fs.AddFile(fullPath, -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		return err
@@ -67,8 +75,8 @@ func runBuild(ctx context.Context, args []string) error {
 		return err
 	}
 
-	serializer := serde.NewProtoSerializer(program, buildArgs.out, symTable)
-	err = serializer.Serialize()
+	serial := serializer.NewProtoSerializer(program, buildArgs.out, symTable)
+	err = serial.Serialize()
 	if err != nil {
 		return err
 	}
