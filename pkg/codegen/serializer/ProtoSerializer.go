@@ -597,7 +597,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_UnExpr,
 			Expr: &Expression_Ue{
 				Ue: &UnaryExpr{
-					Op:      s.translateOp(expr.Operator),
+					Op:      s.translateOp(expr.Operator.Kind),
 					Operand: s.translateExpr(expr.Operand),
 				},
 			},
@@ -607,7 +607,7 @@ func (s *ProtoSerializer) translateExpr(expr ast.Expression) *Expression {
 			Kind: Expression_BinExpr,
 			Expr: &Expression_Be{
 				Be: &BinaryExpr{
-					Op:    s.translateOp(expr.Operator),
+					Op:    s.translateOp(expr.Operator.Kind),
 					Left:  s.translateExpr(expr.Left),
 					Right: s.translateExpr(expr.Right),
 				},
