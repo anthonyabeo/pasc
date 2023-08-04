@@ -45,64 +45,64 @@ func (w *WonkySymbolTable) initSymbolTable() {
 	w.EnterSymbol("true", NewConst("true", CONST, base.NewBoolean(), &ast.BoolLiteral{Value: "true"}))
 	w.EnterSymbol("false", NewConst("false", CONST, base.NewBoolean(), &ast.BoolLiteral{Value: "false"}))
 	w.EnterSymbol("maxint", NewConst("maxint", CONST, base.NewInteger(), &ast.UIntegerLiteral{
-		TokenKind: token.UIntLiteral,
-		Value:     "9223372036854775807",
-		EType:     base.NewInteger(),
+		Token: token.NewToken(token.UIntLiteral, "9223372036854775807", nil),
+		Value: "9223372036854775807",
+		EType: base.NewInteger(),
 	}))
 	w.EnterSymbol("abs", NewFunction("abs", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "abs"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "abs", nil), Name: "abs"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("sqr", NewFunction("sqr", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "sqr"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "sqr", nil), Name: "sqr"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("sin", NewFunction("sin", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "sin"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "sin", nil), Name: "sin"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("cos", NewFunction("cos", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "cos"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "cos", nil), Name: "cos"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("exp", NewFunction("exp", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "exp"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "exp", nil), Name: "exp"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("ln", NewFunction("ln", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "ln"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "ln", nil), Name: "ln"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("sqrt", NewFunction("sqrt", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "sqrt"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "sqrt", nil), Name: "sqrt"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 	w.EnterSymbol("arctan", NewFunction("arctan", FUNCTION, &ast.FuncHeading{
-		TokenKind: token.Function,
-		FName:     &ast.Identifier{TokenKind: token.Identifier, Name: "arctan"},
+		Token: token.NewToken(token.Function, "function", nil),
+		FName: &ast.Identifier{Token: token.NewToken(token.Identifier, "arctan", nil), Name: "arctan"},
 		Parameters: []ast.FormalParameter{&ast.ValueParam{Names: []*ast.Identifier{
-			{TokenKind: token.Identifier, Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
+			{Token: token.NewToken(token.Identifier, "x", nil), Name: "x", EType: base.NewReal()}}, Typ: base.NewReal()}},
 		ReturnType: base.NewReal(),
 	}))
 }

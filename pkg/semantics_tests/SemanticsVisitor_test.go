@@ -5,10 +5,11 @@ import (
 
 	"github.com/anthonyabeo/pasc/pkg/parser"
 	"github.com/anthonyabeo/pasc/pkg/semantics"
+	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
 func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, sum : integer;
@@ -16,8 +17,13 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 	begin
 		a := 1
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -36,7 +42,7 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 }
 
 func TestStaticTypeCheckBasicArithmetic(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, sum : integer;
@@ -46,8 +52,13 @@ func TestStaticTypeCheckBasicArithmetic(t *testing.T) {
 		b := 2;
 		sum := a + b
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -66,7 +77,7 @@ func TestStaticTypeCheckBasicArithmetic(t *testing.T) {
 }
 
 func TestTypeCheckWhileStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, sum : integer;
@@ -83,8 +94,13 @@ func TestTypeCheckWhileStatement(t *testing.T) {
 
 		writeln(sum)
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -103,7 +119,7 @@ func TestTypeCheckWhileStatement(t *testing.T) {
 }
 
 func TestStaticCheckIfStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		n, m, result : integer;
@@ -116,8 +132,13 @@ func TestStaticCheckIfStatement(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -136,7 +157,7 @@ func TestStaticCheckIfStatement(t *testing.T) {
 }
 
 func TestStaticCheckMaxProgram(t *testing.T) {
-	input := `
+	input := []byte(`
 	program MaxProgram;
 	var
 		a, b, sum : integer;
@@ -160,9 +181,14 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 
 		writeln(sum)
 	end.
-	`
+	`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -181,7 +207,7 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 }
 
 func TestStaticTypeCheckExpressions(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	
 	type
@@ -226,8 +252,13 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -246,7 +277,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 }
 
 func TestTypeCheckForStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 
 	var
@@ -258,9 +289,14 @@ func TestTypeCheckForStatement(t *testing.T) {
 
 		writeln(sum)
 	end.
-`
+`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -279,7 +315,7 @@ func TestTypeCheckForStatement(t *testing.T) {
 }
 
 func TestTypeCheckWhileStatementWithInvalidCondition(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b, sum : integer;
@@ -296,8 +332,13 @@ func TestTypeCheckWhileStatementWithInvalidCondition(t *testing.T) {
 
 		writeln(sum)
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -321,7 +362,7 @@ func TestTypeCheckWhileStatementWithInvalidCondition(t *testing.T) {
 }
 
 func TestTypeCheckForStatementWithInvalidCtrlID(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 
 	var
@@ -333,9 +374,14 @@ func TestTypeCheckForStatementWithInvalidCtrlID(t *testing.T) {
 
 		writeln(sum)
 	end.
-`
+`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -360,7 +406,7 @@ func TestTypeCheckForStatementWithInvalidCtrlID(t *testing.T) {
 }
 
 func TestStaticCheckFuncDeclaration(t *testing.T) {
-	input := `
+	input := []byte(`
 	program MaxProgram;
 	var
 		a, b, sum : integer;
@@ -384,9 +430,14 @@ func TestStaticCheckFuncDeclaration(t *testing.T) {
 
 		writeln(sum)
 	end.
-	`
+`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -411,7 +462,7 @@ func TestStaticCheckFuncDeclaration(t *testing.T) {
 }
 
 func TestTypeCheckWithStatement(t *testing.T) {
-	input := `
+	input := []byte(`
 		program Record;
 
 		var
@@ -437,9 +488,14 @@ func TestTypeCheckWithStatement(t *testing.T) {
 
 			writeln('%d/%d/%d', date.day, date.month, date.year)
 		end.
-	`
+	`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -458,7 +514,7 @@ func TestTypeCheckWithStatement(t *testing.T) {
 }
 
 func TestFunctionHeadingParameterWithInvalidArgument(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	const
 		eps = 1e-10;
@@ -486,9 +542,14 @@ func TestFunctionHeadingParameterWithInvalidArgument(t *testing.T) {
 		bisect(bar, 0.12, 4, 32);
 		writeln('Hello, world!')
 	end.
-	`
+`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -513,7 +574,7 @@ func TestFunctionHeadingParameterWithInvalidArgument(t *testing.T) {
 }
 
 func TestFunctionHeadingParameter(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	const
 		eps = 1e-10;
@@ -541,9 +602,14 @@ func TestFunctionHeadingParameter(t *testing.T) {
 		bisect(bar, 0.12, 4, midpoint, slang);
 		writeln('Hello, world!')
 	end.
-	`
+	`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -563,7 +629,7 @@ func TestFunctionHeadingParameter(t *testing.T) {
 }
 
 func TestTypeCheckNotUnaryExpression(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	var
 		a, b : integer;
@@ -574,8 +640,13 @@ func TestTypeCheckNotUnaryExpression(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -600,7 +671,7 @@ func TestTypeCheckNotUnaryExpression(t *testing.T) {
 }
 
 func TestTypeCheckMinusUnaryExpression(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	type
 		hue = set of integer;
@@ -617,8 +688,13 @@ func TestTypeCheckMinusUnaryExpression(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -643,7 +719,7 @@ func TestTypeCheckMinusUnaryExpression(t *testing.T) {
 }
 
 func TestTypeCheckIdentifiedVariable(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	
 	type
@@ -660,8 +736,14 @@ func TestTypeCheckIdentifiedVariable(t *testing.T) {
 		person^ := nil;
 		writeln('Hello, world!')
 	end.
-`
-	lex := parser.NewLexer(input)
+`)
+
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
@@ -680,7 +762,7 @@ func TestTypeCheckIdentifiedVariable(t *testing.T) {
 }
 
 func TestTypeCheckGotoLabelsOutOfRange(t *testing.T) {
-	input := `
+	input := []byte(`
 	program HelloWorld;
 	label 10294;
 
@@ -692,9 +774,14 @@ func TestTypeCheckGotoLabelsOutOfRange(t *testing.T) {
 
 		writeln('Hello, world!')
 	end.
-`
+`)
 
-	lex := parser.NewLexer(input)
+	fs := token.NewFileSet()
+	file := fs.AddFile("test.go", -1, len(input))
+
+	lex := parser.Lexer{}
+	lex.Init(file, input)
+
 	symTable := semantics.NewWonkySymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
