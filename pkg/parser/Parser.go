@@ -22,7 +22,6 @@ type Parser struct {
 	lookahead [3]token.Token
 	k, idx    int
 	symTable  *semantics.WonkySymbolTable
-	curBlock  *ast.Block
 }
 
 // NewParser constructs and returns an instance of parser
