@@ -729,7 +729,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 				},
 			},
 			VarDeclaration: &ast.VarDeclaration{
-				TokenKind: token.Var,
+				Token: token.NewToken(token.Var, "var", nil),
 				Decls: []*ast.VarDecl{
 					{
 						Names: []*ast.Identifier{{Token: token.NewToken(token.Identifier, "midpoint", nil), Name: "midpoint"}},
@@ -1163,8 +1163,8 @@ func testUnaryExpression(t *testing.T, expr ast.Expression, operator token.Token
 func testVarDeclaration(
 	t *testing.T, vd *ast.VarDeclaration, tt token.Token, varDeclCount int, varList [][]string, varType []string,
 ) bool {
-	if vd.TokenKind != tt.Kind {
-		t.Errorf("expected token to be %v; got %v instead", tt.Text, vd.TokenKind)
+	if vd.Token.Kind != tt.Kind {
+		t.Errorf("expected token to be %v; got %v instead", tt.Text, vd.Token.Kind)
 		return false
 	}
 

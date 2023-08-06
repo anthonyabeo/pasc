@@ -1421,7 +1421,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 		d   *ast.VarDecl
 	)
 
-	varDecl := new(ast.VarDeclaration)
+	varDecl := &ast.VarDeclaration{Token: p.lAheadToken(1)}
 
 	if err = p.match(token.Var); err != nil {
 		return nil, err
@@ -1430,7 +1430,7 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 	if d, err = p.variableDeclaration(); err != nil {
 		return nil, err
 	}
-	varDecl.TokenKind = token.Var
+
 	varDecl.Decls = append(varDecl.Decls, d)
 
 	if err = p.match(token.SemiColon); err != nil {
@@ -1442,7 +1442,6 @@ func (p *Parser) variableDeclarationPart() (*ast.VarDeclaration, error) {
 			return nil, err
 		}
 
-		varDecl.TokenKind = token.Var
 		varDecl.Decls = append(varDecl.Decls, d)
 
 		if err = p.match(token.SemiColon); err != nil {
