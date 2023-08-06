@@ -38,4 +38,8 @@ type Visitor interface {
 	VisitVariableParam(*VariableParam) error
 	VisitFuncHeading(*FuncHeading) error
 	VisitProcedureHeading(*ProcedureHeading) error
+	VisitVarDecl(*VarDeclaration) error
+	VisitConstDef(*ConstDefinition) error
+	VisitLabelDef(*LabelDefinition) error
+	VisitTypeDef(*TypeDefinition) error
 }
