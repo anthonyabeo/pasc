@@ -29,37 +29,26 @@ func (s *Visitor) VisitBlock(blk *ast.Block) error {
 	var err error
 
 	if blk.Labels != nil {
-		for _, lbl := range blk.Labels.Labels {
-			if !s.symbolTable.DeclaredLocally(lbl.Value) {
-				s.symbolTable.EnterSymbol(lbl.Value, NewLabel(lbl.Value, LABEL, base.NewInteger()))
-			}
+		if err = blk.Labels.Accept(s); err != nil {
+			return err
 		}
 	}
 
 	if blk.Types != nil {
-		for _, typeDef := range blk.Types.Types {
-			if !s.symbolTable.DeclaredLocally(typeDef.Name.Name) {
-				s.symbolTable.EnterSymbol(typeDef.Name.Name, NewTypeDef(typeDef.Name.Name, TYPE, typeDef.TypeDenoter))
-			}
+		if err = blk.Types.Accept(s); err != nil {
+			return err
 		}
 	}
 
 	if blk.VarDeclaration != nil {
-		for _, varDecl := range blk.VarDeclaration.Decls {
-			for _, id := range varDecl.Names {
-				if !s.symbolTable.DeclaredLocally(id.Name) {
-					s.symbolTable.EnterSymbol(id.Name, NewVariable(id.Name, VARIABLE, varDecl.Type))
-				}
-			}
+		if err := blk.VarDeclaration.Accept(s); err != nil {
+			return err
 		}
 	}
 
 	if blk.Consts != nil {
-		for _, constDef := range blk.Consts.Consts {
-			if !s.symbolTable.DeclaredLocally(constDef.Name.Name) {
-				s.symbolTable.EnterSymbol(
-					constDef.Name.Name, NewConst(constDef.Name.Name, CONST, constDef.Value.Type(), constDef.Value))
-			}
+		if err = blk.Consts.Accept(s); err != nil {
+			return err
 		}
 	}
 
@@ -971,6 +960,49 @@ func (s *Visitor) VisitProcedureHeading(p *ast.ProcedureHeading) error {
 	for _, param := range p.Parameters {
 		if err := param.Accept(s); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Visitor) VisitVarDecl(decl *ast.VarDeclaration) error {
+	for _, varDecl := range decl.Decls {
+		for _, id := range varDecl.Names {
+			if !s.symbolTable.DeclaredLocally(id.Name) {
+				s.symbolTable.EnterSymbol(id.Name, NewVariable(id.Name, VARIABLE, varDecl.Type))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *Visitor) VisitConstDef(constDef *ast.ConstDefinition) error {
+	for _, constDef := range constDef.Consts {
+		if !s.symbolTable.DeclaredLocally(constDef.Name.Name) {
+			s.symbolTable.EnterSymbol(
+				constDef.Name.Name, NewConst(constDef.Name.Name, CONST, constDef.Value.Type(), constDef.Value))
+		}
+	}
+
+	return nil
+}
+
+func (s *Visitor) VisitLabelDef(label *ast.LabelDefinition) error {
+	for _, lbl := range label.Labels {
+		if !s.symbolTable.DeclaredLocally(lbl.Value) {
+			s.symbolTable.EnterSymbol(lbl.Value, NewLabel(lbl.Value, LABEL, base.NewInteger()))
+		}
+	}
+
+	return nil
+}
+
+func (s *Visitor) VisitTypeDef(types *ast.TypeDefinition) error {
+	for _, typeDef := range types.Types {
+		if !s.symbolTable.DeclaredLocally(typeDef.Name.Name) {
+			s.symbolTable.EnterSymbol(typeDef.Name.Name, NewTypeDef(typeDef.Name.Name, TYPE, typeDef.TypeDenoter))
 		}
 	}
 
