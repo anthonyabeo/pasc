@@ -26,3 +26,8 @@ type Expression interface {
 	Type() types.Type
 	expr()
 }
+
+type Decl interface {
+	Node
+	decl()
+}
