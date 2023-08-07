@@ -18,7 +18,7 @@ import (
 // from the lexer. The Parser checks and ensures that the input tokens stream conforms
 // to the grammar of the language or returns an appropriate error otherwise.
 type Parser struct {
-	input     Lexer
+	lexer     Lexer
 	lookahead [3]token.Token
 	k, idx    int
 	symTable  *semantics.WonkySymbolTable
@@ -26,7 +26,7 @@ type Parser struct {
 
 // NewParser constructs and returns an instance of parser
 func NewParser(lexer Lexer, symTab *semantics.WonkySymbolTable) (*Parser, error) {
-	parser := Parser{input: lexer, k: 3, idx: 0, symTable: symTab}
+	parser := Parser{lexer: lexer, k: 3, idx: 0, symTable: symTab}
 	for i := 0; i < parser.k; i++ {
 		if err := parser.consume(); err != nil {
 			return nil, err
@@ -37,7 +37,7 @@ func NewParser(lexer Lexer, symTab *semantics.WonkySymbolTable) (*Parser, error)
 }
 
 func (p *Parser) consume() error {
-	t, err := p.input.NextToken()
+	t, err := p.lexer.NextToken()
 	if err != nil {
 		return err
 	}
