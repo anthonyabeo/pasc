@@ -6,6 +6,7 @@ import "fmt"
 type Type interface {
 	fmt.Stringer
 	Name() string
+	Underlying() Type
 }
 
 // Ordinal is the generic parent of ordinal types
