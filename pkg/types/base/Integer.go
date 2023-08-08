@@ -18,8 +18,4 @@ func (i *Integer) String() string {
 	return i.name
 }
 
-func (i *Integer) isBuiltIn() bool {
-	return true
-}
-
 func (i *Integer) Ord() {}

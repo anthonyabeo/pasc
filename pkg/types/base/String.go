@@ -18,8 +18,4 @@ func (s *String) String() string {
 	return s.name
 }
 
-func (s *String) isBuiltIn() bool {
-	return true
-}
-
 func (s *String) Ord() {}

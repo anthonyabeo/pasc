@@ -18,8 +18,4 @@ func (c *Char) String() string {
 	return c.name
 }
 
-func (c *Char) isBuiltIn() bool {
-	return true
-}
-
 func (c *Char) Ord() {}

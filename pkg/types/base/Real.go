@@ -17,7 +17,3 @@ func NewReal() *Real {
 func (r *Real) String() string {
 	return r.name
 }
-
-func (r *Real) isBuiltIn() bool {
-	return true
-}
