@@ -60,6 +60,10 @@ func (f *FuncHeading) Type() types.Type {
 	return f
 }
 
+func (f *FuncHeading) Underlying() types.Type {
+	return f
+}
+
 func (f *FuncHeading) Pos() *token.Position {
 	return f.Token.Pos
 }

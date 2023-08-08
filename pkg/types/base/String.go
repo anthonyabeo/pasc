@@ -1,5 +1,7 @@
 package base
 
+import "github.com/anthonyabeo/pasc/pkg/types"
+
 type String struct {
 	name          string
 	NumComponents int
@@ -19,3 +21,7 @@ func (s *String) String() string {
 }
 
 func (s *String) Ord() {}
+
+func (s *String) Underlying() types.Type {
+	return s
+}

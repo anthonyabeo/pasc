@@ -1,5 +1,7 @@
 package base
 
+import "github.com/anthonyabeo/pasc/pkg/types"
+
 // Char models a data type for single characters
 type Char struct {
 	name string
@@ -19,3 +21,7 @@ func (c *Char) String() string {
 }
 
 func (c *Char) Ord() {}
+
+func (c *Char) Underlying() types.Type {
+	return c
+}

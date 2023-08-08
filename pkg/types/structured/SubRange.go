@@ -21,3 +21,7 @@ func (s *SubRange) String() string {
 }
 
 func (s *SubRange) Ord() {}
+
+func (s *SubRange) Underlying() types.Type {
+	return s
+}

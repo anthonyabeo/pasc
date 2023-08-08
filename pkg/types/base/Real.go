@@ -1,5 +1,7 @@
 package base
 
+import "github.com/anthonyabeo/pasc/pkg/types"
+
 // Real is an real data type
 type Real struct {
 	name string
@@ -16,4 +18,8 @@ func NewReal() *Real {
 
 func (r *Real) String() string {
 	return r.name
+}
+
+func (r *Real) Underlying() types.Type {
+	return r
 }

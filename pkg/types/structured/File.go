@@ -19,3 +19,7 @@ func (f *File) Name() string {
 func (f *File) String() string {
 	return "file"
 }
+
+func (f *File) Underlying() types.Type {
+	return f
+}

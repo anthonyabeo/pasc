@@ -1,5 +1,7 @@
 package base
 
+import "github.com/anthonyabeo/pasc/pkg/types"
+
 // Integer is an integer data type
 type Integer struct {
 	name string
@@ -19,3 +21,7 @@ func (i *Integer) String() string {
 }
 
 func (i *Integer) Ord() {}
+
+func (i *Integer) Underlying() types.Type {
+	return i
+}

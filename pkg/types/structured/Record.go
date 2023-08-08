@@ -21,6 +21,10 @@ func (r *Record) String() string {
 	return "Record-Type-to-be-implemented"
 }
 
+func (r *Record) Underlying() types.Type {
+	return r
+}
+
 // RecordSection ...
 type RecordSection struct {
 	List []*ast.Identifier

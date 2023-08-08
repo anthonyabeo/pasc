@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/anthonyabeo/pasc/pkg/ast"
+	"github.com/anthonyabeo/pasc/pkg/types"
 )
 
 // Enumerated denoted an enumerated type
@@ -27,3 +28,7 @@ func (e *Enumerated) String() string {
 }
 
 func (e *Enumerated) Ord() {}
+
+func (e *Enumerated) Underlying() types.Type {
+	return e
+}

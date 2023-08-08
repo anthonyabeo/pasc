@@ -56,6 +56,10 @@ func (p *ProcedureHeading) Type() types.Type {
 	return p
 }
 
+func (p *ProcedureHeading) Underlying() types.Type {
+	return p
+}
+
 func (p *ProcedureHeading) Pos() *token.Position {
 	return p.Token.Pos
 }

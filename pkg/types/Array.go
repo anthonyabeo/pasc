@@ -28,3 +28,7 @@ func (a *Array) String() string {
 
 	return fmt.Sprintf("<array[%s] of %s>", strings.Join(indices, ", "), a.ComponentType)
 }
+
+func (a *Array) Underlying() Type {
+	return a
+}

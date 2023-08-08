@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-
 	"github.com/anthonyabeo/pasc/pkg/token"
 )
 
@@ -19,4 +18,8 @@ func (s *Set) Name() string {
 
 func (s *Set) String() string {
 	return fmt.Sprintf("set of %s", s.BaseType)
+}
+
+func (s *Set) Underlying() Type {
+	return s
 }

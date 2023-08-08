@@ -23,3 +23,7 @@ func (p *Pointer) Name() string {
 func (p *Pointer) String() string {
 	return "pointer"
 }
+
+func (p *Pointer) Underlying() types.Type {
+	return p
+}
