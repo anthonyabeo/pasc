@@ -7,8 +7,8 @@ import (
 	"github.com/anthonyabeo/pasc/pkg/types/base"
 )
 
-// SymbolTable ...
-type SymbolTable interface {
+// Scope ...
+type Scope interface {
 	OpenScope()
 	CloseScope()
 	EnterSymbol(string, Symbol)
@@ -16,16 +16,16 @@ type SymbolTable interface {
 	DeclaredLocally(string) bool
 }
 
-// WonkySymbolTable ...
-type WonkySymbolTable struct {
+// SymbolTable ...
+type SymbolTable struct {
 	Depth        int
 	Table        map[string]Symbol
 	ScopeDisplay map[int][]Symbol
 }
 
-// NewWonkySymbolTable ...
-func NewWonkySymbolTable() *WonkySymbolTable {
-	w := &WonkySymbolTable{
+// NewSymbolTable ...
+func NewSymbolTable() *SymbolTable {
+	w := &SymbolTable{
 		Depth:        0,
 		Table:        make(map[string]Symbol),
 		ScopeDisplay: make(map[int][]Symbol),
@@ -36,7 +36,7 @@ func NewWonkySymbolTable() *WonkySymbolTable {
 	return w
 }
 
-func (w *WonkySymbolTable) initSymbolTable() {
+func (w *SymbolTable) initSymbolTable() {
 	w.EnterSymbol("integer", NewInteger("integer", TYPE, base.NewInteger()))
 	w.EnterSymbol("Boolean", NewBoolean("Boolean", TYPE, base.NewBoolean()))
 	w.EnterSymbol("real", NewReal("real", TYPE, base.NewReal()))
@@ -108,13 +108,13 @@ func (w *WonkySymbolTable) initSymbolTable() {
 }
 
 // OpenScope ...
-func (w *WonkySymbolTable) OpenScope() {
+func (w *SymbolTable) OpenScope() {
 	w.Depth++
 	w.ScopeDisplay[w.Depth] = make([]Symbol, 0)
 }
 
 // CloseScope ...
-func (w *WonkySymbolTable) CloseScope() {
+func (w *SymbolTable) CloseScope() {
 	for _, sym := range w.ScopeDisplay[w.Depth] {
 		prevSym := sym.Var()
 		delete(w.Table, sym.Name())
@@ -128,7 +128,7 @@ func (w *WonkySymbolTable) CloseScope() {
 }
 
 // EnterSymbol ...
-func (w *WonkySymbolTable) EnterSymbol(name string, sym Symbol) {
+func (w *SymbolTable) EnterSymbol(name string, sym Symbol) {
 	oldSym := w.RetrieveSymbol(name)
 	if oldSym != nil && oldSym.Depth() == w.Depth {
 		panic(fmt.Sprintf("symbol %s already declared", name))
@@ -143,12 +143,12 @@ func (w *WonkySymbolTable) EnterSymbol(name string, sym Symbol) {
 }
 
 // RetrieveSymbol ...
-func (w *WonkySymbolTable) RetrieveSymbol(name string) Symbol {
+func (w *SymbolTable) RetrieveSymbol(name string) Symbol {
 	return w.Table[name]
 }
 
 // DeclaredLocally ...
-func (w *WonkySymbolTable) DeclaredLocally(name string) bool {
+func (w *SymbolTable) DeclaredLocally(name string) bool {
 	sym := w.RetrieveSymbol(name)
 	if sym == nil {
 		return false
