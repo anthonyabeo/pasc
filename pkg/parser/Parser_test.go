@@ -23,7 +23,7 @@ func TestParseBasicProgram(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -63,7 +63,7 @@ func TestParseProgramWithVarDeclarations(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -104,7 +104,7 @@ func TestParsingProgramWithAssignmentStatements(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -167,7 +167,7 @@ func TestParseBasicArithmeticOperation(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -241,7 +241,7 @@ func TestParseProgramWithFunctionDeclaration(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -309,7 +309,7 @@ func TestParseProgramWithIfStatement(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -389,7 +389,7 @@ func TestParseProgramWithFunctionCall(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -448,7 +448,7 @@ func TestMultipleVariableDeclarations(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -506,7 +506,7 @@ func TestParsingMultiplicationOperator(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -571,7 +571,7 @@ func TestParsingConstantDefinition(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -606,7 +606,7 @@ func TestParseForStatement(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -673,7 +673,7 @@ func TestParsingProcedureDeclaration(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -765,7 +765,7 @@ func TestParseWhileStatement(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1214,7 +1214,7 @@ func TestParseRepeatStatement(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1293,7 +1293,7 @@ func TestParseTypeDefinitionPart(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1333,7 +1333,7 @@ func TestParsingIndexedVariables(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1409,7 +1409,7 @@ func TestParseExpressions(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1459,7 +1459,7 @@ func TestParseFieldDesignator(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1506,7 +1506,7 @@ func TestParserArrayType(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1541,7 +1541,7 @@ func TestParseLabelDeclaration(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -1589,7 +1589,7 @@ func TestParseStatementsWithLabels(t *testing.T) {
 	lex := Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)

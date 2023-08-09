@@ -21,11 +21,11 @@ import (
 type ProtoSerializer struct {
 	ast       *ast.Program
 	out       string
-	symTable  semantics.SymbolTable
+	symTable  *semantics.SymbolTable
 	constants map[string]string
 }
 
-func NewProtoSerializer(ast *ast.Program, out string, symTable semantics.SymbolTable) *ProtoSerializer {
+func NewProtoSerializer(ast *ast.Program, out string, symTable *semantics.SymbolTable) *ProtoSerializer {
 	return &ProtoSerializer{
 		ast:       ast,
 		out:       out,

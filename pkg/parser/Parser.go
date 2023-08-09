@@ -21,11 +21,11 @@ type Parser struct {
 	lexer     Lexer
 	lookahead [3]token.Token
 	k, idx    int
-	symTable  *semantics.WonkySymbolTable
+	symTable  *semantics.SymbolTable
 }
 
 // NewParser constructs and returns an instance of parser
-func NewParser(lexer Lexer, symTab *semantics.WonkySymbolTable) (*Parser, error) {
+func NewParser(lexer Lexer, symTab *semantics.SymbolTable) (*Parser, error) {
 	parser := Parser{lexer: lexer, k: 3, idx: 0, symTable: symTab}
 	for i := 0; i < parser.k; i++ {
 		if err := parser.consume(); err != nil {

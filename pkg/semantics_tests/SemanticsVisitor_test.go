@@ -24,7 +24,7 @@ func TestStaticTypeCheckAssignmentStatement(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -59,7 +59,7 @@ func TestStaticTypeCheckBasicArithmetic(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -101,7 +101,7 @@ func TestTypeCheckWhileStatement(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -139,7 +139,7 @@ func TestStaticCheckIfStatement(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -189,7 +189,7 @@ func TestStaticCheckMaxProgram(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -259,7 +259,7 @@ func TestStaticTypeCheckExpressions(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -297,7 +297,7 @@ func TestTypeCheckForStatement(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -339,7 +339,7 @@ func TestTypeCheckWhileStatementWithInvalidCondition(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -382,7 +382,7 @@ func TestTypeCheckForStatementWithInvalidCtrlID(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -438,7 +438,7 @@ func TestStaticCheckFuncDeclaration(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -496,7 +496,7 @@ func TestTypeCheckWithStatement(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -550,7 +550,7 @@ func TestFunctionHeadingParameterWithInvalidArgument(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -610,7 +610,7 @@ func TestFunctionHeadingParameter(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -647,7 +647,7 @@ func TestTypeCheckNotUnaryExpression(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -695,7 +695,7 @@ func TestTypeCheckMinusUnaryExpression(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -744,7 +744,7 @@ func TestTypeCheckIdentifiedVariable(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)
@@ -782,7 +782,7 @@ func TestTypeCheckGotoLabelsOutOfRange(t *testing.T) {
 	lex := parser.Lexer{}
 	lex.Init(file, input)
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 	pars, err := parser.NewParser(lex, symTable)
 	if err != nil {
 		t.Error(err)

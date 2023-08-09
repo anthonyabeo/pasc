@@ -52,7 +52,7 @@ func runBuild(ctx context.Context, args []string) error {
 		return err
 	}
 
-	symTable := semantics.NewWonkySymbolTable()
+	symTable := semantics.NewSymbolTable()
 
 	fs := token.NewFileSet()
 	file := fs.AddFile(fullPath, -1, len(input))

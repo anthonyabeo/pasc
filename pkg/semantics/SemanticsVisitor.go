@@ -14,10 +14,10 @@ import (
 // Visitor ...
 type Visitor struct {
 	program     *ast.Program
-	symbolTable *WonkySymbolTable
+	symbolTable *SymbolTable
 }
 
-func NewSemaVisitor(program *ast.Program, symTable *WonkySymbolTable) *Visitor {
+func NewSemaVisitor(program *ast.Program, symTable *SymbolTable) *Visitor {
 	return &Visitor{program: program, symbolTable: symTable}
 }
 
