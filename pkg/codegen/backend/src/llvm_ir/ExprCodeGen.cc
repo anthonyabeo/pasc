@@ -112,6 +112,11 @@ llvm::Value *IRCodegenVisitor::codegen(const BinaryExpression &binExpr) {
 
     return builder->CreateCmp(llvm::CmpInst::Predicate::ICMP_EQ, L, R);
   case Operator::Mod:
+    if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
+      L = builder->CreateFPToUI(L, llvm::Type::getInt32Ty(*ctx));
+      R = builder->CreateFPToUI(R, llvm::Type::getInt32Ty(*ctx));
+    }
+
     return builder->CreateSRem(L, R);
   case Operator::Mult:
     if (L->getType() == llvm::Type::getDoubleTy(*ctx) || R->getType() == llvm::Type::getDoubleTy(*ctx)) {
