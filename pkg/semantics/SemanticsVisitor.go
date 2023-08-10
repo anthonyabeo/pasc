@@ -421,8 +421,8 @@ func (s *Visitor) VisitFuncDesignator(f *ast.FuncDesignator) error {
 						if !s.AreAssignmentCompatible(f.Args[offset+i], name) {
 							return fmt.Errorf(
 								"[Semantic Error at '%s']\n\t mismatched parameters: argument at position '%d' "+
-									"in function call (%s) does not match parameter at position '%d' in function '%s'",
-								f.Args[offset+i].Pos(), offset+i, f, offset+i, fHead)
+									"in function call '%s' does not match parameter at position '%d' in function '%s'",
+								f.Args[offset+i].Pos(), offset+i+1, f, offset+i+1, fHead)
 						}
 					}
 				}
