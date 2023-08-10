@@ -55,7 +55,7 @@ func runBuild(ctx context.Context, args []string) error {
 	symTable := semantics.NewSymbolTable()
 
 	fs := token.NewFileSet()
-	file := fs.AddFile(fullPath, -1, len(input))
+	file := fs.AddFile(fmt.Sprintf("%s/%s", fullPath, args[0]), -1, len(input))
 
 	lex := parser.Lexer{}
 	lex.Init(file, input)
