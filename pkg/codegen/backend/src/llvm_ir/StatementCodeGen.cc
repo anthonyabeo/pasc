@@ -319,7 +319,16 @@ llvm::Value *IRCodegenVisitor::codegen(const ProcedureDeclaration &pd) {
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const ProcedureStmt& ps) {
-  return nullptr;
+  std::vector<llvm::Value*> procArgs;
+  procArgs.reserve(ps.params.size());
+
+  for (auto& arg :ps.params) {
+    procArgs.push_back(arg->codegen(*this));
+  }
+
+  auto f = module->getFunction(ps.name->get_name());
+
+  return builder->CreateCall(f, procArgs);
 }
 
 llvm::Value *IRCodegenVisitor::codegen(const ReturnStatement& rs) {
