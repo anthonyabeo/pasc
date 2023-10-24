@@ -20,7 +20,6 @@ func (cs *CompoundStatement) Pos() *token.Position {
 	return cs.Token.Pos
 }
 
-// StatNode ...
 func (cs *CompoundStatement) stmt() {}
 
 func (cs *CompoundStatement) String() string {

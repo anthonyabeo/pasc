@@ -22,7 +22,6 @@ func (f *ForStatement) Pos() *token.Position {
 	return f.Token.Pos
 }
 
-// StatNode ...
 func (f *ForStatement) stmt() {}
 
 func (f *ForStatement) String() string {

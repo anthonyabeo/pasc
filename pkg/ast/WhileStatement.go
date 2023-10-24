@@ -21,7 +21,6 @@ func (w *WhileStatement) Pos() *token.Position {
 	return w.Token.Pos
 }
 
-// StatNode ...
 func (w *WhileStatement) stmt() {}
 
 func (w *WhileStatement) String() string {

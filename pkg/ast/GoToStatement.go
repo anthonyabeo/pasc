@@ -20,7 +20,6 @@ func (g *GotoStatement) Pos() *token.Position {
 	return g.Token.Pos
 }
 
-// StatNode ...
 func (g *GotoStatement) stmt() {}
 
 func (g *GotoStatement) String() string {

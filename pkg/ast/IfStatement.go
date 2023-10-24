@@ -22,7 +22,6 @@ func (f *IfStatement) Pos() *token.Position {
 	return f.Token.Pos
 }
 
-// StatNode ...
 func (f *IfStatement) stmt() {}
 
 func (f *IfStatement) String() string {

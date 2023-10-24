@@ -23,7 +23,6 @@ func (r *RepeatStatement) Pos() *token.Position {
 	return r.Token.Pos
 }
 
-// StatNode ...
 func (r *RepeatStatement) stmt() {}
 
 func (r *RepeatStatement) String() string {

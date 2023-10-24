@@ -23,7 +23,6 @@ func (w *WithStatement) Pos() *token.Position {
 	return w.Token.Pos
 }
 
-// StatNode ...
 func (w *WithStatement) stmt() {}
 
 func (w *WithStatement) String() string {
